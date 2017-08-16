@@ -257,6 +257,14 @@
                 <source>label.conclusion_fullname</source>
                 <target>Полное название заключения</target>
             </trans-unit>
+            <trans-unit id="label.info">
+                <source>label.info</source>
+                <target>Инфо</target>
+            </trans-unit>
+            <trans-unit id="label.actions">
+                <source>label.actions</source>
+                <target>Действия</target>
+            </trans-unit>
 
             <trans-unit id="label.title">
                 <source>label.title</source>
@@ -293,10 +301,6 @@
             <trans-unit id="label.published_at">
                 <source>label.published_at</source>
                 <target>Опубликовано</target>
-            </trans-unit>
-            <trans-unit id="label.actions">
-                <source>label.actions</source>
-                <target>Действия</target>
             </trans-unit>
             <trans-unit id="action.edit_contents">
                 <source>action.edit_contents</source>

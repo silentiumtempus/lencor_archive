@@ -107,7 +107,7 @@ class FolderEntity
     /**
      * @ORM\Column(type="datetime")
      * @Assert\DateTime()
-     * @Gedmo\Timestampable(on="update")
+     * @Gedmo\Timestampable(on="create")
      * @Gedmo\Versioned()
      */
 

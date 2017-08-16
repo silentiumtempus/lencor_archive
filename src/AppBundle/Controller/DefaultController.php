@@ -354,7 +354,9 @@ file_put_contents($file, $wr); */
                     $newFileEntity->setParentFolder($parentFolder);
                     $userId = $this->getUser()->getId();
                     $newFileEntity->setModifiedByUserId($userId);
+                    $newFileEntity->setDeleteMark(false);
                     $newFileEntity->setSlug(null);
+                    $newFileEntity->setDeletedByUserId(null);
 
                     $rootPath = $this->getParameter('lencor_archive.storage_path');
                     $folderAbsPath = $rootPath;
@@ -374,6 +376,7 @@ file_put_contents($file, $wr); */
                         $fileExistedPreviously = false;
                         try {
                             $newFileEntity->getFileName()->move($folderAbsPath, $originalName);
+                            $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
                             $this->addFlash('success', 'Новый документ записан в директорию ' . $parentFolder);
                         } catch (\Exception $exception) {
                             $uploadNotFailed = false;
@@ -403,7 +406,7 @@ file_put_contents($file, $wr); */
                             $this->addFlash('success', 'Ноsый документ добавлен в БД');
                         } catch (\Exception $exception) {
                             if ($exception instanceof ConstraintViolationException) {
-                                $this->addFlash('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.');
+                                $this->addFlash('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage());
                             } else {
                                 $this->addFlash('danger', 'Документ не записан в БД. Ошибка БД: ' . $exception->getMessage());
                             }

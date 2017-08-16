@@ -5,43 +5,48 @@
         <td id="entry-content-buttons-spacer" class="entry-content-buttons-spacer">
         </td>
 
-        <td><a class="btn btn-success btn-xs" id="{{ entryId }}"
-               href="#" name="folderAdd"
-               title="Добавить директорию"><i
-                        class="fa fa-folder-o"></i> Добавить директорию </a></td>
-        <td><a class="btn btn-success btn-xs" id="{{ entryId }}"
-               href="#" name="fileAdd" title="Добавить файл"><i
-                        class="fa fa-file-o"></i> Добавить файл </a></td>
-        <td></td>
+        <td><a class="btn btn-success btn-xs" id="{{ entryId }}" href="#" name="folderAdd" title="Добавить директорию"><i class="fa fa-folder-o"></i> Добавить директорию </a></td>
+        <td><a class="btn btn-success btn-xs" id="{{ entryId }}" href="#" name="fileAdd" title="Добавить файл"><i class="fa fa-file-o"></i> Добавить файл </a></td>
 
     </tr>
     <tr class="row-content">
-        <td class="entry-content-container" colspan="9">
+        <td class="entry-content-container" colspan="3">
             <ul id="entry-content-header" class="fa ul entry-content-header">
                 <li>
-                    <span><h5>Имя</h5></span>
-                    <span><h5>Пользователь</h5></span>
-                    <span><h5>Дата</h5></span>
+                    <span><h5>Название</h5></span>
+                    <span><h5>Добавлено пользователем</h5></span>
+                    <span><h5>Дата и время изменения</h5></span>
+                    <span><h5>Информация</h5></span>
                     <span><h5>Действия</h5></span>
                 </li>
             </ul>
         </td>
     </tr>
     <tr class="row-content">
-        <td class="entry-content-container" colspan="9">
+        <td class="entry-content-container" colspan="3">
             {% endif %}
+            <ul class="fa-ul entry-content-container entry-content-folders-block">
+                {% if (htmlTree is not empty) or (fileNodes is not empty) %}
 
-            {% if (htmlTree is not empty) or (fileNodes is not empty) %}
-                <ul class="fa-ul entry-content-container entry-content-folders-block">
 
                 {% for directory in htmlTree %}
                     <li>
-                        <span> <a href="#" name="openFolder" id="{{ directory.id }}">
-                                <i class="fa fa-folder"></i> {{ directory.folderName }} </a>
+                        <span> <a href="#" name="openFolder" id="{{ directory.id }}"><i class="fa fa-angle-down"></i><i class="fa fa-folder"> </i> {{ directory.folderName }}</a>
                         </span>
-                        <span>{{ directory.modifiedByUserId }}</span>
+                        <span>ID: {{ directory.modifiedByUserId }}</span>
                         <span>{{ directory.lastModified|date('Y-m-d H:m:s') }}</span>
-                        <span> Actions</span>
+                        <span>
+                            <i class="fa fa-ban" id="isRemoved"> </i>
+                            <i class="fa fa-check-circle-o" id="checkPassed"> </i>
+                            <i class="fa fa-exclamation" id="checkError"> </i>
+                            <i class="fa fa-user" id="lastChangeInfo"> </i>
+                        </span>
+                        <span>
+                            <a href="#" name="openContents"><i class="fa fa-angle-down"></i><i class="fa fa-folder" id="openContents"></i></a>
+                            <a href="#" name="addFiles"><i class="fa fa-upload" id=addFiles"> </i></a>
+                            <a href="#" name="createCatalogue"><i class="fa fa-plus" id="createCatalogue"> </i></a>
+                            <a href="#" name="requestRemoval"><i class="fa fa-trash-o" id="requestRemoval"> </i></a>
+                        </span>
                     </li>
                     <li style="display: none" id="folderContent_{{ directory.id }}"></li>
 
@@ -49,18 +54,31 @@
                 {% for file in fileNodes %}
                     <li>
                         <span><a href="#" name="downloadFile" id="{{ file.id }}">
-                                <i class="fa fa-file-text"></i> {{ file.fileName }} </a>
+                                <i class="fa fa-file-text"> </i>{{ file.fileName }}</a>
                         </span>
-                        <span> {{ file.modifiedByUserId }}</span>
+                        <span>ID: {{ file.modifiedByUserId }}</span>
                         <span> {{ file.lastModified|date('Y-m-d H:m:s') }} </span>
-                        <span><a hrref="#">name</a>  </span>
+                        <span>
+                            <i class="fa fa-ban" id="isRemoved"> </i>
+                            <i class="fa fa-check-circle-o" id="checkPassed"> </i>
+                            <i class="fa fa-exclamation" id="checkError"> </i>
+                            <i class="fa fa-user" id="lastChangeInfo"> </i>
+                        </span>
+                        <span>
+                            <a href="#" name="downloadFile"><i class="fa fa-download" id="downloadFile"></i></a>
+                            <a href="#" name="markForRemoval"><i class="fa fa-trash-o" id="requestRemoval"></i></a>
+                        </span>
                     </li>
                 {% endfor %}
-            {% else %}
+                {% else %}
                 <li>
-                    <span>Пустая директория</span>
+                    <span><a href="#"><i class="fa fa-ellipsis-h"> </i></a></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </li>
-                </ul>
+            </ul>
             {% endif %}
         </td>
     </tr>

@@ -68,7 +68,7 @@ class FileEntity
     /**
      * @ORM\Column(type="datetime")
      * @Assert\DateTime()
-     * @Gedmo\Timestampable(on="update")
+     * @Gedmo\Timestampable(on="create")
      * @Gedmo\Versioned()
      */
 
@@ -90,6 +90,22 @@ class FileEntity
      */
 
     protected $checksum;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Assert\Type("boolean")
+     * @Gedmo\Versioned()
+     */
+
+    protected $deleteMark;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\Type("string")
+     * @Gedmo\Versioned()
+     */
+
+    protected $deletedByUserId;
 
     /**
      * @Gedmo\Translatable
@@ -280,5 +296,53 @@ class FileEntity
     public function getChecksum()
     {
         return $this->checksum;
+    }
+
+    /**
+     * Set deleteMark
+     *
+     * @param boolean $deleteMark
+     *
+     * @return FileEntity
+     */
+    public function setDeleteMark($deleteMark)
+    {
+        $this->deleteMark = $deleteMark;
+
+        return $this;
+    }
+
+    /**
+     * Get deleteMark
+     *
+     * @return boolean
+     */
+    public function getDeleteMark()
+    {
+        return $this->deleteMark;
+    }
+
+    /**
+     * Set deletedByUserId
+     *
+     * @param string $deletedByUserId
+     *
+     * @return FileEntity
+     */
+    public function setDeletedByUserId($deletedByUserId)
+    {
+        $this->deletedByUserId = $deletedByUserId;
+
+        return $this;
+    }
+
+    /**
+     * Get deletedByUserId
+     *
+     * @return string
+     */
+    public function getDeletedByUserId()
+    {
+        return $this->deletedByUserId;
     }
 }
