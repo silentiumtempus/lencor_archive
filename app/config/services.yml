@@ -1,0 +1,46 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+
+  appbundle.form.archiveentryaddform:
+    class: AppBundle\Form\ArchiveEntryAddForm
+    arguments: ['@doctrine.orm.entity_manager']
+    tags:
+      - { name: form.type }
+
+  appbundle.form.archiveentrysearchform:
+    class: AppBundle\Form\ArchiveEntrySearchForm
+    arguments: ['@doctrine.orm.entity_manager']
+    tags:
+      - { name: form.type }
+
+  appbundle.form.folderaddform:
+    class: AppBundle\Form\FolderAddForm
+    arguments: ['@doctrine.orm.entity_manager']
+    tags:
+      - { name: form.type }
+
+  appbundle.form.fileaddform:
+    class: AppBundle\Form\FileAddForm
+    arguments: ['@doctrine.orm.entity_manager']
+    tags:
+      - { name: form.type }
+
+
+  #jms_serializer:
+    #class: JMS\SerializerBundle\JMSSerializerBundle
+
+# required to implement binary tree select list options
+# https://github.com/Yavin/symfony-form-tree
+
+    symfony.form.type_guesser.tree:
+        class: Yavin\Symfony\Form\Type\TreeTypeGuesser
+        arguments: [ "@doctrine" ]
+        tags:
+            - { name: form.type_guesser }
