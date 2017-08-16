@@ -1,7 +1,0 @@
-<td id="entry-content-buttons-spacer" class="entry-content-buttons-spacer">
-    Последние изменения:
-    {% for data in lastUpdateInfo %}
-        {{ data.lastModified|date('d-m-Y H:m:s') }} пользователем <b>{{ data.usernameCanonical }}</b>
-    {% endfor %}
-    .
-</td>
