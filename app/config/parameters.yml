@@ -1,0 +1,17 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: localhost
+    database_port: 3306
+    database_name: # put database name here
+    database_user: # put database user here
+    database_password: # put database user password here
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: # put e-mail here
+    mailer_password: null
+    secret: # removed
+    fos_elastica.host: localhost
+    fos_elastica.port: 9200
+    storage_path: '%kernel.root_dir%/Resources/files'
+    lencor_archive.storage_path: '%kernel.root_dir%/Resources/files'
+    lencor_archive.storage_permissions: 509
