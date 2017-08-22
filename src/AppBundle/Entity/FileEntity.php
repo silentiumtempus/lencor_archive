@@ -72,7 +72,7 @@ class FileEntity
      * @Gedmo\Versioned()
      */
 
-    protected $lastModified;
+    protected $addTimestamp;
 
     /**
      * @ORM\Column(type="string")
@@ -80,7 +80,7 @@ class FileEntity
      * @Gedmo\Versioned()
      */
 
-    protected $modifiedByUserId;
+    protected $addedByUserId;
 
     /**
      * @ORM\Column(type="string")
@@ -155,51 +155,51 @@ class FileEntity
     }
 
     /**
-     * Set lastModified
+     * Set addTimestamp
      *
-     * @param \DateTime $lastModified
+     * @param \DateTime $addTimestamp
      *
      * @return FileEntity
      */
-    public function setLastModified($lastModified)
+    public function setAddTimestamp($addTimestamp)
     {
-        $this->lastModified = $lastModified;
+        $this->addTimestamp = $addTimestamp;
 
         return $this;
     }
 
     /**
-     * Get lastModified
+     * Get addTimestamp
      *
      * @return \DateTime
      */
-    public function getLastModified()
+    public function getAddTimestamp()
     {
-        return $this->lastModified;
+        return $this->addTimestamp;
     }
 
     /**
-     * Set modifiedByUserId
+     * Set addedByUserId
      *
-     * @param string $modifiedByUserId
+     * @param string $addedByUserId
      *
      * @return FileEntity
      */
-    public function setModifiedByUserId($modifiedByUserId)
+    public function setAddedByUserId($addedByUserId)
     {
-        $this->modifiedByUserId = $modifiedByUserId;
+        $this->addedByUserId = $addedByUserId;
 
         return $this;
     }
 
     /**
-     * Get modifiedByUserId
+     * Get addedByUserId
      *
      * @return string
      */
-    public function getModifiedByUserId()
+    public function getAddedByUserId()
     {
-        return $this->modifiedByUserId;
+        return $this->addedByUserId;
     }
 
     /*

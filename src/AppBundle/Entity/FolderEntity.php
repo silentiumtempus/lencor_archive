@@ -111,7 +111,7 @@ class FolderEntity
      * @Gedmo\Versioned()
      */
 
-    protected $lastModified;
+    protected $addTimestamp;
 
     /**
      * @ORM\Column(type="string")
@@ -119,7 +119,23 @@ class FolderEntity
      * @Gedmo\Versioned()
      */
 
-    protected $modifiedByUserId;
+    protected $addedByUserId;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Assert\Type("boolean")
+     * @Gedmo\Versioned()
+     */
+
+    protected $deleteMark;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\Type("string")
+     * @Gedmo\Versioned()
+     */
+
+    protected $deletedByUserId;
 
     /**
      * @Gedmo\Translatable
@@ -169,51 +185,51 @@ class FolderEntity
     }
 
     /**
-     * Set lastModified
+     * Set addTimestamp
      *
-     * @param \DateTime $lastModified
+     * @param \DateTime $addTimestamp
      *
      * @return FolderEntity
      */
-    public function setLastModified($lastModified)
+    public function setAddTimestamp($addTimestamp)
     {
-        $this->lastModified = $lastModified;
+        $this->addTimestamp = $addTimestamp;
 
         return $this;
     }
 
     /**
-     * Get lastModified
+     * Get addTimestamp
      *
      * @return \DateTime
      */
-    public function getLastModified()
+    public function getAddTimestamp()
     {
-        return $this->lastModified;
+        return $this->addTimestamp;
     }
 
     /**
-     * Set modifiedByUserId
+     * Set addedByUserId
      *
-     * @param string $modifiedByUserId
+     * @param string $addedByUserId
      *
      * @return FolderEntity
      */
-    public function setModifiedByUserId($modifiedByUserId)
+    public function setAddedByUserId($addedByUserId)
     {
-        $this->modifiedByUserId = $modifiedByUserId;
+        $this->addedByUserId = $addedByUserId;
 
         return $this;
     }
 
     /**
-     * Get modifiedByUserId
+     * Get addedByUserId
      *
      * @return string
      */
-    public function getModifiedByUserId()
+    public function getAddedByUserId()
     {
-        return $this->modifiedByUserId;
+        return $this->addedByUserId;
     }
 
     /**
@@ -423,5 +439,53 @@ class FolderEntity
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set deleteMark
+     *
+     * @param boolean $deleteMark
+     *
+     * @return FolderEntity
+     */
+    public function setDeleteMark($deleteMark)
+    {
+        $this->deleteMark = $deleteMark;
+
+        return $this;
+    }
+
+    /**
+     * Get deleteMark
+     *
+     * @return boolean
+     */
+    public function getDeleteMark()
+    {
+        return $this->deleteMark;
+    }
+
+    /**
+     * Set deletedByUserId
+     *
+     * @param string $deletedByUserId
+     *
+     * @return FolderEntity
+     */
+    public function setDeletedByUserId($deletedByUserId)
+    {
+        $this->deletedByUserId = $deletedByUserId;
+
+        return $this;
+    }
+
+    /**
+     * Get deletedByUserId
+     *
+     * @return string
+     */
+    public function getDeletedByUserId()
+    {
+        return $this->deletedByUserId;
     }
 }

@@ -218,17 +218,17 @@ file_put_contents($file, $wr); */
 
         $newFolder = new FolderEntity();
         $session = $this->container->get('session');
-        $catId = $request->get('catId');
+        $entryId = $request->get('entryId');
 
-        if ($catId) {
+        if ($entryId) {
 
-            $session->set('catId', $request->get('catId'));
-        } elseif (!$catId) {
-            $catId = $session->get('catId');
+            $session->set('entryId', $request->get('entryId'));
+        } elseif (!$entryId) {
+            $entryId = $session->get('entryId');
         }
 
         $repository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
-        $rootFolder = $repository->findOneByArchiveEntry($catId);
+        $rootFolder = $repository->findOneByArchiveEntry($entryId);
         $folderId = $rootFolder->getRoot()->getId();
 
         $folderAddForm = $this->createForm(FolderAddForm::class, $newFolder, array('action' => $this->generateUrl('lencor_entries_new_folder'), 'attr' => array('folderId' => $folderId, 'id' => 'folder_add_form')));
@@ -241,7 +241,9 @@ file_put_contents($file, $wr); */
                     $parentFolder = $repository->findOneById($folderAddForm->get('parentFolder')->getViewData());
                     $newFolderEntity->setParentFolder($parentFolder);
                     $userId = $this->getUser()->getId();
-                    $newFolderEntity->setModifiedByUserId($userId);
+                    $newFolderEntity->setAddedByUserId($userId);
+                    $newFolderEntity->setDeleteMark(false);
+                    $newFolderEntity->setDeletedByUserId(null);
                     $newFolderEntity->setSlug(null);
                     $fileSystem = new Filesystem();
                     $storagePath = $this->getParameter('lencor_archive.storage_path');
@@ -292,6 +294,7 @@ file_put_contents($file, $wr); */
                             $em = $this->getDoctrine()->getManager();
                             $em->persist($newFolderEntity);
                             $em->flush();
+                            $this->changeLastUpdateInfo($entryId);
                             $this->addFlash('success', 'Новая директория успешно добавлена в БД');
                         } catch (\Exception $exception) {
                             if ($exception instanceof ConstraintViolationException) {
@@ -316,7 +319,7 @@ file_put_contents($file, $wr); */
                 $this->addFlash('danger', 'Форма заполнена неверно. Операция не выполнена.');
             }
         }
-        return $this->render('lencor/admin/archive/archive_manager_new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'catId' => $catId));
+        return $this->render('lencor/admin/archive/archive_manager_new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entryId));
     }
 
     /**
@@ -327,19 +330,18 @@ file_put_contents($file, $wr); */
     public function uploadNewFile(Request $request)
     {
         $newFile = new FileEntity();
-        $rootArchiveEntry = new ArchiveEntryEntity();
         $session = $this->container->get('session');
-        $catId = $request->get('catId');
+        $entryId = $request->get('entryId');
 
-        if ($catId) {
-            $session->set('catId', $request->get('catId'));
-        } elseif (!$catId) {
-            $catId = $session->get('catId');
+        if ($entryId) {
+            $session->set('entryId', $request->get('entryId'));
+        } elseif (!$entryId) {
+            $entryId = $session->get('entryId');
         }
 
         $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
         $entriesRepository = $this->getDoctrine()->getRepository('AppBundle:ArchiveEntryEntity');
-        $rootFolder = $foldersRepository->findOneByArchiveEntry($catId);
+        $rootFolder = $foldersRepository->findOneByArchiveEntry($entryId);
         $folderId = $rootFolder->getRoot()->getId();
 
         $fileAddForm = $this->createForm(FileAddForm::class, $newFile, array('action' => $this->generateUrl('lencor_entries_new_file'), 'method' => 'POST', 'attr' => array('folderId' => $folderId, 'id' => 'file_add_form')));
@@ -350,10 +352,9 @@ file_put_contents($file, $wr); */
                 try {
                     $newFileEntity = $fileAddForm->getData();
                     $parentFolder = $foldersRepository->findOneById($fileAddForm->get('parentFolder')->getViewData());
-                    //$newFileEntity->setArchiveEntry($parentArchiveEntry);
                     $newFileEntity->setParentFolder($parentFolder);
                     $userId = $this->getUser()->getId();
-                    $newFileEntity->setModifiedByUserId($userId);
+                    $newFileEntity->setAddedByUserId($userId);
                     $newFileEntity->setDeleteMark(false);
                     $newFileEntity->setSlug(null);
                     $newFileEntity->setDeletedByUserId(null);
@@ -366,8 +367,6 @@ file_put_contents($file, $wr); */
                     foreach ($binaryPath as $folderName) {
                         $folderAbsPath .= "/" . $folderName;
                     }
-
-                    //$originalName = $newFileEntity->getFileName()->getClientOriginalName();
                     $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
                     $fileWithAbsPath = $folderAbsPath . "/" . $originalName;
                     $fileSystem = new Filesystem();
@@ -385,24 +384,17 @@ file_put_contents($file, $wr); */
                         }
                     } else {
                         $fileExistedPreviously = true;
-                        $this->addFlash('warning', 'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.');
+                        $this->addFlash('danger', 'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.');
                     }
 
                     if ($uploadNotFailed) {
                         try {
-                            $newFileEntity->setFileName($originalName);
                             $em = $this->getDoctrine()->getManager();
+                            $newFileEntity->setFileName($originalName);
                             $em->persist($newFileEntity);
                             $em->flush();
+                            $this->changeLastUpdateInfo($entryId);
 
-                            try {
-                                //$em = $this->getDoctrine()->getManager();
-                                $rootArchiveEntry = $entriesRepository->findOneById($parentFolder->getRoot()->getId());
-                                $rootArchiveEntry->setModifiedByUserId($userId);
-                                $em->flush();
-                            } catch (\Exception $exception) {
-                                $this->addFlash('warning', 'Внимание. произошла ошибка при записи служебной информации о пользователе: ' . $exception->getMessage());
-                            }
                             $this->addFlash('success', 'Ноsый документ добавлен в БД');
                         } catch (\Exception $exception) {
                             if ($exception instanceof ConstraintViolationException) {
@@ -428,7 +420,7 @@ file_put_contents($file, $wr); */
                 $this->addFlash('danger', 'Форма заполнена неверно. Операция не выполнена.');
             }
         }
-        return $this->render('lencor/admin/archive/archive_manager_new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'catId' => $catId));
+        return $this->render('lencor/admin/archive/archive_manager_new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'entryId' => $entryId));
     }
 
     /**
@@ -487,7 +479,6 @@ file_put_contents($file, $wr); */
             }
         }
 
-
         $entryForm->handleRequest($request);
         if ($entryForm->isSubmitted() && $fs->exists($pathRoot)) {
             if ($entryForm->isValid()) {
@@ -524,11 +515,14 @@ file_put_contents($file, $wr); */
                             $newEntry->setCataloguePath($newFolder);
                             $newEntry->setModifiedByUserId($userId);
                             $newEntry->setDeleteMark(false);
+                            $newEntry->setDeletedByUserId(null);
                             //$newEntry->setSlug(null);
 
                             $newFolder->setArchiveEntry($newEntry);
                             $newFolder->setFolderName($newEntry->getYear() . "/" . $newEntry->getFactory()->getId() . "/" . $newEntry->getArchiveNumber());
-                            $newFolder->setModifiedByUserId($userId);
+                            $newFolder->setAddedByUserId($userId);
+                            $newFolder->setDeleteMark(false);
+                            $newFolder->setDeletedByUserId(null);
 
                             $serializer = SerializerBuilder::create()->build();
                             $jsonContent = $serializer->serialize($newEntry, 'yml');
@@ -609,7 +603,7 @@ file_put_contents($file, $wr); */
      * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/settings_manager", name="lencor_settings_manager")
      */
-    public function settingsManagerAction()
+    public function settingsManager()
     {
         $repository = $this->getDoctrine()->getRepository('AppBundle:SettingEntity');
         $settings = $repository->findAll();
@@ -645,6 +639,25 @@ file_put_contents($file, $wr); */
     }
 
     /**
+     * @param String $entryId
+     * @Route("/lencor_entries_change_last_update_info", name="lencor_entries_change_last_update_info")
+     */
+
+    public function changeLastUpdateInfo($entryId)
+    {
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $entriesRepository = $this->getDoctrine()->getRepository('AppBundle:ArchiveEntryEntity');
+            $archiveEntry = $entriesRepository->findOneById($entryId);
+            $archiveEntry->setModifiedbyUserId($this->getUser()->getId());
+            $em->flush();
+
+        } catch (\Exception $exception) {
+            $this->addFlash('error', 'Информация об изменениях не записана в ячейку. Ошибка: ' . $exception->getMessage());
+        }
+    }
+
+    /**
      * @param Request $request
      * @return Response
      * @Route("/lencor_entries_last_update_info", name="lencor_entries_last_update_info")
@@ -670,7 +683,7 @@ file_put_contents($file, $wr); */
             $entryUpdatedDataQuery = $qb->getQuery();
             $lastUpdateInfo = $entryUpdatedDataQuery->getResult();
         }
-        return $this->render('lencor/admin/archive/archive_manager_entries_update_info.html.twig', array ('lastUpdateInfo' => $lastUpdateInfo));
+        return $this->render('lencor/admin/archive/archive_manager_entries_update_info.html.twig', array('lastUpdateInfo' => $lastUpdateInfo));
     }
 
     /**
@@ -679,9 +692,10 @@ file_put_contents($file, $wr); */
      * @Route("/lencor_entries_get_folder_entryId", name="lencor_entries_get_folder_entryId")
      */
 
-    public function getFolderEntryId (Request $request) {
+    public function getFolderEntryId(Request $request)
+    {
         $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
-        $entryId=null;
+        $entryId = null;
 
         if ($request->request->has('folderId')) {
             $folderNode = $foldersRepository->findOneById($request->get('folderId'));
@@ -689,6 +703,97 @@ file_put_contents($file, $wr); */
         }
         return new Response($entryId);
     }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("/lencor_entries/remove_file", name="lencor_entries_remove_file")
+     */
+
+    public function removeFile(Request $request)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $deletedFile = $em->getRepository('AppBundle:FileEntity')->findOneById($request->get('fileId'));
+        $deletedFile->setDeleteMark(true);
+        $deletedFile->setDeletedByUserId($this->getUser()->getId());
+        $em->flush();
+
+        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('deletedFile' => $deletedFile));
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("/lencor_entries/restore_file", name="lencor_entries_restore_file")
+     */
+
+    public function restoreFile(Request $request)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $deletedFile = $em->getRepository('AppBundle:FileEntity')->findOneById($request->get('fileId'));
+        $deletedFile->setDeleteMark(false);
+        $deletedFile->setDeletedByUserId(null);
+        $em->flush();
+
+        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('deletedFile' => $deletedFile));
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("/lencor_entries/remove_folder", name="lencor_entries_remove_folder")
+     */
+
+    public function removeFolder(Request $request)
+    {
+
+        $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
+        $filesRepository = $this->getDoctrine()->getRepository('AppBundle:FileEntity');
+        $em = $this->getDoctrine()->getManager();
+        $deletedFolder = $foldersRepository->findOneById($request->get('folderId'));
+        $folderChildren = $foldersRepository->getChildren($deletedFolder, false, null, null, true);
+
+        if ($folderChildren) {
+            foreach ($folderChildren as $childFolder) {
+                if (!$childFolder->getDeleteMark()) {
+                    $childFolder->setDeleteMark(true);
+                    $childFolder->setDeletedByUserId($this->getUser()->getId());
+                    $childFiles = $filesRepository->findByParentFolder($childFolder->getId());
+                    if ($childFiles) {
+                        foreach ($childFiles as $childFile) {
+                            if (!$childFile->getDeleteMark()) {
+                                $childFile->setDeleteMark(true);
+                                $childFile->setDeletedByUserId($this->getUser()->getId());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $em->flush();
+
+        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('directory' => $deletedFolder));
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("/lencor_entries/restore_folder", name="lencor_entries_restore_folder")
+     */
+
+    public function restoreFolder(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $deletedFolder = $em->getRepository('AppBundle:FolderEntity')->findOneById($request->get('folderId'));
+        $deletedFolder->setDeleteMark(false);
+        $deletedFolder->setDeletedByUserId(null);
+        $em->flush();
+
+        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('directory' => $deletedFolder));
+    }
+
 
     /**
      * @return Response

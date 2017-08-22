@@ -131,12 +131,12 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="folderAdd"]', createFolder);
 
         function createFolder() {
-            var catId = $(this).attr("id");
+            var entryId = $(this).attr("id");
             /** Load folder creation form **/
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_entries_new_folder",
                 method: searchForm.attr('mehtod'),
-                data: {catId: catId},
+                data: {entryId: entryId},
                 success: function (loadFormResponse) {
                     createFolderBlock.html($(loadFormResponse));
                     createFolderBlock.show();
@@ -162,6 +162,7 @@ $(document).ready(function () {
                                         folderContent.hide();
                                         folderContent.html(reloadResponse);
                                         folderContent.show();
+                                        loadLastUpdateInfo(null, folderId);
                                     }
                                 });
                                 /** Load flash messages **/
@@ -178,12 +179,12 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="fileAdd"]', uploadFile);
 
         function uploadFile() {
-            var catId = $(this).attr("id");
+            var entryId = $(this).attr("id");
             /** Load file upload form **/
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_entries_new_file",
                 method: searchForm.attr('mehtod'),
-                data: {catId: catId},
+                data: {entryId: entryId},
                 success: function (loadFormResponse) {
                     uploadFileBlock.html($(loadFormResponse));
                     uploadFileBlock.show();
@@ -256,6 +257,72 @@ $(document).ready(function () {
                     }
                 );
             }
+        }
+
+        /** Archive entries file removal action **/
+
+        $(document).on("click", 'a[name="removeFile"]', removeFile);
+
+        function removeFile() {
+            var fileId = $(this).attr("id");
+            $.ajax({
+                url: "/new/web/app_dev.php/lencor_entries/remove_file",
+                method: "POST",
+                data: {fileId: fileId},
+                success: function (fileRemoval) {
+                    $('#file_' + fileId).replaceWith(fileRemoval);
+                }
+            })
+        }
+
+        /** Archive entries file restore action **/
+
+        $(document).on("click", 'a[name="restoreFile"]', restoreFile);
+
+        function restoreFile() {
+            var fileId = $(this).attr("id");
+            $.ajax({
+                url: "/new/web/app_dev.php/lencor_entries/restore_file",
+                method: "POST",
+                data: {fileId: fileId},
+                success: function (fileRestoration) {
+                    $('#file_' + fileId).replaceWith(fileRestoration);
+                }
+            })
+        }
+
+        /** Archive entries folder removal action **/
+
+        $(document).on("click", 'a[name="removeFolder"]', removeFolder);
+
+        function removeFolder() {
+            var folderId = $(this).attr("id");
+            $.ajax({
+                url: "/new/web/app_dev.php/lencor_entries/remove_folder",
+                method: "POST",
+                data: {folderId: folderId},
+                success: function (folderRemoval) {
+                    $('#folder_' + folderId).replaceWith(folderRemoval);
+                    $('#folderContent_' + folderId).html('');
+                    $('#folderContent_' + folderId).hide();
+                }
+            })
+        }
+
+        /** Archive entries folder restore action **/
+
+        $(document).on("click", 'a[name="restoreFolder"]', restoreFolder);
+
+        function restoreFolder() {
+            var folderId = $(this).attr("id");
+            $.ajax({
+                url: "/new/web/app_dev.php/lencor_entries/restore_folder",
+                method: "POST",
+                data: {folderId: folderId},
+                success: function (folderRestoration) {
+                    $('#folder_' + folderId).replaceWith(folderRestoration);
+                }
+            })
         }
 
         /** Popup window close **/

@@ -93,7 +93,7 @@ class ArchiveEntrySearchForm extends AbstractType
 
     private function getYears($min, $max = 'current')
     {
-        $years = range($min, ($max === 'current' ? date('Y') : $max));
+        $years = range(($max === 'current' ? date('Y') : $max), $min);
         return array_combine($years, $years);
     }
 

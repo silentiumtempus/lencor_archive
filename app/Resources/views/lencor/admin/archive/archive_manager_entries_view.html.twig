@@ -15,7 +15,7 @@
                 <li>
                     <span><h5>Название</h5></span>
                     <span><h5>Добавлено пользователем</h5></span>
-                    <span><h5>Дата и время изменения</h5></span>
+                    <span><h5>Дата и время добавления</h5></span>
                     <span><h5>Информация</h5></span>
                     <span><h5>Действия</h5></span>
                 </li>
@@ -28,45 +28,71 @@
             <ul class="fa-ul entry-content-container entry-content-folders-block">
                 {% if (htmlTree is not empty) or (fileNodes is not empty) %}
 
-
                 {% for directory in htmlTree %}
-                    <li>
-                        <span> <a href="#" name="openFolder" id="{{ directory.id }}"><i class="fa fa-angle-down"></i><i class="fa fa-folder"> </i> {{ directory.folderName }}</a>
-                        </span>
-                        <span>ID: {{ directory.modifiedByUserId }}</span>
-                        <span>{{ directory.lastModified|date('Y-m-d H:m:s') }}</span>
+                    <li id="folder_{{ directory.id }}" {% if directory.deleteMark !=0 %} class="entry-content-file-deleted" {% endif %}>
                         <span>
-                            <i class="fa fa-ban" id="isRemoved"> </i>
-                            <i class="fa fa-check-circle-o" id="checkPassed"> </i>
-                            <i class="fa fa-exclamation" id="checkError"> </i>
-                            <i class="fa fa-user" id="lastChangeInfo"> </i>
+                            {%  if directory.deleteMark != 0 %}
+                                <i class="fa fa-remove"></i>
+                            {% endif %}
+                            <a href="#" name="openFolder" id="{{ directory.id }}">
+                                <i class="fa fa-angle-down"></i><i class="fa fa-folder"> </i> {{ directory.folderName }}</a>
+
+                        </span>
+                        <span>ID: {{ directory.addedByUserId }}</span>
+                        <span>{{ directory.addTimestamp|date('Y-m-d H:i:s') }}</span>
+                        <span>
+                            {%  if directory.deleteMark != 0 %}
+                                <i class="fa fa-ban" id="isRemoved"> </i>
+                            {% else %}
+                                <i class="fa fa-check-circle-o" id="checkPassed"> </i>
+                                <i class="fa fa-exclamation" id="checkError"> </i>
+                                <i class="fa fa-user" id="lastChangeInfo"> </i>
+                            {% endif %}
+
                         </span>
                         <span>
-                            <a href="#" name="openContents"><i class="fa fa-angle-down"></i><i class="fa fa-folder" id="openContents"></i></a>
-                            <a href="#" name="addFiles"><i class="fa fa-upload" id=addFiles"> </i></a>
-                            <a href="#" name="createCatalogue"><i class="fa fa-plus" id="createCatalogue"> </i></a>
-                            <a href="#" name="requestRemoval"><i class="fa fa-trash-o" id="requestRemoval"> </i></a>
+                            {%  if directory.deleteMark != 0 %}
+                                <a href="#" name="restoreFolder" id="{{ directory.id }}"><i class="fa fa-undo"></i></a>
+                            {% else %}
+                            <!--<a href="#" name="openContents" id="{{ directory.id }}"><i class="fa fa-angle-down"></i><i class="fa fa-folder" id="openContents"></i></a>-->
+                            <a href="#" name="addFiles" id="{{ directory.id }}"><i class="fa fa-upload" id=addFiles"> </i></a>
+                            <a href="#" name="createCatalogue" id="{{ directory.id }}"><i class="fa fa-plus" id="createCatalogue"> </i></a>
+                            <a href="#" name="removeFolder" id="{{ directory.id }}"><i class="fa fa-trash-o" id="removeFolder"> </i></a>
+                            {% endif %}
                         </span>
                     </li>
                     <li style="display: none" id="folderContent_{{ directory.id }}"></li>
 
                 {% endfor %}
                 {% for file in fileNodes %}
-                    <li>
-                        <span><a href="#" name="downloadFile" id="{{ file.id }}">
+                    <li id="file_{{ file.id }}" {% if file.deleteMark != 0 %} class="entry-content-file-deleted" {% endif %}>
+                        <span>
+                            {%  if file.deleteMark != 0 %}
+                            <i class="fa fa-remove"></i>
+                             <i class="fa fa-file-text"> </i>{{ file.fileName }}
+                            {% else %}
+                            <a href="#" name="downloadFile" id="{{ file.id }}">
                                 <i class="fa fa-file-text"> </i>{{ file.fileName }}</a>
+                            {% endif %}
                         </span>
-                        <span>ID: {{ file.modifiedByUserId }}</span>
-                        <span> {{ file.lastModified|date('Y-m-d H:m:s') }} </span>
+                        <span>ID: {{ file.addedByUserId }}</span>
+                        <span> {{ file.addTimestamp|date('Y-m-d H:i:s') }} </span>
                         <span>
-                            <i class="fa fa-ban" id="isRemoved"> </i>
-                            <i class="fa fa-check-circle-o" id="checkPassed"> </i>
-                            <i class="fa fa-exclamation" id="checkError"> </i>
-                            <i class="fa fa-user" id="lastChangeInfo"> </i>
+                            {%  if file.deleteMark != 0 %}
+                                <i class="fa fa-ban" id="isRemoved"> </i>
+                            {% else %}
+                                <i class="fa fa-check-circle-o" id="checkPassed"> </i>
+                                <i class="fa fa-exclamation" id="checkError"> </i>
+                                <i class="fa fa-user" id="lastChangeInfo"> </i>
+                            {% endif %}
                         </span>
                         <span>
-                            <a href="#" name="downloadFile"><i class="fa fa-download" id="downloadFile"></i></a>
-                            <a href="#" name="markForRemoval"><i class="fa fa-trash-o" id="requestRemoval"></i></a>
+                            {% if file.deleteMark != 0 %}
+                                <a href="#" name="restoreFile" id="{{ file.id }}"><i class="fa fa-undo"></i></a>
+                            {% else %}
+                                <a href="#" name="downloadFile" id="{{ file.id }}"><i class="fa fa-download"></i></a>
+                                <a href="#" name="removeFile" id="{{ file.id }}"><i class="fa fa-trash-o"></i></a>
+                            {% endif %}
                         </span>
                     </li>
                 {% endfor %}

@@ -1,0 +1,31 @@
+<li id="file_{{ deletedFile.id }}" {% if deletedFile.deleteMark != 0 %} class="entry-content-file-deleted" {% endif %}>
+    <span>
+        {% if deletedFile.deleteMark != 0 %}
+            <i class="fa fa-remove"></i>
+            <i class="fa fa-file-text"> </i>{{ deletedFile.fileName }}
+        {% else %}
+            <a href="#" name="downloadFile" id="{{ deletedFile.id }}">
+                <i class="fa fa-file-text"> </i>{{ deletedFile.fileName }}
+            </a>
+        {% endif %}
+    </span>
+    <span>ID: {{ deletedFile.addedByUserId }}</span>
+    <span> {{ deletedFile.addTimestamp|date('Y-m-d H:i:s') }} </span>
+    <span>
+        {%  if file.deleteMark != 0 %}
+            <i class="fa fa-ban" id="isRemoved"> </i>
+        {% else %}
+            <i class="fa fa-check-circle-o" id="checkPassed"> </i>
+            <i class="fa fa-exclamation" id="checkError"> </i>
+            <i class="fa fa-user" id="lastChangeInfo"> </i>
+        {% endif %}
+    </span>
+    <span>
+        {% if deletedFile.deleteMark != 0 %}
+            <a href="#" name="restoreFile" id="{{ deletedFile.id }}"><i class="fa fa-undo"></i></a>
+        {% else %}
+            <a href="#" name="downloadFile" id="{{ deletedFile.id }}"><i class="fa fa-download"></i></a>
+            <a href="#" name="removeFile" id="{{ deletedFile.id }}"><i class="fa fa-trash-o"></i></a>
+        {% endif %}
+    </span>
+</li>

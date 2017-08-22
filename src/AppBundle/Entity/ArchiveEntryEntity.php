@@ -141,6 +141,22 @@ class ArchiveEntryEntity
 
     protected $deleteMark;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\Type("string")
+     * @Gedmo\Versioned()
+     */
+
+    protected $deletedByUserId;
+
+    /**
+     * @Gedmo\Translatable
+     * @Gedmo\Slug(fields={"year", "archiveNumber"})
+     * @ORM\Column(name="slug", type="string", length=128)
+     */
+
+    private $slug;
+
     /*
    protected $fileName;
    protected $logFileName; */
@@ -439,5 +455,53 @@ class ArchiveEntryEntity
     public function removeCataloguePath(\AppBundle\Entity\FolderEntity $cataloguePath)
     {
         $this->cataloguePath->removeElement($cataloguePath);
+    }
+
+    /**
+     * Set deletedByUserId
+     *
+     * @param string $deletedByUserId
+     *
+     * @return ArchiveEntryEntity
+     */
+    public function setDeletedByUserId($deletedByUserId)
+    {
+        $this->deletedByUserId = $deletedByUserId;
+
+        return $this;
+    }
+
+    /**
+     * Get deletedByUserId
+     *
+     * @return string
+     */
+    public function getDeletedByUserId()
+    {
+        return $this->deletedByUserId;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return ArchiveEntryEntity
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
