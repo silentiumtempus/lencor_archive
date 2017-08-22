@@ -12,7 +12,7 @@
     <span>ID: {{ deletedFile.addedByUserId }}</span>
     <span> {{ deletedFile.addTimestamp|date('Y-m-d H:i:s') }} </span>
     <span>
-        {%  if file.deleteMark != 0 %}
+        {%  if deletedFile.deleteMark != 0 %}
             <i class="fa fa-ban" id="isRemoved"> </i>
         {% else %}
             <i class="fa fa-check-circle-o" id="checkPassed"> </i>
