@@ -1,17 +1,17 @@
 # This file is auto-generated during the composer install
 parameters:
-    database_host: 8.8.8.18
-    database_port: 3306
-    database_name: lencor_docmanager
-    database_user: lencor_docmanager
-    database_password: 654312
-    mailer_transport: smtp
-    mailer_host: 127.0.0.1
-    mailer_user: no@e.mail
-    mailer_password: null
-    secret: 41eb167db6030dcb83b1063f2e4a52d80c2afb55
-    fos_elastica.host: localhost
-    fos_elastica.port: 9200
+    database_host: # db IP address / hostname
+    database_port: #db port
+    database_name: # db name
+    database_user: # db user
+    database_password: 
+    mailer_transport: #mailer protocol (defaut - 'smtp') w/o quotes
+    mailer_host: # mailer IP address / hostname (default - 127.0.0.1) w/o quotes
+    mailer_user: # admin e-mail
+    mailer_password: # admin password (default - 'null') w/o quotes
+    secret: # mailer key password
+    fos_elastica.host: # elastica IP address / hostname (default - 'localhost') w/o quotes
+    fos_elastica.port: # elastica port (default - '9200') w/o quotes
     storage_path: '%kernel.root_dir%/Resources/files'
     lencor_archive.storage_path: '%kernel.root_dir%/Resources/files'
-    lencor_archive.storage_permissions: 509
+    lencor_archive.storage_permissions: #file storage access permissions ('775') w/o quotes

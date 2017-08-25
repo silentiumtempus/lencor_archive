@@ -122,6 +122,13 @@ class FolderEntity
     protected $addedByUserId;
 
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Type("integer")
+     */
+
+    protected $sumErrors;
+
+    /**
      * @ORM\Column(type="boolean")
      * @Assert\Type("boolean")
      * @Gedmo\Versioned()
@@ -487,5 +494,29 @@ class FolderEntity
     public function getDeletedByUserId()
     {
         return $this->deletedByUserId;
+    }
+
+    /**
+     * Set sumErrors
+     *
+     * @param integer $sumErrors
+     *
+     * @return FolderEntity
+     */
+    public function setSumErrors($sumErrors)
+    {
+        $this->sumErrors = $sumErrors;
+
+        return $this;
+    }
+
+    /**
+     * Get sumErrors
+     *
+     * @return integer
+     */
+    public function getSumErrors()
+    {
+        return $this->sumErrors;
     }
 }

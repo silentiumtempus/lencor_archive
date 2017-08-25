@@ -92,6 +92,13 @@ class FileEntity
     protected $checksum;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Assert\Type("boolean")
+     */
+
+    protected $sumError;
+
+    /**
      * @ORM\Column(type="boolean")
      * @Assert\Type("boolean")
      * @Gedmo\Versioned()
@@ -344,5 +351,29 @@ class FileEntity
     public function getDeletedByUserId()
     {
         return $this->deletedByUserId;
+    }
+
+    /**
+     * Set sumError
+     *
+     * @param boolean $sumError
+     *
+     * @return FileEntity
+     */
+    public function setSumError($sumError)
+    {
+        $this->sumError = $sumError;
+
+        return $this;
+    }
+
+    /**
+     * Get sumError
+     *
+     * @return boolean
+     */
+    public function getSumError()
+    {
+        return $this->sumError;
     }
 }

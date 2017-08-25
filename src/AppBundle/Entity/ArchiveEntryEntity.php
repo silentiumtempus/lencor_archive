@@ -134,6 +134,13 @@ class ArchiveEntryEntity
     protected $modifiedByUserId;
 
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Type("integer")
+     */
+
+    protected $sumErrors;
+
+    /**
      * @ORM\Column(type="boolean")
      * @Assert\Type("boolean")
      * @Gedmo\Versioned()
@@ -503,5 +510,29 @@ class ArchiveEntryEntity
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set sumErrors
+     *
+     * @param integer $sumErrors
+     *
+     * @return ArchiveEntryEntity
+     */
+    public function setSumErrors($sumErrors)
+    {
+        $this->sumErrors = $sumErrors;
+
+        return $this;
+    }
+
+    /**
+     * Get sumErrors
+     *
+     * @return integer
+     */
+    public function getSumErrors()
+    {
+        return $this->sumErrors;
     }
 }

@@ -6,12 +6,11 @@ $(document).ready(function () {
 
         /** Do not touch this **/
         var path = $("#main-table").attr("data-path");
-        var newFolderPath = $('#folderForm').attr("data-path")
         var $factory = $('#archive_entry_search_form_factory');
         var searchForm = $("#archive_entry_search_form");
         var createFolderBlock = $("#folderAdd");
         var uploadFileBlock = $("#fileAdd");
-
+        var fId = 0;
 
         /** Seriously, it'a a bad idea  :) **/
 
@@ -78,52 +77,64 @@ $(document).ready(function () {
 
         /** Archive entries content loader **/
 
-        $(document).on("click", "a[name='entryid']", function openContents() {
+        $(document).on("click", "a[name='entryid']", openEntryContents);
+
+        function openEntryContents() {
             var entryId = $(this).parent().attr("id");
-            var contentHiddenPlace = $('#entryContent_' + entryId);
-            //var contentHeader = $('#entryHeader_' + entryId);
             var contentPlace = $('#entryContent_' + entryId);
-            if ($(contentHiddenPlace).is(":hidden")) {
+            if ($(contentPlace).is(":hidden")) {
                 $.ajax({
                     url: "/new/web/app_dev.php/lencor_entries_view",
                     method: searchForm.attr('method'),
                     data: {entryId: entryId},
                     success: function (response) {
                         contentPlace.html($(response));
-                        contentHiddenPlace.show();
                         loadLastUpdateInfo(entryId, null);
+                        var folderId = contentPlace.find('#rootEntry').children('ul').attr('id');
+                        openFolder(folderId);
+                        contentPlace.show();
                     }
                 });
             }
             else {
-                //contentHeader.hide();
                 $(contentPlace).hide();
             }
+        }
+
+        /** Archive entries content navigation **/
+
+        $(document).on("click", "a[name='openFolder']", function()
+        {
+            openFolder(folderId = $(this).attr("id"));
         });
 
-        /** Archive entries folder navigation **/
-
-        $(document).on("click", 'a[name="openFolder"]', openFolder);
-
-        function openFolder() {
-            var folderId = $(this).attr("id");
+        function openFolder(folderId) {
             var folderContent = $('#folderContent_' + folderId);
             if ($(folderContent).is(":hidden")) {
                 $.ajax({
-                    url: "/new/web/app_dev.php/lencor_entries_view",
-                    method: searchForm.attr('method'),
+                    url: "/new/web/app_dev.php/lencor_entries/view_folders",
+                    method: "POST",
                     data: {folderId: folderId},
                     success: function (response) {
-                        folderContent.show();
                         folderContent.html($(response));
                         loadLastUpdateInfo(null, folderId);
+                        $.ajax({
+                            url: "/new/web/app_dev.php/lencor_entries/view_files",
+                            method: "POST",
+                            data: {folderId: folderId},
+                            success: function (response) {
+                                var foldersList = folderContent.children('ul');
+                                foldersList.append(response);
+                            }
+
+                        });
+                        folderContent.show();
                     }
                 });
             }
             else {
-                $(folderContent).hide()
+                $(folderContent).hide();
             }
-
         }
 
         /** Archive entries folder creation with form loader **/
@@ -134,7 +145,7 @@ $(document).ready(function () {
             var entryId = $(this).attr("id");
             /** Load folder creation form **/
             $.ajax({
-                url: "/new/web/app_dev.php/lencor_entries_new_folder",
+                url: "/new/web/app_dev.php/lencor_entries/new_folder",
                 method: searchForm.attr('mehtod'),
                 data: {entryId: entryId},
                 success: function (loadFormResponse) {
@@ -146,7 +157,7 @@ $(document).ready(function () {
                         var folderSerialized = $folderAddForm.serialize();
                         /** Submit new folder **/
                         $.ajax({
-                            url: "/new/web/app_dev.php/lencor_entries_new_folder",
+                            url: "/new/web/app_dev.php/lencor_entries/new_folder",
                             method: $folderAddForm.attr('method'),
                             data: folderSerialized,
                             success: function () {
@@ -155,7 +166,7 @@ $(document).ready(function () {
                                 var folderContent = $('#folderContent_' + folderId);
                                 /** Reload folder view order **/
                                 $.ajax({
-                                    url: "/new/web/app_dev.php/lencor_entries_view",
+                                    url: "/new/web/app_dev.php/lencor_entries/view_folders",
                                     method: searchForm.attr('method'),
                                     data: {folderId: folderId},
                                     success: function (reloadResponse) {
@@ -182,7 +193,7 @@ $(document).ready(function () {
             var entryId = $(this).attr("id");
             /** Load file upload form **/
             $.ajax({
-                url: "/new/web/app_dev.php/lencor_entries_new_file",
+                url: "/new/web/app_dev.php/lencor_entries/new_file",
                 method: searchForm.attr('mehtod'),
                 data: {entryId: entryId},
                 success: function (loadFormResponse) {
@@ -195,18 +206,18 @@ $(document).ready(function () {
                         var fileSerialized = new FormData($(this)[0]);
                         /** Submit new file **/
                         $.ajax({
-                            url: "/new/web/app_dev.php/lencor_entries_new_file",
+                            url: "/new/web/app_dev.php/lencor_entries/new_file",
                             method: $fileAddForm.attr('method'),
                             data: fileSerialized,
                             processData: false,
                             contentType: false,
                             success: function () {
                                 uploadFileBlock.hide();
-                                var folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
+                                folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
                                 var folderContent = $('#folderContent_' + folderId);
                                 /** Reload folder view order **/
                                 $.ajax({
-                                    url: "/new/web/app_dev.php/lencor_entries_view",
+                                    url: "/new/web/app_dev.php/lencor_entries/view_files",
                                     method: searchForm.attr('method'),
                                     data: {folderId: folderId},
                                     success: function (reloadResponse) {
@@ -230,7 +241,7 @@ $(document).ready(function () {
         function loadLastUpdateInfo(entryId, folderId) {
             if (entryId !== null) {
                 $.ajax({
-                    url: "/new/web/app_dev.php/lencor_entries_last_update_info",
+                    url: "/new/web/app_dev.php/lencor_entries/last_update_info",
                     method: "POST",
                     data: {entryId: entryId},
                     success: function (reloadLastUpdateInfo) {
@@ -240,12 +251,12 @@ $(document).ready(function () {
             }
             else if (folderId !== null) {
                 $.ajax({
-                        url: "/new/web/app_dev.php/lencor_entries_get_folder_entryId",
+                        url: "/new/web/app_dev.php/lencor_entries/get_folder_entryId",
                         method: "POST",
                         data: {folderId: folderId},
                         success: function (entryId) {
                             $.ajax({
-                                url: "/new/web/app_dev.php/lencor_entries_last_update_info",
+                                url: "/new/web/app_dev.php/lencor_entries/last_update_info",
                                 method: "POST",
                                 data: {folderId: folderId},
                                 success: function (reloadLastUpdateInfo) {
