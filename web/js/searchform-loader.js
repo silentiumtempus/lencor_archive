@@ -8,9 +8,8 @@ $(document).ready(function () {
         var path = $("#main-table").attr("data-path");
         var $factory = $('#archive_entry_search_form_factory');
         var searchForm = $("#archive_entry_search_form");
-        var createFolderBlock = $("#folderAdd");
-        var uploadFileBlock = $("#fileAdd");
-        var fId = 0;
+        var createFolderBlock = $("#addFolder");
+        var uploadFileBlock = $("#addFile");
 
         /** Seriously, it'a a bad idea  :) **/
 
@@ -70,7 +69,7 @@ $(document).ready(function () {
 
                     $('#main-tbody').replaceWith(
                         $(response).find('#main-tbody'));
-                    $('#folderAdd').hide();
+                    $('#addFolder').hide();
                 }
             });
         });
@@ -103,8 +102,7 @@ $(document).ready(function () {
 
         /** Archive entries content navigation **/
 
-        $(document).on("click", "a[name='openFolder']", function()
-        {
+        $(document).on("click", "a[name='openFolder']", function () {
             openFolder(folderId = $(this).attr("id"));
         });
 
@@ -126,7 +124,6 @@ $(document).ready(function () {
                                 var foldersList = folderContent.children('ul');
                                 foldersList.append(response);
                             }
-
                         });
                         folderContent.show();
                     }
@@ -139,7 +136,7 @@ $(document).ready(function () {
 
         /** Archive entries folder creation with form loader **/
 
-        $(document).on("click", 'a[name="folderAdd"]', createFolder);
+        $(document).on("click", 'a[name="addFolder"]', createFolder);
 
         function createFolder() {
             var entryId = $(this).attr("id");
@@ -164,18 +161,9 @@ $(document).ready(function () {
                                 createFolderBlock.hide();
                                 var folderId = $folderAddForm.find('select[id="folder_add_form_parentFolder"]').val();
                                 var folderContent = $('#folderContent_' + folderId);
+                                folderContent.hide();
                                 /** Reload folder view order **/
-                                $.ajax({
-                                    url: "/new/web/app_dev.php/lencor_entries/view_folders",
-                                    method: searchForm.attr('method'),
-                                    data: {folderId: folderId},
-                                    success: function (reloadResponse) {
-                                        folderContent.hide();
-                                        folderContent.html(reloadResponse);
-                                        folderContent.show();
-                                        loadLastUpdateInfo(null, folderId);
-                                    }
-                                });
+                                openFolder(folderId);
                                 /** Load flash messages **/
                                 loadFlashMessages();
                             }
@@ -187,7 +175,7 @@ $(document).ready(function () {
 
         /** Archive entries file upload with form loader **/
 
-        $(document).on("click", 'a[name="fileAdd"]', uploadFile);
+        $(document).on("click", 'a[name="addFile"]', uploadFile);
 
         function uploadFile() {
             var entryId = $(this).attr("id");
@@ -222,7 +210,8 @@ $(document).ready(function () {
                                     data: {folderId: folderId},
                                     success: function (reloadResponse) {
                                         folderContent.hide();
-                                        folderContent.html(reloadResponse);
+                                        var foldersList = folderContent.children('ul');
+                                        foldersList.html(reloadResponse);
                                         folderContent.show();
                                         loadLastUpdateInfo(null, folderId);
                                     }

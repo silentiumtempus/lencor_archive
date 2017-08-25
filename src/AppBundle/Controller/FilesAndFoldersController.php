@@ -391,8 +391,15 @@ class FilesAndFoldersController extends Controller
     }
 
     /**
-     * $paran Request $request
+     * @param Request $request
      * @return Response
      * @Route("/lencor_entries/download_file", name="lencor_entries_download_file")
      */
+
+    public function downloadFile(Request $request)
+    {
+
+
+        return $this->render('lencor/admin/archive/archive_manager_download_file.html.twig');
+    }
 }

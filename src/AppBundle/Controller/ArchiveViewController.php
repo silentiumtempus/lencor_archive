@@ -137,15 +137,12 @@ file_put_contents($file, $wr); */
         $entryId = null;
         $folderId = null;
         $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
-        $options = array();
         $addHeaderAndButtons = true;
 
         if ($request->request->has('entryId')) {
             $entryId = $request->get('entryId');
             $folderNode = $foldersRepository->findOneByArchiveEntry($entryId);
             $folderId = $folderNode->getId();
-
-            //$htmlTree = $foldersRepository->childrenHierarchy($folderNode, true, $options, true);
 
         }
         /** for file system handling **/
