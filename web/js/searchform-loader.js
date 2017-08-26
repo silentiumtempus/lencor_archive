@@ -2,7 +2,8 @@
  * Created by Vinegar on 018 18.04.17.
  */
 $(document).ready(function () {
-    if (window.jQuery) {
+    if (!window.jQuery) {
+    } else {
 
         /** Do not touch this **/
         var path = $("#main-table").attr("data-path");
@@ -315,14 +316,15 @@ $(document).ready(function () {
 
         function removeFolder() {
             var folderId = $(this).attr("id");
+            var folderContent = $('#folderContent_' + folderId);
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_entries/remove_folder",
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRemoval) {
-                    $('#folder_' + folderId).replaceWith(folderRemoval);
-                    $('#folderContent_' + folderId).html('');
-                    $('#folderContent_' + folderId).hide();
+                    $('#folder_' + folderId).replaceWith($(folderRemoval).find('#folder_' + folderId));
+                    folderContent.html('');
+                    folderContent.hide();
                 }
             })
         }
@@ -338,7 +340,7 @@ $(document).ready(function () {
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRestoration) {
-                    $('#folder_' + folderId).replaceWith(folderRestoration);
+                    $('#folder_' + folderId).replaceWith($(folderRestoration).find('#folder_' + folderId));
                 }
             })
         }

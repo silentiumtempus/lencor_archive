@@ -245,12 +245,15 @@ class FilesAndFoldersController extends Controller
     {
 
         $em = $this->getDoctrine()->getManager();
-        $deletedFile = $em->getRepository('AppBundle:FileEntity')->findOneById($request->get('fileId'));
-        $deletedFile->setDeleteMark(true);
-        $deletedFile->setDeletedByUserId($this->getUser()->getId());
+        $deletedFile = $em->getRepository('AppBundle:FileEntity')->findById($request->get('fileId'));
+
+        foreach ($deletedFile as $file) {
+            $file->setDeleteMark(true);
+            $file->setDeletedByUserId($this->getUser()->getId());
+        }
         $em->flush();
 
-        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('deletedFile' => $deletedFile));
+        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $deletedFile));
     }
 
     /**
@@ -263,12 +266,14 @@ class FilesAndFoldersController extends Controller
     {
 
         $em = $this->getDoctrine()->getManager();
-        $deletedFile = $em->getRepository('AppBundle:FileEntity')->findOneById($request->get('fileId'));
-        $deletedFile->setDeleteMark(false);
-        $deletedFile->setDeletedByUserId(null);
+        $deletedFile = $em->getRepository('AppBundle:FileEntity')->findById($request->get('fileId'));
+        foreach ($deletedFile as $file) {
+            $file->setDeleteMark(false);
+            $file->setDeletedByUserId($this->getUser()->getId());
+        }
         $em->flush();
 
-        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('deletedFile' => $deletedFile));
+        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $deletedFile));
     }
 
     /**
@@ -283,20 +288,22 @@ class FilesAndFoldersController extends Controller
         $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
         $filesRepository = $this->getDoctrine()->getRepository('AppBundle:FileEntity');
         $em = $this->getDoctrine()->getManager();
-        $deletedFolder = $foldersRepository->findOneById($request->get('folderId'));
-        $folderChildren = $foldersRepository->getChildren($deletedFolder, false, null, null, true);
+        $deletedFolder = $foldersRepository->findById($request->get('folderId'));
 
-        if ($folderChildren) {
-            foreach ($folderChildren as $childFolder) {
-                if (!$childFolder->getDeleteMark()) {
-                    $childFolder->setDeleteMark(true);
-                    $childFolder->setDeletedByUserId($this->getUser()->getId());
-                    $childFiles = $filesRepository->findByParentFolder($childFolder->getId());
-                    if ($childFiles) {
-                        foreach ($childFiles as $childFile) {
-                            if (!$childFile->getDeleteMark()) {
-                                $childFile->setDeleteMark(true);
-                                $childFile->setDeletedByUserId($this->getUser()->getId());
+        foreach ($deletedFolder as $folder) {
+            $folderChildren = $foldersRepository->getChildren($folder, false, null, null, true);
+            if ($folderChildren) {
+                foreach ($folderChildren as $childFolder) {
+                    if (!$childFolder->getDeleteMark()) {
+                        $childFolder->setDeleteMark(true);
+                        $childFolder->setDeletedByUserId($this->getUser()->getId());
+                        $childFiles = $filesRepository->findByParentFolder($childFolder->getId());
+                        if ($childFiles) {
+                            foreach ($childFiles as $childFile) {
+                                if (!$childFile->getDeleteMark()) {
+                                    $childFile->setDeleteMark(true);
+                                    $childFile->setDeletedByUserId($this->getUser()->getId());
+                                }
                             }
                         }
                     }
@@ -305,7 +312,7 @@ class FilesAndFoldersController extends Controller
         }
         $em->flush();
 
-        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('directory' => $deletedFolder));
+        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('folderTree' => $deletedFolder));
     }
 
     /**
@@ -317,12 +324,14 @@ class FilesAndFoldersController extends Controller
     public function restoreFolder(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $deletedFolder = $em->getRepository('AppBundle:FolderEntity')->findOneById($request->get('folderId'));
-        $deletedFolder->setDeleteMark(false);
-        $deletedFolder->setDeletedByUserId(null);
+        $deletedFolder = $em->getRepository('AppBundle:FolderEntity')->findById($request->get('folderId'));
+        foreach ($deletedFolder as $folder) {
+            $folder->setDeleteMark(false);
+            $folder->setDeletedByUserId(null);
+        }
         $em->flush();
 
-        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('directory' => $deletedFolder));
+        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('folderTree' => $deletedFolder));
     }
 
     /**
