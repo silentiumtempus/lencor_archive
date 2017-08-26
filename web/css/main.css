@@ -509,8 +509,8 @@ body#admin_post_new .new_setting {
     margin: 0 auto;
     padding: 20px;
     text-align: center;
-    width: 300px;
-    height: 400px;
+    width: 600px;
+    height: 300px;
     border: 2px groove;
     display: none;
 }

@@ -10,6 +10,7 @@ $(document).ready(function () {
         var searchForm = $("#archive_entry_search_form");
         var createFolderBlock = $("#addFolder");
         var uploadFileBlock = $("#addFile");
+        var downloadFileBlock = $("#downloadFile");
 
         /** Seriously, it'a a bad idea  :) **/
 
@@ -225,6 +226,24 @@ $(document).ready(function () {
             });
         }
 
+        /** Archive entries file download with md5 verification **/
+
+        $(document).on("click", 'a[name="downloadFile"]', downloadFile);
+
+        function downloadFile() {
+            var fileId = $(this).attr("id");
+            /** Load file download block **/
+            $.ajax({
+                url: "/new/web/app_dev.php/lencor_entries/download_file",
+                method: "POST",
+                data: {fileId: fileId},
+                success: function (downloadBlockResponse) {
+                    downloadFileBlock.html($(downloadBlockResponse));
+                    downloadFileBlock.show();
+                }
+            });
+        }
+
         /** Last entry update information load & refresh **/
 
         function loadLastUpdateInfo(entryId, folderId) {
@@ -252,7 +271,6 @@ $(document).ready(function () {
                                     $($('#entryContent_' + entryId).find('#entry-content-buttons-spacer')).html(reloadLastUpdateInfo);
                                 }
                             });
-
                         }
                     }
                 );

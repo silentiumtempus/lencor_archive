@@ -234,6 +234,7 @@ class FilesAndFoldersController extends Controller
         }
         return $this->render('lencor/admin/archive/archive_manager_new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'entryId' => $entryId));
     }
+
     /**
      * @param Request $request
      * @return Response
@@ -382,7 +383,6 @@ class FilesAndFoldersController extends Controller
     {
         $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
         $entryId = null;
-
         if ($request->request->has('folderId')) {
             $folderNode = $foldersRepository->findOneById($request->get('folderId'));
             $entryId = $folderNode->getRoot()->getArchiveEntry()->getId();
@@ -398,8 +398,31 @@ class FilesAndFoldersController extends Controller
 
     public function downloadFile(Request $request)
     {
+        $checkPass = null;
+        $downloadLink = null;
+        $requestedFile = null;
+        $filesRepository = $this->getDoctrine()->getRepository('AppBundle:FileEntity');
+        $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
+        $storageHttpAddress = "http://localhost:8071/new/app/Resources/files";
+        $storagePath = $this->getParameter('lencor_archive.storage_path');
 
+        if ($request->request->has('fileId')) {
+            $fileId = $request->get('fileId');
+            $requestedFile = $filesRepository->findOneById($fileId);
+            $absPath = $storagePath;
+            $httpPath = $storageHttpAddress;
+            $binaryPath = $foldersRepository->getPath($requestedFile->getParentFolder());
+            foreach ($binaryPath as $folderName) {
+                $absPath .= "/" . $folderName;
+                $httpPath .= "/" . $folderName;
+            }
+            $checkAddress = $absPath .= "/" . $requestedFile->getFileName();
+            $downloadLink = $httpPath .= "/" . $requestedFile->getFileName();
+            $actualChecksum = md5_file($checkAddress);
 
-        return $this->render('lencor/admin/archive/archive_manager_download_file.html.twig');
+            $checkPass = ($actualChecksum == $requestedFile->getChecksum()) ? true : false;
+        }
+
+        return $this->render('lencor/admin/archive/archive_manager_download_file.html.twig', array('requestedFile' => $requestedFile, 'downloadLink' => $downloadLink, 'checkPass' => $checkPass));
     }
 }
