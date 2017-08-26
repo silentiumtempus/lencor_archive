@@ -32,6 +32,7 @@ $(document).ready(function () {
                     );
                 }
             });
+            return false;
         }
 
         $factorySelect.on("change", function () {
@@ -64,6 +65,7 @@ $(document).ready(function () {
                     });
                 }
             });
+            return false;
         });
 
         /** Archive new setting submission **/
@@ -92,6 +94,7 @@ $(document).ready(function () {
                     });
                 }
             });
+            return false;
         });
 
         /** Archive new entry submission **/
@@ -109,6 +112,7 @@ $(document).ready(function () {
                     );
                 }
             });
+            return false;
         });
     }
 });

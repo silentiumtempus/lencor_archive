@@ -17,8 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="log_archive_folders")
  * @ORM\Entity(repositoryClass="Gedmo\Loggable\Entity\Repository\LogEntryRepository")
  */
-
-class FolderLog  extends AbstractLogEntry
+class FolderLog extends AbstractLogEntry
 {
 
 }

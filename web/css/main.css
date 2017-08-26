@@ -441,7 +441,7 @@ body#admin_post_new .new_setting {
 
 .entry-content-folders-block {
     border-left: 1px solid silver;
-    border-bottom: 1px solid silver;
+    border-bottom: 0px solid silver;
     border-right:  1px solid silver;
     margin: 0 0 0px 0px !important;
     padding: 1.143em 10px 10px 40px;
@@ -451,12 +451,60 @@ body#admin_post_new .new_setting {
     border-bottom: 1px dashed silver;
 }
 
+.entry-content .fa {
+    font-size: 16px !important;
+}
+
+.entry-content .fa-chevron-down {
+    color: #2ca02c;
+}
+
+.entry-content .fa-remove {
+    color: #9A0000;
+}
+
+.entry-content .fa-exclamation {
+    color: #9A0000;
+}
+
+.entry-content .fa-check-circle-o {
+    color: #2ca02c;
+}
+
+.entry-content .fa-user {
+    color: #16527a;
+}
+
+.entry-content .fa-upload {
+    color: #004C96;
+}
+
+.entry-content .fa-ban {
+    color: #8aa4be;
+}
+
+.entry-content .fa-download{
+    color: #2ca02c;
+}
+
+.entry-content-file-deleted {
+    opacity: 0.5;
+}
+
+.entry-content .fa-undo {
+    color: #2c3e50 !important;
+}
+
+.entry-content .fa-ellipsis-h {
+    color: #8aa4be;
+}
+
 .folder-add {
 
-    position: absolute;
+    position: fixed;
     background-color: #ffffff;
-    top: 0;
-    left: 0;
+    top: 100px;
+    left: -10%;
     right: 0;
     bottom: 0;
     margin: 0 auto;
@@ -477,10 +525,10 @@ body#admin_post_new .new_setting {
 
 .file-add {
 
-    position: absolute;
+    position: fixed;
     background-color: #ffffff;
-    top: 0;
-    left: 0;
+    top: 100px;
+    left: 30%;
     right: 0;
     bottom: 0;
     margin: 0 auto;
@@ -490,6 +538,7 @@ body#admin_post_new .new_setting {
     height: 400px;
     border: 2px groove;
     display: none;
+    z-index: 2000;
 }
 .file-add table tr td {
     padding-top:20px;
@@ -500,10 +549,10 @@ body#admin_post_new .new_setting {
 }
 
 .file-download {
-    position: absolute;
+    position: fixed;
     background-color: #ffffff;
-    top: 0;
-    left: 0;
+    top: 100px;
+    left: -66%;
     right: 0;
     bottom: 0;
     margin: 0 auto;

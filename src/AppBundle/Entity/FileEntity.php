@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
  * Class FileEntity
@@ -38,14 +37,6 @@ class FileEntity
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /*/**
-     * @ORM\ManyToOne(targetEntity="ArchiveEntryEntity")
-     * @ORM\JoinColumn(name="archive_entry_id", referencedColumnName="id")
-     * @Gedmo\Versioned()
-     */
-
-    //protected $archiveEntry;
 
     /**
      * @ORM\Column(type="string")
@@ -99,16 +90,16 @@ class FileEntity
     protected $sumError;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @Assert\Type("boolean")
+     * @ORM\Column(type="string")
+     * @Assert\Type("string")
      * @Gedmo\Versioned()
      */
 
     protected $deleteMark;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
-     * @Assert\Type("string")
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Assert\Type("smallint")
      * @Gedmo\Versioned()
      */
 
@@ -208,30 +199,6 @@ class FileEntity
     {
         return $this->addedByUserId;
     }
-
-    /*
-     * Set archiveEntry
-     *
-     * @param \AppBundle\Entity\ArchiveEntryEntity $archiveEntry
-     *
-     * @return FileEntity
-     */
-    /*public function setArchiveEntry(\AppBundle\Entity\ArchiveEntryEntity $archiveEntry = null)
-    {
-        $this->archiveEntry = $archiveEntry;
-
-        return $this;
-    } */
-
-    /*
-     * Get archiveEntry
-     *
-     * @return \AppBundle\Entity\ArchiveEntryEntity
-     */
-    /*public function getArchiveEntry()
-    {
-        return $this->archiveEntry;
-    } */
 
     /**
      * Set parentFolder

@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
  * Class FolderEntity
@@ -122,8 +121,8 @@ class FolderEntity
     protected $addedByUserId;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\Type("integer")
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Assert\Type("smallint")
      */
 
     protected $sumErrors;

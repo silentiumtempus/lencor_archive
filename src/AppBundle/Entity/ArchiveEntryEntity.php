@@ -134,8 +134,8 @@ class ArchiveEntryEntity
     protected $modifiedByUserId;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\Type("integer")
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Assert\Type("smallint")
      */
 
     protected $sumErrors;

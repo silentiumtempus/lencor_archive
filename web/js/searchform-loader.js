@@ -18,7 +18,6 @@ $(document).ready(function () {
         /** Archive entries main table factory->settings AJAX loader **/
 
         $factory.on("change", function settingsLoadAction() {
-            //create array for AJAX request
             var data = {};
             data[$factory.attr('name')] = $factory.val();
             $.ajax({
@@ -31,20 +30,18 @@ $(document).ready(function () {
                     );
                 }
             });
+            return false;
         });
 
         /** Archive entries main table content AJAX loader **/
 
         $("#archive_entry_search_form").on("submit", function searchAction(event) {
-
             event.preventDefault();
-            //create array for AJAX request
             var fields = searchForm.serializeArray();
             var values = {};
             jQuery.each(fields, function (i, field) {
                 values[field.name] = field.value;
             });
-            // send AJAX request
             $.ajax({
                 url: path,
                 method: searchForm.attr('method'),
@@ -55,14 +52,13 @@ $(document).ready(function () {
                     );
                 }
             });
+            return false;
         });
 
         /** Archive entries main table search form reset to default stdout AJAX loader **/
 
-        $("#archive_entry_search_form_resetButton").on("click", function resetAction(event) {
-            //event.preventDefault();
+        $("#archive_entry_search_form_resetButton").on("click", function resetAction() {
             searchForm.trigger('reset');
-            //send AJAX null request
             $.ajax({
                 url: path,
                 method: searchForm.attr('method'),
@@ -74,6 +70,7 @@ $(document).ready(function () {
                     $('#addFolder').hide();
                 }
             });
+            return false;
         });
 
         /** Archive entries content loader **/
@@ -100,12 +97,14 @@ $(document).ready(function () {
             else {
                 $(contentPlace).hide();
             }
+            return false;
         }
 
         /** Archive entries content navigation **/
 
         $(document).on("click", "a[name='openFolder']", function () {
             openFolder(folderId = $(this).attr("id"));
+            return false;
         });
 
         function openFolder(folderId) {
@@ -134,6 +133,7 @@ $(document).ready(function () {
             else {
                 $(folderContent).hide();
             }
+            return false;
         }
 
         /** Archive entries folder creation with form loader **/
@@ -173,6 +173,7 @@ $(document).ready(function () {
                     });
                 }
             });
+            return false;
         }
 
         /** Archive entries file upload with form loader **/
@@ -225,6 +226,7 @@ $(document).ready(function () {
                     });
                 }
             });
+            return false;
         }
 
         /** Archive entries file download with md5 verification **/
@@ -243,6 +245,7 @@ $(document).ready(function () {
                     downloadFileBlock.show();
                 }
             });
+            return false;
         }
 
         /** Last entry update information load & refresh **/
@@ -276,6 +279,7 @@ $(document).ready(function () {
                     }
                 );
             }
+            return false;
         }
 
         /** Archive entries file removal action **/
@@ -291,7 +295,8 @@ $(document).ready(function () {
                 success: function (fileRemoval) {
                     $('#file_' + fileId).replaceWith(fileRemoval);
                 }
-            })
+            });
+            return false;
         }
 
         /** Archive entries file restore action **/
@@ -307,7 +312,8 @@ $(document).ready(function () {
                 success: function (fileRestoration) {
                     $('#file_' + fileId).replaceWith(fileRestoration);
                 }
-            })
+            });
+            return false;
         }
 
         /** Archive entries folder removal action **/
@@ -326,7 +332,8 @@ $(document).ready(function () {
                     folderContent.html('');
                     folderContent.hide();
                 }
-            })
+            });
+            return false;
         }
 
         /** Archive entries folder restore action **/
@@ -342,8 +349,10 @@ $(document).ready(function () {
                 success: function (folderRestoration) {
                     $('#folder_' + folderId).replaceWith($(folderRestoration).find('#folder_' + folderId));
                 }
-            })
+            });
+            return false;
         }
+
 
         /** Popup window close **/
 
@@ -363,6 +372,7 @@ $(document).ready(function () {
                         $(reloadFlashMessages));
                 }
             });
+            return false;
         }
     }
 });
