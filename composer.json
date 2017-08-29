@@ -2,52 +2,49 @@
     "name": "ennor/lencor",
     "license": "proprietary",
     "type": "project",
+    "description": "Lencor archive base",
     "autoload": {
         "psr-4": {
-            "": "src/"
+            "AppBundle\\": "src/AppBundle"
         },
-        "classmap": [
-            "app/AppKernel.php",
-            "app/AppCache.php"
-        ]
+        "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
     },
     "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/"
-        }
+        "psr-4": { "Tests\\": "tests/" },
+        "files": [ "vendor/symfony/symfony/src/Symfony/Component/VarDumper/Resources/functions/dump.php" ]
     },
     "require": {
-        "php": ">=5.5.9",
-        "symfony/symfony": "3.2.*",
-        "doctrine/orm": "^2.5",
+        "php": ">=7.0.22",
         "doctrine/doctrine-bundle": "^1.6",
-        "doctrine/doctrine-cache-bundle": "^1.2",
-        "symfony/swiftmailer-bundle": "^2.3.10",
-        "symfony/monolog-bundle": "^3.1",
-        "symfony/polyfill-apcu": "^1.0",
-        "sensio/distribution-bundle": "^5.0",
-        "sensio/framework-extra-bundle": "^3.0.2",
+        "doctrine/orm": "^2.5",
+	"doctrine/doctrine-cache-bundle": "^1.2",
+	"doctrine/annotations": "^1.4",
         "incenteev/composer-parameter-handler": "^2.0",
-        "symfony/filesystem": "^3.2",
-        "symfony/finder": "^3.2",
-        "symfony/form": "^3.2",
-        "symfony/ldap": "^3.2",
-        "symfony/serializer": "^3.2",
-        "twig/twig": "~2.0",
-        "symfony/templating": "^3.2",
-        "friendsofsymfony/user-bundle": "~2.0@dev",
-        "jms/i18n-routing-bundle": "^2.0",
-        "stof/doctrine-extensions-bundle": "^1.2",
-        "select2/select2": "^4.0",
-        "components/jquery": "^3.2",
-        "friendsofsymfony/elastica-bundle": "^4.0",
-        "symfony/yaml": "^3.2",
-        "symfony/console": "^3.2",
-        "jms/serializer-bundle": "^1.4",
-        "ninsuo/symfony-collection": "^2.0",
-        "yavin/symfony-form-tree": "^1.0",
-        "vich/uploader-bundle": "^1.6",
-        "monolog/monolog": "^1.22"
+        "sensio/distribution-bundle": "^5.0.19",
+        "sensio/framework-extra-bundle": "^3.0.2",
+        "symfony/monolog-bundle": "^3.1.0",
+        "symfony/polyfill-apcu": "^1.0",
+        "symfony/swiftmailer-bundle": "^2.3.10",
+        "symfony/symfony": "3.3.*",
+	"symfony/filesystem": "^3.3",
+	"symfony/finder": "^3.3",
+	"symfony/form": "^3.3",
+	"symfony/ldap": "^3.3",
+	"symfony/yaml": "^3.3",
+	"symfony/console": "^3.3",
+	"symfony/serializer": "^3.3",
+	"symfony/templating": "^3.3",
+	"twig/twig": "~2.0",
+	"friendsofsymfony/user-bundle": "~2.0dev",
+	"friendsofsymfony/elastica-bundle": "^4.0",
+	"jms/i18n-routing-bundle": "^2.0",
+	"stof/doctrine-extensions-bundle": "^1.2",
+	"components/jquery": "^3.2",
+	"jms/serializer-bundle": "^1.4",
+	"ninsuo/symfony-collection": "^2.0",
+	"yavin/symfony-form-tree": "^1.0",
+	"vich/uploader-bundle": "^1.6",
+	"monolog/monolog": "^1.22"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
@@ -69,6 +66,12 @@
             "@symfony-scripts"
         ]
     },
+    "config": {
+        "platform": {
+            "php": "7.0.22"
+        },
+        "sort-packages": true
+    },
     "extra": {
         "symfony-app-dir": "app",
         "symfony-bin-dir": "bin",
@@ -79,6 +82,8 @@
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
         },
-        "branch-alias": null
+        "branch-alias": {
+            "dev-master": "3.3-dev"
+        }
     }
 }
