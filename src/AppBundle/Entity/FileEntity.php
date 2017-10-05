@@ -90,16 +90,16 @@ class FileEntity
     protected $sumError;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\Type("string")
+     * @ORM\Column(type="boolean")
+     * @Assert\Type("boolean")
      * @Gedmo\Versioned()
      */
 
     protected $deleteMark;
 
     /**
-     * @ORM\Column(type="smallint", nullable=true)
-     * @Assert\Type("smallint")
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\Type("string")
      * @Gedmo\Versioned()
      */
 

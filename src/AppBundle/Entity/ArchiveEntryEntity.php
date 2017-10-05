@@ -356,7 +356,7 @@ class ArchiveEntryEntity
 
     /**
      * Get cataloguePath
-     * @return integer
+     * @return string
      */
 
     public function getCataloguePath()

@@ -55,6 +55,7 @@ class EntryAdditionController extends Controller
                     $em->persist($newFactory);
                     $em->flush();
 
+
                     $this->addFlash('success', 'Новый завод добавлен');
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());

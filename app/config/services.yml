@@ -8,50 +8,62 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
-  #_defaults:
-    #autowire: true
-    #autoconfigure: true
+  # default configuration for services in *this* file
+  _defaults:
+    # automatically injects dependencies in your services
+    autowire: true
+    # automatically registers your services as commands, event subscribers, etc.
+    autoconfigure: true
 
-  appbundle.form.archiveentryaddform:
-    class: AppBundle\Form\ArchiveEntryAddForm
-    arguments: ['@doctrine.orm.entity_manager']
-    tags:
-      - { name: form.type }
+  # makes classes in src/AppBundle available to be used as services
+  # this creates a service per class whose id is the fully-qualified class name
+  AppBundle\:
+    resource: '../../src/AppBundle/*'
+    # you can exclude directories or files
+    # but if a service is unused, it's removed anyway
+    exclude: '../../src/AppBundle/{Entity,Repository,Tests}'
 
-  appbundle.form.archiveentrysearchform:
-    class: AppBundle\Form\ArchiveEntrySearchForm
-    arguments: ['@doctrine.orm.entity_manager']
-    tags:
-      - { name: form.type }
+  # controllers are imported separately to make sure they're public
+  # and have a tag that allows actions to type-hint services
+  AppBundle\Controller\:
+    resource: '../../src/AppBundle/Controller'
+    public: true
+    tags: ['controller.service_arguments']
 
-  appbundle.form.folderaddform:
-    class: AppBundle\Form\FolderAddForm
-    arguments: ['@doctrine.orm.entity_manager']
-    tags:
-      - { name: form.type }
-
-  appbundle.form.fileaddform:
-    class: AppBundle\Form\FileAddForm
-    arguments: ['@doctrine.orm.entity_manager']
-    tags:
-      - { name: form.type }
-
-# Application services
-
-  appbundle.service.folderservice:
-    class: AppBundle\Services\FolderService
-    arguments: ['@doctrine.orm.entity_manager']
-
-  appbundle.service.fileservice:
-    class: AppBundle\Services\FileService
-    arguments: ['@doctrine.orm.entity_manager', '@appbundle.service.folderservice']
-
-  appbundle.service.archiveentryservice:
-    class: AppBundle\Services\ArchiveEntryService
-    arguments: ['@doctrine.orm.entity_manager', '@service_container']
-
-  appbundle.controller.filesandfolderscontroller:
-    class: AppBundle\Controller\FilesAndFoldersController
+  AppBundle\AppBundle:
+    # application forms
+    form:
+      archiveentryaddform:
+        class: AppBundle\Form\ArchiveEntryAddForm
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+          - { name: form.type }
+      archiveentrysearchform:
+        class: AppBundle\Form\ArchiveEntrySearchForm
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+          - { name: form.type }
+      folderaddform:
+        class: AppBundle\Form\FolderAddForm
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+          - { name: form.type }
+      fileaddform:
+        class: AppBundle\Form\FileAddForm
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+          - { name: form.type }
+    # application services
+    service:
+      folderservice:
+        class: AppBundle\Services\FolderService
+        arguments: ['@doctrine.orm.entity_manager']
+      fileservice:
+        class: AppBundle\Services\FileService
+        arguments: ['@doctrine.orm.entity_manager', '@appbundle.service.folderservice']
+      archiveentryservice:
+        class: AppBundle\Services\ArchiveEntryService
+        arguments: ['@doctrine.orm.entity_manager', '@service_container']
 
   #jms_serializer:
     #class: JMS\SerializerBundle\JMSSerializerBundle

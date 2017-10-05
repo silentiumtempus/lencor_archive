@@ -30,11 +30,13 @@ class ArchiveEntryService
         $this->em->flush();
     }
 
-    public function setEntryId(string $entryId, Request $request)
+    public function setEntryId(Request $request)
     {
         $session = $this->container->get('session');
+        $entryId = $request->get('entryId');
         if ($entryId) {
-            return $session->set('entryId', $request->get('entryId'));
+            $session->set('entryId', $request->get('entryId'));
+            return $entryId;
         } elseif (!$entryId) {
             return $session->get('entryId');
         }

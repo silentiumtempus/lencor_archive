@@ -14,6 +14,8 @@ use AppBundle\Form\FileAddForm;
 use AppBundle\Form\FolderAddForm;
 use AppBundle\Entity\Mappings\FileChecksumError;
 use AppBundle\Services\ArchiveEntryService;
+use AppBundle\Services\FileService;
+use AppBundle\Services\FolderService;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -30,26 +32,16 @@ class FilesAndFoldersController extends Controller
 {
     /**
      * @param Request $request
+     * @param FolderService $folderService
+     * @param ArchiveEntryService $archiveEntryService
      * @return Response
      * @Route("/lencor_entries/new_folder", name="lencor_entries_new_folder")
      */
-    public function createNewFolder(Request $request)
+    public function createNewFolder(Request $request, FolderService $folderService, ArchiveEntryService $archiveEntryService)
     {
-        $session = $this->container->get('session');
-        $entryId = $request->get('entryId');
+        $entryId = $archiveEntryService->setEntryId($request);
         $user = $this->getUser();
         $newFolder = new FolderEntity();
-        $folderService = $this->container->get('appbundle.service.folderservice');
-        $archiveEntryService = $this->container->get('appbundle.service.archiveentryservice');
-
-        $entryId = $archiveEntryService->setEntryId($entryId, $request);
-
-        /*if ($entryId) {
-            $session->set('entryId', $request->get('entryId'));
-        } elseif (!$entryId) {
-            $entryId = $session->get('entryId');
-        } */
-
         $folderRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
         $folderId = $folderService->getRootFolder($entryId);
 
@@ -143,32 +135,25 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
+     * @param FileService $fileService
+     * @param FolderService $folderService
+     * @param ArchiveEntryService $archiveEntryService
      * @return Response
      * @Route("/lencor_entries/new_file", name="lencor_entries_new_file")
      */
-    public function uploadNewFile(Request $request)
+    public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, ArchiveEntryService $archiveEntryService)
     {
         $newFile = new FileEntity();
         $session = $this->container->get('session');
         $entryId = $request->get('entryId');
         $user = $this->getUser();
-        $archiveEntryService = $this->container->get('appbundle.service.archiveentryservice');
-        $folderService = $this->container->get('appbundle.service.folderservice');
-        $fileService = $this->container->get('appbundle.service.fileservice');
-        $entryId = $archiveEntryService->setEntryId($entryId, $request);
+        //$entryId = $archiveEntryService->setEntryId($entryId, $request);
 
-        /*if ($entryId) {
+        if ($entryId) {
             $session->set('entryId', $request->get('entryId'));
         } elseif (!$entryId) {
             $entryId = $session->get('entryId');
-        } */
-
-        $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
-        //$entriesRepository = $this->getDoctrine()->getRepository('AppBundle:ArchiveEntryEntity');
-
-
-        //$rootFolder = $foldersRepository->findOneByArchiveEntry($entryId);
-        //$folderId = $rootFolder->getRoot()->getId();
+        }
         $folderId = $folderService->getRootFolder($entryId);
 
         $fileAddForm = $this->createForm(
@@ -182,7 +167,7 @@ class FilesAndFoldersController extends Controller
                 try {
                     $uploadNotFailed = true;
                     $newFileEntity = $fileAddForm->getData();
-                    $newFilesArray = $fileAddForm->getData();
+                    //$newFilesArray = $fileAddForm->getData();
                     $parentFolder = $folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
                     //foreach ($newFilesArray as $newFileEntity) {
                     $rootPath = $this->getParameter('lencor_archive.storage_path');
@@ -252,15 +237,8 @@ class FilesAndFoldersController extends Controller
 
     public function removeFile(Request $request)
     {
-
-        $em = $this->getDoctrine()->getManager();
-        $deletedFile = $em->getRepository('AppBundle:FileEntity')->findById($request->get('fileId'));
-
-        foreach ($deletedFile as $file) {
-            $file->setDeleteMark(true);
-            $file->setDeletedByUserId($this->getUser()->getId());
-        }
-        $em->flush();
+        $fileService = $this->container->get('appbundle.service.fileservice');
+        $deletedFile = $fileService->removeFile($request->get('fileId'), $this->getUser()->getid());
 
         return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $deletedFile));
     }
