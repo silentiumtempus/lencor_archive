@@ -14,7 +14,7 @@
         "files": [ "vendor/symfony/symfony/src/Symfony/Component/VarDumper/Resources/functions/dump.php" ]
     },
     "require": {
-        "php": ">=7.0.22",
+        "php": ">=7.0.24",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
 	"doctrine/doctrine-cache-bundle": "^1.2",
@@ -35,8 +35,8 @@
 	"symfony/serializer": "^3.3",
 	"symfony/templating": "^3.3",
 	"twig/twig": "~2.0",
-	"friendsofsymfony/user-bundle": "~2.0dev",
 	"friendsofsymfony/elastica-bundle": "^4.0",
+	"friendsofsymfony/user-bundle": "^2.0",
 	"jms/i18n-routing-bundle": "^2.0",
 	"stof/doctrine-extensions-bundle": "^1.2",
 	"components/jquery": "^3.2",
@@ -68,9 +68,10 @@
     },
     "config": {
         "platform": {
-            "php": "7.0.22"
+            "php": "7.0.24"
         },
-        "sort-packages": true
+        "sort-packages": true,
+	"discard-changes": true
     },
     "extra": {
         "symfony-app-dir": "app",
