@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Vinegar
- * Date: 023 23.08.17
- * Time: 11:54
- */
 
 namespace AppBundle\Controller;
 
@@ -13,9 +7,9 @@ use AppBundle\Entity\FolderEntity;
 use AppBundle\Form\FileAddForm;
 use AppBundle\Form\FolderAddForm;
 use AppBundle\Entity\Mappings\FileChecksumError;
-use AppBundle\Services\ArchiveEntryService;
-use AppBundle\Services\FileService;
-use AppBundle\Services\FolderService;
+use AppBundle\Service\ArchiveEntryService;
+use AppBundle\Service\FileService;
+use AppBundle\Service\FolderService;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -37,6 +31,7 @@ class FilesAndFoldersController extends Controller
      * @return Response
      * @Route("/lencor_entries/new_folder", name="lencor_entries_new_folder")
      */
+
     public function createNewFolder(Request $request, FolderService $folderService, ArchiveEntryService $archiveEntryService)
     {
         $entryId = $archiveEntryService->setEntryId($request);
@@ -141,19 +136,12 @@ class FilesAndFoldersController extends Controller
      * @return Response
      * @Route("/lencor_entries/new_file", name="lencor_entries_new_file")
      */
+
     public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, ArchiveEntryService $archiveEntryService)
     {
         $newFile = new FileEntity();
-        $session = $this->container->get('session');
-        $entryId = $request->get('entryId');
+        $entryId = $entryId = $archiveEntryService->setEntryId($request);
         $user = $this->getUser();
-        //$entryId = $archiveEntryService->setEntryId($entryId, $request);
-
-        if ($entryId) {
-            $session->set('entryId', $request->get('entryId'));
-        } elseif (!$entryId) {
-            $entryId = $session->get('entryId');
-        }
         $folderId = $folderService->getRootFolder($entryId);
 
         $fileAddForm = $this->createForm(
@@ -231,13 +219,14 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
+     * @param FileService $fileService
      * @return Response
      * @Route("/lencor_entries/remove_file", name="lencor_entries_remove_file")
      */
 
-    public function removeFile(Request $request)
+    //@TODO: Unite two methods below
+    public function removeFile(Request $request, FileService $fileService)
     {
-        $fileService = $this->container->get('appbundle.service.fileservice');
         $deletedFile = $fileService->removeFile($request->get('fileId'), $this->getUser()->getid());
 
         return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $deletedFile));
@@ -245,96 +234,57 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
+     * @param FileService $fileService
      * @return Response
      * @Route("/lencor_entries/restore_file", name="lencor_entries_restore_file")
      */
 
-    public function restoreFile(Request $request)
+    public function restoreFile(Request $request, FileService $fileService)
     {
+        $restoredFile = $fileService->restoreFile($request->get('fileId'));
 
-        $em = $this->getDoctrine()->getManager();
-        $deletedFile = $em->getRepository('AppBundle:FileEntity')->findById($request->get('fileId'));
-        foreach ($deletedFile as $file) {
-            $file->setDeleteMark(false);
-            $file->setDeletedByUserId($this->getUser()->getId());
-        }
-        $em->flush();
-
-        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $deletedFile));
+        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $restoredFile));
     }
 
     /**
      * @param Request $request
+     * @param FolderService $folderService
+     * @param FileService $fileService
      * @return Response
      * @Route("/lencor_entries/remove_folder", name="lencor_entries_remove_folder")
      */
 
-    public function removeFolder(Request $request)
+    public function removeFolder(Request $request, FolderService $folderService, FileService $fileService)
     {
-
-        $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
-        $filesRepository = $this->getDoctrine()->getRepository('AppBundle:FileEntity');
-        $em = $this->getDoctrine()->getManager();
-        $deletedFolder = $foldersRepository->findById($request->get('folderId'));
-
-        foreach ($deletedFolder as $folder) {
-            $folderChildren = $foldersRepository->getChildren($folder, false, null, null, true);
-            if ($folderChildren) {
-                foreach ($folderChildren as $childFolder) {
-                    if (!$childFolder->getDeleteMark()) {
-                        $childFolder->setDeleteMark(true);
-                        $childFolder->setDeletedByUserId($this->getUser()->getId());
-                        $childFiles = $filesRepository->findByParentFolder($childFolder->getId());
-                        if ($childFiles) {
-                            foreach ($childFiles as $childFile) {
-                                if (!$childFile->getDeleteMark()) {
-                                    $childFile->setDeleteMark(true);
-                                    $childFile->setDeletedByUserId($this->getUser()->getId());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        $em->flush();
+        $deletedFolder = $folderService->removeFolder($request->get('folderId'), $this->getUser()->getId(), $fileService);
 
         return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('folderTree' => $deletedFolder));
     }
 
     /**
      * @param Request $request
+     * @param FolderService $folderService
      * @return Response
      * @Route("/lencor_entries/restore_folder", name="lencor_entries_restore_folder")
      */
 
-    public function restoreFolder(Request $request)
+    public function restoreFolder(Request $request, FolderService $folderService)
     {
-        $em = $this->getDoctrine()->getManager();
-        $deletedFolder = $em->getRepository('AppBundle:FolderEntity')->findById($request->get('folderId'));
-        foreach ($deletedFolder as $folder) {
-            $folder->setDeleteMark(false);
-            $folder->setDeletedByUserId(null);
-        }
-        $em->flush();
+        $restoredFolder = $folderService->restoreFolder($request->get('folderId'));
 
-        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('folderTree' => $deletedFolder));
+        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('folderTree' => $restoredFolder));
     }
 
     /**
      * @param String $entryId
+     * @param ArchiveEntryService $archiveEntryService
      * @Route("/lencor_entries/change_last_update_info", name="lencor_entries_change_last_update_info")
      */
 
-    public function changeLastUpdateInfo($entryId)
+    public function changeLastUpdateInfo($entryId, ArchiveEntryService $archiveEntryService)
     {
         try {
-            $em = $this->getDoctrine()->getManager();
-            $entriesRepository = $this->getDoctrine()->getRepository('AppBundle:ArchiveEntryEntity');
-            $archiveEntry = $entriesRepository->findOneById($entryId);
-            $archiveEntry->setModifiedbyUserId($this->getUser()->getId());
-            $em->flush();
-
+            $archiveEntryService->changeLastUpdateInfo($entryId, $this->getUser()->getId());
         } catch (\Exception $exception) {
             $this->addFlash('error', 'Информация об изменениях не записана в ячейку. Ошибка: ' . $exception->getMessage());
         }
@@ -342,30 +292,14 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
+     * @param ArchiveEntryService $archiveEntryService
      * @return Response
      * @Route("/lencor_entries/last_update_info", name="lencor_entries_last_update_info")
      */
-    public function loadLastUpdateInfo(Request $request)
+    public function loadLastUpdateInfo(Request $request, ArchiveEntryService $archiveEntryService)
     {
-        $em = $this->getDoctrine()->getManager();
-        $qb = $em->createQueryBuilder();
-        $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
-        $lastUpdateInfo = null;
+        $lastUpdateInfo = $archiveEntryService->loadLastUpdateInfo($request);
 
-        if ($request->request->has('entryId')) {
-            $entryId = $request->get('entryId');
-            $qb->select('en.lastModified', 'us.usernameCanonical')->from('AppBundle:ArchiveEntryEntity', 'en')->leftJoin('AppBundle:User', 'us', \Doctrine\ORM\Query\Expr\Join::WITH, 'en.modifiedByUserId = us.id')->where('en.id = ' . $entryId);
-            $entryUpdatedDataQuery = $qb->getQuery();
-            $lastUpdateInfo = $entryUpdatedDataQuery->getResult();
-        } else if ($request->request->has('folderId')) {
-            $folderNode = $foldersRepository->findOneById($request->get('folderId'));
-
-            $entryId = $folderNode->getRoot()->getArchiveEntry()->getId();
-            //$qb->select('root_id')->from('archive_files')->where('id = ' . $folderId);
-            $qb->select('en.lastModified', 'us.usernameCanonical')->from('AppBundle:ArchiveEntryEntity', 'en')->leftJoin('AppBundle:User', 'us', \Doctrine\ORM\Query\Expr\Join::WITH, 'en.modifiedByUserId = us.id')->where('en.id IN (:archiveEntryId)')->setParameter('archiveEntryId', $entryId);
-            $entryUpdatedDataQuery = $qb->getQuery();
-            $lastUpdateInfo = $entryUpdatedDataQuery->getResult();
-        }
         return $this->render('lencor/admin/archive/archive_manager_entries_update_info.html.twig', array('lastUpdateInfo' => $lastUpdateInfo));
     }
 

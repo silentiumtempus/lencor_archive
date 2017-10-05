@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class ArchiveEntry
  * @package AppBundle\Entity
- * @ORM\Entity;
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ArchiveEntryRepository");
  * @UniqueEntity(
  *     fields={"archiveNumber"},
  *     groups={"entry_addition"}

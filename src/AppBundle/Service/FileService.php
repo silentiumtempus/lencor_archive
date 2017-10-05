@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Services;
+namespace AppBundle\Service;
 
 use AppBundle\Entity\FileEntity;
 use AppBundle\Entity\FolderEntity;
@@ -49,6 +49,7 @@ class FileService
         $this->em->flush();
     }
 
+    //@TODO: Unite two methods below
     public function removeFile($fileId, $userId)
     {
         $deletedFile = $this->filesRepository->findById($fileId);
@@ -60,5 +61,32 @@ class FileService
         $this->em->flush();
 
         return $deletedFile;
+    }
+
+    public function restoreFile($fileId)
+    {
+        $restoredFile = $this->filesRepository->findById($fileId);
+        foreach ($restoredFile as $file) {
+            $file->setDeleteMark(false);
+            $file->setDeletedByUserId(null);
+        }
+        $this->em->flush();
+
+        return $restoredFile;
+    }
+
+    public function removeFilesByParentFolder($folderId, $userId)
+    {
+        $childFiles = $this->filesRepository->findByParentFolder($folderId);
+        if ($childFiles) {
+            foreach ($childFiles as $childFile) {
+                if (!$childFile->getDeleteMark()) {
+                    $childFile->setDeleteMark(true);
+                    $childFile->setDeletedByUserId($userId);
+                }
+            }
+        }
+
+        return true;
     }
 }
