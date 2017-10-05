@@ -336,12 +336,13 @@ body#admin_post_show .post-tags .label-default i {
 /* Page 'Add archive entry'
     ------------------------------------------------------------------------- */
 body#admin_post_new .row {
-    margin-left: 5%;
+    margin-left: 2%;
 }
 
 body#admin_post_new .new_entry{
     width: 50%;
     float: left;
+    padding-right: 15px;
 }
 
 body#admin_post_new table{

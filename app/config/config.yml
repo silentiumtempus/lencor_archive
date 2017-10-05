@@ -214,3 +214,7 @@ fos_elastica:
 # Vich Uploader Bundle configuration
 vich_uploader:
     db_driver: orm
+    mappings:
+      documents:
+        uri_prefix: /Resources/files
+        upload_destination: '%kernel.root_dir%/Resources/files'

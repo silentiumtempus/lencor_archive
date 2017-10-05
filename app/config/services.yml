@@ -8,6 +8,10 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
+  #_defaults:
+    #autowire: true
+    #autoconfigure: true
+
   appbundle.form.archiveentryaddform:
     class: AppBundle\Form\ArchiveEntryAddForm
     arguments: ['@doctrine.orm.entity_manager']
@@ -32,6 +36,22 @@ services:
     tags:
       - { name: form.type }
 
+# Application services
+
+  appbundle.service.folderservice:
+    class: AppBundle\Services\FolderService
+    arguments: ['@doctrine.orm.entity_manager']
+
+  appbundle.service.fileservice:
+    class: AppBundle\Services\FileService
+    arguments: ['@doctrine.orm.entity_manager', '@appbundle.service.folderservice']
+
+  appbundle.service.archiveentryservice:
+    class: AppBundle\Services\ArchiveEntryService
+    arguments: ['@doctrine.orm.entity_manager', '@service_container']
+
+  appbundle.controller.filesandfolderscontroller:
+    class: AppBundle\Controller\FilesAndFoldersController
 
   #jms_serializer:
     #class: JMS\SerializerBundle\JMSSerializerBundle

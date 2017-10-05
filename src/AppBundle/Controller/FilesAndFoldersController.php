@@ -13,13 +13,19 @@ use AppBundle\Entity\FolderEntity;
 use AppBundle\Form\FileAddForm;
 use AppBundle\Form\FolderAddForm;
 use AppBundle\Entity\Mappings\FileChecksumError;
+use AppBundle\Services\ArchiveEntryService;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOException;
 
+/**
+ * Class FilesAndFoldersController
+ * @package AppBundle\Controller
+ */
 class FilesAndFoldersController extends Controller
 {
     /**
@@ -29,35 +35,37 @@ class FilesAndFoldersController extends Controller
      */
     public function createNewFolder(Request $request)
     {
-
-        $newFolder = new FolderEntity();
         $session = $this->container->get('session');
         $entryId = $request->get('entryId');
+        $user = $this->getUser();
+        $newFolder = new FolderEntity();
+        $folderService = $this->container->get('appbundle.service.folderservice');
+        $archiveEntryService = $this->container->get('appbundle.service.archiveentryservice');
 
-        if ($entryId) {
+        $entryId = $archiveEntryService->setEntryId($entryId, $request);
+
+        /*if ($entryId) {
             $session->set('entryId', $request->get('entryId'));
         } elseif (!$entryId) {
             $entryId = $session->get('entryId');
-        }
+        } */
 
-        $repository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
-        $rootFolder = $repository->findOneByArchiveEntry($entryId);
-        $folderId = $rootFolder->getRoot()->getId();
+        $folderRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
+        $folderId = $folderService->getRootFolder($entryId);
 
-        $folderAddForm = $this->createForm(FolderAddForm::class, $newFolder, array('action' => $this->generateUrl('lencor_entries_new_folder'), 'attr' => array('folderId' => $folderId, 'id' => 'folder_add_form')));
+        $folderAddForm = $this->createForm(
+            FolderAddForm::class,
+            $newFolder,
+            array('action' => $this->generateUrl('lencor_entries_new_folder'), 'attr' => array('folderId' => $folderId, 'id' => 'folder_add_form')));
 
         $folderAddForm->handleRequest($request);
         if ($folderAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($folderAddForm->isValid()) {
                 try {
                     $newFolderEntity = $folderAddForm->getData();
-                    $parentFolder = $repository->findOneById($folderAddForm->get('parentFolder')->getViewData());
-                    $newFolderEntity->setParentFolder($parentFolder);
-                    $userId = $this->getUser()->getId();
-                    $newFolderEntity->setAddedByUserId($userId);
-                    $newFolderEntity->setDeleteMark(false);
-                    $newFolderEntity->setDeletedByUserId(null);
-                    $newFolderEntity->setSlug(null);
+                    $parentFolder = $folderRepository->findOneById($folderAddForm->get('parentFolder')->getViewData());
+                    $newFolderEntity = $folderService->prepareNewFolder($newFolderEntity, $parentFolder, $user);
+
                     $fileSystem = new Filesystem();
                     $storagePath = $this->getParameter('lencor_archive.storage_path');
                     $pathPermissions = $this->getParameter('lencor_archive.storage_permissions');
@@ -67,7 +75,7 @@ class FilesAndFoldersController extends Controller
                     if ($fileSystem->exists($storagePath)) {
                         try {
                             $newFolderAbsPath = $storagePath;
-                            $binaryPath = $repository->getPath($parentFolder);
+                            $binaryPath = $folderRepository->getPath($parentFolder);
                             foreach ($binaryPath as $folderName) {
                                 $newFolderAbsPath .= "/" . $folderName;
                                 if (!$fileSystem->exists($newFolderAbsPath)) {
@@ -104,10 +112,8 @@ class FilesAndFoldersController extends Controller
 
                     if ($creationNotFailed) {
                         try {
-                            $em = $this->getDoctrine()->getManager();
-                            $em->persist($newFolderEntity);
-                            $em->flush();
-                            $this->changeLastUpdateInfo($entryId);
+                            $folderService->persistFolder($newFolderEntity);
+                            $archiveEntryService->changeLastUpdateInfo($entryId, $user);
                             $this->addFlash('success', 'Новая директория успешно добавлена в БД');
                         } catch (\Exception $exception) {
                             if ($exception instanceof ConstraintViolationException) {
@@ -145,43 +151,47 @@ class FilesAndFoldersController extends Controller
         $newFile = new FileEntity();
         $session = $this->container->get('session');
         $entryId = $request->get('entryId');
+        $user = $this->getUser();
+        $archiveEntryService = $this->container->get('appbundle.service.archiveentryservice');
+        $folderService = $this->container->get('appbundle.service.folderservice');
+        $fileService = $this->container->get('appbundle.service.fileservice');
+        $entryId = $archiveEntryService->setEntryId($entryId, $request);
 
-        if ($entryId) {
+        /*if ($entryId) {
             $session->set('entryId', $request->get('entryId'));
         } elseif (!$entryId) {
             $entryId = $session->get('entryId');
-        }
+        } */
 
         $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
-        $entriesRepository = $this->getDoctrine()->getRepository('AppBundle:ArchiveEntryEntity');
-        $rootFolder = $foldersRepository->findOneByArchiveEntry($entryId);
-        $folderId = $rootFolder->getRoot()->getId();
+        //$entriesRepository = $this->getDoctrine()->getRepository('AppBundle:ArchiveEntryEntity');
 
-        $fileAddForm = $this->createForm(FileAddForm::class, $newFile, array('action' => $this->generateUrl('lencor_entries_new_file'), 'method' => 'POST', 'attr' => array('folderId' => $folderId, 'id' => 'file_add_form')));
+
+        //$rootFolder = $foldersRepository->findOneByArchiveEntry($entryId);
+        //$folderId = $rootFolder->getRoot()->getId();
+        $folderId = $folderService->getRootFolder($entryId);
+
+        $fileAddForm = $this->createForm(
+            FileAddForm::class,
+            $newFile,
+            array('action' => $this->generateUrl('lencor_entries_new_file'), 'method' => 'POST', 'attr' => array('folderId' => $folderId, 'id' => 'file_add_form')));
 
         $fileAddForm->handleRequest($request);
         if ($fileAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($fileAddForm->isValid()) {
                 try {
-                    $newFileEntity = $fileAddForm->getData();
-                    $parentFolder = $foldersRepository->findOneById($fileAddForm->get('parentFolder')->getViewData());
-                    $newFileEntity->setParentFolder($parentFolder);
-                    $userId = $this->getUser()->getId();
-                    $newFileEntity->setAddedByUserId($userId);
-                    $newFileEntity->setDeleteMark(false);
-                    $newFileEntity->setSlug(null);
-                    $newFileEntity->setDeletedByUserId(null);
-
-                    $rootPath = $this->getParameter('lencor_archive.storage_path');
-                    $folderAbsPath = $rootPath;
-                    $binaryPath = $foldersRepository->getPath($parentFolder);
                     $uploadNotFailed = true;
+                    $newFileEntity = $fileAddForm->getData();
+                    $newFilesArray = $fileAddForm->getData();
+                    $parentFolder = $folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
+                    //foreach ($newFilesArray as $newFileEntity) {
+                    $rootPath = $this->getParameter('lencor_archive.storage_path');
+                    $folderAbsPath = $folderService->constructFolderAbsPath($rootPath, $parentFolder);
 
-                    foreach ($binaryPath as $folderName) {
-                        $folderAbsPath .= "/" . $folderName;
-                    }
                     $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
-                    $fileWithAbsPath = $folderAbsPath . "/" . $originalName;
+                    $fileWithAbsPath = $fileService->constructFileAbsPath($folderAbsPath, $originalName);
+
+                    $newFileEntity = $fileService->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
                     $fileSystem = new Filesystem();
 
                     if (!$fileSystem->exists($fileWithAbsPath)) {
@@ -202,10 +212,7 @@ class FilesAndFoldersController extends Controller
 
                     if ($uploadNotFailed) {
                         try {
-                            $em = $this->getDoctrine()->getManager();
-                            $newFileEntity->setFileName($originalName);
-                            $em->persist($newFileEntity);
-                            $em->flush();
+                            $fileService->persistFile($newFileEntity);
                             $this->changeLastUpdateInfo($entryId);
 
                             $this->addFlash('success', 'Ноsый документ добавлен в БД');
@@ -226,6 +233,7 @@ class FilesAndFoldersController extends Controller
                             }
                         }
                     };
+                    //}
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
                 }
