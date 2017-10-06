@@ -9,7 +9,11 @@ use AppBundle\Form\ArchiveEntryAddForm;
 use AppBundle\Form\FactoryAddForm;
 use AppBundle\Entity\FactoryEntity;
 use AppBundle\Form\SettingAddForm;
+use AppBundle\Service\ArchiveEntryService;
+use AppBundle\Service\FactoryService;
+use AppBundle\Service\SettingService;
 use Doctrine\ORM\ORMException;
+use Symfony\Component\Filesystem\Exception\IOException;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -22,13 +26,14 @@ class EntryAdditionController extends Controller
 {
     /**
      * @param Request $request
+     * @param ArchiveEntryService $archiveEntryService
+     * @param FactoryService $factoryService
+     * @param SettingService $settingService
      * @return Response
      * @Route("/archive/new", name="lencor_entries_new")
      */
-    public function archiveEntryAdd(Request $request)
+    public function archiveEntryAdd(Request $request, ArchiveEntryService $archiveEntryService, FactoryService $factoryService, SettingService $settingService)
     {
-        $logger = $this->get('monolog.logger.event');
-        $logger->info('Test');
         $newEntry = new ArchiveEntryEntity();
         $newFactory = new FactoryEntity();
         $newSetting = new SettingEntity();
@@ -44,12 +49,7 @@ class EntryAdditionController extends Controller
         if ($factoryForm->isSubmitted()) {
             if ($factoryForm->isValid()) {
                 try {
-                    $newFactory = $factoryForm->getData();
-                    $em = $this->getDoctrine()->getManager();
-                    $em->persist($newFactory);
-                    $em->flush();
-
-
+                    $factoryService->createFactory($factoryForm->getData());
                     $this->addFlash('success', 'Новый завод добавлен');
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
@@ -63,10 +63,7 @@ class EntryAdditionController extends Controller
         if ($settingForm->isSubmitted()) {
             if ($settingForm->isValid()) {
                 try {
-                    $newSetting = $settingForm->getData();
-                    $em = $this->getDoctrine()->getManager();
-                    $em->persist($newSetting);
-                    $em->flush();
+                    $settingService->createSetting($settingForm->getData());
                     $this->addFlash('success', 'Новая установка добавлена');
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
@@ -125,10 +122,7 @@ class EntryAdditionController extends Controller
                             $jsonContent = $serializer->serialize($newEntry, 'yml');
 
                             file_put_contents($filename, $jsonContent);
-                            $em = $this->getDoctrine()->getManager();
-                            $em->persist($newEntry);
-                            $em->persist($newFolder);
-                            $em->flush();
+                            $archiveEntryService->persistEntry($newEntry, $newFolder);
                             $this->addFlash('success', 'message.entryAdded');
                         } catch (IOException $IOException) {
                             $this->addFlash('danger', 'Ошибка записи файла ячейки: ' . $IOException->getMessage());

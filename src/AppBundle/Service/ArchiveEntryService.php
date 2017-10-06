@@ -2,6 +2,8 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\ArchiveEntryEntity;
+use AppBundle\Entity\FolderEntity;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,8 +54,16 @@ class ArchiveEntryService
         if ($entryId) {
             $session->set('entryId', $request->get('entryId'));
             return $entryId;
-        } elseif (!$entryId) {
+        } else {
             return $session->get('entryId');
         }
     }
+
+    public function persistEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder)
+    {
+        $this->em->persist($newEntry);
+        $this->em->persist($newFolder);
+        $this->em->flush();
+    }
+
 }

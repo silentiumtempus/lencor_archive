@@ -2,8 +2,6 @@
 
 namespace AppBundle\Repository;
 
-
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
 class ArchiveEntryRepository extends EntityRepository
