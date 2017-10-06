@@ -24,6 +24,11 @@ class FileService
         $this->filesRepository = $this->em->getRepository('AppBundle:FileEntity');
     }
 
+    public function getFileById($fileId)
+    {
+        return $this->filesRepository->findOneById($fileId);
+    }
+
     public function constructFileAbsPath($folderAbsPath, $originalName)
     {
         return $folderAbsPath . "/" . $originalName;

@@ -5,7 +5,6 @@ namespace AppBundle\Service;
 use AppBundle\Entity\FolderEntity;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
-use phpDocumentor\Reflection\File;
 
 /**
  * Class FolderService
@@ -36,6 +35,12 @@ class FolderService
         return $folderAbsPath;
     }
 
+    public function getFolderEntryId($folderId)
+    {
+            $folderNode = $this->foldersRepository->findOneById($folderId);
+            return $folderNode->getRoot()->getArchiveEntry()->getId();
+    }
+
     public function getRootFolder($entryId)
     {
         $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
@@ -46,9 +51,7 @@ class FolderService
 
     public function getParentFolder(FolderEntity $parentFolder)
     {
-        $parentFolder = $this->foldersRepository->findOneById($parentFolder);
-
-        return $parentFolder;
+        return $this->foldersRepository->findOneById($parentFolder);
     }
 
     public function prepareNewFolder(FolderEntity $newFolderEntity, FolderEntity $parentFolder, User $user)

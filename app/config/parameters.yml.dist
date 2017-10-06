@@ -39,3 +39,4 @@ parameters:
 
     lencor_archive.storage_path: '%kernel.root_dir%/Resources/files'
     lencor_archive.storage_permissions: 0775
+    lencor_archive.http_path: 'http://localhost:8071/new/app/Resources/files'

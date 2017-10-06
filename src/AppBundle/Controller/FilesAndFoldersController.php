@@ -6,8 +6,8 @@ use AppBundle\Entity\FileEntity;
 use AppBundle\Entity\FolderEntity;
 use AppBundle\Form\FileAddForm;
 use AppBundle\Form\FolderAddForm;
-use AppBundle\Entity\Mappings\FileChecksumError;
 use AppBundle\Service\ArchiveEntryService;
+use AppBundle\Service\FileChecksumService;
 use AppBundle\Service\FileService;
 use AppBundle\Service\FolderService;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
@@ -186,7 +186,7 @@ class FilesAndFoldersController extends Controller
                     if ($uploadNotFailed) {
                         try {
                             $fileService->persistFile($newFileEntity);
-                            $this->changeLastUpdateInfo($entryId);
+                            $this->changeLastUpdateInfo($entryId, $archiveEntryService);
 
                             $this->addFlash('success', 'Ноsый документ добавлен в БД');
                         } catch (\Exception $exception) {
@@ -305,78 +305,46 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
+     * @param FolderService $folderService
      * @return Response
      * @Route("/lencor_entries/get_folder_entryId", name="lencor_entries_get_folder_entryId")
      */
 
-    public function getFolderEntryId(Request $request)
+    public function getFolderEntryId(Request $request, FolderService $folderService)
     {
-        $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
         $entryId = null;
         if ($request->request->has('folderId')) {
-            $folderNode = $foldersRepository->findOneById($request->get('folderId'));
-            $entryId = $folderNode->getRoot()->getArchiveEntry()->getId();
+            $entryId = $folderService->getFolderEntryId($request->get('folderId'));
         }
+
         return new Response($entryId);
     }
 
     /**
      * @param Request $request
+     * @param FileService $fileService
+     * @param FileChecksumService $fileChecksumService
      * @return Response
      * @Route("/lencor_entries/download_file", name="lencor_entries_download_file")
      */
 
-    public function downloadFile(Request $request)
+    public function downloadFile(Request $request, FileService $fileService, FileChecksumService $fileChecksumService)
     {
-        $checkPass = null;
-        $downloadLink = null;
         $requestedFile = null;
-        $filesRepository = $this->getDoctrine()->getRepository('AppBundle:FileEntity');
-        $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
-        $fileErrorsRepository = $this->getDoctrine()->getRepository('AppBundle:Mappings\FileChecksumError');
-        $storageHttpAddress = "http://localhost:8071/new/app/Resources/files";
-        $storagePath = $this->getParameter('lencor_archive.storage_path');
-
-        if ($request->request->has('fileId')) {
-            $fileId = $request->get('fileId');
-            $requestedFile = $filesRepository->findOneById($fileId);
-            $absPath = $storagePath;
-            $httpPath = $storageHttpAddress;
-            $binaryPath = $foldersRepository->getPath($requestedFile->getParentFolder());
-
-            foreach ($binaryPath as $folderName) {
-                $absPath .= "/" . $folderName;
-                $httpPath .= "/" . $folderName;
+        $checkStatus = null;
+        $httpPath = null;
+        if ($request->request->has('fileId'))
+        {
+            $requestedFile = $fileService->getFileById($request->get('fileId'));
+            $filePath = $fileChecksumService->getFilePath($requestedFile);
+            $httpPath = $fileChecksumService->getFileHttpUrl($filePath);
+            $checkStatus = $fileChecksumService->checkFile($requestedFile, $filePath);
+            if (!$checkStatus) {
+                $fileChecksumService->reportChecksumError($requestedFile, $this->getUser()->getId());
+            } else {
+                $fileChecksumService->validateChecksumValue($requestedFile, $this->getUser()->getId());
             }
-
-            $checkAddress = $absPath .= "/" . $requestedFile->getFileName();
-            $downloadLink = $httpPath .= "/" . $requestedFile->getFileName();
-            $actualChecksum = md5_file($checkAddress);
-            $checkPass = ($actualChecksum == $requestedFile->getChecksum()) ? true : false;
-
-            if (!$checkPass) {
-                $em = $this->getDoctrine()->getManager();
-                if ($requestedFile->getSumError() == false) {
-                    $requestedFile->setSumError(true);
-                }
-                $errorExists = $fileErrorsRepository->findOneByFileId($fileId);
-                if (!($errorExists)) {
-                    $newFileError = new FileChecksumError();
-                    $newFileError->setFileId($requestedFile);
-                    $newFileError->setParentFolderId($requestedFile->getParentFolder());
-                    $newFileError->setStatus(1);
-                    $newFileError->setLastCheckByUser($this->getUser()->getId());
-                    $em->persist($newFileError);
-
-                } else {
-                    if (!($errorExists->getLastCheckByUser() == $this->getUser()->getId())) {
-                        $errorExists->setLastCheckByUser($this->getUser()->getId());
-                    }
-                    $errorExists->setLastCheckOn(new \DateTime());
-                }
-                $em->flush();
-            };
         }
-        return $this->render('lencor/admin/archive/archive_manager_download_file.html.twig', array('requestedFile' => $requestedFile, 'downloadLink' => $downloadLink, 'checkPass' => $checkPass));
+        return $this->render('lencor/admin/archive/archive_manager_download_file.html.twig', array('requestedFile' => $requestedFile, 'downloadLink' => $httpPath, 'checkPass' => $checkStatus));
     }
 }

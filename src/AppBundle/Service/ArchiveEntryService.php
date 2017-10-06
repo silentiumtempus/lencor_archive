@@ -17,7 +17,6 @@ class ArchiveEntryService
     protected $entriesRepository;
     protected $foldersRepository;
 
-
     public function __construct(EntityManager $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
