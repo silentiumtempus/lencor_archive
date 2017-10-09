@@ -26,7 +26,7 @@
                         <i class="fa fa-ban" id="isRemoved"> </i>
                     {% else %}
                         {% if folder.sumErrors is not null %}
-                            <i class="fa fa-exclamation" id="checkError"> </i>
+                            <i class="fa fa-exclamation" id="checkError" > </i>({{ folder.sumErrors }})
                         {% else %}
                             <i class="fa fa-check-circle-o" id="checkPassed"> </i>
                         {% endif %}

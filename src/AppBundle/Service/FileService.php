@@ -99,8 +99,6 @@ class FileService
             ->setDeleteMark(false)
             ->setSlug(null)
             ->setDeletedByUserId(null);
-
-        return $newFileEntity;
     }
 
     /**

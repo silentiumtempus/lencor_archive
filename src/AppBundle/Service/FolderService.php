@@ -41,9 +41,10 @@ class FolderService
      * @param $parentFolder
      * @return string
      */
-    public function constructFolderAbsPath($rootPath, $parentFolder)
+    public function constructFolderAbsPath($parentFolder)
     {
-        $folderAbsPath = $rootPath;
+
+        $folderAbsPath = $this->pathRoot;
         $binaryPath = $this->foldersRepository->getPath($parentFolder);
 
         foreach ($binaryPath as $folderName) {
@@ -79,7 +80,7 @@ class FolderService
      * @param FolderEntity $parentFolder
      * @return mixed
      */
-    public function getParentFolder(FolderEntity $parentFolder)
+    public function getParentFolder($parentFolder)
     {
         return $this->foldersRepository->findOneById($parentFolder);
     }

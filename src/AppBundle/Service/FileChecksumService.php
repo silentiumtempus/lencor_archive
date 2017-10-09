@@ -6,6 +6,7 @@ use AppBundle\Entity\FileEntity;
 use AppBundle\Entity\Mappings\FileChecksumError;
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Class FileChecksumService
@@ -56,6 +57,7 @@ class FileChecksumService
      */
     public function newChecksumError(FileEntity $fileEntity, $userId)
     {
+
         $newFileError = new FileChecksumError();
         $newFileError
             ->setFileId($fileEntity)
@@ -63,6 +65,7 @@ class FileChecksumService
             ->setStatus(1)
             ->setLastCheckByUser($userId)
             ->setLastCheckOn(new \DateTime());
+        $this->changeErrorsQuantity($fileEntity->getParentFolder(), true);
         $this->em->persist($newFileError);
         $this->em->flush();
 
@@ -76,12 +79,18 @@ class FileChecksumService
      */
     public function reportChecksumError(FileEntity $fileEntity, $userId)
     {
+        $fileError = $this->fileErrorsRepository->findOneByFileId($fileEntity->getId());
         if ($fileEntity->getSumError() == false) {
             $fileEntity->setSumError(true);
-            $this->newChecksumError($fileEntity, $userId);
-
+            if ($fileError)
+            {
+                $fileError->setFirstOccuredOn(new \DateTime());
+                $this->changeErrorStatus($fileError, true, $userId);
+                $this->changeErrorsQuantity($fileEntity->getParentFolder(), true);
+            } else {
+                $this->newChecksumError($fileEntity, $userId);
+            }
         } else {
-            $fileError = $this->fileErrorsRepository->findOneByFileId($fileEntity->getId());
             $fileError
                 ->setLastCheckByUser($userId)
                 ->setLastCheckOn(new \DateTime());
@@ -103,14 +112,34 @@ class FileChecksumService
             $fileError = $this->fileErrorsRepository->findOneByFileId($fileEntity->getId());
             if ($fileError)
             {
-                $fileError
-                    ->setStatus(0)
-                    ->setLastCheckByUser($userId)
-                    ->setLastCheckOn(new \DateTime());
+                $this->changeErrorStatus($fileError, false, $userId);
             }
+            $this->changeErrorsQuantity($fileEntity->getParentFolder(), false);
         }
         $this->em->flush();
 
         return true;
+    }
+
+    public function changeErrorStatus(FileChecksumError $fileChecksumError, $status, $userId)
+    {
+        $fileChecksumError
+            ->setStatus($status)
+            ->setLastCheckByUser($userId)
+            ->setLastCheckOn(new \DateTime());
+    }
+
+    public function changeErrorsQuantity($parentFolder, $errorState)
+    {
+        $binaryPath = $this->foldersRepository->getPath($parentFolder);
+        foreach ($binaryPath as $folder)
+        {
+            if ($errorState)
+            {
+                $folder->setSumErrors($folder->getSumErrors()+1);
+            } else {
+                $folder->setSumErrors($folder->getSumErrors()-1);
+            }
+        }
     }
 }

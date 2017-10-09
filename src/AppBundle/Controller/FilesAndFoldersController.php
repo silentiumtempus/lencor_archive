@@ -158,19 +158,17 @@ class FilesAndFoldersController extends Controller
                     //$newFilesArray = $fileAddForm->getData();
                     $parentFolder = $folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
                     //foreach ($newFilesArray as $newFileEntity) {
-                    $rootPath = $this->getParameter('lencor_archive.storage_path');
-                    $folderAbsPath = $folderService->constructFolderAbsPath($rootPath, $parentFolder);
+                    $folderAbsPath = $folderService->constructFolderAbsPath($parentFolder);
 
                     $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
                     $fileWithAbsPath = $fileService->constructFileAbsPath($folderAbsPath, $originalName);
 
-                    $newFileEntity = $fileService->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
                     $fileSystem = new Filesystem();
-
                     if (!$fileSystem->exists($fileWithAbsPath)) {
                         $fileExistedPreviously = false;
                         try {
                             $newFileEntity->getFileName()->move($folderAbsPath, $originalName);
+                            $fileService->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
                             $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
                             $this->addFlash('success', 'Новый документ записан в директорию ' . $parentFolder);
                         } catch (\Exception $exception) {
