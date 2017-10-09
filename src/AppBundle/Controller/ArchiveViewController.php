@@ -5,6 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Form\ArchiveEntrySearchForm;
 use AppBundle\Service\ArchiveEntrySearchService;
+use AppBundle\Service\FileService;
+use AppBundle\Service\FolderService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +33,6 @@ file_put_contents($file, $wr); */
      * @return Response
      * @Route("/welcome_index", name="lencor_welcome_index")
      */
-
     public function welcomeIndexAction(Request $request, ArchiveEntrySearchService $entrySearchService)
     {
         $finalQuery = new Query();
@@ -53,24 +54,16 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
+     * @param FolderService $folderService
      * @return Response
      * @Route("/lencor_entries/view_folders", name="lencor_entries_view_folders")
      */
-
-    function showEntryFolders(Request $request)
+    function showEntryFolders(Request $request, FolderService $folderService)
     {
         $entryId = null;
-        $folderId = null;
-        $fileNodes = null;
         $folderTree = null;
-        $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
-        $entryUpdatedData = null;
-        $options = array();
-
         if ($request->request->has('folderId')) {
-            $folderId = $request->get('folderId');
-            $folderNode = $foldersRepository->findOneById($folderId);
-            $folderTree = $foldersRepository->childrenHierarchy($folderNode, true, $options, false);
+            $folderTree = $folderService->showEntryFolder($request->request->get('folderId'));
         }
 
         return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('entryId' => $entryId, 'folderTree' => $folderTree));
@@ -78,20 +71,15 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
+     * @param FileService $fileService
      * @return Response
      * @Route("/lencor_entries/view_files", name="lencor_entries_view_files")
      */
-
-    function showEntryFiles(Request $request)
+    function showEntryFiles(Request $request, FileService $fileService)
     {
-        $folderId = null;
         $fileList = null;
-        $filesRepository = $this->getDoctrine()->getRepository('AppBundle:FileEntity');
-        $entryUpdatedData = null;
-
         if ($request->request->has('folderId')) {
-            $folderId = $request->get('folderId');
-            $fileList = $filesRepository->findByParentFolder($folderId);
+            $fileList = $fileService->showEntryFiles($request->request->get('folderId'));
         }
 
         return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $fileList));
@@ -102,19 +90,15 @@ file_put_contents($file, $wr); */
      * @return Response
      * @Route("/lencor_entries_view", name="lencor_entries_view")
      */
-
-    function showEntryDetails(Request $request)
+    function showEntryDetails(Request $request, FolderService $folderService)
     {
         $entryId = null;
         $folderId = null;
-        $foldersRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
         $addHeaderAndButtons = true;
 
         if ($request->request->has('entryId')) {
             $entryId = $request->get('entryId');
-            $folderNode = $foldersRepository->findOneByArchiveEntry($entryId);
-            $folderId = $folderNode->getId();
-
+            $folderId = $folderService->getRootFolder($entryId);
         }
         /** for file system handling **/
         /*$entryId = $request->get('entryId');

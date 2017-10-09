@@ -86,5 +86,4 @@ class ArchiveEntryService
         $this->em->persist($newFolder);
         $this->em->flush();
     }
-
 }

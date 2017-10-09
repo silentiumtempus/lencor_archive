@@ -132,4 +132,13 @@ class FileService
 
         return true;
     }
+
+    /**
+     * @param $folderId
+     * @return mixed
+     */
+    public function showEntryFiles($folderId)
+    {
+        return $fileList = $this->filesRepository->findByParentFolder($folderId);
+    }
 }

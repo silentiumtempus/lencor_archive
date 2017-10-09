@@ -54,6 +54,10 @@ class FolderService
             return $folderNode->getRoot()->getArchiveEntry()->getId();
     }
 
+    /**
+     * @param $entryId
+     * @return mixed
+     */
     public function getRootFolder($entryId)
     {
         $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
@@ -132,5 +136,18 @@ class FolderService
         $this->em->flush();
 
         return $restoredFolder;
+    }
+
+    /**
+     * @param $folderId
+     * @return mixed
+     */
+    public function showEntryFolder($folderId)
+    {
+        $options = array();
+        $folderNode = $this->foldersRepository->findOneById($folderId);
+        $folderTree = $this->foldersRepository->childrenHierarchy($folderNode, true, $options, false);
+
+        return $folderTree;
     }
 }
