@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Vinegar
- * Date: 007 07.04.17
- * Time: 14:31
- */
 
 namespace AppBundle\Form;
 

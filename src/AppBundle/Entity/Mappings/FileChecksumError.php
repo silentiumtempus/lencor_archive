@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Vinegar
- * Date: 026 26.08.17
- * Time: 11:58
- */
 
 namespace AppBundle\Entity\Mappings;
 
