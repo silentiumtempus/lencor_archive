@@ -1,28 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Vinegar
- * Date: 021 21.02.17
- * Time: 19:41
- */
 
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Form\ArchiveEntrySearchForm;
+use AppBundle\Service\ArchiveEntrySearchService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Elastica\Query\BoolQuery;
-use Elastica\Query\Match;
-use Elastica\Query\Term;
-use Elastica\Query;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Elastica\Query\BoolQuery;
+use Elastica\Query;
 
 class ArchiveViewController extends Controller
 {
 
-        /*set_include_path('/var/www/lencor/public_html/new/web/');
+    /*set_include_path('/var/www/lencor/public_html/new/web/');
 $file = 'test.txt';
 
 $wr = file_get_contents($file);
@@ -34,48 +27,26 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
+     * @param ArchiveEntrySearchService $entrySearchService
      * @return Response
      * @Route("/welcome_index", name="lencor_welcome_index")
      */
 
-    public function welcomeIndexAction(Request $request)
+    public function welcomeIndexAction(Request $request, ArchiveEntrySearchService $entrySearchService)
     {
-        $entrySearchEntity = new ArchiveEntryEntity();
-        $searchForm = $this->createForm(ArchiveEntrySearchForm::class, $entrySearchEntity);
-        $elasticManager = $this->container->get('fos_elastica.finder.lencor_archive.archive_entries');
         $finalQuery = new Query();
         $filterQuery = new BoolQuery();
-        $entryCatalogue = null;
-
+        $entrySearchEntity = new ArchiveEntryEntity();
+        $searchForm = $this->createForm(ArchiveEntrySearchForm::class, $entrySearchEntity);
         $searchForm->handleRequest($request);
         if ($searchForm->isSubmitted() && $searchForm->isValid() && $request->isMethod('POST')) {
             try {
-                // if ($form->getData()) {
-
-                foreach ($searchForm->getIterator() as $key => $child) {
-                    if ($child->getData()) {
-                        if ($key == 'factory') {
-                            $conditionFactory = (new Term())->setTerm('factory.id', $child->getViewData());
-                            $filterQuery->addMust($conditionFactory);
-                        } else if ($key == 'setting') {
-                            $conditionSetting = (new Term())->setTerm('setting.id', $child->getViewData());
-                            $filterQuery->addMust($conditionSetting);
-                        } else {
-                            $filterMatchField = (new Match())->setFieldQuery($child->getName(), $child->getViewData());
-                            $filterQuery->addMust($filterMatchField);
-                        }
-                    }
-                }
-                $finalQuery->setQuery($filterQuery);
-                //}
+                $filterQuery = $entrySearchService->performSearch($request, $searchForm, $filterQuery);
             } catch (\Exception $exception) {
                 $this->addFlash('error', $exception->getMessage());
             }
         }
-        $finalQuery->addSort(array('year' => array('order' => 'ASC')));
-        $archiveEntries = $elasticManager->find($finalQuery, 3000);
-        $boolQuery = null;
-        $finalQuery = null;
+        $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery);
 
         return $this->render('lencor/admin/archive/index.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView()));
     }

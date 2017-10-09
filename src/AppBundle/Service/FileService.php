@@ -17,6 +17,11 @@ class FileService
     protected $folderService;
     protected $filesRepository;
 
+    /**
+     * FileService constructor.
+     * @param EntityManager $entityManager
+     * @param FolderService $folderService
+     */
     public function __construct(EntityManager $entityManager, FolderService $folderService)
     {
         $this->em = $entityManager;
@@ -24,16 +29,32 @@ class FileService
         $this->filesRepository = $this->em->getRepository('AppBundle:FileEntity');
     }
 
+    /**
+     * @param $fileId
+     * @return mixed
+     */
     public function getFileById($fileId)
     {
         return $this->filesRepository->findOneById($fileId);
     }
 
+    /**
+     * @param $folderAbsPath
+     * @param $originalName
+     * @return string
+     */
     public function constructFileAbsPath($folderAbsPath, $originalName)
     {
         return $folderAbsPath . "/" . $originalName;
     }
 
+    /**
+     * @param FileEntity $newFileEntity
+     * @param FolderEntity $parentFolder
+     * @param string $originalName
+     * @param User $user
+     * @return FileEntity
+     */
     public function prepareNewFile(FileEntity $newFileEntity, FolderEntity $parentFolder, string $originalName, User $user)
     {
         $parentFolder = $this->folderService->getParentFolder($parentFolder);
@@ -48,6 +69,9 @@ class FileService
         return $newFileEntity;
     }
 
+    /**
+     * @param FileEntity $fileEntity
+     */
     public function persistFile(FileEntity $fileEntity)
     {
         $this->em->persist($fileEntity);
@@ -55,6 +79,11 @@ class FileService
     }
 
     //@TODO: Unite two methods below
+    /**
+     * @param $fileId
+     * @param $userId
+     * @return mixed
+     */
     public function removeFile($fileId, $userId)
     {
         $deletedFile = $this->filesRepository->findById($fileId);
@@ -68,6 +97,10 @@ class FileService
         return $deletedFile;
     }
 
+    /**
+     * @param $fileId
+     * @return mixed
+     */
     public function restoreFile($fileId)
     {
         $restoredFile = $this->filesRepository->findById($fileId);
@@ -80,6 +113,11 @@ class FileService
         return $restoredFile;
     }
 
+    /**
+     * @param $folderId
+     * @param $userId
+     * @return bool
+     */
     public function removeFilesByParentFolder($folderId, $userId)
     {
         $childFiles = $this->filesRepository->findByParentFolder($folderId);

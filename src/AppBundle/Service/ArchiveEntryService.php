@@ -19,6 +19,11 @@ class ArchiveEntryService
     protected $entriesRepository;
     protected $foldersRepository;
 
+    /**
+     * ArchiveEntryService constructor.
+     * @param EntityManager $entityManager
+     * @param ContainerInterface $container
+     */
     public function __construct(EntityManager $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
@@ -27,6 +32,10 @@ class ArchiveEntryService
         $this->container = $container;
     }
 
+    /**
+     * @param string $entryId
+     * @param string $userId
+     */
     public function changeLastUpdateInfo(string $entryId, string $userId)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
@@ -34,6 +43,10 @@ class ArchiveEntryService
         $this->em->flush();
     }
 
+    /**
+     * @param Request $request
+     * @return null
+     */
     public function loadLastUpdateInfo(Request $request)
     {
         $lastUpdateInfo = null;
@@ -47,6 +60,10 @@ class ArchiveEntryService
         return $lastUpdateInfo;
     }
 
+    /**
+     * @param Request $request
+     * @return mixed
+     */
     public function setEntryId(Request $request)
     {
         $session = $this->container->get('session');
@@ -59,6 +76,10 @@ class ArchiveEntryService
         }
     }
 
+    /**
+     * @param ArchiveEntryEntity $newEntry
+     * @param FolderEntity $newFolder
+     */
     public function persistEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder)
     {
         $this->em->persist($newEntry);

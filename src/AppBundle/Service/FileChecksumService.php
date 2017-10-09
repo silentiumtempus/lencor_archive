@@ -19,6 +19,11 @@ class FileChecksumService
     protected $foldersRepository;
     protected $fileErrorsRepository;
 
+    /**
+     * FileChecksumService constructor.
+     * @param EntityManager $entityManager
+     * @param ContainerInterface $container
+     */
     public function __construct(EntityManager $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
@@ -28,6 +33,10 @@ class FileChecksumService
         $this->fileErrorsRepository = $this->em->getRepository('AppBundle:Mappings\FileChecksumError');
     }
 
+    /**
+     * @param FileEntity $requestedFile
+     * @return null|string
+     */
     public function getFilePath(FileEntity $requestedFile)
     {
         $path = null;
@@ -40,6 +49,10 @@ class FileChecksumService
         return $path;
     }
 
+    /**
+     * @param $filePath
+     * @return string
+     */
     public function getFileHttpUrl($filePath)
     {
         $httpRoot = $this->container->getParameter('lencor_archive.http_path');
@@ -48,6 +61,11 @@ class FileChecksumService
         return $httpPath;
     }
 
+    /**
+     * @param FileEntity $requestedFile
+     * @param $filePath
+     * @return bool
+     */
     public function checkFile(FileEntity $requestedFile, $filePath)
     {
         $absRoot = $this->container->getParameter('lencor_archive.storage_path');
@@ -58,6 +76,11 @@ class FileChecksumService
         return $checkStatus;
     }
 
+    /**
+     * @param FileEntity $fileEntity
+     * @param $userId
+     * @return bool
+     */
     public function newChecksumError(FileEntity $fileEntity, $userId)
     {
         $newFileError = new FileChecksumError();
@@ -73,6 +96,11 @@ class FileChecksumService
         return true;
     }
 
+    /**
+     * @param FileEntity $fileEntity
+     * @param $userId
+     * @return bool
+     */
     public function reportChecksumError(FileEntity $fileEntity, $userId)
     {
         if ($fileEntity->getSumError() == false) {
@@ -90,6 +118,11 @@ class FileChecksumService
         return true;
     }
 
+    /**
+     * @param FileEntity $fileEntity
+     * @param $userId
+     * @return bool
+     */
     public function validateChecksumValue(FileEntity $fileEntity, $userId)
     {
         if ($fileEntity->getSumError() ==  true) {

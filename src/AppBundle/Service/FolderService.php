@@ -16,6 +16,10 @@ class FolderService
     protected $foldersRepository;
     protected $filesRepository;
 
+    /**
+     * FolderService constructor.
+     * @param EntityManager $entityManager
+     */
     public function __construct(EntityManager $entityManager)
     {
         $this->em = $entityManager;
@@ -23,6 +27,11 @@ class FolderService
         $this->filesRepository = $this->em->getRepository('AppBundle:FileEntity');
     }
 
+    /**
+     * @param $rootPath
+     * @param $parentFolder
+     * @return string
+     */
     public function constructFolderAbsPath($rootPath, $parentFolder)
     {
         $folderAbsPath = $rootPath;
@@ -35,6 +44,10 @@ class FolderService
         return $folderAbsPath;
     }
 
+    /**
+     * @param $folderId
+     * @return mixed
+     */
     public function getFolderEntryId($folderId)
     {
             $folderNode = $this->foldersRepository->findOneById($folderId);
@@ -49,6 +62,10 @@ class FolderService
         return $folderId;
     }
 
+    /**
+     * @param FolderEntity $parentFolder
+     * @return mixed
+     */
     public function getParentFolder(FolderEntity $parentFolder)
     {
         return $this->foldersRepository->findOneById($parentFolder);
@@ -66,12 +83,21 @@ class FolderService
         return $newFolderEntity;
     }
 
+    /**
+     * @param FolderEntity $folderEntity
+     */
     public function persistFolder(FolderEntity $folderEntity)
     {
         $this->em->persist($folderEntity);
         $this->em->flush();
     }
 
+    /**
+     * @param $folderId
+     * @param $userId
+     * @param FileService $fileService
+     * @return mixed
+     */
     public function removeFolder($folderId, $userId, FileService $fileService)
     {
         $deletedFolder = $this->foldersRepository->findById($folderId);
@@ -92,6 +118,10 @@ class FolderService
         return $deletedFolder;
     }
 
+    /**
+     * @param $folderId
+     * @return mixed
+     */
     public function restoreFolder($folderId)
     {
         $restoredFolder = $this->foldersRepository->findById($folderId);
