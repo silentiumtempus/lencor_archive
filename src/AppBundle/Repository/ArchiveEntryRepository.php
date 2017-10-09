@@ -9,6 +9,11 @@ class ArchiveEntryRepository extends EntityRepository
     protected $em;
     protected $queryBuilder;
 
+    /**
+     * ArchiveEntryRepository constructor.
+     * @param \Doctrine\ORM\EntityManager $em
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
+     */
     public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
     {
         parent::__construct($em, $class);
@@ -16,6 +21,10 @@ class ArchiveEntryRepository extends EntityRepository
         $this->queryBuilder = $this->em->createQueryBuilder();
     }
 
+    /**
+     * @param int $entryId
+     * @return array
+     */
     public function getUpdateInfoByEntry(int $entryId)
     {
         return $this->queryBuilder
@@ -27,6 +36,10 @@ class ArchiveEntryRepository extends EntityRepository
             ->getResult();
     }
 
+    /**
+     * @param int $entryId
+     * @return array
+     */
     public function getUpdateInfoByFolder(int $entryId)
     {
         return $this->queryBuilder
