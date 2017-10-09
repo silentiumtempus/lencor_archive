@@ -2,9 +2,12 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FolderEntity;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 /**
  * Class FolderService
@@ -13,18 +16,24 @@ use Doctrine\ORM\EntityManager;
 class FolderService
 {
     protected $em;
+    protected $container;
     protected $foldersRepository;
     protected $filesRepository;
+    protected $pathRoot;
+    protected $pathPermissions;
 
     /**
      * FolderService constructor.
      * @param EntityManager $entityManager
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
+        $this->container = $container;
         $this->foldersRepository = $this->em->getRepository('AppBundle:FolderEntity');
         $this->filesRepository = $this->em->getRepository('AppBundle:FileEntity');
+        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->pathPermissions = $this->container->getParameter('lencor_archive.storage_permissions');
     }
 
     /**
@@ -50,8 +59,8 @@ class FolderService
      */
     public function getFolderEntryId($folderId)
     {
-            $folderNode = $this->foldersRepository->findOneById($folderId);
-            return $folderNode->getRoot()->getArchiveEntry()->getId();
+        $folderNode = $this->foldersRepository->findOneById($folderId);
+        return $folderNode->getRoot()->getArchiveEntry()->getId();
     }
 
     /**
@@ -75,6 +84,26 @@ class FolderService
         return $this->foldersRepository->findOneById($parentFolder);
     }
 
+    /**
+     * @param FolderEntity $newFolderEntity
+     * @param ArchiveEntryEntity $newEntry
+     * @param $userId
+     */
+    public function prepareNewRootFolder(FolderEntity $newFolderEntity, ArchiveEntryEntity $newEntry, $userId)
+    {
+        $newFolderEntity->setArchiveEntry($newEntry);
+        $newFolderEntity->setFolderName($newEntry->getYear() . "/" . $newEntry->getFactory()->getId() . "/" . $newEntry->getArchiveNumber());
+        $newFolderEntity->setAddedByUserId($userId);
+        $newFolderEntity->setDeleteMark(false);
+        $newFolderEntity->setDeletedByUserId(null);
+    }
+
+    /**
+     * @param FolderEntity $newFolderEntity
+     * @param FolderEntity $parentFolder
+     * @param User $user
+     * @return FolderEntity
+     */
     public function prepareNewFolder(FolderEntity $newFolderEntity, FolderEntity $parentFolder, User $user)
     {
         $parentFolder = $this->getParentFolder($parentFolder);
@@ -149,5 +178,34 @@ class FolderService
         $folderTree = $this->foldersRepository->childrenHierarchy($folderNode, true, $options, false);
 
         return $folderTree;
+    }
+
+    /**
+     * @param ArchiveEntryEntity $archiveEntryEntity
+     * @return string
+     */
+    public function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity)
+    {
+        $pathYear = $this->pathRoot . "/" . $archiveEntryEntity->getYear();
+        $pathFactory = $pathYear . "/" . $archiveEntryEntity->getFactory()->getId();
+        $pathEntry = $pathFactory . "/" . $archiveEntryEntity->getArchiveNumber();
+
+        try {
+            if (!$fs->exists($pathYear)) {
+                $fs->mkdir($pathYear, $this->pathPermissions);
+            }
+            if (!$fs->exists($pathFactory)) {
+                $fs->mkdir($pathFactory, $this->pathPermissions);
+            }
+            if (!$fs->exists($pathEntry)) {
+                $fs->mkdir($pathEntry, $this->pathPermissions);
+            } else {
+                $this->container->addFlash('warning', 'Внимание: директория для новой ячейки: ' . $pathEntry . ' уже существует');
+            }
+        } catch (IOException $IOException) {
+            $this->container->addFlash('danger', 'Ошибка создания директории: ' . $IOException->getMessage());
+        }
+
+        return $pathEntry;
     }
 }

@@ -11,10 +11,10 @@ use AppBundle\Entity\FactoryEntity;
 use AppBundle\Form\SettingAddForm;
 use AppBundle\Service\ArchiveEntryService;
 use AppBundle\Service\FactoryService;
+use AppBundle\Service\FolderService;
 use AppBundle\Service\SettingService;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Filesystem\Exception\IOException;
-use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -29,20 +29,16 @@ class EntryAdditionController extends Controller
      * @param ArchiveEntryService $archiveEntryService
      * @param FactoryService $factoryService
      * @param SettingService $settingService
+     * @param FolderService $folderService
      * @return Response
      * @Route("/archive/new", name="lencor_entries_new")
      */
-    public function archiveEntryAdd(Request $request, ArchiveEntryService $archiveEntryService, FactoryService $factoryService, SettingService $settingService)
+    public function archiveEntryAdd(Request $request, ArchiveEntryService $archiveEntryService, FactoryService $factoryService, SettingService $settingService, FolderService $folderService)
     {
-        $newEntry = new ArchiveEntryEntity();
-        $newFactory = new FactoryEntity();
-        $newSetting = new SettingEntity();
-        $newFolder = new FolderEntity();
-        $entryForm = $this->createForm(ArchiveEntryAddForm::class, $newEntry);
-        $factoryForm = $this->createForm(FactoryAddForm::class, $newFactory);
-        $settingForm = $this->createForm(SettingAddForm::class, $newSetting);
+        $entryForm = $this->createForm(ArchiveEntryAddForm::class, new ArchiveEntryEntity());
+        $factoryForm = $this->createForm(FactoryAddForm::class, new FactoryEntity());
+        $settingForm = $this->createForm(SettingAddForm::class, new SettingEntity());
         $pathRoot = $this->getParameter('lencor_archive.storage_path');
-        $pathPermissions = $this->getParameter('lencor_archive.storage_permissions');
         $fs = new Filesystem();
 
         $factoryForm->handleRequest($request);
@@ -77,52 +73,21 @@ class EntryAdditionController extends Controller
         if ($entryForm->isSubmitted() && $fs->exists($pathRoot)) {
             if ($entryForm->isValid()) {
                 try {
-                    $userId = $this->getUser()->getId();
-                    $newEntry = $entryForm->getData();
+                    $newEntryEntity = $entryForm->getData();
+                    $pathEntry = $folderService->checkAndCreateFolders($newEntryEntity);
+                    $filename = $pathEntry . "/" . $newEntryEntity->getArchiveNumber() . ".txt";
 
-                    $pathYear = $pathRoot . "/" . $newEntry->getYear();
-                    $pathFactory = $pathYear . "/" . $newEntry->getFactory()->getId();
-                    $pathEntry = $pathFactory . "/" . $newEntry->getArchiveNumber();
-
-                    try {
-                        if (!$fs->exists($pathYear)) {
-                            $fs->mkdir($pathYear, $pathPermissions);
-                        }
-                        if (!$fs->exists($pathFactory)) {
-                            $fs->mkdir($pathFactory, $pathPermissions);
-                        }
-                        if (!$fs->exists($pathEntry)) {
-                            $fs->mkdir($pathEntry, $pathPermissions);
-                        } else {
-                            $this->addFlash('warning', 'Внимание: директория для новой ячейки: ' . $pathEntry . ' уже существует');
-                        }
-                    } catch (IOException $IOException) {
-                        $this->addFlash('danger', 'Ошибка создания директории: ' . $IOException->getMessage());
-                    }
-                    $filename = $pathEntry . "/" . $newEntry->getArchiveNumber() . ".txt";
+                    //TODO: change the below design
                     if ($fs->exists($filename)) {
                         $this->addFlash('danger', 'Ошибка: файл ячейки: ' . $filename . ' уже существует. Продолжение прервано.');
                         throw new IOException(null);
                     } else {
                         try {
-                            $fs->touch($filename);
-                            $newEntry->setCataloguePath($newFolder);
-                            $newEntry->setModifiedByUserId($userId);
-                            $newEntry->setDeleteMark(false);
-                            $newEntry->setDeletedByUserId(null);
-                            //$newEntry->setSlug(null);
-
-                            $newFolder->setArchiveEntry($newEntry);
-                            $newFolder->setFolderName($newEntry->getYear() . "/" . $newEntry->getFactory()->getId() . "/" . $newEntry->getArchiveNumber());
-                            $newFolder->setAddedByUserId($userId);
-                            $newFolder->setDeleteMark(false);
-                            $newFolder->setDeletedByUserId(null);
-
-                            $serializer = SerializerBuilder::create()->build();
-                            $jsonContent = $serializer->serialize($newEntry, 'yml');
-
-                            file_put_contents($filename, $jsonContent);
-                            $archiveEntryService->persistEntry($newEntry, $newFolder);
+                            $newFolderEntity = new FolderEntity();
+                            $archiveEntryService->prepareEntry($newEntryEntity, $newFolderEntity, $this->getUser()->getId());
+                            $folderService->prepareNewRootFolder($newFolderEntity, $newEntryEntity, $this->getUser()->getId());
+                            $archiveEntryService->writeDataToEntryFile($newEntryEntity, $filename);
+                            $archiveEntryService->persistEntry($newEntryEntity, $newFolderEntity);
                             $this->addFlash('success', 'message.entryAdded');
                         } catch (IOException $IOException) {
                             $this->addFlash('danger', 'Ошибка записи файла ячейки: ' . $IOException->getMessage());

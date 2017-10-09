@@ -5,7 +5,9 @@ namespace AppBundle\Service;
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FolderEntity;
 use Doctrine\ORM\EntityManager;
+use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -50,7 +52,6 @@ class ArchiveEntryService
     public function loadLastUpdateInfo(Request $request)
     {
         $lastUpdateInfo = null;
-
         if ($request->request->has('entryId')) {
             $lastUpdateInfo = $this->entriesRepository->getUpdateInfoByEntry($request->get('entryId'));
         } else if ($request->request->has('folderId')) {
@@ -74,6 +75,29 @@ class ArchiveEntryService
         } else {
             return $session->get('entryId');
         }
+    }
+
+    /**
+     * @param ArchiveEntryEntity $newEntry
+     * @param FolderEntity $newFolder
+     * @param $userId
+     */
+    public function prepareEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder, $userId)
+    {
+        $newEntry->setCataloguePath($newFolder->getId());
+        $newEntry->setModifiedByUserId($userId);
+        $newEntry->setDeleteMark(false);
+        $newEntry->setDeletedByUserId(null);
+        //$newEntry->setSlug(null);
+    }
+
+    public function writeDataToEntryFile(ArchiveEntryEntity $newEntry, string $filename)
+    {
+        $fs = new Filesystem();
+        $serializer = SerializerBuilder::create()->build();
+        $entryJSONFile = $serializer->serialize($newEntry, 'yml');
+        file_put_contents($filename, $entryJSONFile);
+        $fs->touch($filename);
     }
 
     /**
