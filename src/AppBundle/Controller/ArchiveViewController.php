@@ -42,7 +42,7 @@ file_put_contents($file, $wr); */
         $searchForm->handleRequest($request);
         if ($searchForm->isSubmitted() && $searchForm->isValid() && $request->isMethod('POST')) {
             try {
-                $filterQuery = $entrySearchService->performSearch($request, $searchForm, $filterQuery);
+                $filterQuery = $entrySearchService->performSearch($searchForm, $filterQuery);
             } catch (\Exception $exception) {
                 $this->addFlash('error', $exception->getMessage());
             }
@@ -87,6 +87,7 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
+     * @param FolderService $folderService
      * @return Response
      * @Route("/lencor_entries_view", name="lencor_entries_view")
      */

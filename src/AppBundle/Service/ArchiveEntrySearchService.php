@@ -8,7 +8,6 @@ use Elastica\Query\Match;
 use Elastica\Query\Term;
 use Elastica\Query;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class ArchiveEntrySearchService
@@ -30,12 +29,11 @@ class ArchiveEntrySearchService
     }
 
     /**
-     * @param Request $request
      * @param Form $searchForm
      * @param BoolQuery $filterQuery
      * @return BoolQuery
      */
-    public function performSearch(Request $request, Form $searchForm, BoolQuery $filterQuery)
+    public function performSearch(Form $searchForm, BoolQuery $filterQuery)
     {
         foreach ($searchForm->getIterator() as $key => $child) {
             if ($child->getData()) {
