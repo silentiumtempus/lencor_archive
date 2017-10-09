@@ -33,33 +33,6 @@ class FileChecksumService
         $this->fileErrorsRepository = $this->em->getRepository('AppBundle:Mappings\FileChecksumError');
     }
 
-    /**
-     * @param FileEntity $requestedFile
-     * @return null|string
-     */
-    public function getFilePath(FileEntity $requestedFile)
-    {
-        $path = null;
-        $binaryPath = $this->foldersRepository->getPath($requestedFile->getParentFolder());
-        foreach ($binaryPath as $folderName) {
-            $path .= "/" . $folderName;
-        }
-        $path .= "/" . $requestedFile->getFileName();
-
-        return $path;
-    }
-
-    /**
-     * @param $filePath
-     * @return string
-     */
-    public function getFileHttpUrl($filePath)
-    {
-        $httpRoot = $this->container->getParameter('lencor_archive.http_path');
-        $httpPath = $httpRoot . $filePath;
-
-        return $httpPath;
-    }
 
     /**
      * @param FileEntity $requestedFile

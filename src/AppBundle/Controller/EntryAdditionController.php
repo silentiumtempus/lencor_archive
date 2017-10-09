@@ -77,10 +77,10 @@ class EntryAdditionController extends Controller
                     $pathEntry = $folderService->checkAndCreateFolders($newEntryEntity);
                     $filename = $pathEntry . "/" . $newEntryEntity->getArchiveNumber() . ".txt";
 
-                    //TODO: change the below design
+                    //TODO: mb change the below design ?
                     if ($fs->exists($filename)) {
                         $this->addFlash('danger', 'Ошибка: файл ячейки: ' . $filename . ' уже существует. Продолжение прервано.');
-                        throw new IOException(null);
+                        throw new IOException('Файл ячейки уже существует');
                     } else {
                         try {
                             $newFolderEntity = new FolderEntity();

@@ -6,6 +6,7 @@ use AppBundle\Entity\FileEntity;
 use AppBundle\Entity\FolderEntity;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class FileService
@@ -14,19 +15,24 @@ use Doctrine\ORM\EntityManager;
 class FileService
 {
     protected $em;
+    protected $container;
     protected $folderService;
     protected $filesRepository;
+    protected $foldersRepository;
 
     /**
      * FileService constructor.
      * @param EntityManager $entityManager
+     * @param ContainerInterface $container
      * @param FolderService $folderService
      */
-    public function __construct(EntityManager $entityManager, FolderService $folderService)
+    public function __construct(EntityManager $entityManager, ContainerInterface $container, FolderService $folderService)
     {
         $this->em = $entityManager;
+        $this->container = $container;
         $this->folderService = $folderService;
         $this->filesRepository = $this->em->getRepository('AppBundle:FileEntity');
+        $this->foldersRepository = $this->em->getRepository('AppBundle:FolderEntity');
     }
 
     /**
@@ -46,6 +52,34 @@ class FileService
     public function constructFileAbsPath($folderAbsPath, $originalName)
     {
         return $folderAbsPath . "/" . $originalName;
+    }
+
+    /**
+     * @param FileEntity $requestedFile
+     * @return null|string
+     */
+    public function getFilePath(FileEntity $requestedFile)
+    {
+        $path = null;
+        $binaryPath = $this->foldersRepository->getPath($requestedFile->getParentFolder());
+        foreach ($binaryPath as $folderName) {
+            $path .= "/" . $folderName;
+        }
+        $path .= "/" . $requestedFile->getFileName();
+
+        return $path;
+    }
+
+    /**
+     * @param $filePath
+     * @return string
+     */
+    public function getFileHttpUrl($filePath)
+    {
+        $httpRoot = $this->container->getParameter('lencor_archive.http_path');
+        $httpPath = $httpRoot . $filePath;
+
+        return $httpPath;
     }
 
     /**

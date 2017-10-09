@@ -336,8 +336,8 @@ class FilesAndFoldersController extends Controller
         if ($request->request->has('fileId'))
         {
             $requestedFile = $fileService->getFileById($request->get('fileId'));
-            $filePath = $fileChecksumService->getFilePath($requestedFile);
-            $httpPath = $fileChecksumService->getFileHttpUrl($filePath);
+            $filePath = $fileService->getFilePath($requestedFile);
+            $httpPath = $fileService->getFileHttpUrl($filePath);
             $checkStatus = $fileChecksumService->checkFile($requestedFile, $filePath);
             if (!$checkStatus) {
                 $fileChecksumService->reportChecksumError($requestedFile, $this->getUser()->getId());
