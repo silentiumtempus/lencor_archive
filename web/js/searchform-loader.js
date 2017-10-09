@@ -1,6 +1,3 @@
-/**
- * Created by Vinegar on 018 18.04.17.
- */
 $(document).ready(function () {
     if (!window.jQuery) {
     } else {
@@ -213,6 +210,7 @@ $(document).ready(function () {
                                     data: {folderId: folderId},
                                     success: function (reloadResponse) {
                                         folderContent.hide();
+                                        alert(reloadResponse);
                                         var foldersList = folderContent.children('ul');
                                         foldersList.html(reloadResponse);
                                         folderContent.show();
