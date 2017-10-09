@@ -210,7 +210,6 @@ $(document).ready(function () {
                                     data: {folderId: folderId},
                                     success: function (reloadResponse) {
                                         folderContent.hide();
-                                        alert(reloadResponse);
                                         var foldersList = folderContent.children('ul');
                                         foldersList.html(reloadResponse);
                                         folderContent.show();
