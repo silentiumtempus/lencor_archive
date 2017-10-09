@@ -8,6 +8,7 @@ use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class FolderService
@@ -25,6 +26,7 @@ class FolderService
     /**
      * FolderService constructor.
      * @param EntityManager $entityManager
+     * @param ContainerInterface $container
      */
     public function __construct(EntityManager $entityManager, ContainerInterface $container)
     {
@@ -37,7 +39,6 @@ class FolderService
     }
 
     /**
-     * @param $rootPath
      * @param $parentFolder
      * @return string
      */
@@ -187,6 +188,7 @@ class FolderService
      */
     public function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity)
     {
+        $fs = new Filesystem();
         $pathYear = $this->pathRoot . "/" . $archiveEntryEntity->getYear();
         $pathFactory = $pathYear . "/" . $archiveEntryEntity->getFactory()->getId();
         $pathEntry = $pathFactory . "/" . $archiveEntryEntity->getArchiveNumber();

@@ -57,7 +57,6 @@ class FileChecksumService
      */
     public function newChecksumError(FileEntity $fileEntity, $userId)
     {
-
         $newFileError = new FileChecksumError();
         $newFileError
             ->setFileId($fileEntity)
@@ -121,6 +120,11 @@ class FileChecksumService
         return true;
     }
 
+    /**
+     * @param FileChecksumError $fileChecksumError
+     * @param $status
+     * @param $userId
+     */
     public function changeErrorStatus(FileChecksumError $fileChecksumError, $status, $userId)
     {
         $fileChecksumError
@@ -129,6 +133,10 @@ class FileChecksumService
             ->setLastCheckOn(new \DateTime());
     }
 
+    /**
+     * @param $parentFolder
+     * @param $errorState
+     */
     public function changeErrorsQuantity($parentFolder, $errorState)
     {
         $binaryPath = $this->foldersRepository->getPath($parentFolder);
