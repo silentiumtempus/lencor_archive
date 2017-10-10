@@ -29,7 +29,9 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 7. run "**php bin/console fos:user:create**" to create an internal application user.
 
-8. Check the website index page at http://website.url/web/app_dev.php/welcome_index
+8. Check the website index page at:
+ - http://website.url/web/app_dev.php/welcome_index for dev environment
+ - http://website.url/web/app.php/welcome_index for prod environment
 
 9. Enjoy!
 
