@@ -54,14 +54,13 @@ class FilesAndFoldersController extends Controller
                     $newFolderEntity = $folderService->prepareNewFolder($newFolderEntity, $parentFolder, $user);
 
                     $fileSystem = new Filesystem();
-                    $storagePath = $this->getParameter('lencor_archive.storage_path');
+                    $newFolderAbsPath = $this->getParameter('lencor_archive.storage_path');
                     $pathPermissions = $this->getParameter('lencor_archive.storage_permissions');
                     $creationNotFailed = true;
                     $directoryExistedPreviously = false;
 
-                    if ($fileSystem->exists($storagePath)) {
+                    if ($fileSystem->exists($newFolderAbsPath)) {
                         try {
-                            $newFolderAbsPath = $storagePath;
                             $binaryPath = $folderRepository->getPath($parentFolder);
                             foreach ($binaryPath as $folderName) {
                                 $newFolderAbsPath .= "/" . $folderName;

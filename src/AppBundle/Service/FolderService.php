@@ -5,7 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FolderEntity;
 use AppBundle\Entity\User;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -25,10 +25,10 @@ class FolderService
 
     /**
      * FolderService constructor.
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      */
-    public function __construct(EntityManager $entityManager, ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
         $this->container = $container;

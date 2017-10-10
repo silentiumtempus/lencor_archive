@@ -3,8 +3,8 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\FolderEntity;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -16,7 +16,7 @@ class FolderAddForm extends AbstractType
 {
     protected $em;
 
-    function __construct(EntityManager $em)
+    function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }

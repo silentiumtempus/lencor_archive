@@ -3,7 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\SettingEntity;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class SettingService
@@ -15,9 +15,9 @@ class SettingService
 
     /**
      * SettingService constructor.
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
     }

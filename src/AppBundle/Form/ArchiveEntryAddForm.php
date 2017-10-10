@@ -4,7 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FactoryEntity;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -20,7 +20,7 @@ class ArchiveEntryAddForm extends AbstractType
 {
     protected $em;
 
-    function __construct(EntityManager $em)
+    function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }

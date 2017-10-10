@@ -5,7 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\FileEntity;
 use AppBundle\Entity\FolderEntity;
 use AppBundle\Entity\User;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -22,11 +22,11 @@ class FileService
 
     /**
      * FileService constructor.
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      * @param FolderService $folderService
      */
-    public function __construct(EntityManager $entityManager, ContainerInterface $container, FolderService $folderService)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, FolderService $folderService)
     {
         $this->em = $entityManager;
         $this->container = $container;

@@ -4,7 +4,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\FileEntity;
 use AppBundle\Entity\Mappings\FileChecksumError;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -22,10 +22,10 @@ class FileChecksumService
 
     /**
      * FileChecksumService constructor.
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      */
-    public function __construct(EntityManager $entityManager, ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
         $this->container = $container;

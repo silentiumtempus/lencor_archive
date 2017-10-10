@@ -4,7 +4,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FolderEntity;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -23,10 +23,10 @@ class ArchiveEntryService
 
     /**
      * ArchiveEntryService constructor.
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      */
-    public function __construct(EntityManager $entityManager, ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
         $this->entriesRepository = $this->em->getRepository('AppBundle:ArchiveEntryEntity');

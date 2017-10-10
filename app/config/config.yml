@@ -25,7 +25,7 @@ framework:
         engines: ['twig']
     default_locale:  "%locale%"
     trusted_hosts:   ~
-    trusted_proxies: ~
+    #trusted_proxies: ~
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  session.handler.native_file
@@ -148,10 +148,10 @@ monolog:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: [!event]
+            channels: ["!event"]
         console:
             type:   console
-            channels: [!event, !doctrine]
+            channels: ["!event", "!doctrine"]
         #database:
          #   type: stream
           #  path: "%kernel.logs_dir%/doctrine_%kernel.environment%.log"
@@ -162,8 +162,8 @@ fos_elastica:
     #serializer: ~
     clients:
         default:
-            host: %fos_elastica.host%
-            port: %fos_elastica.port%
+            host: "%fos_elastica.host%"
+            port: "%fos_elastica.port%"
     indexes:
         lencor_archive:
             index_name: archive_entries_%kernel.environment%

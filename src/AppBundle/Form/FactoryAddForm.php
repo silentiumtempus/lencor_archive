@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form;
 
-
 use AppBundle\Entity\FactoryEntity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
