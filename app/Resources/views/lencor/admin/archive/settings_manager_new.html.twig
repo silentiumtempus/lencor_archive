@@ -8,13 +8,11 @@
     <p></p>
     <div>
         <h1>{{ 'title.new_setting'|trans }}</h1>
-
         {{ form_start(form) }}
         {{ form_widget(form) }}
         <input type="submit" value="Создать запись"/>
         {{ form_errors(form) }}
         {{ form_end(form) }}
-
     </div>
     <p></p>
     <p></p>
@@ -26,11 +24,9 @@
             {% endfor %}
         </div>
     {% endif %}
-
 {% endblock %}
 
 {% block sidebar %}
     {{ parent() }}
-
 {% endblock %}
 

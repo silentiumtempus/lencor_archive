@@ -9,22 +9,15 @@
             <i class="fa fa-pencil" aria-hidden="true"></i> {{ 'action.create_post'|trans }}
         </a>
     </div>
-
     {{ parent() }}
-
-    {#{{ show_source_code(_self) }} #}
 {% endblock %}
 
  {% block javascripts %}
      {{ parent() }}
-     {#<script src="{{ asset('select2/js/select2.min.js') }}"></script> #}
-     {#<script src="{{ asset('bundles/tetranzselect2entity/js/select2entity.js') }}"></script> #}
      <script type="text/javascript" src="{{ asset('js/searchform-loader.js') }}"></script>
-
  {% endblock %}
 
 {% block main %}
-
 
     <h1>{{ 'title.post_list'|trans }}</h1>
     {{ form_start(searchForm) }}
@@ -36,7 +29,6 @@
             <td colspan="9">{{ form_row(searchForm.resetButton) }}</td>
         </tr>
         <tr>
-
             <td></td>
             <td>{{ form_row(searchForm.year) }}</td>
             <td>{{ form_row(searchForm.factory) }}</td>
@@ -49,10 +41,8 @@
             <td></td>
             {{ form_errors(searchForm) }}
             {{ form_end(searchForm) }}
-
         </tr>
         <tr class="archive-search-header">
-
             <td></td>
             <td scope="col">{{ 'label.year'|trans }}</td>
             <td scope="col">{{ 'label.factory'|trans }}</td>
@@ -67,7 +57,6 @@
         <tbody id="main-tbody">
         {% for entry in archiveEntries %}
             <tr>
-
                 <td id="{{ entry.id }}"><a href="#" name="entryid" style=" color: #2c3e50;"><i class="fa fa-angle-down"></i><i class="fa fa-folder-o"> </i></a></td>
                 <td>{{ entry.year }}</td>
                 <td>{{ entry.factory.factoryName }}</td>
@@ -93,7 +82,6 @@
 
                 </td>
             </tr>
-
         {% else %}
             <tr>
                 <td colspan="9" align="center">{{ 'post.no_posts_found'|trans }}</td>

@@ -4,13 +4,11 @@
 
 {% block sidebar %}
     {{ parent() }}
-
 {% endblock %}
 
     {% block javascripts %}
         {{ parent() }}
         <script type="text/javascript" src="{{ asset('js/entryadd-loader.js') }}"></script>
-        {# <script type="text/javascript" src="{{ asset('bundles/acmedemo/js/jquery.collection.js') }}"></script> #}
     {% endblock %}
 
 {% block main %}
@@ -82,7 +80,6 @@
                 </tr>
             </table>
             {{ form_end(factoryForm) }}
-
         </div>
         <div class="new_setting">
             <h1>{{ 'title.new_setting'|trans }}</h1>
@@ -116,7 +113,6 @@
             {% endfor %}
         {% endfor %}
     </div>
-
 {% endblock %}
 
 
