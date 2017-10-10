@@ -166,7 +166,7 @@ fos_elastica:
             port: "%fos_elastica.port%"
     indexes:
         lencor_archive:
-            index_name: archive_entries_%kernel.environment%
+            index_name: archive_entries
             client: default
             types:
               archive_factories:
