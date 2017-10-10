@@ -3,6 +3,8 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Query\Expr\Join;
 
 class ArchiveEntryRepository extends EntityRepository
 {
@@ -14,7 +16,7 @@ class ArchiveEntryRepository extends EntityRepository
      * @param \Doctrine\ORM\EntityManager $em
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class
      */
-    public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+    public function __construct($em, ClassMetadata $class)
     {
         parent::__construct($em, $class);
         $this->em = $em;
@@ -45,7 +47,7 @@ class ArchiveEntryRepository extends EntityRepository
         return $this->queryBuilder
             ->select('en.lastModified', 'us.usernameCanonical')
             ->from('AppBundle:ArchiveEntryEntity', 'en')
-            ->leftJoin('AppBundle:User', 'us', \Doctrine\ORM\Query\Expr\Join::WITH, 'en.modifiedByUserId = us.id')
+            ->leftJoin('AppBundle:User', 'us', Join::WITH, 'en.modifiedByUserId = us.id')
             ->where('en.id IN (:archiveEntryId)')
             ->setParameter('archiveEntryId', $entryId)
             ->getQuery()
