@@ -6,7 +6,7 @@ use AppBundle\Entity\FileEntity;
 use AppBundle\Entity\Mappings\FileChecksumError;
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class FileChecksumService
@@ -42,11 +42,16 @@ class FileChecksumService
      */
     public function checkFile(FileEntity $requestedFile, $filePath)
     {
+        $fs = new Filesystem();
         $absRoot = $this->container->getParameter('lencor_archive.storage_path');
         $absPath = $absRoot . $filePath;
-        $actualChecksum = md5_file($absPath);
-        $checkStatus = ($actualChecksum == $requestedFile->getChecksum()) ? true : false;
-
+        if (!$fs->exists($absPath))
+        {
+            $checkStatus = false;
+        } else {
+            $actualChecksum = md5_file($absPath);
+            $checkStatus = ($actualChecksum == $requestedFile->getChecksum()) ? true : false;
+        }
         return $checkStatus;
     }
 
