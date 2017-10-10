@@ -1,24 +1,14 @@
-{#
-   This is the base template used as the application layout which contains the
-   common elements and decorates all the other templates.
-   See http://symfony.com/doc/current/book/templating.html#template-inheritance-and-layouts
-#}
 <!DOCTYPE html>
 <html lang="{{ app.request.locale }}">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>{% block title %}НПО "Ленкор"{% endblock %}</title>
-    {#<link rel="alternate" type="application/rss+xml" title="{{ 'rss.title'|trans }}" href=""> #}
     {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('css/bootstrap-flatly-3.3.7.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/font-lato.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/bootstrap-datetimepicker.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/highlight-solarized-light.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/bootstrap-tagsinput.css') }}">
         <link rel="stylesheet" href="{{ asset('css/main.css') }}">
-        {#<link rel="stylesheet" href="{{ asset('select2/css/select2.min.css') }}"> #}
     {% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
 </head>
