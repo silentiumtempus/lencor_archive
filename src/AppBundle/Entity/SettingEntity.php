@@ -75,10 +75,11 @@ class SettingEntity
 
     /**
      * Set factory
+     * @param FactoryEntity $factory
      * @return SettingEntity
      * @internal param FactoryEntity $factory
      */
-    public function setFactory(\AppBundle\Entity\FactoryEntity $factory = null)
+    public function setFactory(FactoryEntity $factory = null)
     {
         $this->factory = $factory;
 

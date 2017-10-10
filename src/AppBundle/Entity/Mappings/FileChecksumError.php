@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use AppBundle\Entity\FolderEntity;
+use AppBundle\Entity\FileEntity;
 
 /**
  * Class FileChecksumError
@@ -169,11 +171,11 @@ class FileChecksumError
     /**
      * Set fileId
      *
-     * @param \AppBundle\Entity\FileEntity $fileId
+     * @param FileEntity $fileId
      *
      * @return FileChecksumError
      */
-    public function setFileId(\AppBundle\Entity\FileEntity $fileId = null)
+    public function setFileId(FileEntity $fileId = null)
     {
         $this->fileId = $fileId;
 
@@ -183,7 +185,7 @@ class FileChecksumError
     /**
      * Get fileId
      *
-     * @return \AppBundle\Entity\FileEntity
+     * @return FileEntity
      */
     public function getFileId()
     {
@@ -193,11 +195,11 @@ class FileChecksumError
     /**
      * Set parentFolderId
      *
-     * @param \AppBundle\Entity\FolderEntity $parentFolderId
+     * @param FolderEntity $parentFolderId
      *
      * @return FileChecksumError
      */
-    public function setParentFolderId(\AppBundle\Entity\FolderEntity $parentFolderId = null)
+    public function setParentFolderId(FolderEntity $parentFolderId = null)
     {
         $this->parentFolderId = $parentFolderId;
 
@@ -207,7 +209,7 @@ class FileChecksumError
     /**
      * Get parentFolderId
      *
-     * @return \AppBundle\Entity\FolderEntity
+     * @return FolderEntity
      */
     public function getParentFolderId()
     {

@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class FolderEntity
@@ -146,6 +146,14 @@ class FolderEntity
 
     private $slug;
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->childFolders = new ArrayCollection();
+    }
+
     public function __toString()
     {
         return $this->folderName;
@@ -153,7 +161,6 @@ class FolderEntity
 
     /**
      * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -163,9 +170,7 @@ class FolderEntity
 
     /**
      * Set folderName
-     *
      * @param string $folderName
-     *
      * @return FolderEntity
      */
     public function setFolderName($folderName)
@@ -177,7 +182,6 @@ class FolderEntity
 
     /**
      * Get folderName
-     *
      * @return string
      */
     public function getFolderName()
@@ -187,9 +191,7 @@ class FolderEntity
 
     /**
      * Set addTimestamp
-     *
      * @param \DateTime $addTimestamp
-     *
      * @return FolderEntity
      */
     public function setAddTimestamp($addTimestamp)
@@ -201,7 +203,6 @@ class FolderEntity
 
     /**
      * Get addTimestamp
-     *
      * @return \DateTime
      */
     public function getAddTimestamp()
@@ -211,9 +212,7 @@ class FolderEntity
 
     /**
      * Set addedByUserId
-     *
      * @param string $addedByUserId
-     *
      * @return FolderEntity
      */
     public function setAddedByUserId($addedByUserId)
@@ -225,7 +224,6 @@ class FolderEntity
 
     /**
      * Get addedByUserId
-     *
      * @return string
      */
     public function getAddedByUserId()
@@ -235,12 +233,10 @@ class FolderEntity
 
     /**
      * Set archiveEntry
-     *
-     * @param \AppBundle\Entity\ArchiveEntryEntity $archiveEntry
-     *
+     * @param ArchiveEntryEntity $archiveEntry
      * @return FolderEntity
      */
-    public function setArchiveEntry(\AppBundle\Entity\ArchiveEntryEntity $archiveEntry = null)
+    public function setArchiveEntry(ArchiveEntryEntity $archiveEntry = null)
     {
         $this->archiveEntry = $archiveEntry;
 
@@ -249,8 +245,7 @@ class FolderEntity
 
     /**
      * Get archiveEntry
-     *
-     * @return \AppBundle\Entity\ArchiveEntryEntity
+     * @return ArchiveEntryEntity
      */
     public function getArchiveEntry()
     {
@@ -259,12 +254,10 @@ class FolderEntity
 
     /**
      * Add childFolder
-     *
-     * @param \AppBundle\Entity\FolderEntity $childFolder
-     *
+     * @param FolderEntity $childFolder
      * @return FolderEntity
      */
-    public function addChildFolder(\AppBundle\Entity\FolderEntity $childFolder)
+    public function addChildFolder(FolderEntity $childFolder)
     {
         $this->childFolders[] = $childFolder;
 
@@ -273,18 +266,16 @@ class FolderEntity
 
     /**
      * Remove childFolder
-     *
-     * @param \AppBundle\Entity\FolderEntity $childFolder
+     * @param FolderEntity $childFolder
      */
-    public function removeChildFolder(\AppBundle\Entity\FolderEntity $childFolder)
+    public function removeChildFolder(FolderEntity $childFolder)
     {
         $this->childFolders->removeElement($childFolder);
     }
 
     /**
      * Get childFolders
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getChildFolders()
     {
@@ -293,12 +284,10 @@ class FolderEntity
 
     /**
      * Set parentFolder
-     *
-     * @param \AppBundle\Entity\FolderEntity $parentFolder
-     *
+     * @param FolderEntity $parentFolder
      * @return FolderEntity
      */
-    public function setParentFolder(\AppBundle\Entity\FolderEntity $parentFolder = null)
+    public function setParentFolder(FolderEntity $parentFolder = null)
     {
         $this->parentFolder = $parentFolder;
 
@@ -307,26 +296,16 @@ class FolderEntity
 
     /**
      * Get parentFolder
-     *
-     * @return \AppBundle\Entity\FolderEntity
+     * @return FolderEntity
      */
     public function getParentFolder()
     {
         return $this->parentFolder;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->childFolders = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
     /**
      * Set lft
-     *
      * @param integer $lft
-     *
      * @return FolderEntity
      */
     public function setLft($lft)
@@ -338,7 +317,6 @@ class FolderEntity
 
     /**
      * Get lft
-     *
      * @return integer
      */
     public function getLft()
@@ -348,9 +326,7 @@ class FolderEntity
 
     /**
      * Set lvl
-     *
      * @param integer $lvl
-     *
      * @return FolderEntity
      */
     public function setLvl($lvl)
@@ -362,7 +338,6 @@ class FolderEntity
 
     /**
      * Get lvl
-     *
      * @return integer
      */
     public function getLvl()
@@ -372,9 +347,7 @@ class FolderEntity
 
     /**
      * Set rgt
-     *
      * @param integer $rgt
-     *
      * @return FolderEntity
      */
     public function setRgt($rgt)
@@ -386,7 +359,6 @@ class FolderEntity
 
     /**
      * Get rgt
-     *
      * @return integer
      */
     public function getRgt()
@@ -396,9 +368,7 @@ class FolderEntity
 
     /**
      * Set root
-     *
      * @param integer $root
-     *
      * @return FolderEntity
      */
     public function setRoot($root)
@@ -410,7 +380,6 @@ class FolderEntity
 
     /**
      * Get root
-     *
      * @return integer
      */
     public function getRoot()
@@ -420,9 +389,7 @@ class FolderEntity
 
     /**
      * Set slug
-     *
      * @param string $slug
-     *
      * @return FolderEntity
      */
     public function setSlug($slug)
@@ -434,7 +401,6 @@ class FolderEntity
 
     /**
      * Get slug
-     *
      * @return string
      */
     public function getSlug()
@@ -444,9 +410,7 @@ class FolderEntity
 
     /**
      * Set deleteMark
-     *
      * @param boolean $deleteMark
-     *
      * @return FolderEntity
      */
     public function setDeleteMark($deleteMark)
@@ -458,7 +422,6 @@ class FolderEntity
 
     /**
      * Get deleteMark
-     *
      * @return boolean
      */
     public function getDeleteMark()
@@ -468,9 +431,7 @@ class FolderEntity
 
     /**
      * Set deletedByUserId
-     *
      * @param string $deletedByUserId
-     *
      * @return FolderEntity
      */
     public function setDeletedByUserId($deletedByUserId)
@@ -482,7 +443,6 @@ class FolderEntity
 
     /**
      * Get deletedByUserId
-     *
      * @return string
      */
     public function getDeletedByUserId()
@@ -492,9 +452,7 @@ class FolderEntity
 
     /**
      * Set sumErrors
-     *
      * @param integer $sumErrors
-     *
      * @return FolderEntity
      */
     public function setSumErrors($sumErrors)
@@ -506,7 +464,6 @@ class FolderEntity
 
     /**
      * Get sumErrors
-     *
      * @return integer
      */
     public function getSumErrors()

@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use AppBundle\Entity\FolderEntity;
 
 /**
  * Class FileEntity
@@ -114,7 +115,6 @@ class FileEntity
 
     /**
      * Get id
-     *
      * @return integer
      */
     public function getId()
@@ -124,9 +124,7 @@ class FileEntity
 
     /**
      * Set fileName
-     *
      * @param string $fileName
-     *
      * @return FileEntity
      */
     public function setFileName($fileName)
@@ -138,7 +136,6 @@ class FileEntity
 
     /**
      * Get fileName
-     *
      * @return string
      */
     public function getFileName()
@@ -148,9 +145,7 @@ class FileEntity
 
     /**
      * Set addTimestamp
-     *
      * @param \DateTime $addTimestamp
-     *
      * @return FileEntity
      */
     public function setAddTimestamp($addTimestamp)
@@ -162,7 +157,6 @@ class FileEntity
 
     /**
      * Get addTimestamp
-     *
      * @return \DateTime
      */
     public function getAddTimestamp()
@@ -172,9 +166,7 @@ class FileEntity
 
     /**
      * Set addedByUserId
-     *
      * @param string $addedByUserId
-     *
      * @return FileEntity
      */
     public function setAddedByUserId($addedByUserId)
@@ -186,7 +178,6 @@ class FileEntity
 
     /**
      * Get addedByUserId
-     *
      * @return string
      */
     public function getAddedByUserId()
@@ -196,12 +187,10 @@ class FileEntity
 
     /**
      * Set parentFolder
-     *
-     * @param \AppBundle\Entity\FolderEntity $parentFolder
-     *
+     * @param FolderEntity $parentFolder
      * @return FileEntity
      */
-    public function setParentFolder(\AppBundle\Entity\FolderEntity $parentFolder = null)
+    public function setParentFolder(FolderEntity $parentFolder = null)
     {
         $this->parentFolder = $parentFolder;
 
@@ -210,8 +199,7 @@ class FileEntity
 
     /**
      * Get parentFolder
-     *
-     * @return \AppBundle\Entity\FolderEntity
+     * @return FolderEntity
      */
     public function getParentFolder()
     {
@@ -220,9 +208,7 @@ class FileEntity
 
     /**
      * Set slug
-     *
      * @param string $slug
-     *
      * @return FileEntity
      */
     public function setSlug($slug)
@@ -234,7 +220,6 @@ class FileEntity
 
     /**
      * Get slug
-     *
      * @return string
      */
     public function getSlug()
@@ -244,9 +229,7 @@ class FileEntity
 
     /**
      * Set checksum
-     *
      * @param string $checksum
-     *
      * @return FileEntity
      */
     public function setChecksum($checksum)
@@ -258,7 +241,6 @@ class FileEntity
 
     /**
      * Get checksum
-     *
      * @return string
      */
     public function getChecksum()
@@ -268,9 +250,7 @@ class FileEntity
 
     /**
      * Set deleteMark
-     *
      * @param boolean $deleteMark
-     *
      * @return FileEntity
      */
     public function setDeleteMark($deleteMark)
@@ -282,7 +262,6 @@ class FileEntity
 
     /**
      * Get deleteMark
-     *
      * @return boolean
      */
     public function getDeleteMark()
@@ -292,9 +271,7 @@ class FileEntity
 
     /**
      * Set deletedByUserId
-     *
      * @param string $deletedByUserId
-     *
      * @return FileEntity
      */
     public function setDeletedByUserId($deletedByUserId)
@@ -306,7 +283,6 @@ class FileEntity
 
     /**
      * Get deletedByUserId
-     *
      * @return string
      */
     public function getDeletedByUserId()
@@ -316,9 +292,7 @@ class FileEntity
 
     /**
      * Set sumError
-     *
      * @param boolean $sumError
-     *
      * @return FileEntity
      */
     public function setSumError($sumError)
@@ -330,7 +304,6 @@ class FileEntity
 
     /**
      * Get sumError
-     *
      * @return boolean
      */
     public function getSumError()

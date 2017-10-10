@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class ArchiveEntry
@@ -197,11 +197,11 @@ class ArchiveEntryEntity
 
     /**
      * Set factory
-     * @param \AppBundle\Entity\FactoryEntity $factory
+     * @param FactoryEntity $factory
      * @return ArchiveEntryEntity
      */
 
-    public function setFactory(\AppBundle\Entity\FactoryEntity $factory = null)
+    public function setFactory(FactoryEntity $factory = null)
     {
         $this->factory = $factory;
 
@@ -210,7 +210,7 @@ class ArchiveEntryEntity
 
     /**
      * Get factory
-     * @return \AppBundle\Entity\FactoryEntity
+     * @return FactoryEntity
      */
 
     public function getFactory()
@@ -221,11 +221,11 @@ class ArchiveEntryEntity
 
     /**
      * Set setting
-     * @param \AppBundle\Entity\SettingEntity $setting
+     * @param SettingEntity $setting
      * @return ArchiveEntryEntity
      */
 
-    public function setSetting(\AppBundle\Entity\SettingEntity $setting = null)
+    public function setSetting(SettingEntity $setting = null)
     {
         $this->setting = $setting;
 
@@ -431,17 +431,15 @@ class ArchiveEntryEntity
      */
     public function __construct()
     {
-        $this->cataloguePath = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->cataloguePath = new ArrayCollection();
     }
 
     /**
      * Add cataloguePath
-     *
-     * @param \AppBundle\Entity\FolderEntity $cataloguePath
-     *
+     * @param FolderEntity $cataloguePath
      * @return ArchiveEntryEntity
      */
-    public function addCataloguePath(\AppBundle\Entity\FolderEntity $cataloguePath)
+    public function addCataloguePath(FolderEntity $cataloguePath)
     {
         $this->cataloguePath[] = $cataloguePath;
 
@@ -450,19 +448,16 @@ class ArchiveEntryEntity
 
     /**
      * Remove cataloguePath
-     *
-     * @param \AppBundle\Entity\FolderEntity $cataloguePath
+     * @param FolderEntity $cataloguePath
      */
-    public function removeCataloguePath(\AppBundle\Entity\FolderEntity $cataloguePath)
+    public function removeCataloguePath(FolderEntity $cataloguePath)
     {
         $this->cataloguePath->removeElement($cataloguePath);
     }
 
     /**
      * Set deletedByUserId
-     *
      * @param string $deletedByUserId
-     *
      * @return ArchiveEntryEntity
      */
     public function setDeletedByUserId($deletedByUserId)
@@ -474,7 +469,6 @@ class ArchiveEntryEntity
 
     /**
      * Get deletedByUserId
-     *
      * @return string
      */
     public function getDeletedByUserId()
@@ -484,9 +478,7 @@ class ArchiveEntryEntity
 
     /**
      * Set slug
-     *
      * @param string $slug
-     *
      * @return ArchiveEntryEntity
      */
     public function setSlug($slug)
@@ -498,7 +490,6 @@ class ArchiveEntryEntity
 
     /**
      * Get slug
-     *
      * @return string
      */
     public function getSlug()
@@ -508,9 +499,7 @@ class ArchiveEntryEntity
 
     /**
      * Set sumErrors
-     *
      * @param integer $sumErrors
-     *
      * @return ArchiveEntryEntity
      */
     public function setSumErrors($sumErrors)
@@ -522,7 +511,6 @@ class ArchiveEntryEntity
 
     /**
      * Get sumErrors
-     *
      * @return integer
      */
     public function getSumErrors()
