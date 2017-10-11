@@ -85,7 +85,7 @@ $(document).ready(function () {
                     success: function (response) {
                         contentPlace.html($(response));
                         loadLastUpdateInfo(entryId, null);
-                        var folderId = contentPlace.find('#rootEntry').children('ul').attr('id');
+                        var folderId = contentPlace.find('#rootEntry').children('td').attr('id');
                         openFolder(folderId);
                         contentPlace.show();
                     }
@@ -106,29 +106,31 @@ $(document).ready(function () {
 
         function openFolder(folderId) {
             var folderContent = $('#folderContent_' + folderId);
+            var fileContent = $('#fileContent_' + folderId);
             if ($(folderContent).is(":hidden")) {
                 $.ajax({
                     url: "/new/web/app_dev.php/lencor_entries/view_folders",
                     method: "POST",
                     data: {folderId: folderId},
                     success: function (response) {
-                        folderContent.html($(response));
+                        folderContent.html(response);
                         loadLastUpdateInfo(null, folderId);
-                        $.ajax({
-                            url: "/new/web/app_dev.php/lencor_entries/view_files",
-                            method: "POST",
-                            data: {folderId: folderId},
-                            success: function (response) {
-                                var foldersList = folderContent.children('ul');
-                                foldersList.append(response);
-                            }
-                        });
-                        folderContent.show();
                     }
                 });
+                $.ajax({
+                    url: "/new/web/app_dev.php/lencor_entries/view_files",
+                    method: "POST",
+                    data: {folderId: folderId},
+                    success: function (response) {
+                        fileContent.html(response);
+                    }
+                });
+                folderContent.show();
+                fileContent.show();
             }
             else {
-                $(folderContent).hide();
+                folderContent.hide();
+                fileContent.hide();
             }
             return false;
         }
@@ -201,7 +203,7 @@ $(document).ready(function () {
                             contentType: false,
                             success: function () {
                                 uploadFileBlock.hide();
-                                folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
+                                var folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
                                 var folderContent = $('#folderContent_' + folderId);
                                 /** Reload folder view order **/
                                 $.ajax({

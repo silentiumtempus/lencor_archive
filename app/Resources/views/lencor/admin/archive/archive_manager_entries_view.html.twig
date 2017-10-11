@@ -20,11 +20,14 @@
             </ul>
         </td>
     </tr>
-    <tr class="row-content">
-        <td id="rootEntry" class="entry-content-container" colspan="3">
+    <tr id="rootEntry" class="row-content">
+        <td id="{{ folderId }}" class="entry-content-container" colspan="3">
             {% endif %}
-            <ul id="{{ folderId }}" class="fa-ul entry-content-container entry-content-folders-block">
+            <ul id="folderContent_{{ folderId }}" class="fa-ul">
                 <li style="display: none" id="folderContent_{{ folderId }}"></li>
+            </ul>
+            <ul id="fileContent_{{ folderId }}" class="fa-ul">
+                <li style="display: none" id="fileContent_{{ folderId }}"></li>
             </ul>
         </td>
     </tr>
