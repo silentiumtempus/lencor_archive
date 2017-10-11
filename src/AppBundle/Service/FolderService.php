@@ -203,10 +203,10 @@ class FolderService
             if (!$fs->exists($pathEntry)) {
                 $fs->mkdir($pathEntry, $this->pathPermissions);
             } else {
-                $this->container->addFlash('warning', 'Внимание: директория для новой ячейки: ' . $pathEntry . ' уже существует');
+                $this->container->get('session')->getFlashBag()->add('warning', 'Внимание: директория для новой ячейки: ' . $pathEntry . ' уже существует');
             }
         } catch (IOException $IOException) {
-            $this->container->addFlash('danger', 'Ошибка создания директории: ' . $IOException->getMessage());
+            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка создания директории: ' . $IOException->getMessage());
         }
 
         return $pathEntry;
