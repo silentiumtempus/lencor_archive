@@ -162,10 +162,18 @@ $(document).ready(function () {
                                 createFolderBlock.hide();
                                 var folderId = $folderAddForm.find('select[id="folder_add_form_parentFolder"]').val();
                                 var folderContent = $('#folderContent_' + folderId);
-                                folderContent.hide();
                                 /** Reload folder view order **/
-                                openFolder(folderId);
-                                /** Load flash messages **/
+                                $.ajax({
+                                    url: "/new/web/app_dev.php/lencor_entries/view_folders",
+                                    method: searchForm.attr('method'),
+                                    data: {folderId: folderId},
+                                    success: function (reloadResponse) {
+                                        folderContent.hide();
+                                        folderContent.html(reloadResponse);
+                                        folderContent.show();
+                                        loadLastUpdateInfo(null, folderId);
+                                    }
+                                });
                                 loadFlashMessages();
                             }
                         });
@@ -204,17 +212,16 @@ $(document).ready(function () {
                             success: function () {
                                 uploadFileBlock.hide();
                                 var folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
-                                var folderContent = $('#folderContent_' + folderId);
+                                var fileContent = $('#fileContent_' + folderId);
                                 /** Reload folder view order **/
                                 $.ajax({
                                     url: "/new/web/app_dev.php/lencor_entries/view_files",
                                     method: searchForm.attr('method'),
                                     data: {folderId: folderId},
                                     success: function (reloadResponse) {
-                                        folderContent.hide();
-                                        var foldersList = folderContent.children('ul');
-                                        foldersList.html(reloadResponse);
-                                        folderContent.show();
+                                        fileContent.hide();
+                                        fileContent.html(reloadResponse);
+                                        fileContent.show();
                                         loadLastUpdateInfo(null, folderId);
                                     }
                                 });
