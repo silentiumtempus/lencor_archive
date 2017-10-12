@@ -3,13 +3,12 @@ $(document).ready(function () {
     } else {
 
         /** Do not touch this **/
-        var path = $("#main-table").attr("data-path");
-        var $factory = $('#archive_entry_search_form_factory');
-        var searchForm = $("#archive_entry_search_form");
-        var createFolderBlock = $("#addFolder");
-        var uploadFileBlock = $("#addFile");
-        var downloadFileBlock = $("#downloadFile");
-
+        let path = $("#main-table").attr("data-path");
+        let $factory = $('#archive_entry_search_form_factory');
+        let searchForm = $("#archive_entry_search_form");
+        let createFolderBlock = $("#addFolder");
+        let uploadFileBlock = $("#addFile");
+        let downloadFileBlock = $("#downloadFile");
         /** Seriously, it'a a bad idea  :) **/
 
         /** Archive entries main table factory->settings AJAX loader **/
@@ -34,8 +33,8 @@ $(document).ready(function () {
 
         $("#archive_entry_search_form").on("submit", function searchAction(event) {
             event.preventDefault();
-            var fields = searchForm.serializeArray();
-            var values = {};
+            let fields = searchForm.serializeArray();
+            let values = {};
             jQuery.each(fields, function (i, field) {
                 values[field.name] = field.value;
             });
@@ -75,8 +74,8 @@ $(document).ready(function () {
         $(document).on("click", "a[name='entryid']", openEntryContents);
 
         function openEntryContents() {
-            var entryId = $(this).parent().attr("id");
-            var contentPlace = $('#entryContent_' + entryId);
+            let entryId = $(this).parent().attr("id");
+            let contentPlace = $('#entryContent_' + entryId);
             if ($(contentPlace).is(":hidden")) {
                 $.ajax({
                     url: "/new/web/app_dev.php/lencor_entries_view",
@@ -85,7 +84,7 @@ $(document).ready(function () {
                     success: function (response) {
                         contentPlace.html($(response));
                         loadLastUpdateInfo(entryId, null);
-                        var folderId = contentPlace.find('#rootEntry').children('td').attr('id');
+                        let folderId = contentPlace.find('#rootEntry').children('td').attr('id');
                         openFolder(folderId);
                         contentPlace.show();
                     }
@@ -105,8 +104,8 @@ $(document).ready(function () {
         });
 
         function openFolder(folderId) {
-            var folderContent = $('#folderContent_' + folderId);
-            var fileContent = $('#fileContent_' + folderId);
+            let folderContent = $('#folderContent_' + folderId);
+            let fileContent = $('#fileContent_' + folderId);
             if ($(folderContent).is(":hidden")) {
                 $.ajax({
                     url: "/new/web/app_dev.php/lencor_entries/view_folders",
@@ -140,7 +139,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="addFolder"]', createFolder);
 
         function createFolder() {
-            var entryId = $(this).attr("id");
+            let entryId = $(this).attr("id");
             /** Load folder creation form **/
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_entries/new_folder",
@@ -149,10 +148,10 @@ $(document).ready(function () {
                 success: function (loadFormResponse) {
                     createFolderBlock.html($(loadFormResponse));
                     createFolderBlock.show();
-                    var $folderAddForm = createFolderBlock.find('#folder_add_form');
+                    let $folderAddForm = createFolderBlock.find('#folder_add_form');
                     $folderAddForm.on("submit", function createFolder(event) {
                         event.preventDefault();
-                        var folderSerialized = $folderAddForm.serialize();
+                        let folderSerialized = $folderAddForm.serialize();
                         /** Submit new folder **/
                         $.ajax({
                             url: "/new/web/app_dev.php/lencor_entries/new_folder",
@@ -160,14 +159,16 @@ $(document).ready(function () {
                             data: folderSerialized,
                             success: function () {
                                 createFolderBlock.hide();
-                                var folderId = $folderAddForm.find('select[id="folder_add_form_parentFolder"]').val();
-                                var folderContent = $('#folderContent_' + folderId);
+                                let folderId = $folderAddForm.find('select[id="folder_add_form_parentFolder"]').val();
+                                let folderContent = $('#folderContent_' + folderId);
                                 /** Reload folder view order **/
                                 $.ajax({
                                     url: "/new/web/app_dev.php/lencor_entries/view_folders",
                                     method: searchForm.attr('method'),
                                     data: {folderId: folderId},
                                     success: function (reloadResponse) {
+                                        // @TODO: create proper design
+                                        openFolder(folderId);
                                         folderContent.hide();
                                         folderContent.html(reloadResponse);
                                         folderContent.show();
@@ -188,7 +189,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="addFile"]', uploadFile);
 
         function uploadFile() {
-            var entryId = $(this).attr("id");
+            let entryId = $(this).attr("id");
             /** Load file upload form **/
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_entries/new_file",
@@ -197,11 +198,11 @@ $(document).ready(function () {
                 success: function (loadFormResponse) {
                     uploadFileBlock.html($(loadFormResponse));
                     uploadFileBlock.show();
-                    var $fileAddForm = uploadFileBlock.find('#file_add_form');
+                    let $fileAddForm = uploadFileBlock.find('#file_add_form');
                     $fileAddForm.on("submit", function uploadFile(event) {
                         event.preventDefault();
                         //var fileSerialized = $fileAddForm.serialize();
-                        var fileSerialized = new FormData($(this)[0]);
+                        let fileSerialized = new FormData($(this)[0]);
                         /** Submit new file **/
                         $.ajax({
                             url: "/new/web/app_dev.php/lencor_entries/new_file",
@@ -211,14 +212,16 @@ $(document).ready(function () {
                             contentType: false,
                             success: function () {
                                 uploadFileBlock.hide();
-                                var folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
-                                var fileContent = $('#fileContent_' + folderId);
+                                let folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
+                                let fileContent = $('#fileContent_' + folderId);
                                 /** Reload folder view order **/
                                 $.ajax({
                                     url: "/new/web/app_dev.php/lencor_entries/view_files",
                                     method: searchForm.attr('method'),
                                     data: {folderId: folderId},
                                     success: function (reloadResponse) {
+                                        // @TODO: create proper design
+                                        openFolder(folderId);
                                         fileContent.hide();
                                         fileContent.html(reloadResponse);
                                         fileContent.show();
@@ -240,7 +243,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="downloadFile"]', downloadFile);
 
         function downloadFile() {
-            var fileId = $(this).attr("id");
+            let fileId = $(this).attr("id");
             /** Load file download block **/
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_entries/download_file",
@@ -293,7 +296,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="removeFile"]', removeFile);
 
         function removeFile() {
-            var fileId = $(this).attr("id");
+            let fileId = $(this).attr("id");
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_entries/remove_file",
                 method: "POST",
@@ -310,7 +313,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="restoreFile"]', restoreFile);
 
         function restoreFile() {
-            var fileId = $(this).attr("id");
+            let fileId = $(this).attr("id");
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_entries/restore_file",
                 method: "POST",
@@ -327,8 +330,8 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="removeFolder"]', removeFolder);
 
         function removeFolder() {
-            var folderId = $(this).attr("id");
-            var folderContent = $('#folderContent_' + folderId);
+            let folderId = $(this).attr("id");
+            let folderContent = $('#folderContent_' + folderId);
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_entries/remove_folder",
                 method: "POST",
@@ -347,7 +350,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="restoreFolder"]', restoreFolder);
 
         function restoreFolder() {
-            var folderId = $(this).attr("id");
+            let folderId = $(this).attr("id");
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_entries/restore_folder",
                 method: "POST",
