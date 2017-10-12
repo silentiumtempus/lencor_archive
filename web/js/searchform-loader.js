@@ -14,7 +14,7 @@ $(document).ready(function () {
         /** Archive entries main table factory->settings AJAX loader **/
 
         $factory.on("change", function settingsLoadAction() {
-            var data = {};
+            let data = {};
             data[$factory.attr('name')] = $factory.val();
             $.ajax({
                 url: path,
@@ -169,8 +169,8 @@ $(document).ready(function () {
                                     data: {folderId: folderId},
                                     success: function (reloadResponse) {
                                         // @TODO: create proper design
-                                        openFolder(folderId);
                                         folderContent.hide();
+                                        openFolder(folderId);
                                         folderContent.html(reloadResponse);
                                         folderContent.show();
                                         loadLastUpdateInfo(null, folderId);
@@ -362,7 +362,6 @@ $(document).ready(function () {
             });
             return false;
         }
-
 
         /** Popup window close **/
 

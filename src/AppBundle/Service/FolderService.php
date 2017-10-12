@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\Form;
 
 /**
  * Class FolderService
@@ -101,14 +102,14 @@ class FolderService
     }
 
     /**
-     * @param FolderEntity $newFolderEntity
-     * @param FolderEntity $parentFolder
+     * @param Form $folderAddForm
      * @param User $user
      * @return FolderEntity
      */
-    public function prepareNewFolder(FolderEntity $newFolderEntity, FolderEntity $parentFolder, User $user)
+    public function prepareNewFolder(Form $folderAddForm, User $user)
     {
-        $parentFolder = $this->getParentFolder($parentFolder);
+        $newFolderEntity = $folderAddForm->getData();
+        $parentFolder = $this->foldersRepository->findOneById($folderAddForm->get('parentFolder')->getViewData());
         $newFolderEntity->setParentFolder($parentFolder)
             ->setAddedByUserId($user->getId())
             ->setDeleteMark(false)
