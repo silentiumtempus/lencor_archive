@@ -17,24 +17,24 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 3. Check project folder permissions, it's implied that apache and composer are able to write in this directory, so perform needful **chmod** and **chown** operations if required.
 
-3. Update the **parameters.yml.dist** file replacing values with your enviroment configuration parameters.
+4. Update the **parameters.yml.dist** file replacing values with your enviroment configuration parameters.
 
-3. run "**composer install**" (in case of failure during cache:clear operation you may ignore it).
+5. run "**composer install**" (in case of failure during cache:clear operation you may ignore it).
 
-4. run "**php bin/console doctrine:schema:create**" to initialie db structure in new schema.
+6. run "**php bin/console doctrine:schema:create**" to initialie db structure in new schema.
 
-5. run "**fos:elastica:populate**" to populate application search cache.
+7. run "**fos:elastica:populate**" to populate application search cache.
 
-5. run "**php bin/console cache:clear**".
+8. run "**php bin/console cache:clear**".
 
-6. run "**composer update**".
+9. run "**composer update**".
 
-7. run "**php bin/console fos:user:create**" to create an internal application user.
+10. run "**php bin/console fos:user:create**" to create an internal application user.
 
-8. Check the website index page at:
+11. Check the website index page at:
  - http://website.url/web/app_dev.php/welcome_index for dev environment
  - http://website.url/web/app.php/welcome_index for prod environment
 
-9. Enjoy!
+12. Enjoy!
 
 You need to be authorized to perform operations, for this use the Login button at the right-top of the application screen.
