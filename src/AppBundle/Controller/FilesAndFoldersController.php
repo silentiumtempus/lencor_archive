@@ -49,10 +49,7 @@ class FilesAndFoldersController extends Controller
         if ($folderAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($folderAddForm->isValid()) {
                 try {
-                    $newFolderEntity = $folderAddForm->getData();
-                    $parentFolder = $folderRepository->findOneById($folderAddForm->get('parentFolder')->getViewData());
-                    $newFolderEntity = $folderService->prepareNewFolder($newFolderEntity, $parentFolder, $user);
-
+                    $newFolderEntity = $folderService->prepareNewFolder($folderAddForm, $user);
                     $fileSystem = new Filesystem();
                     $newFolderAbsPath = $this->getParameter('lencor_archive.storage_path');
                     $pathPermissions = $this->getParameter('lencor_archive.storage_permissions');
@@ -61,7 +58,7 @@ class FilesAndFoldersController extends Controller
 
                     if ($fileSystem->exists($newFolderAbsPath)) {
                         try {
-                            $binaryPath = $folderRepository->getPath($parentFolder);
+                            $binaryPath = $folderRepository->getPath($newFolderEntity->getParentFolder());
                             foreach ($binaryPath as $folderName) {
                                 $newFolderAbsPath .= "/" . $folderName;
                                 if (!$fileSystem->exists($newFolderAbsPath)) {
