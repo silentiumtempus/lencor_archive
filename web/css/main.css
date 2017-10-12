@@ -513,8 +513,13 @@ body#admin_post_new .new_setting {
 .entry-content-block-border-left {
     border-left: 1px dashed silver;
 }
-.entry-content-block-border-bottom {
+
+.en try-content-block-border-bottom {
     border-bottom: 1px dashed silver;
+}
+
+.entry-content-block-border-top {
+    border-top: 1px dashed silver;
 }
 
 .entry-content-row {
