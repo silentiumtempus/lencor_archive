@@ -94,11 +94,13 @@ class FolderService
      */
     public function prepareNewRootFolder(FolderEntity $newFolderEntity, ArchiveEntryEntity $newEntry, $userId)
     {
-        $newFolderEntity->setArchiveEntry($newEntry);
-        $newFolderEntity->setFolderName($newEntry->getYear() . "/" . $newEntry->getFactory()->getId() . "/" . $newEntry->getArchiveNumber());
-        $newFolderEntity->setAddedByUserId($userId);
-        $newFolderEntity->setDeleteMark(false);
-        $newFolderEntity->setDeletedByUserId(null);
+        $newFolderEntity
+            ->setArchiveEntry($newEntry)
+            ->setFolderName($newEntry->getYear() . "/" . $newEntry->getFactory()->getId() . "/" . $newEntry->getArchiveNumber())
+            ->setAddedByUserId($userId)
+            ->setDeleteMark(false)
+            ->setDeletedByUserId(null)
+            ->setSlug(null);
     }
 
     /**

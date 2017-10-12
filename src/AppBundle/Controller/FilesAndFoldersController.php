@@ -290,6 +290,7 @@ class FilesAndFoldersController extends Controller
      * @return Response
      * @Route("/lencor_entries/last_update_info", name="lencor_entries_last_update_info")
      */
+
     public function loadLastUpdateInfo(Request $request, ArchiveEntryService $archiveEntryService)
     {
         $lastUpdateInfo = $archiveEntryService->loadLastUpdateInfo($request);

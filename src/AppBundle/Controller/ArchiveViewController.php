@@ -87,6 +87,22 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
+     * @param FileService $fileService
+     * @return Response
+     * @Route("/lencor_entries/reload_file", name="lencor_entries_reload_file")
+     */
+    public function changeFileStatus(Request $request, FileService $fileService)
+    {
+        $fileList = array();
+        if ($request->request->has('fileId')) {
+            $fileList[0] = $fileService->reloadFileDetails($request->request->get('fileId'));
+        }
+
+        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $fileList));
+    }
+
+    /**
+     * @param Request $request
      * @param FolderService $folderService
      * @return Response
      * @Route("/lencor_entries_view", name="lencor_entries_view")

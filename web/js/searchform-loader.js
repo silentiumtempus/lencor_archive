@@ -255,6 +255,15 @@ $(document).ready(function () {
                     downloadFileBlock.show();
                 }
             });
+            let fileInfo = $('#file_' + fileId);
+            $.ajax({
+                url: "/new/web/app_dev.php/lencor_entries/reload_file",
+                method: "POST",
+                data: {fileId: fileId},
+                success: function (reloadFileInfo) {
+                    fileInfo.replaceWith(reloadFileInfo);
+                }
+            });
             return false;
         }
 

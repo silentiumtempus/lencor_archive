@@ -171,6 +171,15 @@ class FileService
      */
     public function showEntryFiles($folderId)
     {
-        return $fileList = $this->filesRepository->findByParentFolder($folderId);
+        return $this->filesRepository->findByParentFolder($folderId);
+    }
+
+    /**
+     * @param $fileId
+     * @return mixed
+     */
+    public function reloadFileDetails($fileId)
+    {
+        return $this->filesRepository->findOneById($fileId);
     }
 }
