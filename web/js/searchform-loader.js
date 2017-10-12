@@ -1,11 +1,11 @@
 $(document).ready(function () {
     if (!window.jQuery) {
     } else {
-
         /** Do not touch this **/
         let path = $("#main-table").attr("data-path");
         let $factory = $('#archive_entry_search_form_factory');
         let searchForm = $("#archive_entry_search_form");
+        let resetButton = $("#archive_entry_search_form_resetButton");
         let createFolderBlock = $("#addFolder");
         let uploadFileBlock = $("#addFile");
         let downloadFileBlock = $("#downloadFile");
@@ -31,7 +31,7 @@ $(document).ready(function () {
 
         /** Archive entries main table content AJAX loader **/
 
-        $("#archive_entry_search_form").on("submit", function searchAction(event) {
+        searchForm.on("submit", function searchAction(event) {
             event.preventDefault();
             let fields = searchForm.serializeArray();
             let values = {};
@@ -53,7 +53,7 @@ $(document).ready(function () {
 
         /** Archive entries main table search form reset to default stdout AJAX loader **/
 
-        $("#archive_entry_search_form_resetButton").on("click", function resetAction() {
+        resetButton.on("click", function resetAction() {
             searchForm.trigger('reset');
             $.ajax({
                 url: path,
@@ -99,7 +99,8 @@ $(document).ready(function () {
         /** Archive entries content navigation **/
 
         $(document).on("click", "a[name='openFolder']", function () {
-            openFolder(folderId = $(this).attr("id"));
+            let folderId = $(this).attr("id");
+            openFolder(folderId);
             return false;
         });
 
