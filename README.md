@@ -21,7 +21,7 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 5. run "**composer install**" (in case of failure during cache:clear operation you may ignore it).
 
-6. run "**php bin/console doctrine:schema:create**" to initialie db structure in new schema.
+6. run "**php bin/console doctrine:schema:create**" to initialize db structure in new schema.
 
 7. run "**fos:elastica:populate**" to populate application search cache.
 
