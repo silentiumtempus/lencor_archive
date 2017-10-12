@@ -23,6 +23,7 @@
             {% endif %}
         </td>
     </tr>
+    <tr>
     <td colspan="2">
         Ссылка на скачивание: <br> {{ downloadLink }}
     </td>
@@ -30,9 +31,10 @@
     <tr>
         <td colspan="2">
             {% if checkPass %}
-            <a href="{{ downloadLink }}" download>Загрузить документ</a></td>
-        {% else %}
-            Файл отсутствует или повреждён. Загрузка недоступна.
-        {% endif %}
+                <a href="{{ downloadLink }}" download>Загрузить документ</a>
+            {% else %}
+                Файл отсутствует или повреждён. Загрузка недоступна.
+            {% endif %}
+        </td>
     </tr>
 </table>
