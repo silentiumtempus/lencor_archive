@@ -15,7 +15,7 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 2. cd to downloaded project folder.
 
-3. Check project folder permissions, it's implied that apache and composer are able to write in this directory, so perform necessary **chmod** and **chown** operations if necessary.
+3. Check project folder permissions, it's implied that apache and composer are able to write in this directory, so perform needful **chmod** and **chown** operations if required.
 
 3. Update the **parameters.yml.dist** file replacing values with your enviroment configuration parameters.
 
