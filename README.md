@@ -23,7 +23,7 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 6. run "**php bin/console doctrine:schema:create**" to initialize db structure in new schema.
 
-7. run "**fos:elastica:populate**" to populate application search cache.
+7. run "**php bin/console fos:elastica:populate**" to populate application search cache.
 
 8. run "**php bin/console cache:clear**".
 
