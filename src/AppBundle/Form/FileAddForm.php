@@ -4,7 +4,6 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\FileEntity;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -15,15 +14,24 @@ use Yavin\Symfony\Form\Type\TreeType;
 class FileAddForm extends AbstractType
 {
     protected $em;
+    protected $folderRepository;
 
+    /**
+     * FileAddForm constructor.
+     * @param EntityManagerInterface $em
+     */
     function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+        $this->folderRepository = $this->em->getRepository('AppBundle:FolderEntity');
     }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        //$folderId = '2';
-        $folderId = $options['attr']['folderId'];
         $builder
             ->add('parentFolder', TreeType::class, array(
                 'class' => 'AppBundle:FolderEntity',
@@ -34,12 +42,7 @@ class FileAddForm extends AbstractType
                 'orderFields' => ['lft' => 'asc'],
                 'prefixAttributeName' => 'data-level-prefix',
                 'treeLevelField' => 'lvl',
-                'query_builder' => function(EntityRepository $repository) use ($folderId) {
-                    $parentFolder = $repository->createQueryBuilder('parent')
-                        ->where('parent.root = :folderId')->setParameter(':folderId', $folderId)
-                        ->orderBy('parent.lft', 'ASC');
-                    return $parentFolder;
-                }
+                'query_builder' => $this->folderRepository->getEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
             ))
             ->add ('fileName', FileType::class, array(
                 'label' => 'file.fileName',
@@ -47,6 +50,10 @@ class FileAddForm extends AbstractType
             ))
             ->add('submitButton', SubmitType::class, array('label' => 'file.add'));
     }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

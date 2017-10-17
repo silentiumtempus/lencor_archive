@@ -21,7 +21,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *      columns={"folder_name", "parent_folder_id"}
  *     )
  * }),
- * @ORM\Entity(repositoryClass="Gedmo\Tree\Entity\Repository\NestedTreeRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\FolderRepository")
  * @Gedmo\Loggable(logEntryClass="AppBundle\Entity\LogEntity\FolderLog")
  */
 class FolderEntity

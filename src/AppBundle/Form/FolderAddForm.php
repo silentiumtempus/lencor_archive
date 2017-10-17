@@ -15,15 +15,25 @@ use Yavin\Symfony\Form\Type\TreeType;
 class FolderAddForm extends AbstractType
 {
     protected $em;
+    protected $folderRepository;
 
+    /**
+     * FolderAddForm constructor.
+     * @param EntityManagerInterface $em
+     *
+     */
     function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+        $this->folderRepository = $this->em->getRepository('AppBundle:FolderEntity');
     }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        //$folderId = '2';
-        $folderId = $options['attr']['folderId'];
         $builder
             ->add('parentFolder', TreeType::class, array(
                 'class' => 'AppBundle:FolderEntity',
@@ -34,13 +44,7 @@ class FolderAddForm extends AbstractType
                 'orderFields' => ['lft' => 'asc'],
                 'prefixAttributeName' => 'data-level-prefix',
                 'treeLevelField' => 'lvl',
-                'query_builder' => function(EntityRepository $repository) use ($folderId) {
-
-                    $parentFolder = $repository->createQueryBuilder('parent')
-                        ->where('parent.root = :folderId')->setParameter(':folderId', $folderId)
-                        ->orderBy('parent.lft', 'ASC');
-                    return $parentFolder;
-                }
+                'query_builder' => $this->folderRepository->getEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
             ))
 
             ->add ('folderName', TextType::class, array(
@@ -49,6 +53,10 @@ class FolderAddForm extends AbstractType
             ))
             ->add('submitButton', SubmitType::class, array('label' => 'folder.add'));
     }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

@@ -5,7 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FactoryEntity;
 use AppBundle\Service\SettingService;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
@@ -26,10 +26,10 @@ class ArchiveEntrySearchForm extends AbstractType
 
     /**
      * ArchiveEntrySearchForm constructor.
-     * @param EntityManager $em
+     * @param EntityManagerInterface $em
      * @param SettingService $settingService
      */
-    function __construct(EntityManager $em, SettingService $settingService)
+    function __construct(EntityManagerInterface $em, SettingService $settingService)
     {
         $this->em = $em;
         $this->settingService = $settingService;

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Expr\Join;
@@ -10,13 +11,14 @@ class ArchiveEntryRepository extends EntityRepository
 {
     protected $em;
     protected $queryBuilder;
+    protected $class;
 
     /**
      * ArchiveEntryRepository constructor.
-     * @param \Doctrine\ORM\EntityManager $em
+     * @param EntityManager $em
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class
      */
-    public function __construct($em, ClassMetadata $class)
+    public function __construct(EntityManager $em, ClassMetadata $class)
     {
         parent::__construct($em, $class);
         $this->em = $em;
