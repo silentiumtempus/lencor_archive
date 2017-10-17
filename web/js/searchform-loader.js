@@ -170,7 +170,7 @@ $(document).ready(function () {
                                     success: function (reloadResponse) {
                                         // @TODO: create proper design
                                         folderContent.hide();
-                                        openFolder(folderId);
+                                        //openFolder(folderId);
                                         folderContent.html(reloadResponse);
                                         folderContent.show();
                                         loadLastUpdateInfo(null, folderId);
@@ -214,6 +214,7 @@ $(document).ready(function () {
                             success: function () {
                                 uploadFileBlock.hide();
                                 let folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
+                                let folderContent = $('#folderContent_' + folderId);
                                 let fileContent = $('#fileContent_' + folderId);
                                 /** Reload folder view order **/
                                 $.ajax({
@@ -222,8 +223,9 @@ $(document).ready(function () {
                                     data: {folderId: folderId},
                                     success: function (reloadResponse) {
                                         // @TODO: create proper design
-                                        openFolder(folderId);
                                         fileContent.hide();
+                                        //folderContent.hide();
+                                        //openFolder(folderId);
                                         fileContent.html(reloadResponse);
                                         fileContent.show();
                                         loadLastUpdateInfo(null, folderId);
