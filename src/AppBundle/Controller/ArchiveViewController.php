@@ -66,7 +66,7 @@ file_put_contents($file, $wr); */
             $folderTree = $folderService->showEntryFolder($request->request->get('folderId'));
         }
 
-        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('entryId' => $entryId, 'folderTree' => $folderTree));
+        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('entryId' => $entryId, 'folderTree' => $folderTree, 'placeholder' => true));
     }
 
     /**

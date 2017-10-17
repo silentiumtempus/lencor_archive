@@ -1,3 +1,4 @@
+{% if placeholder is defined %}
 <li class="entry-content-row entry-content-block-border-left entry-content-block-border-top">
     <span><a href="#"><i class="fa fa-ellipsis-h"> </i></a></span>
     <span></span>
@@ -5,6 +6,7 @@
     <span></span>
     <span></span>
 </li>
+{% endif %}
 {% if (folderTree is not empty) %}
     {% for folder in folderTree %}
         <li id="folder_{{ folder.id }}" class="entry-content-block {% if folder.deleteMark !=0 %} entry-content-file-deleted {% endif %}">
