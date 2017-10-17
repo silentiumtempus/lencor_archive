@@ -4,7 +4,8 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FactoryEntity;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Service\SettingService;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -19,12 +20,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ArchiveEntryAddForm extends AbstractType
 {
     protected $em;
+    protected $settingService;
 
-    function __construct(EntityManagerInterface $em)
+    /**
+     * ArchiveEntryAddForm constructor.
+     * @param EntityManager $em
+     * @param SettingService $settingService
+     */
+    function __construct(EntityManager $em, SettingService $settingService)
     {
         $this->em = $em;
+        $this->settingService = $settingService;
     }
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -44,15 +56,18 @@ class ArchiveEntryAddForm extends AbstractType
             $settingsList = array();
 
             if ($factory) {
-                $repository = $this->em->getRepository('AppBundle:SettingEntity');
-                $settingsList = $repository->findByFactory($factory, array('id' => 'asc'));
+                $settingsList = $this->settingService->findSettingsByFactory($factory);
+                $status = false;
+            } else {
+                $status = true;
             }
 
             $builder->add('setting', EntityType::class, array(
                 'class' => 'AppBundle:SettingEntity',
                 'choices' => $settingsList,
                 'label' => 'label.setting',
-                'placeholder' => 'Выберите установку'
+                'placeholder' => 'Выберите установку',
+                'disabled' => $status
             ));
         };
 
@@ -78,11 +93,14 @@ class ArchiveEntryAddForm extends AbstractType
             ->add('registerNumber', TextType::class, array('label' => 'label.register_number', 'attr' => array('size' => 30), 'required' => false))
             ->add('contractNumber', TextType::class, array('label' => 'label.contract_number', 'attr' => array('size' => 30)))
             ->add('fullConclusionName', TextType::class, array('label' => 'label.conclusion_fullname', 'attr' => array('size' => 30)))
-
             ->add('submitButton', SubmitType::class, array('label' => 'Добавить запись'));
-
     }
 
+    /**
+     * @param $min
+     * @param string $max
+     * @return array
+     */
     private function getYears($min, $max = 'current')
     {
         $years = range(($max === 'current' ? date('Y') : $max), $min);
@@ -90,6 +108,9 @@ class ArchiveEntryAddForm extends AbstractType
         return array_combine($years, $years);
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

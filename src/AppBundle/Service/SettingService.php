@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class SettingService
 {
     protected $em;
+    protected $settingsRepository;
 
     /**
      * SettingService constructor.
@@ -20,6 +21,7 @@ class SettingService
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
+        $this->settingsRepository = $this->em->getRepository('AppBundle:SettingEntity');
     }
 
     /**
@@ -29,5 +31,10 @@ class SettingService
     {
         $this->em->persist($newSetting);
         $this->em->flush();
+    }
+
+    public function findSettingsByFactory($factory)
+    {
+       return $this->settingsRepository->findByFactory($factory, array('id' => 'asc'));
     }
 }

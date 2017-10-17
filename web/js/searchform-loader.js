@@ -60,9 +60,9 @@ $(document).ready(function () {
                 method: searchForm.attr('method'),
                 data: null,
                 success: function (response) {
-
                     $('#main-tbody').replaceWith(
                         $(response).find('#main-tbody'));
+                    $('#archive_entry_search_form_setting').attr('disabled', 'disabled');
                     $('#addFolder').hide();
                 }
             });

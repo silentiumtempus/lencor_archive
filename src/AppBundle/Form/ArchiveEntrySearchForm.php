@@ -4,7 +4,8 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FactoryEntity;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Service\SettingService;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
@@ -20,12 +21,24 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ArchiveEntrySearchForm extends AbstractType
 {
     protected $em;
+    protected $status;
+    protected $settingService;
 
-    function __construct(EntityManagerInterface $em)
+    /**
+     * ArchiveEntrySearchForm constructor.
+     * @param EntityManager $em
+     * @param SettingService $settingService
+     */
+    function __construct(EntityManager $em, SettingService $settingService)
     {
         $this->em = $em;
+        $this->settingService = $settingService;
     }
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -45,15 +58,18 @@ class ArchiveEntrySearchForm extends AbstractType
             $settingsList = array();
 
             if ($factory) {
-                $repository = $this->em->getRepository('AppBundle:SettingEntity');
-                $settingsList = $repository->findByFactory($factory, array('id' => 'asc'));
+                $settingsList = $this->settingService->findSettingsByFactory($factory);
+                $status = false;
+            } else {
+                $status = true;
             }
 
             $builder->add('setting', EntityType::class, array(
                 'class' => 'AppBundle:SettingEntity',
                 'choices' => $settingsList,
                 'label' => false,
-                'placeholder' => 'Выберите установку'
+                'placeholder' => 'Выберите установку',
+                'disabled' => $status
             ));
         };
 
@@ -85,12 +101,20 @@ class ArchiveEntrySearchForm extends AbstractType
             ->add('resetButton', ResetType::class, array('label' => 'Сброс'));
     }
 
+    /**
+     * @param $min
+     * @param string $max
+     * @return array
+     */
     private function getYears($min, $max = 'current')
     {
         $years = range(($max === 'current' ? date('Y') : $max), $min);
         return array_combine($years, $years);
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
