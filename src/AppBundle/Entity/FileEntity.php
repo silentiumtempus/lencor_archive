@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use AppBundle\Entity\FolderEntity;
 
 /**
  * Class FileEntity
@@ -36,11 +35,16 @@ class FileEntity
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank
+     * @Gedmo\Versioned()
+     */
+    protected $fileName;
+
+    /**
+     * @Assert\NotBlank
      * @Assert\File
      * @Gedmo\Versioned()
      */
-
-    protected $fileName;
+    protected $files;
 
     /**
      * @ORM\ManyToOne(targetEntity="FolderEntity")
@@ -120,6 +124,27 @@ class FileEntity
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set files
+     * @param array $files
+     * @return FileEntity
+     */
+    public function setFiles($files)
+    {
+        $this->files = $files;
+
+        return $this;
+    }
+
+    /**
+     * Get files
+     * @return array
+     */
+    public function getFiles()
+    {
+        return $this->files;
     }
 
     /**

@@ -149,58 +149,68 @@ class FilesAndFoldersController extends Controller
         if ($fileAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($fileAddForm->isValid()) {
                 try {
+                    $parentFolder = null;
+                    $folderAbsPath = null;
                     $uploadNotFailed = true;
-                    $newFileEntity = $fileAddForm->getData();
-                    //$newFilesArray = $fileAddForm->getData();
-                    $parentFolder = $folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
-                    //foreach ($newFilesArray as $newFileEntity) {
-                    $folderAbsPath = $folderService->constructFolderAbsPath($parentFolder);
-
-                    $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
-                    $fileWithAbsPath = $fileService->constructFileAbsPath($folderAbsPath, $originalName);
-
-                    $fileSystem = new Filesystem();
-                    if (!$fileSystem->exists($fileWithAbsPath)) {
-                        $fileExistedPreviously = false;
-                        try {
-                            $newFileEntity->getFileName()->move($folderAbsPath, $originalName);
-                            $fileService->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
-                            $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
-                            $this->addFlash('success', 'Новый документ записан в директорию ' . $parentFolder);
-                        } catch (\Exception $exception) {
-                            $uploadNotFailed = false;
-                            $this->addFlash('danger', 'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage());
-                            $this->addFlash('danger', 'Загрузка в БД прервана: изменения не внесены.');
-                        }
-                    } else {
-                        $fileExistedPreviously = true;
-                        $this->addFlash('danger', 'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.');
+                    $newFilesArray = $fileAddForm->getData();
+                    try {
+                        $parentFolder = $folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
+                        $folderAbsPath = $folderService->constructFolderAbsPath($parentFolder);
+                    } catch (\Exception $exception)
+                    {
+                        $this->addFlash('danger', "Ошибка создания пути: " . $exception->getMessage());
                     }
-
-                    if ($uploadNotFailed) {
-                        try {
-                            $fileService->persistFile($newFileEntity);
-                            $this->changeLastUpdateInfo($entryId, $archiveEntryService);
-
-                            $this->addFlash('success', 'Ноsый документ добавлен в БД');
-                        } catch (\Exception $exception) {
-                            if ($exception instanceof ConstraintViolationException) {
-                                $this->addFlash('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage());
-                            } else {
-                                $this->addFlash('danger', 'Документ не записан в БД. Ошибка БД: ' . $exception->getMessage());
-                            }
-                            if (!$fileExistedPreviously) {
+                    try {
+                        foreach ($newFilesArray->getFiles() as $newFile) {
+                            $newFileEntity = $fileService->createFileEntityFromArray($newFilesArray, $newFile);
+                            $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
+                            $fileWithAbsPath = $fileService->constructFileAbsPath($folderAbsPath, $originalName);
+                            $fileSystem = new Filesystem();
+                            if (!$fileSystem->exists($fileWithAbsPath)) {
+                                $fileExistedPreviously = false;
                                 try {
-                                    $fileSystem->remove($fileWithAbsPath);
-                                    $this->addFlash('danger', 'Новый документ удалён из директории в связи с ошибкой БД.');
-
-                                } catch (IOException $IOException) {
-                                    $this->addFlash('danger', 'Ошибка файловой системы при удалении загруженного документа: ' . $IOException->getMessage());
-                                };
+                                    $newFileEntity->getFileName()->move($folderAbsPath, $originalName);
+                                    $fileService->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
+                                    $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
+                                    $this->addFlash('success', 'Новый документ записан в директорию ' . $parentFolder);
+                                } catch (\Exception $exception) {
+                                    $uploadNotFailed = false;
+                                    $this->addFlash('danger', 'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage());
+                                    $this->addFlash('danger', 'Загрузка в БД прервана: изменения не внесены.');
+                                }
+                            } else {
+                                $fileExistedPreviously = true;
+                                $this->addFlash('danger', 'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.');
                             }
+
+                            if ($uploadNotFailed) {
+                                try {
+                                    $fileService->persistFile($newFileEntity);
+                                    $this->changeLastUpdateInfo($entryId, $archiveEntryService);
+
+                                    $this->addFlash('success', 'Ноsый документ добавлен в БД');
+                                } catch (\Exception $exception) {
+                                    if ($exception instanceof ConstraintViolationException) {
+                                        $this->addFlash('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage());
+                                    } else {
+                                        $this->addFlash('danger', 'Документ не записан в БД. Ошибка БД: ' . $exception->getMessage());
+                                    }
+                                    if (!$fileExistedPreviously) {
+                                        try {
+                                            $fileSystem->remove($fileWithAbsPath);
+                                            $this->addFlash('danger', 'Новый документ удалён из директории в связи с ошибкой БД.');
+
+                                        } catch (IOException $IOException) {
+                                            $this->addFlash('danger', 'Ошибка файловой системы при удалении загруженного документа: ' . $IOException->getMessage());
+                                        };
+                                    }
+                                }
+                            };
                         }
-                    };
-                    //}
+                    } catch (\Exception $exception)
+                    {
+                        $this->addFlash('danger', "Ошибка загрузки файла(ов) : " . $exception->getMessage());
+                    }
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
                 }

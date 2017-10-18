@@ -44,9 +44,10 @@ class FileAddForm extends AbstractType
                 'treeLevelField' => 'lvl',
                 'query_builder' => $this->folderRepository->getEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
             ))
-            ->add ('fileName', FileType::class, array(
+            ->add ('files', FileType::class, array(
                 'label' => 'file.fileName',
-                'attr' => array('size' => 20)
+                'attr' => array('size' => 20),
+                'multiple' => true
             ))
             ->add('submitButton', SubmitType::class, array('label' => 'file.add'));
     }
