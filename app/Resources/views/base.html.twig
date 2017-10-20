@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>{% block title %}НПО "Ленкор"{% endblock %}</title>
     {% block stylesheets %}
-        {#<link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}"> #}
+        <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/bootstrap-flatly-3.3.7.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/font-lato.css') }}">
@@ -67,8 +67,6 @@
                                 </a>
                             </li>
                         {% endif %}
-                            </ul>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -78,17 +76,17 @@
 
 <div class="{#container#} body-container">
     {% block body %}
-         <div class="row">
-             <div id="sidebar" class="col-sm-9">
-                 {% block sidebar %}
-                 {% endblock %}
-             </div>
-             <div class="col-sm-9" id="main-9" >
-                 {{ include('lencor/default/flash_messages.html.twig') }}
+        <div class="row">
+            <div id="sidebar" class="col-sm-9">
+                {% block sidebar %}
+                {% endblock %}
+            </div>
+            <div class="col-sm-9" id="main-9">
+                {{ include('lencor/default/flash_messages.html.twig') }}
 
-                 {% block main %}{% endblock %}
-             </div>
-         </div>
+                {% block main %}{% endblock %}
+            </div>
+        </div>
     {% endblock %}
 </div>
 
@@ -100,19 +98,19 @@
                 </div>
                 <div id="footer-resources" class="col-md-6">
                     <p>
-                        <a href="https://twitter.com/symfony" title="Symfony Twitter">
+                        <a href="" title="">
                             <i class="fa fa-twitter" aria-hidden="true"></i>
                         </a>
-                        <a href="https://www.facebook.com/SensioLabs" title="SensioLabs Facebook">
+                        <a href="" title="">
                             <i class="fa fa-facebook" aria-hidden="true"></i>
                         </a>
-                        <a href="https://symfony.com/blog/" title="Symfony Blog">
+                        <a href="" title="">
                             <i class="fa fa-rss" aria-hidden="true"></i>
                         </a>
                     </p>
                 </div>
             </div> #}
-        </div>
+            </div>
     </footer>
 {% endblock %}
 
