@@ -121,7 +121,7 @@ class FilesAndFoldersController extends Controller
                 $this->addFlash('danger', 'Такая директория уже существует. Операция прервана');
             }
         }
-        return $this->render('lencor/admin/archive/archive_manager_new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entryId));
+        return $this->render('lencor/admin/archive/archive_manager/new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entryId));
     }
 
     /**
@@ -161,6 +161,8 @@ class FilesAndFoldersController extends Controller
                         $this->addFlash('danger', "Ошибка создания пути: " . $exception->getMessage());
                     }
                     try {
+                        $success = 0;
+                        $errors = [];
                         foreach ($newFilesArray->getFiles() as $newFile) {
                             $newFileEntity = $fileService->createFileEntityFromArray($newFilesArray, $newFile);
                             $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
@@ -173,10 +175,12 @@ class FilesAndFoldersController extends Controller
                                     $fileService->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
                                     $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
                                     $this->addFlash('success', 'Новый документ записан в директорию ' . $parentFolder);
+                                    $success++;
                                 } catch (\Exception $exception) {
                                     $uploadNotFailed = false;
                                     $this->addFlash('danger', 'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage());
                                     $this->addFlash('danger', 'Загрузка в БД прервана: изменения не внесены.');
+                                    $errors[] =  $originalName;
                                 }
                             } else {
                                 $fileExistedPreviously = true;
@@ -188,7 +192,7 @@ class FilesAndFoldersController extends Controller
                                     $fileService->persistFile($newFileEntity);
                                     $this->changeLastUpdateInfo($entryId, $archiveEntryService);
 
-                                    $this->addFlash('success', 'Ноsый документ добавлен в БД');
+                                    $this->addFlash('success', 'Новый документ добавлен в БД');
                                 } catch (\Exception $exception) {
                                     if ($exception instanceof ConstraintViolationException) {
                                         $this->addFlash('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage());
@@ -218,7 +222,7 @@ class FilesAndFoldersController extends Controller
                 $this->addFlash('danger', 'Форма заполнена неверно. Операция не выполнена.');
             }
         }
-        return $this->render('lencor/admin/archive/archive_manager_new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'entryId' => $entryId));
+        return $this->render('lencor/admin/archive/archive_manager/new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'entryId' => $entryId));
     }
 
     /**
@@ -233,7 +237,7 @@ class FilesAndFoldersController extends Controller
     {
         $deletedFile = $fileService->removeFile($request->get('fileId'), $this->getUser()->getid());
 
-        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $deletedFile));
+        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $deletedFile));
     }
 
     /**
@@ -247,7 +251,7 @@ class FilesAndFoldersController extends Controller
     {
         $restoredFile = $fileService->restoreFile($request->get('fileId'));
 
-        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $restoredFile));
+        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $restoredFile));
     }
 
     /**
@@ -262,7 +266,7 @@ class FilesAndFoldersController extends Controller
     {
         $deletedFolder = $folderService->removeFolder($request->get('folderId'), $this->getUser()->getId(), $fileService);
 
-        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('folderTree' => $deletedFolder));
+        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $deletedFolder));
     }
 
     /**
@@ -276,7 +280,7 @@ class FilesAndFoldersController extends Controller
     {
         $restoredFolder = $folderService->restoreFolder($request->get('folderId'));
 
-        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('folderTree' => $restoredFolder));
+        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $restoredFolder));
     }
 
     /**
@@ -305,7 +309,7 @@ class FilesAndFoldersController extends Controller
     {
         $lastUpdateInfo = $archiveEntryService->loadLastUpdateInfo($request);
 
-        return $this->render('lencor/admin/archive/archive_manager_entries_update_info.html.twig', array('lastUpdateInfo' => $lastUpdateInfo));
+        return $this->render('lencor/admin/archive/archive_manager/entries_update_info.html.twig', array('lastUpdateInfo' => $lastUpdateInfo));
     }
 
     /**
@@ -350,6 +354,6 @@ class FilesAndFoldersController extends Controller
                 $fileChecksumService->validateChecksumValue($requestedFile, $this->getUser()->getId());
             }
         }
-        return $this->render('lencor/admin/archive/archive_manager_download_file.html.twig', array('requestedFile' => $requestedFile, 'downloadLink' => $httpPath, 'checkPass' => $checkStatus));
+        return $this->render('lencor/admin/archive/archive_manager/download_file.html.twig', array('requestedFile' => $requestedFile, 'downloadLink' => $httpPath, 'checkPass' => $checkStatus));
     }
 }

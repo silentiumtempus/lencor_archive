@@ -66,7 +66,7 @@ file_put_contents($file, $wr); */
             $folderTree = $folderService->showEntryFolder($request->request->get('folderId'));
         }
 
-        return $this->render('lencor/admin/archive/archive_manager_folder.html.twig', array('entryId' => $entryId, 'folderTree' => $folderTree, 'placeholder' => true));
+        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('entryId' => $entryId, 'folderTree' => $folderTree, 'placeholder' => true));
     }
 
     /**
@@ -82,7 +82,7 @@ file_put_contents($file, $wr); */
             $fileList = $fileService->showEntryFiles($request->request->get('folderId'));
         }
 
-        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $fileList));
+        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $fileList));
     }
 
     /**
@@ -98,7 +98,7 @@ file_put_contents($file, $wr); */
             $fileList[0] = $fileService->reloadFileDetails($request->request->get('fileId'));
         }
 
-        return $this->render('lencor/admin/archive/archive_manager_file.html.twig', array('fileList' => $fileList));
+        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $fileList));
     }
 
     /**
@@ -151,7 +151,7 @@ file_put_contents($file, $wr); */
         //}
         //}
 
-        return $this->render('lencor/admin/archive/archive_manager_entries_view.html.twig', array('folderId' => $folderId, 'entryId' => $entryId, 'addHeaderAndButtons' => $addHeaderAndButtons));
+        return $this->render('lencor/admin/archive/archive_manager/view_entries.html.twig', array('folderId' => $folderId, 'entryId' => $entryId, 'addHeaderAndButtons' => $addHeaderAndButtons));
     }
 
     /**

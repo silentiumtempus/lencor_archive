@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'admin_post_new' %}
+
+{% block sidebar %}
+    {{ parent() }}
+{% endblock %}
+
+    {% block javascripts %}
+        {{ parent() }}
+        <script type="text/javascript" src="{{ asset('js/entryadd-loader.js') }}"></script>
+    {% endblock %}
+
+{% block main %}
+    <div id="main-div" data-path="{{ path('lencor_entries_new') }}">
+        <div class="new_entry">
+            <h1>{{ 'title.new_entry'|trans }}</h1>
+            {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
+            {{ form_start(entryForm) }}
+            <table>
+                <tr>
+                    <td><p>{{ form_label(entryForm.year) }}</p></td>
+                    <td><p>{{ form_widget(entryForm.year) }}</p></td>
+                </tr>
+                <tr>
+                    <td><p>{{ form_label(entryForm.factory) }}</p></td>
+                    <td><p>{{ form_widget(entryForm.factory) }}</p></td>
+                </tr>
+                <tr>
+                    <td><p>{{ form_label(entryForm.setting) }}</p></td>
+                    <td><p>{{ form_widget(entryForm.setting) }}</p></td>
+                </tr>
+                <tr>
+                    <td><p>{{ form_label(entryForm.archiveNumber) }}</p></td>
+                    <td>
+                        <p>{{ form_widget(entryForm.archiveNumber, { 'attr' : {'placeholder' : 'Введите архивный номер'}}) }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>{{ form_label(entryForm.registerNumber) }}</p></td>
+                    <td>
+                        <p>{{ form_widget(entryForm.registerNumber, { 'attr' : {'placeholder' : 'Введите регистрационный номер'}}) }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>{{ form_label(entryForm.contractNumber) }}</p></td>
+                    <td>
+                        <p>{{ form_widget(entryForm.contractNumber, { 'attr' : {'placeholder' : 'Введите номер договора'}}) }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>{{ form_label(entryForm.fullConclusionName) }}</p></td>
+                    <td>
+                        <p>{{ form_widget(entryForm.fullConclusionName, { 'attr' : {'placeholder' : 'Введите полное название заключения'}}) }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p>{{ form_widget(entryForm.submitButton) }}</p></td>
+                </tr>
+            </table>
+            {{ form_errors(entryForm) }}
+            {{ form_end(entryForm) }}
+        </div>
+        <div class="new_factory">
+            <h1>{{ 'title.new_factory'|trans }}</h1>
+            {% form_theme factoryForm '@symfony-collection/jquery.collection.html.twig' %}
+            {{ form_start(factoryForm) }}
+            <table id="factoryForm" data-path="{{ path('lencor_entries_new') }}">
+                <tr>
+                    <td colspan="2">{{ form_errors(factoryForm) }}</td>
+                </tr>
+                <tr>
+                    <td><p>{{ form_label(factoryForm.factoryName) }}</p></td>
+                    <td>
+                        <p>{{ form_widget(factoryForm.factoryName, { 'attr' : {'placeholder' : 'Введите наименование завода'}}) }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p>{{ form_widget(factoryForm.submitButton) }}</p></td>
+                </tr>
+            </table>
+            {{ form_end(factoryForm) }}
+        </div>
+        <div class="new_setting">
+            <h1>{{ 'title.new_setting'|trans }}</h1>
+            {% form_theme settingForm '@symfony-collection/jquery.collection.html.twig' %}
+            {{ form_start(settingForm) }}
+            <table id="settingForm" data-path="{{ path('lencor_entries_new') }}">
+                <tr>
+                    <td><p>{{ form_label(settingForm.factory) }}</p></td>
+                    <td><p>{{ form_widget(settingForm.factory) }}</p></td>
+                </tr>
+                <tr>
+                    <td><p>{{ form_label(settingForm.settingName) }}</p></td>
+                    <td>
+                        <p>{{ form_widget(settingForm.settingName, { 'attr' : {'placeholder' : 'Введите наименование установки'}}) }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p>{{ form_widget(settingForm.submitButton) }}</p></td>
+                </tr>
+            </table>
+            {{ form_errors(settingForm) }}
+            {{ form_end(settingForm) }}
+        </div>
+    </div>
+    <div>
+        {% for type, flash_messages in app.session.flashBag.all %}
+            {% for flash_message in flash_messages %}
+                <div class="flash-{{ type }}">
+                    {{ flash_message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+
