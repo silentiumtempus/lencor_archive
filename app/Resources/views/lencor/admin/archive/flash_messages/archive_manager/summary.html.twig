@@ -9,7 +9,7 @@ Flash messages summary HTML template
                     {#<button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button> #}
-                    {{ app.session.flashBag.peek('passed')[0]|trans }} {#<a href ='#' name="showSuccessfulUploads">Подробнее...</a> #}
+                    {{ app.session.flashBag.get('passed')[0]|trans }} {#<a href ='#' name="showSuccessfulUploads">Подробнее...</a> #}
                 </div>
         {% endif %}
         {% if app.session.flashBag.has('errors') %}
