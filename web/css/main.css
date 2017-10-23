@@ -372,6 +372,11 @@ body#admin_post_new .new_setting {
     font-weight: bold;
 }
 
+.entry-details-icons a{
+    font-size:16px;
+    color: #2c3e50;
+}
+
 .entry-content-container {
     line-height: 1;
 }
