@@ -232,7 +232,7 @@ $(document).ready(function () {
                                     }
                                 });
                                 /** Load flash messages **/
-                                loadFlashMessages();
+                                loadFlashMessagesSummary();
                             }
                         });
                     });
@@ -386,6 +386,20 @@ $(document).ready(function () {
         function loadFlashMessages() {
             $.ajax({
                 url: "/new/web/app_dev.php/lencor_flash_messages",
+                method: "POST",
+                success: function (reloadFlashMessages) {
+                    $('#flash-messages').replaceWith(
+                        $(reloadFlashMessages));
+                }
+            });
+            return false;
+        }
+
+        /** Flash messages summary loader **/
+
+        function loadFlashMessagesSummary() {
+            $.ajax({
+                url: "/new/web/app_dev.php/lencor_flash_messages_summary",
                 method: "POST",
                 success: function (reloadFlashMessages) {
                     $('#flash-messages').replaceWith(

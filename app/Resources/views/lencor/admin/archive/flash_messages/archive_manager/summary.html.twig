@@ -1,3 +1,24 @@
 {#
 Flash messages summary HTML template
 #}
+<div class="messages" id="flash-messages">
+    {% if app.session.started and app.session.flashBag.peekAll is not empty %}
+
+        {% if app.session.flashBag.has('passed') %}
+                <div class="alert alert-dismissible alert-success" role="alert">
+                    {#<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button> #}
+                    {{ app.session.flashBag.peek('passed')[0]|trans }} {#<a href ='#' name="showSuccessfulUploads">Подробнее...</a> #}
+                </div>
+        {% endif %}
+        {% if app.session.flashBag.has('errors') %}
+            <div class="alert alert-dismissible alert-success" role="alert">
+                {#<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> #}
+                {{ app.session.flashBag.get('errors')[0]|trans }} {# <a href ='#' name="showFailedUploads">Подробнее...</a> #}
+            </div>
+        {% endif %}
+    {% endif %}
+</div>

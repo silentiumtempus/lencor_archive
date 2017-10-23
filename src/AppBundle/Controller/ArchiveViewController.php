@@ -163,5 +163,14 @@ file_put_contents($file, $wr); */
         return $this->render('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig');
     }
 
+    /**
+     * @return Response
+     * @Route("/lencor_flash_messages_summary", name="lencor_flash_messages_summary")
+     */
+    public function showFlashMessagesSummary()
+    {
+        return $this->render('lencor/admin/archive/flash_messages/archive_manager/summary.html.twig');
+    }
+
 }
 

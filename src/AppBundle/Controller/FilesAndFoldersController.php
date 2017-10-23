@@ -153,6 +153,7 @@ class FilesAndFoldersController extends Controller
                     $folderAbsPath = null;
                     $uploadNotFailed = true;
                     $newFilesArray = $fileAddForm->getData();
+                    $this->get('session')->getFlashBag()->clear();
                     try {
                         $parentFolder = $folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
                         $folderAbsPath = $folderService->constructFolderAbsPath($parentFolder);
@@ -161,8 +162,8 @@ class FilesAndFoldersController extends Controller
                         $this->addFlash('danger', "Ошибка создания пути: " . $exception->getMessage());
                     }
                     try {
-                        $success = 0;
-                        $errors = [];
+                        $passed = 0;
+                        $errors = 0;
                         foreach ($newFilesArray->getFiles() as $newFile) {
                             $newFileEntity = $fileService->createFileEntityFromArray($newFilesArray, $newFile);
                             $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
@@ -175,16 +176,16 @@ class FilesAndFoldersController extends Controller
                                     $fileService->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
                                     $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
                                     $this->addFlash('success', 'Новый документ записан в директорию ' . $parentFolder);
-                                    $success++;
                                 } catch (\Exception $exception) {
                                     $uploadNotFailed = false;
                                     $this->addFlash('danger', 'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage());
                                     $this->addFlash('danger', 'Загрузка в БД прервана: изменения не внесены.');
-                                    $errors[] =  $originalName;
+                                    $errors++;
                                 }
                             } else {
                                 $fileExistedPreviously = true;
                                 $this->addFlash('danger', 'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.');
+                                $errors++;
                             }
 
                             if ($uploadNotFailed) {
@@ -193,6 +194,7 @@ class FilesAndFoldersController extends Controller
                                     $this->changeLastUpdateInfo($entryId, $archiveEntryService);
 
                                     $this->addFlash('success', 'Новый документ добавлен в БД');
+                                    $passed++;
                                 } catch (\Exception $exception) {
                                     if ($exception instanceof ConstraintViolationException) {
                                         $this->addFlash('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage());
@@ -208,9 +210,18 @@ class FilesAndFoldersController extends Controller
                                             $this->addFlash('danger', 'Ошибка файловой системы при удалении загруженного документа: ' . $IOException->getMessage());
                                         };
                                     }
+                                    $errors++;
                                 }
                             };
                         }
+
+                        if ($passed != 0) {
+                            $this->addFlash('passed', $passed . ' файлов успешно загружено.');
+                        }
+                        if ($errors !=0) {
+                            $this->addFlash('errors', $errors . ' ошибок при загрузке.');
+                        }
+
                     } catch (\Exception $exception)
                     {
                         $this->addFlash('danger', "Ошибка загрузки файла(ов) : " . $exception->getMessage());
