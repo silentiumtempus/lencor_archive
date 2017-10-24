@@ -1,6 +1,3 @@
-/**
- * Created by Vinegar on 008 08.03.17.
- */
 $(document).ready(function () {
     if (window.jQuery) {
         let path = $("#main-div").attr("data-path");
