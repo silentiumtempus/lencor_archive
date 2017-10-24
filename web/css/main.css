@@ -368,11 +368,42 @@ body#admin_post_new .new_setting {
 
 }
 
+.top-menu {
+    background:#122b40;
+}
+
+.top-menu span {
+    padding-left:16px;
+}
+.top-menu a {
+    color: #FFFFFF;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.top-menu a:hover {
+    color: #c4e3f3;
+}
+
+.header-menu {
+    background: #2c3e50;
+}
+
+.header-menu a {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.header-menu a:hover {
+    background-color: #2c3e50;
+    color: #c4e3f3;
+}
+
 .archive-search-header {
     font-weight: bold;
 }
 
-.entry-details-icons a{
+.entry-details-icons a {
     font-size:16px;
     color: #2c3e50;
 }

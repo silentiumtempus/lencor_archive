@@ -9,6 +9,7 @@ $(document).ready(function () {
         let createFolderBlock = $("#addFolder");
         let uploadFileBlock = $("#addFile");
         let downloadFileBlock = $("#downloadFile");
+
         /** Seriously, it'a a bad idea  :) **/
 
         /** Archive entries main table factory->settings AJAX loader **/

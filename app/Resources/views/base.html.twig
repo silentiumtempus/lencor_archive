@@ -22,9 +22,57 @@
 
 {% block header %}
     <header>
-        <div class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="navbar-static-top top-menu" role="navigation">
             <div class="container">
-                <div class="navbar-header">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <span><a href="{{ path('index') }}"><i class="fa fa-home"></i> Главная </a> </span>
+                        <span><a href="{{ path('entries') }}"><i class="fa fa-archive"></i> Архив  <i class="fa fa-angle-down"></i></a></span>
+                        <span><a href="#"><i class="fa fa-cog"></i>Система <i class="fa fa-angle-down"></i></a></span>
+                        <span><a href="#"><i class="fa fa-wrench"></i>Управление  <i class="fa fa-angle-down"></i></a></span>
+                        <span><a href="#"><i class="fa fa-history"></i>Логирование  <i class="fa fa-angle-down"></i></a></span>
+                        <span><a href="#"><i class="fa fa-info"></i>Статистика  <i class="fa fa-angle-down"></i></a></span>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+
+                    {% block header_navigation_links %}
+                        {#<li>
+                            <span>
+                                <a href="{{ path('index') }}"> <i class="fa fa-home" aria-hidden="true"></i> {{ 'menu.homepage'|trans }}</a>
+                            </span>
+                        </li> #}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <li>
+                                <span>
+                                    <a href=""><i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}</a>
+                                </span>
+                            </li>
+                        {% endif %}
+                    {% endblock %}
+                    {% if app.user %}
+                        <li>
+                            <span>
+                                <a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> {{ 'menu.logout'|trans }}
+                                    {# {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} #}
+                                </a>
+                            </span>
+                        </li>
+                    {% else %}
+                        <li>
+                            <span>
+                                <a href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in" aria-hidden="true"></i> {{ 'menu.login'|trans }}
+                                {# {{ 'layout.login'|trans({}, 'FOSUserBundle') }} #}
+                                </a>
+                            </span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div class="navbar-static-top header-menu" role="navigation">
+            <div class="container">
+                <div class="nav navbar-nav">
                     <a class="navbar-brand" href="{{ path('index') }}">
                         Архив НПО "Ленкор"
                     </a>
@@ -36,38 +84,7 @@
                     </button>
                 </div>
                 <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-right">
 
-                        {% block header_navigation_links %}
-                            <li>
-                                <a href="{{ path('index') }}">
-                                    <i class="fa fa-home" aria-hidden="true"></i> {{ 'menu.homepage'|trans }}
-                                </a>
-                            </li>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <li>
-                                    <a href="">
-                                        <i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}
-                                    </a>
-                                </li>
-                            {% endif %}
-                        {% endblock %}
-                        {% if app.user %}
-                            <li>
-                                <a href="{{ path('fos_user_security_logout') }}">
-                                    <i class="fa fa-sign-out" aria-hidden="true"></i> {{ 'menu.logout'|trans }}
-                                    {# {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} #}
-                                </a>
-                            </li>
-                        {% else %}
-                            <li>
-                                <a href="{{ path('fos_user_security_login') }}">
-                                    <i class="fa fa-sign-in" aria-hidden="true"></i> {{ 'menu.login'|trans }}
-                                    {# {{ 'layout.login'|trans({}, 'FOSUserBundle') }} #}
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
                 </div>
             </div>
         </div>
