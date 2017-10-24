@@ -110,4 +110,9 @@ class ArchiveEntryService
         $this->em->persist($newFolder);
         $this->em->flush();
     }
+
+    public function removeEntry($entryId)
+    {
+
+    }
 }

@@ -31,7 +31,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param ArchiveEntrySearchService $entrySearchService
      * @return Response
-     * @Route("/", name="index")
+     * @Route("/entries/", name="entries")
      */
     public function welcomeIndexAction(Request $request, ArchiveEntrySearchService $entrySearchService)
     {
@@ -49,7 +49,7 @@ file_put_contents($file, $wr); */
         }
         $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery);
 
-        return $this->render('lencor/admin/archive/index.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView()));
+        return $this->render('lencor/admin/archive/archive_manager/list_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView()));
     }
 
     /**
@@ -152,6 +152,17 @@ file_put_contents($file, $wr); */
         //}
 
         return $this->render('lencor/admin/archive/archive_manager/view_entries.html.twig', array('folderId' => $folderId, 'entryId' => $entryId, 'addHeaderAndButtons' => $addHeaderAndButtons));
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("entries/remove_entry", name="entries_remove_entry")
+     */
+    public function removeEntry(Request $request)
+    {
+
+        return $this->render('lencor/admin/archive/archive_manager/view_entries.html.twig');
     }
 
     /**
