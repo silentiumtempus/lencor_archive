@@ -43,11 +43,12 @@
                             </span>
                         </li> #}
                         {% if is_granted('ROLE_ADMIN') %}
-                            <li>
+                        {#    <li>
                                 <span>
                                     <a href=""><i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}</a>
                                 </span>
                             </li>
+                         #}
                         {% endif %}
                     {% endblock %}
                     {% if app.user %}
