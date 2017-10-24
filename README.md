@@ -31,7 +31,7 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 10. run "**php bin/console fos:user:create**" to create an internal application user.
 
-11. run "**php bin/console fos:user:promote**" and add ROLE_ADMIN for previously created user.
+11. run "**php bin/console fos:user:promote**" and add **ROLE_ADMIN** for previously created user.
 
 12. Check the website index page at:
  - http://website.url/web/app_dev.php/welcome_index for dev environment
