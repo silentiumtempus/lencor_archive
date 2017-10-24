@@ -377,7 +377,7 @@ $(document).ready(function () {
 
         /** Archive entry removal action **/
 
-        $(document).on("click", 'a[name="removeEntry"]', removeEntry);
+        //$(document).on("click", 'a[name="removeEntry"]', removeEntry);
 
         function removeEntry() {
             let entryId = $(this).attr("id");
