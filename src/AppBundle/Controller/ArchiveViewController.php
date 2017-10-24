@@ -31,7 +31,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param ArchiveEntrySearchService $entrySearchService
      * @return Response
-     * @Route("/welcome_index", name="lencor_welcome_index")
+     * @Route("/", name="index")
      */
     public function welcomeIndexAction(Request $request, ArchiveEntrySearchService $entrySearchService)
     {
@@ -56,7 +56,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
-     * @Route("/lencor_entries/view_folders", name="lencor_entries_view_folders")
+     * @Route("/entries/view_folders", name="entries_view_folders")
      */
     function showEntryFolders(Request $request, FolderService $folderService)
     {
@@ -73,7 +73,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param FileService $fileService
      * @return Response
-     * @Route("/lencor_entries/view_files", name="lencor_entries_view_files")
+     * @Route("/entries/view_files", name="entries_view_files")
      */
     function showEntryFiles(Request $request, FileService $fileService)
     {
@@ -89,7 +89,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param FileService $fileService
      * @return Response
-     * @Route("/lencor_entries/reload_file", name="lencor_entries_reload_file")
+     * @Route("/entries/reload_file", name="entries_reload_file")
      */
     public function changeFileStatus(Request $request, FileService $fileService)
     {
@@ -105,7 +105,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
-     * @Route("/lencor_entries_view", name="lencor_entries_view")
+     * @Route("/entries/view", name="entries_view")
      */
     function showEntryDetails(Request $request, FolderService $folderService)
     {
@@ -156,7 +156,7 @@ file_put_contents($file, $wr); */
 
     /**
      * @return Response
-     * @Route("/lencor_flash_messages", name="lencor_flash_messages")
+     * @Route("flash_messages", name="flash_messages")
      */
     public function showFlashMessages()
     {
@@ -165,7 +165,7 @@ file_put_contents($file, $wr); */
 
     /**
      * @return Response
-     * @Route("/lencor_flash_messages_summary", name="lencor_flash_messages_summary")
+     * @Route("flash_messages_summary", name="flash_messages_summary")
      */
     public function showFlashMessagesSummary()
     {

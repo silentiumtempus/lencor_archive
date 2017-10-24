@@ -12,7 +12,7 @@
     {% endblock %}
 
 {% block main %}
-    <div id="main-div" data-path="{{ path('lencor_entries_new') }}">
+    <div id="main-div" data-path="{{ path('entries_new') }}">
         <div class="new_entry">
             <h1>{{ 'title.new_entry'|trans }}</h1>
             {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
@@ -65,7 +65,7 @@
             <h1>{{ 'title.new_factory'|trans }}</h1>
             {% form_theme factoryForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(factoryForm) }}
-            <table id="factoryForm" data-path="{{ path('lencor_entries_new') }}">
+            <table id="factoryForm" data-path="{{ path('entries_new') }}">
                 <tr>
                     <td colspan="2">{{ form_errors(factoryForm) }}</td>
                 </tr>
@@ -85,7 +85,7 @@
             <h1>{{ 'title.new_setting'|trans }}</h1>
             {% form_theme settingForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(settingForm) }}
-            <table id="settingForm" data-path="{{ path('lencor_entries_new') }}">
+            <table id="settingForm" data-path="{{ path('entries_new') }}">
                 <tr>
                     <td><p>{{ form_label(settingForm.factory) }}</p></td>
                     <td><p>{{ form_widget(settingForm.factory) }}</p></td>

@@ -31,7 +31,7 @@ class EntryAdditionController extends Controller
      * @param SettingService $settingService
      * @param FolderService $folderService
      * @return Response
-     * @Route("/archive/new", name="lencor_entries_new")
+     * @Route("/archive/new", name="entries_new")
      */
     public function archiveEntryAdd(Request $request, ArchiveEntryService $archiveEntryService, FactoryService $factoryService, SettingService $settingService, FolderService $folderService)
     {

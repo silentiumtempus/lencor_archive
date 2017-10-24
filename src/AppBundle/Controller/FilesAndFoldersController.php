@@ -29,7 +29,7 @@ class FilesAndFoldersController extends Controller
      * @param FolderService $folderService
      * @param ArchiveEntryService $archiveEntryService
      * @return Response
-     * @Route("/lencor_entries/new_folder", name="lencor_entries_new_folder")
+     * @Route("/entries/new_folder", name="entries_new_folder")
      */
 
     public function createNewFolder(Request $request, FolderService $folderService, ArchiveEntryService $archiveEntryService)
@@ -43,7 +43,7 @@ class FilesAndFoldersController extends Controller
         $folderAddForm = $this->createForm(
             FolderAddForm::class,
             $newFolder,
-            array('action' => $this->generateUrl('lencor_entries_new_folder'), 'attr' => array('folderId' => $folderId, 'id' => 'folder_add_form')));
+            array('action' => $this->generateUrl('entries_new_folder'), 'attr' => array('folderId' => $folderId, 'id' => 'folder_add_form')));
 
         $folderAddForm->handleRequest($request);
         if ($folderAddForm->isSubmitted() && $request->isMethod('POST')) {
@@ -130,7 +130,7 @@ class FilesAndFoldersController extends Controller
      * @param FolderService $folderService
      * @param ArchiveEntryService $archiveEntryService
      * @return Response
-     * @Route("/lencor_entries/new_file", name="lencor_entries_new_file")
+     * @Route("/entries/new_file", name="entries_new_file")
      */
 
     public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, ArchiveEntryService $archiveEntryService)
@@ -143,7 +143,7 @@ class FilesAndFoldersController extends Controller
         $fileAddForm = $this->createForm(
             FileAddForm::class,
             $newFile,
-            array('action' => $this->generateUrl('lencor_entries_new_file'), 'method' => 'POST', 'attr' => array('folderId' => $folderId, 'id' => 'file_add_form')));
+            array('action' => $this->generateUrl('entries_new_file'), 'method' => 'POST', 'attr' => array('folderId' => $folderId, 'id' => 'file_add_form')));
 
         $fileAddForm->handleRequest($request);
         if ($fileAddForm->isSubmitted() && $request->isMethod('POST')) {
@@ -240,7 +240,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @return Response
-     * @Route("/lencor_entries/remove_file", name="lencor_entries_remove_file")
+     * @Route("/entries/remove_file", name="entries_remove_file")
      */
 
     //@TODO: Unite two methods below
@@ -255,7 +255,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @return Response
-     * @Route("/lencor_entries/restore_file", name="lencor_entries_restore_file")
+     * @Route("/entries/restore_file", name="entries_restore_file")
      */
 
     public function restoreFile(Request $request, FileService $fileService)
@@ -270,7 +270,7 @@ class FilesAndFoldersController extends Controller
      * @param FolderService $folderService
      * @param FileService $fileService
      * @return Response
-     * @Route("/lencor_entries/remove_folder", name="lencor_entries_remove_folder")
+     * @Route("/entries/remove_folder", name="entries_remove_folder")
      */
 
     public function removeFolder(Request $request, FolderService $folderService, FileService $fileService)
@@ -284,7 +284,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
-     * @Route("/lencor_entries/restore_folder", name="lencor_entries_restore_folder")
+     * @Route("/entries/restore_folder", name="entries_restore_folder")
      */
 
     public function restoreFolder(Request $request, FolderService $folderService)
@@ -297,7 +297,7 @@ class FilesAndFoldersController extends Controller
     /**
      * @param String $entryId
      * @param ArchiveEntryService $archiveEntryService
-     * @Route("/lencor_entries/change_last_update_info", name="lencor_entries_change_last_update_info")
+     * @Route("/entries/change_last_update_info", name="entries_change_last_update_info")
      */
 
     public function changeLastUpdateInfo($entryId, ArchiveEntryService $archiveEntryService)
@@ -313,7 +313,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param ArchiveEntryService $archiveEntryService
      * @return Response
-     * @Route("/lencor_entries/last_update_info", name="lencor_entries_last_update_info")
+     * @Route("/entries/last_update_info", name="entries_last_update_info")
      */
 
     public function loadLastUpdateInfo(Request $request, ArchiveEntryService $archiveEntryService)
@@ -327,7 +327,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
-     * @Route("/lencor_entries/get_folder_entryId", name="lencor_entries_get_folder_entryId")
+     * @Route("/entries/get_folder_entryId", name="entries_get_folder_entryId")
      */
 
     public function getFolderEntryId(Request $request, FolderService $folderService)
@@ -345,7 +345,7 @@ class FilesAndFoldersController extends Controller
      * @param FileService $fileService
      * @param FileChecksumService $fileChecksumService
      * @return Response
-     * @Route("/lencor_entries/download_file", name="lencor_entries_download_file")
+     * @Route("/entries/download_file", name="entries_download_file")
      */
 
     public function downloadFile(Request $request, FileService $fileService, FileChecksumService $fileChecksumService)
