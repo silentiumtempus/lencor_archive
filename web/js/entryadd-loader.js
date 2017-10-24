@@ -3,11 +3,11 @@
  */
 $(document).ready(function () {
     if (window.jQuery) {
-        var path = $("#main-div").attr("data-path");
-        var $factorySelect = $('#archive_entry_add_form_factory');
-        var $entryAddForm = $('#archive_entry_add_form');
-        var $factoryAddForm = $('#factory_add_form');
-        var $settingAddForm = $('#setting_add_form');
+        let path = $("#main-div").attr("data-path");
+        let $factorySelect = $('#archive_entry_add_form_factory');
+        let $entryAddForm = $('#archive_entry_add_form');
+        let $factoryAddForm = $('#factory_add_form');
+        let $settingAddForm = $('#setting_add_form');
 
         /** Settings list reload after page refresh **/
 
@@ -20,7 +20,7 @@ $(document).ready(function () {
         function settingsLoader() {
 
             //create array for AJAX request
-            var data = {};
+            let data = {};
             data[$factorySelect.attr('name')] = $factorySelect.val();
             $.ajax({
                 url: path,
@@ -43,7 +43,7 @@ $(document).ready(function () {
 
         $factoryAddForm.on("submit", function (event) {
             event.preventDefault();
-            var factorySerialized = $factoryAddForm.serialize();
+            let factorySerialized = $factoryAddForm.serialize();
             $.ajax({
                 url: path,
                 method: $factoryAddForm.attr('method'),
@@ -72,7 +72,7 @@ $(document).ready(function () {
 
         $settingAddForm.on("submit", function (event) {
             event.preventDefault();
-            var settingSerialized = $settingAddForm.serialize();
+            let settingSerialized = $settingAddForm.serialize();
             $.ajax({
                 url: path,
                 method: $settingAddForm.attr('method'),
@@ -85,8 +85,8 @@ $(document).ready(function () {
                         method: $settingAddForm.attr('method'),
                         data: null,
                         success: function (response) {
-                            var $changedFactory = $settingAddForm.find('select[id="setting_add_form_factory"]').val();
-                            var $selectedFactoryInAddForm = $entryAddForm.find('select[id="archive_entry_add_form_factory"]').val();
+                            let $changedFactory = $settingAddForm.find('select[id="setting_add_form_factory"]').val();
+                            let $selectedFactoryInAddForm = $entryAddForm.find('select[id="archive_entry_add_form_factory"]').val();
                             if($changedFactory === $selectedFactoryInAddForm) {
                                 settingsLoader()
                             }
@@ -101,7 +101,7 @@ $(document).ready(function () {
 
         $entryAddForm.on("submit", function (event) {
             event.preventDefault();
-            var entrySerialized = $entryAddForm.serialize();
+            let entrySerialized = $entryAddForm.serialize();
             $.ajax({
                 url: path,
                 method: $entryAddForm.attr('method'),
