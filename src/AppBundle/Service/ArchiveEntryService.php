@@ -34,6 +34,11 @@ class ArchiveEntryService
         $this->container = $container;
     }
 
+    public function getEntryById(int $entryId)
+    {
+        return $this->entriesRepository->findOneById($entryId);
+    }
+
     /**
      * @param string $entryId
      * @param string $userId
@@ -82,12 +87,13 @@ class ArchiveEntryService
      * @param FolderEntity $newFolder
      * @param $userId
      */
-    public function prepareEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder, $userId)
+    public function prepareEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder, int $userId)
     {
-        $newEntry->setCataloguePath($newFolder->getId());
-        $newEntry->setModifiedByUserId($userId);
-        $newEntry->setDeleteMark(false);
-        $newEntry->setDeletedByUserId(null);
+        $newEntry
+            ->setCataloguePath($newFolder->getId())
+            ->setModifiedByUserId($userId)
+            ->setDeleteMark(false)
+            ->setDeletedByUserId(null);
         //$newEntry->setSlug(null);
     }
 
@@ -111,8 +117,14 @@ class ArchiveEntryService
         $this->em->flush();
     }
 
-    public function removeEntry($entryId)
+    public function removeEntry(int $entryId, int $userId)
     {
+        $archiveEntry = $this->entriesRepository->findOneById($entryId);
+        $archiveEntry
+            ->setDeleteMark(true)
+            ->setDeletedByUserId($userId);
+        $this->em->flush();
 
+        return $archiveEntry;
     }
 }

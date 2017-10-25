@@ -120,8 +120,8 @@ class ArchiveEntryEntity
     protected $lastModified;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\Type("string")
+     * @ORM\Column(type="smallint")
+     * @Assert\Type("smallint")
      * @Gedmo\Versioned()
      */
 
@@ -143,8 +143,8 @@ class ArchiveEntryEntity
     protected $deleteMark;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
-     * @Assert\Type("string")
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\Type("integer")
      * @Gedmo\Versioned()
      */
 
@@ -383,7 +383,7 @@ class ArchiveEntryEntity
 
     /**
      * Set modifiedByUserId
-     * @param string $modifiedByUserId
+     * @param integer $modifiedByUserId
      * @return ArchiveEntryEntity
      */
 
@@ -396,7 +396,7 @@ class ArchiveEntryEntity
 
     /**
      * Get modifiedByUserId
-     * @return string
+     * @return integer
      */
 
     public function getModifiedByUserId()
@@ -457,7 +457,7 @@ class ArchiveEntryEntity
 
     /**
      * Set deletedByUserId
-     * @param string $deletedByUserId
+     * @param integer $deletedByUserId
      * @return ArchiveEntryEntity
      */
     public function setDeletedByUserId($deletedByUserId)
@@ -469,7 +469,7 @@ class ArchiveEntryEntity
 
     /**
      * Get deletedByUserId
-     * @return string
+     * @return integer
      */
     public function getDeletedByUserId()
     {

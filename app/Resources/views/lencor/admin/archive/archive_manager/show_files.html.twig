@@ -1,5 +1,5 @@
 {% for file in fileList %}
-        <li id="file_{{ file.id }}" class="entry-content-block entry-content-row {% if file.deleteMark != 0 %} entry-content-file-deleted {% endif %}">
+        <li id="file_{{ file.id }}" class="entry-content-block entry-content-row {% if file.deleteMark != 0 %} deleted {% endif %}">
             <span>
         {% if file.deleteMark != 0 %}
                 <i class="fa fa-remove"></i>

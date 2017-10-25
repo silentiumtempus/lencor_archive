@@ -392,7 +392,7 @@ $(document).ready(function () {
 
         /** Archive entry removal action **/
 
-        //$(document).on("click", 'a[name="removeEntry"]', removeEntry);
+        $(document).on("click", 'a[name="removeEntry"]', removeEntry);
 
         function removeEntry() {
             let entryId = $(this).attr("id");
@@ -402,8 +402,11 @@ $(document).ready(function () {
                 data: {entryId: entryId},
                 success: function (entryRemoval) {
                     $('#entry_' + entryId).replaceWith(entryRemoval);
+
                 }
-            })
+            });
+
+            return false;
         }
 
         /** Popup window close **/

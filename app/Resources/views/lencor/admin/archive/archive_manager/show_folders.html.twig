@@ -9,7 +9,7 @@
 {% endif %}
 {% if (folderTree is not empty) %}
     {% for folder in folderTree %}
-        <li id="folder_{{ folder.id }}" class="entry-content-block {% if folder.deleteMark !=0 %} entry-content-file-deleted {% endif %}">
+        <li id="folder_{{ folder.id }}" class="entry-content-block {% if folder.deleteMark !=0 %} deleted {% endif %}">
             <ul>
                 <li class="entry-content-row">
                 <span>

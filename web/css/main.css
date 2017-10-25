@@ -398,7 +398,7 @@ body#admin_post_new .new_setting {
     background-color: #2c3e50;
     color: #c4e3f3;
 }
-
+/** --------------------------------------------------------------------------------- **/
 .archive-search-header {
     font-weight: bold;
 }
@@ -408,10 +408,57 @@ body#admin_post_new .new_setting {
     color: #2c3e50;
 }
 
+.entry-container .fa {
+    font-size: 16px !important;
+}
+
+.entry-container .fa-chevron-down {
+    color: #2ca02c;
+}
+
+.entry-container .fa-remove {
+    color: #9A0000;
+}
+
+.entry-container .fa-exclamation {
+    color: #9A0000;
+}
+
+.entry-container .fa-check-circle-o {
+    color: #2ca02c;
+}
+
+.entry-container .fa-user {
+    color: #16527a;
+}
+
+.entry-container .fa-upload {
+    color: #004C96;
+}
+
+.entry-container .fa-ban {
+    color: #8aa4be;
+}
+
+.entry-container .fa-download{
+    color: #2ca02c;
+}
+
+.entry-container .fa-undo {
+    color: #2c3e50 !important;
+}
+
+.entry-container .fa-ellipsis-h {
+    color: #8aa4be;
+}
+
+.entry-container .deleted {
+    opacity: 0.5;
+}
+
 .entry-content-container {
     line-height: 1;
 }
-
 
 .entry-content-container ul li a{
     color: #2c3e50 !important;
@@ -498,46 +545,6 @@ body#admin_post_new .new_setting {
 .entry-content-files-block li {
 }
 
-.entry-content .fa {
-    font-size: 16px !important;
-}
-
-.entry-content .fa-chevron-down {
-    color: #2ca02c;
-}
-
-.entry-content .fa-remove {
-    color: #9A0000;
-}
-
-.entry-content .fa-exclamation {
-    color: #9A0000;
-}
-
-.entry-content .fa-check-circle-o {
-    color: #2ca02c;
-}
-
-.entry-content .fa-user {
-    color: #16527a;
-}
-
-.entry-content .fa-upload {
-    color: #004C96;
-}
-
-.entry-content .fa-ban {
-    color: #8aa4be;
-}
-
-.entry-content .fa-download{
-    color: #2ca02c;
-}
-
-.entry-content-file-deleted {
-    opacity: 0.5;
-}
-
 .entry-content-block {
     border-bottom: 1px dashed silver;
 }
@@ -550,7 +557,7 @@ body#admin_post_new .new_setting {
     border-left: 1px dashed silver;
 }
 
-.en try-content-block-border-bottom {
+.entry-content-block-border-bottom {
     border-bottom: 1px dashed silver;
 }
 
@@ -568,14 +575,6 @@ body#admin_post_new .new_setting {
     border-left: 1px solid silver;
     border-bottom: 0px solid silver;
     border-right:  1px solid silver;
-}
-
-.entry-content .fa-undo {
-    color: #2c3e50 !important;
-}
-
-.entry-content .fa-ellipsis-h {
-    color: #8aa4be;
 }
 
 .folder-add {

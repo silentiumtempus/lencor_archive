@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Form\ArchiveEntrySearchForm;
 use AppBundle\Service\ArchiveEntrySearchService;
+use AppBundle\Service\ArchiveEntryService;
 use AppBundle\Service\FileService;
 use AppBundle\Service\FolderService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -156,13 +157,20 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
+     * @param ArchiveEntryService $archiveEntryService
      * @return Response
      * @Route("entries/remove_entry", name="entries_remove_entry")
      */
-    public function removeEntry(Request $request)
+    public function removeEntry(Request $request, ArchiveEntryService $archiveEntryService)
     {
+        $archiveEntries = array();
+        if ($request->request->has('entryId'))
+        {
+            $archiveEntry = $archiveEntryService->removeEntry($request->get('entryId'), $this->getUser()->getId());
+            array_push($archiveEntries, $archiveEntry);
+        }
 
-        return $this->render('lencor/admin/archive/archive_manager/show_entries.html.twig');
+        return $this->render('lencor/admin/archive/archive_manager/entries_list.html.twig', array('archiveEntries' => $archiveEntries));
     }
 
     /**
