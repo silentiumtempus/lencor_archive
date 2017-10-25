@@ -1,7 +1,7 @@
 # lencor_archive
 Lencor archive application
 
-ElasticSearch is requried to be installed and configured to run this application
+ElasticSearch is required to be installed and configured to run this application
 
 
 How to install application
