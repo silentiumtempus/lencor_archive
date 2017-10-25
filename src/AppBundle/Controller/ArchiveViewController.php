@@ -174,6 +174,24 @@ file_put_contents($file, $wr); */
     }
 
     /**
+     * @param Request $request
+     * @param ArchiveEntryService $archiveEntryService
+     * @return Response
+     * @Route("entries/restore_entry", name="entries_restore_entry")
+     */
+    public function restoreEntry(Request $request, ArchiveEntryService $archiveEntryService)
+    {
+        $archiveEntries = array();
+        if ($request->request->has('entryId'))
+        {
+            $archiveEntry = $archiveEntryService->restoreEntry($request->get('entryId'), $this->getUser()->getId());
+            array_push($archiveEntries, $archiveEntry);
+        }
+
+        return $this->render('lencor/admin/archive/archive_manager/entries_list.html.twig', array('archiveEntries' => $archiveEntries));
+    }
+
+    /**
      * @return Response
      * @Route("flash_messages", name="flash_messages")
      */

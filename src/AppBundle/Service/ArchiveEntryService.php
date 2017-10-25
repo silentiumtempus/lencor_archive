@@ -52,7 +52,7 @@ class ArchiveEntryService
 
     /**
      * @param Request $request
-     * @return null
+     * @return ArchiveEntryEntity
      */
     public function loadLastUpdateInfo(Request $request)
     {
@@ -117,12 +117,34 @@ class ArchiveEntryService
         $this->em->flush();
     }
 
+    /**
+     * @param int $entryId
+     * @param int $userId
+     * @return ArchiveEntryEntity
+     */
     public function removeEntry(int $entryId, int $userId)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
         $archiveEntry
             ->setDeleteMark(true)
             ->setDeletedByUserId($userId);
+        $this->em->flush();
+
+        return $archiveEntry;
+    }
+
+    /**
+     * @param int $entryId
+     * @param int $userId
+     * @return ArchiveEntryEntity
+     */
+    public function restoreEntry(int $entryId, int $userId)
+    {
+        $archiveEntry = $this->entriesRepository->findOneById($entryId);
+        $archiveEntry
+            ->setDeleteMark(false)
+            ->setModifiedByUserId($userId)
+            ->setDeletedByUserId(null);
         $this->em->flush();
 
         return $archiveEntry;

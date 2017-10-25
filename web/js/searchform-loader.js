@@ -409,6 +409,25 @@ $(document).ready(function () {
             return false;
         }
 
+        /** Archive entry restore action **/
+
+        $(document).on("click", 'a[name="restoreEntry"]', restoreEntry);
+
+        function restoreEntry() {
+            let entryId = $(this).attr("id");
+            $.ajax({
+                url: "restore_entry",
+                method: "POST",
+                data: {entryId: entryId},
+                success: function (entryRestoration) {
+                    $('#entry_' + entryId).replaceWith(entryRestoration);
+
+                }
+            });
+
+            return false;
+        }
+
         /** Popup window close **/
 
         $(document).on("click", "a[name='closeForm']", function closeForm(event) {
