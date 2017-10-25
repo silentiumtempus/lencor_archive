@@ -12,6 +12,7 @@
 
  {% block javascripts %}
      {{ parent() }}
+     <script type="text/javascript" src="{{ asset('js/entries-loader.js')  }}"></script>
      <script type="text/javascript" src="{{ asset('js/searchform-loader.js') }}"></script>
  {% endblock %}
 
@@ -54,7 +55,7 @@
         <tbody id="main-tbody">
         {% block entries %}
 
-            {% endblock %}
+        {% endblock %}
         </tbody>
     </table>
     <div id="addFolder" class="folder-add">

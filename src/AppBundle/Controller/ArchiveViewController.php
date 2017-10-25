@@ -33,7 +33,7 @@ file_put_contents($file, $wr); */
      * @return Response
      * @Route("/entries/", name="entries")
      */
-    public function openEntriesPage(Request $request, ArchiveEntrySearchService $entrySearchService)
+    public function loadEntries(Request $request, ArchiveEntrySearchService $entrySearchService)
     {
         $finalQuery = new Query();
         $filterQuery = new BoolQuery();

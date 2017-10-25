@@ -27,6 +27,7 @@ $(document).ready(function () {
                     );
                 }
             });
+
             return false;
         });
 
@@ -49,6 +50,7 @@ $(document).ready(function () {
                     );
                 }
             });
+
             return false;
         });
 
@@ -67,12 +69,13 @@ $(document).ready(function () {
                     $('#addFolder').hide();
                 }
             });
+
             return false;
         });
 
         /** Archive entries content loader **/
 
-        $(document).on("click", "a[name='entryid']", openEntryContents);
+        $(document).on("click", "a[name='entryId']", openEntryContents);
 
         function openEntryContents() {
             let entryId = $(this).parent().attr("id");
@@ -94,14 +97,17 @@ $(document).ready(function () {
             else {
                 $(contentPlace).hide();
             }
+
             return false;
         }
 
         /** Archive entries content navigation **/
 
-        $(document).on("click", "a[name='openFolder']", function () {
+        $(document).on("click", "a[name='openFolder']", function ()
+        {
             let folderId = $(this).attr("id");
             openFolder(folderId);
+
             return false;
         });
 
@@ -133,6 +139,7 @@ $(document).ready(function () {
                 folderContent.hide();
                 fileContent.hide();
             }
+
             return false;
         }
 
@@ -183,6 +190,7 @@ $(document).ready(function () {
                     });
                 }
             });
+
             return false;
         }
 
@@ -239,6 +247,7 @@ $(document).ready(function () {
                     });
                 }
             });
+
             return false;
         }
 
@@ -267,6 +276,7 @@ $(document).ready(function () {
                     fileInfo.replaceWith(reloadFileInfo);
                 }
             });
+
             return false;
         }
 
@@ -301,6 +311,7 @@ $(document).ready(function () {
                     }
                 );
             }
+
             return false;
         }
 
@@ -318,6 +329,7 @@ $(document).ready(function () {
                     $('#file_' + fileId).replaceWith(fileRemoval);
                 }
             });
+
             return false;
         }
 
@@ -335,6 +347,7 @@ $(document).ready(function () {
                     $('#file_' + fileId).replaceWith(fileRestoration);
                 }
             });
+
             return false;
         }
 
@@ -355,6 +368,7 @@ $(document).ready(function () {
                     folderContent.hide();
                 }
             });
+
             return false;
         }
 
@@ -372,6 +386,7 @@ $(document).ready(function () {
                     $('#folder_' + folderId).replaceWith(folderRestoration);
                 }
             });
+
             return false;
         }
 
@@ -409,6 +424,7 @@ $(document).ready(function () {
                         $(reloadFlashMessages));
                 }
             });
+
             return false;
         }
 
@@ -423,6 +439,7 @@ $(document).ready(function () {
                         $(reloadFlashMessages));
                 }
             });
+
             return false;
         }
     }

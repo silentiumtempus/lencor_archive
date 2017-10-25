@@ -1,0 +1,35 @@
+{% if archiveEntries is not empty %}
+    {% for entry in archiveEntries %}
+        <tr>
+            <td id="{{ entry.id }}"><a href="#" name="entryId" style=" color: #2c3e50;"><i class="fa fa-angle-down"></i><i class="fa fa-folder-o"> </i></a></td>
+            <td>{{ entry.year }}</td>
+            <td>{{ entry.factory.factoryName }}</td>
+            <td>{{ entry.setting.settingName }}</td>
+            <td>{{ entry.archiveNumber }}</td>
+            <td>{{ entry.registerNumber }}</td>
+            <td>{{ entry.contractNumber }}</td>
+            <td>{{ entry.fullConclusionName }}</td>
+            <td>
+                <i class="fa fa-ban" id="isRemoved"> </i>
+                <i class="fa fa-check-circle" id="checkPassed"> </i>
+                <i class="fa fa-exclamation-triangle" id="checkError"> </i>
+            </td>
+            <td class="entry-details-icons">
+                <a href="#" name="uploadFiles" id="{{ entry.id }}"><i class="fa fa-upload"></i></a>&nbsp;
+                <a href="#" name="createCatalogue" id="{{ entry.id }}"><i class="fa fa-plus-square-o" id="createCatalogue"></i><i class="fa fa-folder-o"></i></a>&nbsp;
+                <a href="#"><i class="fa fa-edit" title="Редактировать"> </i></a>
+                <a href="#" name="removeEntry" id="{{ entry.id }}"><i class="fa fa-trash" title="Пометить к удалению"> </i></a>
+                <a href="#"><i class="fa fa-history" title="Открыть записи изменений"> </i></a>
+            </td>
+        </tr>
+        <tr class="row-content" style="">
+            <td id="entryContent_{{ entry.id }}" class="entry-content-container entry-content" style="display: none" colspan="10">
+            </td>
+        </tr>
+
+    {% endfor %}
+{% else %}
+<tr>
+    <td colspan="9" align="center">{{ 'post.no_posts_found'|trans }}</td>
+</tr>
+{% endif %}
