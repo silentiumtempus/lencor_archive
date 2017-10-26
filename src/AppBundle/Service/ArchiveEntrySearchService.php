@@ -62,6 +62,6 @@ class ArchiveEntrySearchService
         $finalQuery->setQuery($filterQuery);
         $finalQuery->addSort(array('year' => array('order' => 'ASC')));
 
-        return $this->elasticManager->find($finalQuery, 3000);
+        return $this->elasticManager->find($finalQuery, 5000);
     }
 }

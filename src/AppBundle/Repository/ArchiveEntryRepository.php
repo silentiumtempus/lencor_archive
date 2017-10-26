@@ -34,7 +34,7 @@ class ArchiveEntryRepository extends EntityRepository
         return $this->queryBuilder
             ->select('en.lastModified', 'us.usernameCanonical')
             ->from('AppBundle:ArchiveEntryEntity', 'en')
-            ->leftJoin('AppBundle:User', 'us', 'with', 'en.modifiedByUserId = us.id')
+            ->leftJoin('AppBundle:User', 'us', Join::WITH, 'en.modifiedByUserId = us.id')
             ->where('en.id = ' . $entryId)
             ->getQuery()
             ->getResult();

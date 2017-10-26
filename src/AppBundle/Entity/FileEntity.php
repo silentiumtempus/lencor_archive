@@ -97,8 +97,8 @@ class FileEntity
     protected $deleteMark;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
-     * @Assert\Type("string")
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Assert\Type("smallint")
      * @Gedmo\Versioned()
      */
 
