@@ -193,7 +193,7 @@ file_put_contents($file, $wr); */
 
     /**
      * @return Response
-     * @Route("flash_messages", name="flash_messages")
+     * @Route("entries/flash_messages", name="flash_messages")
      */
     public function showFlashMessages()
     {
@@ -202,7 +202,7 @@ file_put_contents($file, $wr); */
 
     /**
      * @return Response
-     * @Route("flash_messages_summary", name="flash_messages_summary")
+     * @Route("entries/flash_messages_summary", name="flash_messages_summary")
      */
     public function showFlashMessagesSummary()
     {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>{% block title %}НПО "Ленкор"{% endblock %}</title>
+    <title>{% block title %}{{ 'title'|trans }}{% endblock %}</title>
     {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/bootstrap-flatly-3.3.7.min.css') }}">
@@ -22,115 +22,88 @@
 
 {% block header %}
     <header>
-        <div class="top-menu" role="navigation">
+        {% block header_navigation_menu %}
+        <div class="top-menu left" role="navigation">
             <div class="container">
-                <ul class="nav navbar-nav">
+                <ul class="left">
                     <li>
-                        <span><a href="{{ path('index') }}"><i class="fa fa-home"></i> Главная </a> </span>
-                        <span><a href="{{ path('entries') }}"><i class="fa fa-archive"></i> Архив  <i class="fa fa-angle-down"></i></a></span>
-                        <span><a href="#"><i class="fa fa-cog"></i>Система <i class="fa fa-angle-down"></i></a></span>
-                        <span><a href="#"><i class="fa fa-wrench"></i>Управление  <i class="fa fa-angle-down"></i></a></span>
-                        <span><a href="#"><i class="fa fa-history"></i>Логирование  <i class="fa fa-angle-down"></i></a></span>
-                        <span><a href="#"><i class="fa fa-info"></i>Статистика  <i class="fa fa-angle-down"></i></a></span>
+                        <span><a href="{{ path('index') }}"><i class="fa fa-home"></i> {{ 'header.menu.homepage'|trans }} </a> </span>
+                        <span><a href="{{ path('entries') }}"><i class="fa fa-archive"></i> {{ 'header.menu.manager'|trans }} <i class="fa fa-angle-down"></i></a></span>
+                        <span><a href="#"><i class="fa fa-cog"></i> {{ 'header.menu.system'|trans }} <i class="fa fa-angle-down"></i></a></span>
+                        <span><a href="#"><i class="fa fa-wrench"></i> {{ 'header.menu.control'|trans }} <i class="fa fa-angle-down"></i></a></span>
+                        <span><a href="#"><i class="fa fa-history"></i> {{ 'header.menu.logging'|trans }} <i class="fa fa-angle-down"></i></a></span>
+                        <span><a href="#"><i class="fa fa-info"></i> {{ 'header.menu.stats'|trans }} <i class="fa fa-angle-down"></i></a></span>
                     </li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
-
-                    {% block header_navigation_links %}
-                        {#<li>
-                            <span>
-                                <a href="{{ path('index') }}"> <i class="fa fa-home" aria-hidden="true"></i> {{ 'menu.homepage'|trans }}</a>
-                            </span>
-                        </li> #}
-                        {% if is_granted('ROLE_ADMIN') %}
+                <ul class="right">
+                    {% if is_granted('ROLE_ADMIN') %}
                         {#    <li>
                                 <span>
                                     <a href=""><i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}</a>
                                 </span>
                             </li>
                          #}
-                        {% endif %}
-                    {% endblock %}
+                    {% endif %}
                     {% if app.user %}
                         <li>
                             <span>
-                                <a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> {{ 'menu.logout'|trans }}
-                                    {# {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} #}
-                                </a>
+                                <a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> {{ 'header.menu.logout'|trans }}</a>
                             </span>
                         </li>
                     {% else %}
                         <li>
                             <span>
-                                <a href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in" aria-hidden="true"></i> {{ 'menu.login'|trans }}
-                                {# {{ 'layout.login'|trans({}, 'FOSUserBundle') }} #}
-                                </a>
+                                <a href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in" aria-hidden="true"></i> {{ 'header.menu.login'|trans }}</a>
                             </span>
                         </li>
                     {% endif %}
                 </ul>
             </div>
         </div>
-        <div class="navbar-static-top header-menu" role="navigation">
+        {% endblock %}
+        {% block header_info_block %}
+        <div class="info-block left" role="navigation">
             <div class="container">
-                <div class="nav navbar-nav">
-                    <a class="navbar-brand" href="{{ path('index') }}">
-                        Архив НПО "Ленкор"
+                <div class="info-title">
+                    <a class="left" href="{{ path('index') }}">
+                        {{ 'header.title'|trans }}
                     </a>
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">{{ 'menu.toggle_nav'|trans }}</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                </div>
-                <div class="navbar-collapse collapse">
-
                 </div>
             </div>
         </div>
+        {% endblock %}
     </header>
 {% endblock %}
-
-<div class="{#container#} body-container">
-    {% block body %}
-        <div class="row">
-            <div id="sidebar" class="col-sm-9">
-                {% block sidebar %}
-                {% endblock %}
-            </div>
-            <div class="col-sm-9" id="main-9">
-                {{ include('lencor/admin/archive/flash_messages/archive_manager/summary.html.twig') }}
-
-                {% block main %}{% endblock %}
-            </div>
+{% block body %}
+    <div class="content">
+        {{ include('lencor/admin/archive/flash_messages/archive_manager/summary.html.twig') }}
+        <div class="container">
+            {% block sidebar %}{% endblock %}
         </div>
-    {% endblock %}
-</div>
+        {% block main %}{% endblock %}
+    </div>
+{% endblock %}
 
 {% block footer %}
     <footer>
         <div class="container">
-            <div class="row">
-                {#<div id="footer-copyright" class="col-md-6">
-                </div>
-                <div id="footer-resources" class="col-md-6">
-                    <p>
-                        <a href="" title="">
-                            <i class="fa fa-twitter" aria-hidden="true"></i>
-                        </a>
-                        <a href="" title="">
-                            <i class="fa fa-facebook" aria-hidden="true"></i>
-                        </a>
-                        <a href="" title="">
-                            <i class="fa fa-rss" aria-hidden="true"></i>
-                        </a>
-                    </p>
-                </div>
-            </div> #}
+            <div id="footer-copyright">
             </div>
+            <div id="footer-resources">
+                <p>
+                    <a href="" title="">
+                        <i class="fa fa-twitter" aria-hidden="true"></i>
+                    </a>
+                    <a href="" title="">
+                        <i class="fa fa-vk" aria-hidden="true"></i>
+                    </a>
+                    <a href="" title="">
+                        <i class="fa fa-rss" aria-hidden="true"></i>
+                    </a>
+                </p>
+            </div>
+        </div>
     </footer>
 {% endblock %}
-
 </body>
 </html>

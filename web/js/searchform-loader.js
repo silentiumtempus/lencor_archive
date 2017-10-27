@@ -401,6 +401,7 @@ $(document).ready(function () {
                 method: "POST",
                 data: {entryId: entryId},
                 success: function (entryRemoval) {
+                    alert($(entryRemoval).find('#entry_' + entryId));
                     $('#entry_' + entryId).replaceWith(entryRemoval);
 
                 }
