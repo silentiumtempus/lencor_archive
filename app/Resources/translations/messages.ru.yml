@@ -11,6 +11,7 @@ header:
     logout: 'Выйти'
   title: 'Архив НПО Ленкор'
 entries:
+  title: 'Список записей'
   header:
     year: 'Год'
     factory: 'Завод'
@@ -21,3 +22,10 @@ entries:
     conclusion_fullname: 'Полное название заключения'
     info: 'Инфо'
     actions: 'Действия'
+button:
+  entry:
+    create: 'Создать запись'
+  folder:
+    create: 'Добавить директорию'
+  files:
+    upload: 'Добавить файл(ы)'

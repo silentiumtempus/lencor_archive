@@ -18,18 +18,18 @@ i {
     margin-right: auto;
 }
 
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
 header .top-menu {
     width: 100%;
     background:#122b40;
     margin: 0;
-}
-
-header .left {
-    float: left;
-}
-
-header .right {
-    float: right;
 }
 
 header .top-menu ul {
@@ -77,6 +77,25 @@ header .info-title {
 
 body .content {
     background: #ecf0f1;
+}
+
+body .button {
+    display: inline-block;
+    border-radius: 6px;
+    background: #18bc9c;
+    border-color: #18bc9c;
+    white-space: nowrap;
+    vertical-align: middle;
+    text-align: center;
+    padding: 6px 12px;
+    font-size: 19px;
+    color: #ffffff !important;
+}
+
+body .button:hover {
+    background: #128f76;
+    border-color: #11866f;
+    text-decoration: none;
 }
 
 footer {

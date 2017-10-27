@@ -1,24 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block sidebar %}
-    <div class="section actions">
-        <!-- css removed from button: btn-block  -->
-        <a href="{{ path('entries_new') }}" class="btn btn-lg create-button btn-success">
-            <i class="fa fa-pencil" aria-hidden="true"></i> {{ 'action.create_post'|trans }}
-        </a>
-    </div>
-    {{ parent() }}
-{% endblock %}
+    {% block sidebar %}
+        {{ parent() }}
+    {% endblock %}
 
  {% block javascripts %}
      {{ parent() }}
-     <script type="text/javascript" src="{{ asset('js/entries-loader.js')  }}"></script>
      <script type="text/javascript" src="{{ asset('js/searchform-loader.js') }}"></script>
  {% endblock %}
 
 {% block main %}
 
-    <h1>{{ 'title.post_list'|trans }}</h1>
+    <div class="">
+        <a href="{{ path('entries_new') }}" class="button right">
+            <i class="fa fa-pencil" aria-hidden="true"></i> {{ 'button.entry.create'|trans }}
+        </a>
+    </div>
+    <h2>{{ 'entries.title'|trans }}</h2>
     {{ form_start(searchForm) }}
 
     <table class="table table-striped table-middle-aligned" id="main-table" data-path="{{ path('entries') }}">
@@ -35,10 +33,10 @@
             <td>{{ form_row(searchForm.registerNumber, { 'attr' : {'placeholder' : 'Введите регистрационный номер'}}) }}</td>
             <td>{{ form_row(searchForm.contractNumber, { 'attr' : {'placeholder' : 'Введите номер договора'}}) }}</td>
             <td>{{ form_row(searchForm.fullConclusionName, { 'attr' : {'placeholder' : 'Введите полное название заключения'}}) }}</td>
-            <td>{{ form_row(searchForm.submitButton) }}</td>
-            <td></td>
-            {{ form_errors(searchForm) }}
-            {{ form_end(searchForm) }}
+        <td>{{ form_row(searchForm.submitButton) }}</td>
+        <td></td>
+        {{ form_errors(searchForm) }}
+        {{ form_end(searchForm) }}
         </tr>
         <tr class="archive-search-header">
             <td></td>
