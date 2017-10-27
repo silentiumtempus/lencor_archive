@@ -1,0 +1,23 @@
+title: 'Архив НПО "Ленкор"'
+header:
+  menu:
+    homepage: 'Главная'
+    manager: 'Архив'
+    system: 'Система'
+    control: 'Управление'
+    logging: 'Логирование'
+    stats: 'Статистика'
+    login: 'Войти'
+    logout: 'Выйти'
+  title: 'Архив НПО Ленкор'
+entries:
+  header:
+    year: 'Год'
+    factory: 'Завод'
+    setting: 'Установка'
+    archive_number: 'Архивный номер'
+    register_number: 'Регистрационный номер'
+    contract_number: 'Номер договора'
+    conclusion_fullname: 'Полное название заключения'
+    info: 'Инфо'
+    actions: 'Действия'
