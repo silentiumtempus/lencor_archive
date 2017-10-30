@@ -12,6 +12,7 @@ i {
 }
 
 .container {
+    width: 100%;
     padding-left: 15px;
     padding-right: 15px;
     margin-left: auto;
@@ -96,6 +97,20 @@ body .button:hover {
     background: #128f76;
     border-color: #11866f;
     text-decoration: none;
+}
+
+body .form-row {
+    font-size: 14px;
+}
+
+body .form-row li {
+    display: flex;
+    vertical-align: middle;
+}
+
+body .form-row li > span {
+    padding-left: 10px;
+
 }
 
 footer {
