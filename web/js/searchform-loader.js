@@ -289,7 +289,7 @@ $(document).ready(function () {
                     method: "POST",
                     data: {entryId: entryId},
                     success: function (reloadLastUpdateInfo) {
-                        $($('#entryContent_' + entryId).find('#entry-content-buttons-spacer')).html(reloadLastUpdateInfo);
+                        $($('#entryContent_' + entryId).find('#last-update')).html(reloadLastUpdateInfo);
                     }
                 });
             }
@@ -304,7 +304,7 @@ $(document).ready(function () {
                                 method: "POST",
                                 data: {folderId: folderId},
                                 success: function (reloadLastUpdateInfo) {
-                                    $($('#entryContent_' + entryId).find('#entry-content-buttons-spacer')).html(reloadLastUpdateInfo);
+                                    $($('#entryContent_' + entryId).find('#last-update')).html(reloadLastUpdateInfo);
                                 }
                             });
                         }
@@ -401,9 +401,7 @@ $(document).ready(function () {
                 method: "POST",
                 data: {entryId: entryId},
                 success: function (entryRemoval) {
-                    alert($(entryRemoval).find('#entry_' + entryId));
                     $('#entry_' + entryId).replaceWith(entryRemoval);
-
                 }
             });
 

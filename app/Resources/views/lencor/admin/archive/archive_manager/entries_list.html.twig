@@ -1,29 +1,27 @@
 {% if archiveEntries is not empty %}
-
     {% for entry in archiveEntries %}
-        <ul class="fa-ul" id="entry_{{ entry.id }}">
-        <li class="{#entry-content-row#} entry-content-block {% if entry.deleteMark != 0 %} deleted {% endif %}">
-            <span id="{{ entry.id }}"><a href="#" name="entryId" style=" color: #2c3e50;"><i class="fa fa-angle-down"></i><i class="fa fa-folder-o"> </i></a></span>
-            <span>
+        <tr id="entry_{{ entry.id }}" class="{% if entry.deleteMark != 0 %} deleted {% endif %}">
+            <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i class="fa fa-angle-down"></i><i class="fa fa-folder-o"> </i></a></td>
+            <td>
                 {% if entry.deleteMark != 0 %}
                     <i class="fa fa-remove"></i>
                 {% endif %}
                 {{ entry.year }}
-            </span>
-            <span>{{ entry.factory.factoryName }}</span>
-            <span>{{ entry.setting.settingName }}</span>
-            <span>{{ entry.archiveNumber }}</span>
-            <span>{{ entry.registerNumber }}</span>
-            <span>{{ entry.contractNumber }}</span>
-            <span>{{ entry.fullConclusionName }}</span>
-            <span>
+            </td>
+            <td>{{ entry.factory.factoryName }}</td>
+            <td>{{ entry.setting.settingName }}</td>
+            <td>{{ entry.archiveNumber }}</td>
+            <td>{{ entry.registerNumber }}</td>
+            <td>{{ entry.contractNumber }}</td>
+            <td>{{ entry.fullConclusionName }}</td>
+            <td>
                 {% if entry.deleteMark != 0 %}
                     <i class="fa fa-ban" id="isRemoved"> </i>
                 {% endif %}
                 <i class="fa fa-check-circle" id="checkPassed"> </i>
                 <i class="fa fa-exclamation-triangle" id="checkError"> </i>
-            </span>
-            <span class="entry-details-icons">
+            </td>
+            <td class="icons">
                 <a href="#" name="uploadFiles" id="{{ entry.id }}"><i class="fa fa-upload"></i></a>&nbsp;
                 <a href="#" name="createCatalogue" id="{{ entry.id }}"><i class="fa fa-plus-square-o" id="createCatalogue"></i><i class="fa fa-folder-o"></i></a>&nbsp;
                 {% if entry.deleteMark !=0 %}
@@ -33,16 +31,13 @@
                 {% endif %}
                 <a href="#"><i class="fa fa-edit" title="Редактировать"> </i></a>
                 <a href="#"><i class="fa fa-history" title="Открыть записи изменений"> </i></a>
-            </span>
-        </li>
-        <li class="row-content" style="">
-            <span id="entryContent_{{ entry.id }}" class="entry-content-container entry-content" style="display: none">
-            </span>
-        </li>
-        </ul>
+            </td>
+        </tr>
+        <tr>
+            <td id="entryContent_{{ entry.id }}" class="content" hidden colspan="10">
+            </td>
+        </tr>
     {% endfor %}
-        </td>
-    </tr>
 {% else %}
 <tr>
     <td colspan="9" align="center">{{ 'post.no_posts_found'|trans }}</td>

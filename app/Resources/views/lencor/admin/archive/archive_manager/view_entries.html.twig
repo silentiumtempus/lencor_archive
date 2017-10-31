@@ -1,33 +1,32 @@
 {% if addHeaderAndButtons %}
-<table id="{{ entryId }}" style="width: 100%; background: #ffffff; margin: 0 0 8px 0;">
-
-    <tr class="entry-content-buttons">
-        <td id="entry-content-buttons-spacer" class="entry-content-buttons-spacer">
+<table id="{{ entryId }}" class="content">
+    <tr class="add-buttons">
+        <td id="last-update" class="last-update">
         </td>
-        <td><a class="btn btn-success btn-xs" id="{{ entryId }}" href="#" name="addFolder" title="Добавить директорию"><i class="fa fa-folder-o"></i> Добавить директорию </a></td>
-        <td><a class="btn btn-success btn-xs" id="{{ entryId }}" href="#" name="addFile" title="Добавить файл"><i class="fa fa-file-o"></i> Добавить файл </a></td>
+        <td><a class="button" id="{{ entryId }}" href="#" name="addFolder" title="Добавить директорию"><i class="fa fa-folder-o"></i> Добавить директорию </a></td>
+        <td><a class="button" id="{{ entryId }}" href="#" name="addFile" title="Добавить файл"><i class="fa fa-file-o"></i> Добавить файл </a></td>
     </tr>
-    <tr class="row-content">
-        <td class="entry-content-container" colspan="3">
-            <ul id="entry-content-header" class="fa ul entry-content-header">
+    <tr>
+        <td class="container" colspan="9">
+            <ul class="header">
                 <li>
-                    <span><h5>Название</h5></span>
-                    <span><h5>Добавлено пользователем</h5></span>
-                    <span><h5>Дата и время добавления</h5></span>
-                    <span><h5>Информация</h5></span>
-                    <span><h5>Действия</h5></span>
+                    <span>Название</span>
+                    <span>Добавлено пользователем</span>
+                    <span>Дата и время добавления</span>
+                    <span>Информация</span>
+                    <span>Действия</span>
                 </li>
             </ul>
         </td>
     </tr>
-    <tr id="rootEntry" class="row-content">
-        <td id="{{ folderId }}" class="entry-content-container" colspan="3">
+    <tr id="rootEntry">
+        <td id="{{ folderId }}" class="container" colspan="3">
             {% endif %}
-            <ul id="folderContent_{{ folderId }}" class="fa-ul">
-                <li style="display: none" id="folderContent_{{ folderId }}"></li>
+            <ul id="folderContent_{{ folderId }}" class="fa-ul folders">
+                <li hidden id="folderContent_{{ folderId }}"></li>
             </ul>
-            <ul id="fileContent_{{ folderId }}" class="fa-ul">
-                <li style="display: none" id="fileContent_{{ folderId }}"></li>
+            <ul id="fileContent_{{ folderId }}" class="fa-ul files">
+                <li hidden id="fileContent_{{ folderId }}"></li>
             </ul>
         </td>
     </tr>
