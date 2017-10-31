@@ -10,8 +10,16 @@ header:
     login: 'Войти'
     logout: 'Выйти'
   title: 'Архив НПО Ленкор'
+search:
+  placeholder:
+    archive_number: 'Введите архивный номер'
+    register_number: 'Введите регистрационный номер'
+    contract_number: 'Введите номер договора'
+    сonclusion_fullname: 'Введите полное название заключения'
 entries:
-  title: 'Список записей'
+  title:
+    search: 'Поиск по архиву'
+    list: 'Список записей'
   header:
     year: 'Год'
     factory: 'Завод'

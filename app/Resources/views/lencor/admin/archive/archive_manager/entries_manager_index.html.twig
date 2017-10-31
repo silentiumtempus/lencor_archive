@@ -22,10 +22,10 @@
                 <span>{{ form_row(searchForm.setting) }}</span>
             </li>
             <li>
-                <span>{{ form_row(searchForm.archiveNumber, { 'attr' : {'placeholder' : 'Введите архивный номер'}}) }}</span>
-                <span>{{ form_row(searchForm.registerNumber, { 'attr' : {'placeholder' : 'Введите регистрационный номер'}}) }}</span>
-                <span>{{ form_row(searchForm.contractNumber, { 'attr' : {'placeholder' : 'Введите номер договора'}}) }}</span>
-                <span>{{ form_row(searchForm.fullConclusionName, { 'attr' : {'placeholder' : 'Введите полное название заключения'}}) }}</span>
+                <span>{{ form_row(searchForm.archiveNumber, { 'attr' : {'placeholder' : 'search.placeholder.archive_number'|trans}}) }}</span>
+                <span>{{ form_row(searchForm.registerNumber, { 'attr' : {'placeholder' : 'search.placeholder.register_number'|trans}}) }}</span>
+                <span>{{ form_row(searchForm.contractNumber, { 'attr' : {'placeholder' : 'search.placeholder.contract_number'|trans}}) }}</span>
+                <span>{{ form_row(searchForm.fullConclusionName, { 'attr' : {'placeholder' : 'search.placeholder.сonclusion_fullname'|trans}}) }}</span>
             </li>
             <li>
                 <span>{{ form_row(searchForm.resetButton) }}</span>
