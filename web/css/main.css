@@ -30,6 +30,12 @@ i {
 .table {
     margin-bottom: 0 !important;
     width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.white {
+    background-color: #ffffff;
 }
 
 /*.hidden {
@@ -213,6 +219,10 @@ body .entries .container  ul li > span {
     /*display: block; */
     width: 100%;
     border: 0 solid silver;
+}
+
+body .entries tr:first-child {
+    white-space: nowrap;
 }
 
 body .entries .icons a {
