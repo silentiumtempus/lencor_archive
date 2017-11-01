@@ -42,12 +42,12 @@ class ArchiveEntryAddForm extends AbstractType
         $builder
             ->add('year', ChoiceType::class, array(
                 'choices' => $this->getYears(1990),
-                'label' => 'label.year',
-                'placeholder' => 'Выберите год'
+                'label' => 'entries.add.year.label',
+                'placeholder' => 'entries.add.year.placeholder'
             ))
             ->add('factory', EntityType::class, array(
                 'class' => 'AppBundle:FactoryEntity',
-                'label' => 'label.factory',
+                'label' => 'entries.add.factory.label',
                 'placeholder' => 'Выберите завод',
                 'choice_value' => 'id'
             ));
@@ -65,8 +65,8 @@ class ArchiveEntryAddForm extends AbstractType
             $builder->add('setting', EntityType::class, array(
                 'class' => 'AppBundle:SettingEntity',
                 'choices' => $settingsList,
-                'label' => 'label.setting',
-                'placeholder' => 'Выберите установку',
+                'label' => 'entries.add.setting.label',
+                'placeholder' => 'entries.add.setting.placeholder',
                 'disabled' => $status
             ));
         };
@@ -89,11 +89,11 @@ class ArchiveEntryAddForm extends AbstractType
         );
 
         $builder
-            ->add('archiveNumber', TextType::class, array('label' => 'label.archive_number', 'attr' => array('size' => 30)))
-            ->add('registerNumber', TextType::class, array('label' => 'label.register_number', 'attr' => array('size' => 30), 'required' => false))
-            ->add('contractNumber', TextType::class, array('label' => 'label.contract_number', 'attr' => array('size' => 30)))
-            ->add('fullConclusionName', TextType::class, array('label' => 'label.conclusion_fullname', 'attr' => array('size' => 30)))
-            ->add('submitButton', SubmitType::class, array('label' => 'Добавить запись'));
+            ->add('archiveNumber', TextType::class, array('label' => 'entries.add.archive_number.label', 'attr' => array('size' => 30)))
+            ->add('registerNumber', TextType::class, array('label' => 'entries.add.register_number.label', 'attr' => array('size' => 30), 'required' => false))
+            ->add('contractNumber', TextType::class, array('label' => 'entries.add.contract_number.label', 'attr' => array('size' => 30)))
+            ->add('fullConclusionName', TextType::class, array('label' => 'entries.add.conclusion_fullname.label', 'attr' => array('size' => 30)))
+            ->add('submitButton', SubmitType::class, array('label' => 'button.entry.create'));
     }
 
     /**

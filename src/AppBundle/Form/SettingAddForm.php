@@ -20,16 +20,16 @@ class SettingAddForm extends AbstractType
     {
         $builder
             ->add ('factory', EntityType::class, array(
-                'label' => 'factory.name',
+                'label' => 'factories.add.name.label',
                 'placeholder' => 'Выберите завод',
                 'class' => 'AppBundle:FactoryEntity',
                 'choice_label' => 'factoryName',
             ))
             ->add ('settingName', TextType::class, array(
-                'label' => 'setting.name',
+                'label' => 'settings.add.name.label',
                 'attr' => array('size' => 30)
             ))
-            ->add('submitButton', SubmitType::class, array('label' => 'Добавить установку'));
+            ->add('submitButton', SubmitType::class, array('label' => 'button.setting.create'));
     }
 
     /**

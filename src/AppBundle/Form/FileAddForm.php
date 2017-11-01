@@ -35,8 +35,8 @@ class FileAddForm extends AbstractType
         $builder
             ->add('parentFolder', TreeType::class, array(
                 'class' => 'AppBundle:FolderEntity',
-                'label' => 'folder.parent',
-                'placeholder' => 'Выберите директорию',
+                'label' => 'folder.create.parent',
+                'placeholder' => 'folder.create.parent.placeholder',
                 'choice_value' => 'id',
                 'levelPrefix' => ' -',
                 'orderFields' => ['lft' => 'asc'],
@@ -45,11 +45,11 @@ class FileAddForm extends AbstractType
                 'query_builder' => $this->folderRepository->getEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
             ))
             ->add ('files', FileType::class, array(
-                'label' => 'file.fileName',
+                'label' => 'file.upload.name',
                 'attr' => array('size' => 20),
                 'multiple' => true
             ))
-            ->add('submitButton', SubmitType::class, array('label' => 'file.add'));
+            ->add('submitButton', SubmitType::class, array('label' => 'button.files.upload'));
     }
 
     /**

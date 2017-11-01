@@ -20,6 +20,7 @@ entries:
   title:
     search: 'Поиск по архиву'
     list: 'Список записей'
+    new: 'Создание записи'
   header:
     year: 'Год'
     factory: 'Завод'
@@ -30,10 +31,61 @@ entries:
     conclusion_fullname: 'Полное название заключения'
     info: 'Инфо'
     actions: 'Действия'
+  add:
+    year:
+      label: 'Год'
+      placeholder: 'Выберите год'
+    factory:
+      label: 'Завод'
+      placeholder: 'Выберите завод'
+    setting:
+      label: 'Установка'
+      placeholder: 'Выберите установку'
+    archive_number:
+      label: 'Архивный номер'
+      placeholder: 'Введите архивный номер'
+    register_number:
+      label: 'Регистрационный номер'
+      placeholder: 'Введите регистрационный номер'
+    contract_number:
+      label: 'Номер договора'
+      placeholder: 'Введите номер договора'
+    conclusion_fullname:
+      label: 'Полное название заключения'
+      placeholder: 'Введите полное название заключения'
+factories:
+  title:
+    new: 'Добавление завода'
+  add:
+    name:
+      label: 'Наименование завода'
+      placeholder: 'Введите наименование завода'
+settings:
+  title:
+    new: 'Добавление установки'
+  add:
+    name:
+      label: 'Наименование установки'
+      placeholder: 'Введите наименование установки'
 button:
   entry:
-    create: 'Создать запись'
+    create: 'Добавить запись'
   folder:
-    create: 'Добавить директорию'
+    create: 'Создать'
   files:
-    upload: 'Добавить файл(ы)'
+    upload: 'Загрузить'
+  factory:
+    create: 'Добавить завод'
+  setting:
+    create: 'Добавить установку'
+file:
+  upload:
+    name: 'Выбрать файл(ы)'
+    placeholder: 'Добавить файл(ы)'
+folder:
+  create:
+    name: 'Наименование директории'
+    placeholder: 'Наименование директории'
+    parent:
+      label: 'Родительская директория'
+      placeholder: 'Выберите родителя'

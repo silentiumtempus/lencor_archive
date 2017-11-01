@@ -19,10 +19,10 @@ class FactoryAddForm extends AbstractType
     {
         $builder
             ->add ('factoryName', TextType::class, array(
-                'label' => 'factory.name',
+                'label' => 'factories.add.name.label',
                 'attr' => array('size' => 30)
             ))
-            ->add('submitButton', SubmitType::class, array('label' => 'Добавить завод'));
+            ->add('submitButton', SubmitType::class, array('label' => 'button.factory.create'));
     }
 
     /**

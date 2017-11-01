@@ -4,7 +4,6 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\FolderEntity;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -37,8 +36,8 @@ class FolderAddForm extends AbstractType
         $builder
             ->add('parentFolder', TreeType::class, array(
                 'class' => 'AppBundle:FolderEntity',
-                'label' => 'folder.parent',
-                'placeholder' => 'Выберите родителя',
+                'label' => 'folder.create.parent.label',
+                'placeholder' => 'folder.create.parent.placeholder',
                 'choice_value' => 'id',
                 'levelPrefix' => '--',
                 'orderFields' => ['lft' => 'asc'],
@@ -48,10 +47,10 @@ class FolderAddForm extends AbstractType
             ))
 
             ->add ('folderName', TextType::class, array(
-                'label' => 'folder.name',
+                'label' => 'folder.create.name',
                 'attr' => array('size' => 20)
             ))
-            ->add('submitButton', SubmitType::class, array('label' => 'folder.add'));
+            ->add('submitButton', SubmitType::class, array('label' => 'button.folder.create'));
     }
 
     /**

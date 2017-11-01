@@ -14,7 +14,7 @@
 {% block main %}
     <div id="main-div" data-path="{{ path('entries_new') }}">
         <div class="new_entry">
-            <h1>{{ 'title.new_entry'|trans }}</h1>
+            <h1>{{ 'entries.title.new'|trans }}</h1>
             {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(entryForm) }}
             <table>
@@ -33,25 +33,25 @@
                 <tr>
                     <td><p>{{ form_label(entryForm.archiveNumber) }}</p></td>
                     <td>
-                        <p>{{ form_widget(entryForm.archiveNumber, { 'attr' : {'placeholder' : 'Введите архивный номер'}}) }}</p>
+                        <p>{{ form_widget(entryForm.archiveNumber, { 'attr' : {'placeholder' : 'entries.add.archive_number.placeholder'|trans}}) }}</p>
                     </td>
                 </tr>
                 <tr>
                     <td><p>{{ form_label(entryForm.registerNumber) }}</p></td>
                     <td>
-                        <p>{{ form_widget(entryForm.registerNumber, { 'attr' : {'placeholder' : 'Введите регистрационный номер'}}) }}</p>
+                        <p>{{ form_widget(entryForm.registerNumber, { 'attr' : {'placeholder' : 'entries.add.register_number.placeholder'|trans}}) }}</p>
                     </td>
                 </tr>
                 <tr>
                     <td><p>{{ form_label(entryForm.contractNumber) }}</p></td>
                     <td>
-                        <p>{{ form_widget(entryForm.contractNumber, { 'attr' : {'placeholder' : 'Введите номер договора'}}) }}</p>
+                        <p>{{ form_widget(entryForm.contractNumber, { 'attr' : {'placeholder' : 'entries.add.contract_number.placeholder'|trans}}) }}</p>
                     </td>
                 </tr>
                 <tr>
                     <td><p>{{ form_label(entryForm.fullConclusionName) }}</p></td>
                     <td>
-                        <p>{{ form_widget(entryForm.fullConclusionName, { 'attr' : {'placeholder' : 'Введите полное название заключения'}}) }}</p>
+                        <p>{{ form_widget(entryForm.fullConclusionName, { 'attr' : {'placeholder' : 'entries.add.conclusion_fullname.placeholder'|trans}}) }}</p>
                     </td>
                 </tr>
                 <tr>
@@ -62,7 +62,7 @@
             {{ form_end(entryForm) }}
         </div>
         <div class="new_factory">
-            <h1>{{ 'title.new_factory'|trans }}</h1>
+            <h1>{{ 'factories.title.new'|trans }}</h1>
             {% form_theme factoryForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(factoryForm) }}
             <table id="factoryForm" data-path="{{ path('entries_new') }}">
@@ -72,7 +72,7 @@
                 <tr>
                     <td><p>{{ form_label(factoryForm.factoryName) }}</p></td>
                     <td>
-                        <p>{{ form_widget(factoryForm.factoryName, { 'attr' : {'placeholder' : 'Введите наименование завода'}}) }}</p>
+                        <p>{{ form_widget(factoryForm.factoryName, { 'attr' : {'placeholder' : 'factories.add.name.placeholder'|trans}}) }}</p>
                     </td>
                 </tr>
                 <tr>
@@ -82,7 +82,7 @@
             {{ form_end(factoryForm) }}
         </div>
         <div class="new_setting">
-            <h1>{{ 'title.new_setting'|trans }}</h1>
+            <h1>{{ 'settings.title.new'|trans }}</h1>
             {% form_theme settingForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(settingForm) }}
             <table id="settingForm" data-path="{{ path('entries_new') }}">
@@ -93,7 +93,7 @@
                 <tr>
                     <td><p>{{ form_label(settingForm.settingName) }}</p></td>
                     <td>
-                        <p>{{ form_widget(settingForm.settingName, { 'attr' : {'placeholder' : 'Введите наименование установки'}}) }}</p>
+                        <p>{{ form_widget(settingForm.settingName, { 'attr' : {'placeholder' : 'settings.add.name.placeholder'|trans}}) }}</p>
                     </td>
                 </tr>
                 <tr>
