@@ -33,6 +33,10 @@ class SettingService
         $this->em->flush();
     }
 
+    /**
+     * @param $factory
+     * @return mixed
+     */
     public function findSettingsByFactory($factory)
     {
        return $this->settingsRepository->findByFactory($factory, array('id' => 'asc'));

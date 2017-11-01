@@ -94,7 +94,6 @@ class ArchiveEntryService
             ->setModifiedByUserId($userId)
             ->setDeleteMark(false)
             ->setDeletedByUserId(null);
-        //$newEntry->setSlug(null);
     }
 
     public function writeDataToEntryFile(ArchiveEntryEntity $newEntry, string $filename)

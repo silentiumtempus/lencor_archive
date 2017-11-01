@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\FileEntity;
+use AppBundle\Entity\FolderEntity;
 use AppBundle\Entity\Mappings\FileChecksumError;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
@@ -19,6 +20,7 @@ class FileChecksumService
     protected $filesRepository;
     protected $foldersRepository;
     protected $fileErrorsRepository;
+    protected $entriesRepository;
 
     /**
      * FileChecksumService constructor.
@@ -32,6 +34,7 @@ class FileChecksumService
         $this->filesRepository = $this->em->getRepository('AppBundle:FileEntity');
         $this->foldersRepository = $this->em->getRepository('AppBundle:FolderEntity');
         $this->fileErrorsRepository = $this->em->getRepository('AppBundle:Mappings\FileChecksumError');
+        $this->entriesRepository = $this->em->getRepository('AppBundle:ArchiveEntryEntity');
     }
 
 
@@ -69,7 +72,6 @@ class FileChecksumService
             ->setStatus(1)
             ->setLastCheckByUser($userId)
             ->setLastCheckOn(new \DateTime());
-        $this->changeErrorsQuantity($fileEntity->getParentFolder(), true);
         $this->em->persist($newFileError);
         $this->em->flush();
 
@@ -90,10 +92,10 @@ class FileChecksumService
             {
                 $fileError->setFirstOccuredOn(new \DateTime());
                 $this->changeErrorStatus($fileError, true, $userId);
-                $this->changeErrorsQuantity($fileEntity->getParentFolder(), true);
             } else {
                 $this->newChecksumError($fileEntity, $userId);
             }
+            $this->changeErrorsQuantity($fileEntity->getParentFolder(), true);
         } else {
             $fileError
                 ->setLastCheckByUser($userId)
@@ -139,10 +141,10 @@ class FileChecksumService
     }
 
     /**
-     * @param $parentFolder
-     * @param $errorState
+     * @param FolderEntity $parentFolder
+     * @param bool $errorState
      */
-    public function changeErrorsQuantity($parentFolder, $errorState)
+    public function changeErrorsQuantity(FolderEntity $parentFolder, bool $errorState)
     {
         $binaryPath = $this->foldersRepository->getPath($parentFolder);
         foreach ($binaryPath as $folder)
@@ -150,9 +152,14 @@ class FileChecksumService
             if ($errorState)
             {
                 $folder->setSumErrors($folder->getSumErrors()+1);
+
             } else {
                 $folder->setSumErrors($folder->getSumErrors()-1);
             }
         }
+        // @TODO: Temporary solution, find out how to use joins with FOSElasticaBundle
+        $rootFolder = $this->foldersRepository->findOneById($parentFolder->getRoot());
+        $entry = $this->entriesRepository->findOneById($rootFolder->getArchiveEntry());
+        $entry->setSumErrors($rootFolder->getSumErrors());
     }
 }

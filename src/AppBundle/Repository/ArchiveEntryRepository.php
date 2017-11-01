@@ -55,4 +55,15 @@ class ArchiveEntryRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function createEntriesAndErrorsQueryBuilder()
+    {
+        return $this->queryBuilder
+            ->select('o')
+            ->from('AppBundle:ArchiveEntryEntity', 'o')
+            ->innerJoin('AppBundle:FolderEntity', 'folders', Join::WITH, 'o.id = folders.archiveEntry');
+            //->innerJoin('AppBundle:FolderEntity', 'folders', Join::WITH, 'o.id = folders.archiveEntry');
+            //->getQuery()
+            //->getResult();
+    }
 }

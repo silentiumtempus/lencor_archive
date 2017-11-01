@@ -18,8 +18,11 @@
                 {% if entry.deleteMark != 0 %}
                     <i class="fa fa-ban" id="isRemoved"> </i>
                 {% endif %}
-                <i class="fa fa-check-circle" id="checkPassed"> </i>
-                <i class="fa fa-exclamation-triangle" id="checkError"> </i>
+                {% if entry.sumErrors != 0 %}
+                    <i class="fa fa-exclamation-triangle" id="checkError"> </i>
+                {% else %}
+                    <i class="fa fa-check-circle" id="checkPassed"> </i>
+                {% endif %}
             </td>
             <td class="icons">
                 <a href="#" name="uploadFiles" id="{{ entry.id }}"><i class="fa fa-upload"></i></a>&nbsp;
