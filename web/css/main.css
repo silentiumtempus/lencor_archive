@@ -1,3 +1,16 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
 p, ul, ol {
     font-size: 19px;
     margin-bottom: 1.5em
@@ -92,7 +105,7 @@ header .info-title {
 }
 
 body .content {
-    background: #ecf0f1;
+    /*background: #ecf0f1; */
 }
 
 body .content .button {
@@ -148,14 +161,22 @@ body .entries .fa-chevron-down {
 }
 
 body .entries .fa-remove {
-    color: #9A0000;
+    color: #9a0000;
 }
 
 body .entries .fa-exclamation {
-    color: #9A0000;
+    color: #9a0000;
+}
+
+body .entries .fa-exclamation-triangle {
+    color: #9a0000;;
 }
 
 body .entries .fa-check-circle-o {
+    color: #2ca02c;
+}
+
+body .entries .fa-check-circle {
     color: #2ca02c;
 }
 
@@ -164,7 +185,7 @@ body .entries .fa-user {
 }
 
 body .entries .fa-upload {
-    color: #004C96;
+    color: #004c96;
 }
 
 body .entries .fa-ban {
@@ -363,9 +384,10 @@ body .entries .content .row {
 }
 
 footer {
+    width: 100%;
     background: #ecf0f1;
     padding-top: 2em;
-    padding-bottom: 2em
+    padding-bottom: 2em;
 }
 
 

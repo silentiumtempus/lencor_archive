@@ -23,65 +23,76 @@
 {% block header %}
     <header>
         {% block header_navigation_menu %}
-        <div class="top-menu left" role="navigation">
-            <div class="container">
-                <ul class="left">
-                    <li>
-                        <span><a href="{{ path('index') }}"><i class="fa fa-home"></i> {{ 'header.menu.homepage'|trans }} </a> </span>
-                        <span><a href="{{ path('entries') }}"><i class="fa fa-archive"></i> {{ 'header.menu.manager'|trans }} <i class="fa fa-angle-down"></i></a></span>
-                        <span><a href="#"><i class="fa fa-cog"></i> {{ 'header.menu.system'|trans }} <i class="fa fa-angle-down"></i></a></span>
-                        <span><a href="#"><i class="fa fa-wrench"></i> {{ 'header.menu.control'|trans }} <i class="fa fa-angle-down"></i></a></span>
-                        <span><a href="#"><i class="fa fa-history"></i> {{ 'header.menu.logging'|trans }} <i class="fa fa-angle-down"></i></a></span>
-                        <span><a href="#"><i class="fa fa-info"></i> {{ 'header.menu.stats'|trans }} <i class="fa fa-angle-down"></i></a></span>
-                    </li>
-                </ul>
-                <ul class="right">
-                    {% if is_granted('ROLE_ADMIN') %}
-                        {#    <li>
-                                <span>
-                                    <a href=""><i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}</a>
-                                </span>
+            <div class="top-menu left" role="navigation">
+                <div class="container">
+                    <ul class="left">
+                        <li>
+                            <span><a href="{{ path('index') }}"><i
+                                            class="fa fa-home"></i> {{ 'header.menu.homepage'|trans }} </a> </span>
+                            <span><a href="{{ path('entries') }}"><i
+                                            class="fa fa-archive"></i> {{ 'header.menu.manager'|trans }} <i
+                                            class="fa fa-angle-down"></i></a></span>
+                            <span><a href="#"><i class="fa fa-cog"></i> {{ 'header.menu.system'|trans }} <i
+                                            class="fa fa-angle-down"></i></a></span>
+                            <span><a href="#"><i class="fa fa-wrench"></i> {{ 'header.menu.control'|trans }} <i
+                                            class="fa fa-angle-down"></i></a></span>
+                            <span><a href="#"><i class="fa fa-history"></i> {{ 'header.menu.logging'|trans }} <i
+                                            class="fa fa-angle-down"></i></a></span>
+                            <span><a href="#"><i class="fa fa-info"></i> {{ 'header.menu.stats'|trans }} <i
+                                            class="fa fa-angle-down"></i></a></span>
+                        </li>
+                    </ul>
+                    <ul class="right">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {#    <li>
+                                    <span>
+                                        <a href=""><i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}</a>
+                                    </span>
+                                </li>
+                             #}
+                        {% endif %}
+                        {% if app.user %}
+                            <li>
+                            <span>
+                                <a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-sign-out"
+                                                                                    aria-hidden="true"></i> {{ 'header.menu.logout'|trans }}</a>
+                            </span>
                             </li>
-                         #}
-                    {% endif %}
-                    {% if app.user %}
-                        <li>
+                        {% else %}
+                            <li>
                             <span>
-                                <a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-sign-out" aria-hidden="true"></i> {{ 'header.menu.logout'|trans }}</a>
+                                <a href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in"
+                                                                                   aria-hidden="true"></i> {{ 'header.menu.login'|trans }}</a>
                             </span>
-                        </li>
-                    {% else %}
-                        <li>
-                            <span>
-                                <a href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in" aria-hidden="true"></i> {{ 'header.menu.login'|trans }}</a>
-                            </span>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-        {% endblock %}
-        {% block header_info_block %}
-        <div class="info-block left" role="navigation">
-            <div class="container">
-                <div class="info-title">
-                    <a class="left" href="{{ path('index') }}">
-                        {{ 'header.title'|trans }}
-                    </a>
+                            </li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
-        </div>
+        {% endblock %}
+        {% block header_info_block %}
+            <div class="info-block left" role="navigation">
+                <div class="container">
+                    <div class="info-title">
+                        <a class="left" href="{{ path('index') }}">
+                            {{ 'header.title'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
         {% endblock %}
     </header>
 {% endblock %}
 {% block body %}
-    <div class="content">
-        {{ include('lencor/admin/archive/flash_messages/archive_manager/summary.html.twig') }}
-        <div class="container">
-            {% block sidebar %}{% endblock %}
+    <main>
+        <div class="content">
+            {{ include('lencor/admin/archive/flash_messages/archive_manager/summary.html.twig') }}
+            {#<div class="container">
+                {% block sidebar %}{% endblock %}
+            </div> #}
+            {% block main %}{% endblock %}
         </div>
-        {% block main %}{% endblock %}
-    </div>
+    </main>
 {% endblock %}
 
 {% block footer %}
