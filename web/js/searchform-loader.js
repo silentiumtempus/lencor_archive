@@ -90,7 +90,7 @@ $(document).ready(function () {
                         loadLastUpdateInfo(entryId, null);
                         let folderId = contentPlace.find('#rootEntry').children('td').attr('id');
                         openFolder(folderId);
-                        contentPlace.show();
+                        contentPlace.show().css('display', 'table-cell');
                     }
                 });
             }
