@@ -1,4 +1,8 @@
 title: 'Архив НПО "Ленкор"'
+login:
+  title: 'Вход в архив'
+  username: 'Имя пользователя'
+  password: 'Пароль'
 header:
   menu:
     homepage: 'Главная'
