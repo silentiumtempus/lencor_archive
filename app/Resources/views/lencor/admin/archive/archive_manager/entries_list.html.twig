@@ -1,6 +1,6 @@
 {% if archiveEntries is not empty %}
     {% for entry in archiveEntries %}
-        <tr id="entry_{{ entry.id }}" class="{% if entry.deleteMark != 0 %} deleted {% endif %}">
+        <tr id="entry_{{ entry.id }}" class="description{% if entry.deleteMark != 0 %} deleted {% endif %}">
             <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i class="fa fa-angle-down"></i><i class="fa fa-folder-o"> </i></a></td>
             <td>
                 {% if entry.deleteMark != 0 %}
@@ -37,7 +37,7 @@
             </td>
         </tr>
         <tr>
-            <td id="entryContent_{{ entry.id }}" class="content" hidden colspan="10">
+            <td id="entryContent_{{ entry.id }}" class="content" colspan="10" hidden>
             </td>
         </tr>
     {% endfor %}
