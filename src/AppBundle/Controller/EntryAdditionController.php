@@ -12,6 +12,7 @@ use AppBundle\Form\SettingAddForm;
 use AppBundle\Service\ArchiveEntryService;
 use AppBundle\Service\FactoryService;
 use AppBundle\Service\FolderService;
+use AppBundle\Service\LoggingService;
 use AppBundle\Service\SettingService;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -30,11 +31,19 @@ class EntryAdditionController extends Controller
      * @param FactoryService $factoryService
      * @param SettingService $settingService
      * @param FolderService $folderService
+     * @param LoggingService $loggingService
      * @return Response
      * @Route("/entries/new", name="entries_new")
      */
-    public function archiveEntryAdd(Request $request, ArchiveEntryService $archiveEntryService, FactoryService $factoryService, SettingService $settingService, FolderService $folderService)
+    public function archiveEntryAdd(
+        Request $request,
+        ArchiveEntryService $archiveEntryService,
+        FactoryService $factoryService,
+        SettingService $settingService,
+        FolderService $folderService,
+        LoggingService $loggingService)
     {
+        $session = $this->container->get('session');
         $entryForm = $this->createForm(ArchiveEntryAddForm::class, new ArchiveEntryEntity());
         $factoryForm = $this->createForm(FactoryAddForm::class, new FactoryEntity());
         $settingForm = $this->createForm(SettingAddForm::class, new SettingEntity());
@@ -74,8 +83,8 @@ class EntryAdditionController extends Controller
             if ($entryForm->isValid()) {
                 try {
                     $newEntryEntity = $entryForm->getData();
-                    $pathEntry = $folderService->checkAndCreateFolders($newEntryEntity);
-                    $filename = $pathEntry . "/" . $newEntryEntity->getArchiveNumber() . ".txt";
+                    $entryPath = $folderService->checkAndCreateFolders($newEntryEntity);
+                    $filename = $entryPath . "/" . $newEntryEntity->getArchiveNumber() . ".txt";
 
                     //TODO: mb change the below design ?
                     if ($fs->exists($filename)) {
@@ -88,13 +97,14 @@ class EntryAdditionController extends Controller
                             $folderService->prepareNewRootFolder($newFolderEntity, $newEntryEntity, $this->getUser()->getId());
                             $archiveEntryService->writeDataToEntryFile($newEntryEntity, $filename);
                             $archiveEntryService->persistEntry($newEntryEntity, $newFolderEntity);
-                            $this->addFlash('success', 'message.entryAdded');
+                            $this->addFlash('success', 'Запись успешно создана.');
                         } catch (IOException $IOException) {
                             $this->addFlash('danger', 'Ошибка записи файла ячейки: ' . $IOException->getMessage());
                         } catch (ORMException $ORMException) {
                             $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $ORMException->getMessage());
                         }
                     }
+                    $loggingService->logEntry($newEntryEntity, $entryPath, $this->getUser(), $session->getFlashBag()->peekAll());
                 } catch (Exception $exception) {
                     $this->addFlash('danger', 'Произошла непредвиденная ошибка:' . $exception->getMessage());
                 }

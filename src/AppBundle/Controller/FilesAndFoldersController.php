@@ -120,7 +120,7 @@ class FilesAndFoldersController extends Controller
             } else {
                 $this->addFlash('danger', 'Такая директория уже существует. Операция прервана');
             }
-
+            //$session->getFlashBag()->peekAll();
         }
         return $this->render('lencor/admin/archive/archive_manager/new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entryId));
     }

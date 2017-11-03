@@ -99,10 +99,10 @@ class ArchiveEntryService
     public function writeDataToEntryFile(ArchiveEntryEntity $newEntry, string $filename)
     {
         $fs = new Filesystem();
+        $fs->touch($filename);
         $serializer = SerializerBuilder::create()->build();
         $entryJSONFile = $serializer->serialize($newEntry, 'yml');
         file_put_contents($filename, $entryJSONFile);
-        $fs->touch($filename);
     }
 
     /**
