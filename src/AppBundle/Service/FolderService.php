@@ -88,6 +88,15 @@ class FolderService
     }
 
     /**
+     * @param FolderEntity $parentFolder
+     * @return array
+     */
+    public function getPath(FolderEntity $parentFolder)
+    {
+        return $this->foldersRepository->getPath($parentFolder);
+    }
+
+    /**
      * @param FolderEntity $newFolderEntity
      * @param ArchiveEntryEntity $newEntry
      * @param $userId

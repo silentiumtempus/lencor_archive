@@ -34,10 +34,10 @@ class FilesAndFoldersController extends Controller
 
     public function createNewFolder(Request $request, FolderService $folderService, ArchiveEntryService $archiveEntryService)
     {
+        $session = $this->container->get('session');
         $entryId = $archiveEntryService->setEntryId($request);
         $user = $this->getUser();
         $newFolder = new FolderEntity();
-        $folderRepository = $this->getDoctrine()->getRepository('AppBundle:FolderEntity');
         $folderId = $folderService->getRootFolder($entryId);
 
         $folderAddForm = $this->createForm(
@@ -49,7 +49,7 @@ class FilesAndFoldersController extends Controller
         if ($folderAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($folderAddForm->isValid()) {
                 try {
-                    $newFolderEntity = $folderService->prepareNewFolder($folderAddForm, $user);
+                    $newFolderEntity = $folderService->prepareNewFolder($folderAddForm, $user->getId());
                     $fileSystem = new Filesystem();
                     $newFolderAbsPath = $this->getParameter('lencor_archive.storage_path');
                     $pathPermissions = $this->getParameter('lencor_archive.storage_permissions');
@@ -58,7 +58,7 @@ class FilesAndFoldersController extends Controller
 
                     if ($fileSystem->exists($newFolderAbsPath)) {
                         try {
-                            $binaryPath = $folderRepository->getPath($newFolderEntity->getParentFolder());
+                            $binaryPath = $folderService->getPath($newFolderEntity->getParentFolder());
                             foreach ($binaryPath as $folderName) {
                                 $newFolderAbsPath .= "/" . $folderName;
                                 if (!$fileSystem->exists($newFolderAbsPath)) {
@@ -120,6 +120,7 @@ class FilesAndFoldersController extends Controller
             } else {
                 $this->addFlash('danger', 'Такая директория уже существует. Операция прервана');
             }
+
         }
         return $this->render('lencor/admin/archive/archive_manager/new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entryId));
     }
