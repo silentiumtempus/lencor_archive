@@ -2,10 +2,6 @@
 
 {% block body_id 'admin_post_new' %}
 
-{% block sidebar %}
-    {{ parent() }}
-{% endblock %}
-
     {% block javascripts %}
         {{ parent() }}
         <script type="text/javascript" src="{{ asset('js/entryadd-loader.js') }}"></script>
@@ -13,6 +9,7 @@
 
 {% block main %}
     <div id="main-div" data-path="{{ path('entries_new') }}">
+        {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
         <div class="new_entry">
             <h1>{{ 'entries.title.new'|trans }}</h1>
             {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
@@ -103,15 +100,6 @@
             {{ form_errors(settingForm) }}
             {{ form_end(settingForm) }}
         </div>
-    </div>
-    <div>
-        {% for type, flash_messages in app.session.flashBag.all %}
-            {% for flash_message in flash_messages %}
-                <div class="flash-{{ type }}">
-                    {{ flash_message }}
-                </div>
-            {% endfor %}
-        {% endfor %}
     </div>
 {% endblock %}
 
