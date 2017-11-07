@@ -10,6 +10,7 @@ use AppBundle\Service\ArchiveEntryService;
 use AppBundle\Service\FileChecksumService;
 use AppBundle\Service\FileService;
 use AppBundle\Service\FolderService;
+use AppBundle\Service\LoggingService;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,11 +29,12 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FolderService $folderService
      * @param ArchiveEntryService $archiveEntryService
+     * @param LoggingService $loggingService
      * @return Response
      * @Route("/entries/new_folder", name="entries_new_folder")
      */
 
-    public function createNewFolder(Request $request, FolderService $folderService, ArchiveEntryService $archiveEntryService)
+    public function createNewFolder(Request $request, FolderService $folderService, ArchiveEntryService $archiveEntryService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
         $entryId = $archiveEntryService->setEntryId($request);
@@ -92,11 +94,10 @@ class FilesAndFoldersController extends Controller
                     } else {
                         $this->addFlash('danger', 'Файловая система архива недоступна. Операция не выполнена.');
                     }
-
                     if ($creationNotFailed) {
                         try {
                             $folderService->persistFolder($newFolderEntity);
-                            $archiveEntryService->changeLastUpdateInfo($entryId, $user);
+                            $archiveEntryService->changeLastUpdateInfo($entryId, $user->getId());
                             $this->addFlash('success', 'Новая директория успешно добавлена в БД');
                         } catch (\Exception $exception) {
                             if ($exception instanceof ConstraintViolationException) {
@@ -118,9 +119,9 @@ class FilesAndFoldersController extends Controller
                     $this->addFlash('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
                 }
             } else {
-                $this->addFlash('danger', 'Такая директория уже существует. Операция прервана');
+                $this->addFlash('danger','Директория ' . $folderAddForm->getName() . ' уже существует в каталоге ' . $folderAddForm->getParent() . '. Операция прервана');
             }
-            //$session->getFlashBag()->peekAll();
+            $loggingService->logFolder($entryId, $this->getUser(), $session->getFlashBag()->peekAll());
         }
         return $this->render('lencor/admin/archive/archive_manager/new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entryId));
     }

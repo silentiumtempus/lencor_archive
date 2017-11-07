@@ -114,15 +114,15 @@ class FolderService
 
     /**
      * @param Form $folderAddForm
-     * @param User $user
+     * @param int $userId
      * @return FolderEntity
      */
-    public function prepareNewFolder(Form $folderAddForm, User $user)
+    public function prepareNewFolder(Form $folderAddForm, $userId)
     {
         $newFolderEntity = $folderAddForm->getData();
         $parentFolder = $this->foldersRepository->findOneById($folderAddForm->get('parentFolder')->getViewData());
         $newFolderEntity->setParentFolder($parentFolder)
-            ->setAddedByUserId($user->getId())
+            ->setAddedByUserId($userId)
             ->setDeleteMark(false)
             ->setDeletedByUserId(null)
             ->setSlug(null);
