@@ -210,6 +210,9 @@ fos_elastica:
                   finder: ~
                   provider: ~
                   listener: ~
+                  repository: ~ #AppBundle\Repository\ArchiveEntrySearchRepository
+                  elastica_to_model_transformer:
+                    query_builder_method: createEntriesAndErrorsQueryBuilder
 
 # Vich Uploader Bundle configuration
 vich_uploader:
@@ -218,3 +221,6 @@ vich_uploader:
       documents:
         uri_prefix: /Resources/files
         upload_destination: '%kernel.root_dir%/Resources/files'
+        inject_on_load: false
+        delete_on_update: true
+        delete_on_remove: true

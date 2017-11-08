@@ -56,13 +56,13 @@ services:
     # application services
     service:
       folderservice:
-        class: AppBundle\Services\FolderService
+        class: AppBundle\Service\FolderService
         arguments: ['@doctrine.orm.entity_manager']
       fileservice:
-        class: AppBundle\Services\FileService
-        arguments: ['@doctrine.orm.entity_manager', '@appbundle.service.folderservice']
+        class: AppBundle\Service\FileService
+        arguments: ['@doctrine.orm.entity_manager', '@service_container']
       archiveentryservice:
-        class: AppBundle\Services\ArchiveEntryService
+        class: AppBundle\Service\ArchiveEntryService
         arguments: ['@doctrine.orm.entity_manager', '@service_container']
 
   #jms_serializer:
