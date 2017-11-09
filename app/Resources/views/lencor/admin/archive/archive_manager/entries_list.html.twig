@@ -24,13 +24,14 @@
                     <i class="fa fa-check-circle" id="checkPassed"> </i>
                 {% endif %}
             </td>
-            <td class="icons">
-                <a href="#" name="uploadFiles" id="{{ entry.id }}"><i class="fa fa-upload"></i></a>&nbsp;
-                <a href="#" name="createCatalogue" id="{{ entry.id }}"><i class="fa fa-plus-square-o" id="createCatalogue"></i><i class="fa fa-folder-o"></i></a>&nbsp;
+            <td class="icons" id="{{ entry.id }}">
+                <a href="#" name="entryId" class="open"><i class="fa fa-angle-down"></i><i class="fa fa-folder-o"> </i></a>
+                <a href="#" name="addFile"><i class="fa fa-upload"></i></a>&nbsp;
+                <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"></i><i class="fa fa-folder-o"></i></a>&nbsp;
                 {% if entry.deleteMark !=0 %}
-                    <a href="#" name="restoreEntry" id="{{ entry.id }}"><i class="fa fa-undo" title="Восстановить ячейку"></i></a>
+                    <a href="#" name="restoreEntry"><i class="fa fa-undo" title="Восстановить ячейку"></i></a>
                 {% else %}
-                    <a href="#" name="removeEntry" id="{{ entry.id }}"><i class="fa fa-trash" title="Пометить к удалению"> </i></a>
+                    <a href="#" name="removeEntry" ><i class="fa fa-trash" title="Пометить к удалению"> </i></a>
                 {% endif %}
                 <a href="#"><i class="fa fa-edit" title="Редактировать"> </i></a>
                 <a href="#"><i class="fa fa-history" title="Открыть записи изменений"> </i></a>

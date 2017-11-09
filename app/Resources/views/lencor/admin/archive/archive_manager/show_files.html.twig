@@ -1,11 +1,11 @@
 {% for file in fileList %}
         <li id="file_{{ file.id }}" class="block row {% if file.deleteMark != 0 %} deleted {% endif %}">
-            <span>
+            <span id="{{ file.id }}">
         {% if file.deleteMark != 0 %}
                 <i class="fa fa-remove"></i>
                 <i class="fa fa-file-text"> </i>{{ file.fileName }}
         {% else %}
-                <a href="#" name="downloadFile" id="{{ file.id }}">
+                <a href="#" name="downloadFile">
                     <i class="fa fa-file-text"> </i>{{ file.fileName }}
                 </a>
         {% endif %}
@@ -24,12 +24,12 @@
         {% endif %}
                 &nbsp;<i class="fa fa-user" id="lastChangeInfo"> </i>
             </span>
-            <span>
+            <span id="{{ file.id }}">
         {% if file.deleteMark != 0 %}
-                <a href="#" name="restoreFile" id="{{ file.id }}"><i class="fa fa-undo"></i></a>&nbsp;
+                <a href="#" name="restoreFile"><i class="fa fa-undo"></i></a>&nbsp;
         {% else %}
-                <a href="#" name="downloadFile" id="{{ file.id }}"><i class="fa fa-download"></i></a>&nbsp;
-                <a href="#" name="removeFile" id="{{ file.id }}"><i class="fa fa-trash-o"></i></a>&nbsp;
+                <a href="#" name="downloadFile"><i class="fa fa-download"></i></a>&nbsp;
+                <a href="#" name="removeFile"><i class="fa fa-trash-o"></i></a>&nbsp;
         {% endif %}
             </span>
         </li>

@@ -36,14 +36,14 @@
                     {% endif %}
                         &nbsp;<i class="fa fa-user" id="lastChangeInfo"></i>
                     </span>
-                    <span>
+                    <span id="{{ folder.id }}">
                     {% if folder.deleteMark != 0 %}
-                        <a href="#" name="restoreFolder" id="{{ folder.id }}"><i class="fa fa-undo"></i></a>
+                        <a href="#" name="restoreFolder"><i class="fa fa-undo"></i></a>
                     {% else %}
-                        <!--<a href="#" name="openContents" id="{{ folder.id }}"><i class="fa fa-angle-down"></i><i class="fa fa-folder" id="openContents"></i></a>-->
-                        <a href="#" name="addFiles" id="{{ folder.id }}"><i class="fa fa-upload" id=addFiles"></i></a>&nbsp;
-                        <a href="#" name="createCatalogue" id="{{ folder.id }}"><i class="fa fa-plus-square-o" id="createCatalogue"></i><i class="fa fa-folder-o"></i></a>&nbsp;
-                        <a href="#" name="removeFolder" id="{{ folder.id }}"><i class="fa fa-trash-o" id="removeFolder"></i></a>&nbsp;
+                        <!--<a href="#" name="openContents"><i class="fa fa-angle-down"></i><i class="fa fa-folder" id="openContents"></i></a>-->
+                        <a href="#" name="addFiles"><i class="fa fa-upload" id=addFiles"></i></a>&nbsp;
+                        <a href="#" name="createCatalogue"><i class="fa fa-plus-square-o" id="createCatalogue"></i><i class="fa fa-folder-o"></i></a>&nbsp;
+                        <a href="#" name="removeFolder"><i class="fa fa-trash-o" id="removeFolder"></i></a>&nbsp;
                     {% endif %}
                     </span>
                 </li>

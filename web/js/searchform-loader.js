@@ -148,7 +148,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="addFolder"]', createFolder);
 
         function createFolder() {
-            let entryId = $(this).attr("id");
+            let entryId = $(this).parent().attr("id");
             /** Load folder creation form **/
             $.ajax({
                 url: "new_folder",
@@ -199,7 +199,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="addFile"]', uploadFile);
 
         function uploadFile() {
-            let entryId = $(this).attr("id");
+            let entryId = $(this).parent().attr("id");
             /** Load file upload form **/
             $.ajax({
                 url: "new_file",
@@ -256,7 +256,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="downloadFile"]', downloadFile);
 
         function downloadFile() {
-            let fileId = $(this).attr("id");
+            let fileId = $(this).parent().attr("id");
             /** Load file download block **/
             $.ajax({
                 url: "download_file",
@@ -320,7 +320,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="removeFile"]', removeFile);
 
         function removeFile() {
-            let fileId = $(this).attr("id");
+            let fileId = $(this).parent().attr("id");
             $.ajax({
                 url: "remove_file",
                 method: "POST",
@@ -338,7 +338,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="restoreFile"]', restoreFile);
 
         function restoreFile() {
-            let fileId = $(this).attr("id");
+            let fileId = $(this).parent().attr("id");
             $.ajax({
                 url: "restore_file",
                 method: "POST",
@@ -356,7 +356,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="removeFolder"]', removeFolder);
 
         function removeFolder() {
-            let folderId = $(this).attr("id");
+            let folderId = $(this).parent().attr("id");
             let folderContent = $('#folderContent_' + folderId);
             $.ajax({
                 url: "remove_folder",
@@ -377,7 +377,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="restoreFolder"]', restoreFolder);
 
         function restoreFolder() {
-            let folderId = $(this).attr("id");
+            let folderId = $(this).parent().attr("id");
             $.ajax({
                 url: "restore_folder",
                 method: "POST",
@@ -395,7 +395,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="removeEntry"]', removeEntry);
 
         function removeEntry() {
-            let entryId = $(this).attr("id");
+            let entryId = $(this).parent().attr("id");
             $.ajax({
                 url: "remove_entry",
                 method: "POST",
@@ -413,7 +413,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="restoreEntry"]', restoreEntry);
 
         function restoreEntry() {
-            let entryId = $(this).attr("id");
+            let entryId = $(this).parent().attr("id");
             $.ajax({
                 url: "restore_entry",
                 method: "POST",
