@@ -35,7 +35,7 @@ class FileAddForm extends AbstractType
         $builder
             ->add('parentFolder', TreeType::class, array(
                 'class' => 'AppBundle:FolderEntity',
-                'label' => 'folder.create.parent',
+                'label' => 'folder.create.parent.label',
                 'placeholder' => 'folder.create.parent.placeholder',
                 'choice_value' => 'id',
                 'levelPrefix' => ' -',
