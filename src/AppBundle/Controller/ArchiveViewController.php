@@ -119,6 +119,7 @@ file_put_contents($file, $wr); */
             $folderId = $folderService->getRootFolder($entryId);
         }
         /** for file system handling **/
+        //@TODO: review the code below
         /*$entryId = $request->get('entryId');
         $pathRoot = $this->getParameter('lencor_archive.storage_path');
         $targetEntry = $this->getDoctrine()->getRepository('AppBundle:ArchiveEntryEntity')->find($entryId);

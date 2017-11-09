@@ -32,26 +32,29 @@ class LoggingService
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
         $this->foldersRepository = $this->em->getRepository('AppBundle:FolderEntity');
         $this->entriesRepository = $this->em->getRepository('AppBundle:ArchiveEntryEntity');
-
     }
 
     /**
      * @param ArchiveEntryEntity $archiveEntryEntity
      * @param string $entryPath
      * @param User $user
-     * @param array $messages
+     * @param array $flashArray
      */
-    public function logEntry(ArchiveEntryEntity $archiveEntryEntity, string $entryPath, User $user, array $messages)
+    public function logEntry(ArchiveEntryEntity $archiveEntryEntity, string $entryPath, User $user, array $flashArray)
     {
         $fs = new Filesystem();
         $logFileName = $entryPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".log";
-        $fs->touch($logFileName);
-        foreach ($messages as $message)
-        {
-            $date = new \DateTime();
-            $dateString = $date->format('Y-m-d H:i:s');
-            $logRecord = "[" . $dateString . "] :" . " (" . $user->getUsername() . ") " . $message[0] . "\n";
-            $fs->appendToFile($logFileName, $logRecord);
+        if (!$fs->exists($logFileName)) {
+            $fs->touch($logFileName);
+        }
+        $date = new \DateTime();
+        $dateString = $date->format('Y-m-d H:i:s');
+        $recordTemplate = "[" . $dateString . "] :" . " (" . $user->getUsername() . ") ";
+        foreach ($flashArray as $messagesArray) {
+            foreach ($messagesArray as $message) {
+                $logRecord = $recordTemplate . $message . "\n";
+                $fs->appendToFile($logFileName, $logRecord);
+            }
         }
     }
 
@@ -60,12 +63,11 @@ class LoggingService
      * @param User $user
      * @param array $messages
      */
-    public function logFolder(int $entryId, User $user, array $messages)
+    public function logEntryContent(int $entryId, User $user, array $messages)
     {
         $entry = $this->entriesRepository->findOneById($entryId);
         $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         $entryPath = $this->pathRoot . "/" . $rootFolder->getFolderName();
-
         $this->logEntry($entry, $entryPath, $user, $messages);
     }
 }

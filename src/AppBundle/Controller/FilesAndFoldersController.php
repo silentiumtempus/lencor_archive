@@ -121,7 +121,7 @@ class FilesAndFoldersController extends Controller
             } else {
                 $this->addFlash('danger','Директория ' . $folderAddForm->getName() . ' уже существует в каталоге ' . $folderAddForm->getParent() . '. Операция прервана');
             }
-            $loggingService->logFolder($entryId, $this->getUser(), $session->getFlashBag()->peekAll());
+            $loggingService->logEntryContent($entryId, $this->getUser(), $session->getFlashBag()->peekAll());
         }
         return $this->render('lencor/admin/archive/archive_manager/new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entryId));
     }
@@ -131,12 +131,14 @@ class FilesAndFoldersController extends Controller
      * @param FileService $fileService
      * @param FolderService $folderService
      * @param ArchiveEntryService $archiveEntryService
+     * @param LoggingService $loggingService
      * @return Response
      * @Route("/entries/new_file", name="entries_new_file")
      */
 
-    public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, ArchiveEntryService $archiveEntryService)
+    public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, ArchiveEntryService $archiveEntryService, LoggingService $loggingService)
     {
+        $session = $this->container->get('session');
         $newFile = new FileEntity();
         $entryId = $entryId = $archiveEntryService->setEntryId($request);
         $user = $this->getUser();
@@ -177,7 +179,7 @@ class FilesAndFoldersController extends Controller
                                     $newFileEntity->getFileName()->move($folderAbsPath, $originalName);
                                     $fileService->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
                                     $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
-                                    $this->addFlash('success', 'Новый документ записан в директорию ' . $parentFolder);
+                                    $this->addFlash('success', 'Новый документ ' . $originalName . ' записан в директорию ' . $parentFolder);
                                 } catch (\Exception $exception) {
                                     $uploadNotFailed = false;
                                     $this->addFlash('danger', 'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage());
@@ -234,6 +236,7 @@ class FilesAndFoldersController extends Controller
             } else {
                 $this->addFlash('danger', 'Форма заполнена неверно. Операция не выполнена.');
             }
+            $loggingService->logEntryContent($entryId, $this->getUser(), $session->getFlashBag()->peekAll());
         }
         return $this->render('lencor/admin/archive/archive_manager/new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'entryId' => $entryId));
     }
