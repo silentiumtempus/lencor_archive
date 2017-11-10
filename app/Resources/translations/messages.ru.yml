@@ -3,6 +3,7 @@ login:
   title: 'Вход в архив'
   username: 'Имя пользователя'
   password: 'Пароль'
+  sign_in: 'Войти'
 header:
   menu:
     homepage: 'Главная'
