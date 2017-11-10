@@ -9,9 +9,9 @@ You need to add archive website address to trusted websites zone.
 
 Google Chrome
 
-You need to install LocalLinks extension.
+You need to install [LocalLinks](https://chrome.google.com/webstore/detail/locallinks/jllpkdkcdjndhggodimiphkghogcpida) extension.
 File links will be opening catalogue in new browser tab.
-https://chrome.google.com/webstore/detail/locallinks/jllpkdkcdjndhggodimiphkghogcpida
+
 
 
 
