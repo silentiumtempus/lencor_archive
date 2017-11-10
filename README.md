@@ -42,6 +42,6 @@ You may also require phpmyadmin to maintain the application if necessary.
 You need to be authorized to perform operations, for this use the Login button at the right-top of the application screen.
 
 
-# Additional client configuration
+## Additional client configuration
 
 [File share links](https://github.com/silentiumtempus/lencor_archive/blob/master/app/Resources/doc/file_links.md)
