@@ -1,6 +1,6 @@
 ## Client browser configuration to support file links
 
-By default, web browsers don't allow opening links (<a>) pointing to network share drive.
+By default, web browsers don't allow opening links (<a href>) pointing to network share drive.
 To change this additional client web browser configuration is required.
 
 Internet Explorer
