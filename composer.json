@@ -23,6 +23,7 @@
         "doctrine/orm": "^2.5",
         "friendsofsymfony/elastica-bundle": "^4.0",
         "friendsofsymfony/user-bundle": "^2.0",
+        "glifery/entity-hidden-type-bundle": "^2.1",
         "incenteev/composer-parameter-handler": "^2.0",
         "jms/i18n-routing-bundle": "^2.0",
         "jms/serializer-bundle": "^1.4",

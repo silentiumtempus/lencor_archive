@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new FOS\ElasticaBundle\FOSElasticaBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
+            new Glifery\EntityHiddenTypeBundle\GliferyEntityHiddenTypeBundle(),
             new AppBundle\AppBundle(),
 
         ];
