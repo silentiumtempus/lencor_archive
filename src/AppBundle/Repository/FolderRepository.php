@@ -10,7 +10,7 @@ class FolderRepository extends NestedTreeRepository
 {
     /**
      * @param EntityRepository $entityRepository
-     * @param $folderId
+     * @param int $folderId
      * @return QueryBuilder
      */
     public function getEntryFoldersQuery(EntityRepository $entityRepository, int $folderId)

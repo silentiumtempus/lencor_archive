@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\FolderEntity;
 use Doctrine\ORM\EntityManagerInterface;
+use Glifery\EntityHiddenTypeBundle\Form\Type\EntityHiddenType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -33,19 +34,30 @@ class FolderAddForm extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $parentFolder = $this->folderRepository->findOneById($options['attr']['folderId']);
+        if ($options['attr']['isRoot'])
+        {
+            $builder
+                ->add('parentFolder', TreeType::class, array(
+                    'class' => 'AppBundle:FolderEntity',
+                    'label' => 'folder.create.parent.label',
+                    'placeholder' => 'folder.create.parent.placeholder',
+                    'choice_value' => 'id',
+                    'levelPrefix' => '--',
+                    'orderFields' => ['lft' => 'asc'],
+                    'prefixAttributeName' => 'data-level-prefix',
+                    'treeLevelField' => 'lvl',
+                    'query_builder' => $this->folderRepository->getEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
+                ));
+        } else {
+            $builder
+                ->add('parentFolder', EntityHiddenType::class, array(
+                    'class' => 'AppBundle\Entity\FolderEntity',
+                    'data' => $parentFolder,
+                    'label' => $parentFolder->getFolderName()
+                ));
+        }
         $builder
-            ->add('parentFolder', TreeType::class, array(
-                'class' => 'AppBundle:FolderEntity',
-                'label' => 'folder.create.parent.label',
-                'placeholder' => 'folder.create.parent.placeholder',
-                'choice_value' => 'id',
-                'levelPrefix' => '--',
-                'orderFields' => ['lft' => 'asc'],
-                'prefixAttributeName' => 'data-level-prefix',
-                'treeLevelField' => 'lvl',
-                'query_builder' => $this->folderRepository->getEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
-            ))
-
             ->add ('folderName', TextType::class, array(
                 'label' => 'folder.create.name',
                 'attr' => array('size' => 20)

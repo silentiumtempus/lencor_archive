@@ -37,15 +37,16 @@ class FilesAndFoldersController extends Controller
     public function createNewFolder(Request $request, FolderService $folderService, ArchiveEntryService $archiveEntryService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
-        $entryId = $archiveEntryService->setEntryId($request);
+        $folderId = $archiveEntryService->setFolderId($request);
+        $entryId = $folderService->getFolderEntryId($folderId);
         $user = $this->getUser();
         $newFolder = new FolderEntity();
-        $folderId = $folderService->getRootFolder($entryId);
+        $isRoot = $folderService->isRoot($folderId);
 
         $folderAddForm = $this->createForm(
             FolderAddForm::class,
             $newFolder,
-            array('action' => $this->generateUrl('entries_new_folder'), 'attr' => array('folderId' => $folderId, 'id' => 'folder_add_form')));
+            array('action' => $this->generateUrl('entries_new_folder'), 'attr' => array('isRoot' => $isRoot, 'folderId' => $folderId, 'id' => 'folder_add_form')));
 
         $folderAddForm->handleRequest($request);
         if ($folderAddForm->isSubmitted() && $request->isMethod('POST')) {

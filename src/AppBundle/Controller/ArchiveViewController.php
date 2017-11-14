@@ -49,8 +49,9 @@ file_put_contents($file, $wr); */
             }
         }
         $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery);
+        $rootPath = $this->getParameter('lencor_archive.storage_path');
 
-        return $this->render('/lencor/admin/archive/archive_manager/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView()));
+        return $this->render('/lencor/admin/archive/archive_manager/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath));
     }
 
     /**
@@ -61,13 +62,12 @@ file_put_contents($file, $wr); */
      */
     function showEntryFolders(Request $request, FolderService $folderService)
     {
-        $entryId = null;
         $folderTree = null;
         if ($request->request->has('folderId')) {
             $folderTree = $folderService->showEntryFolder($request->request->get('folderId'));
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('entryId' => $entryId, 'folderTree' => $folderTree, 'placeholder' => true));
+        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $folderTree, 'placeholder' => true));
     }
 
     /**

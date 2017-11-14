@@ -4,12 +4,12 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FolderEntity;
-use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Class FolderService
@@ -40,10 +40,10 @@ class FolderService
     }
 
     /**
-     * @param $parentFolder
+     * @param FolderEntity $parentFolder
      * @return string
      */
-    public function constructFolderAbsPath($parentFolder)
+    public function constructFolderAbsPath(FolderEntity $parentFolder)
     {
 
         $folderAbsPath = $this->pathRoot;
@@ -60,7 +60,7 @@ class FolderService
      * @param $folderId
      * @return mixed
      */
-    public function getFolderEntryId($folderId)
+    public function getFolderEntryId(int $folderId)
     {
         $folderNode = $this->foldersRepository->findOneById($folderId);
         return $folderNode->getRoot()->getArchiveEntry()->getId();
@@ -70,7 +70,7 @@ class FolderService
      * @param $entryId
      * @return mixed
      */
-    public function getRootFolder($entryId)
+    public function getRootFolder(int $entryId)
     {
         $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         $folderId = $rootFolder->getRoot()->getId();
@@ -79,10 +79,21 @@ class FolderService
     }
 
     /**
+     * @param int $folderId
+     * @return bool
+     */
+    public function isRoot(int $folderId)
+    {
+        $folderEntity = $this->foldersRepository->findOneById($folderId);
+
+        return ($folderEntity->getId() == $folderEntity->getRoot()->getId()) ? true : false;
+    }
+
+    /**
      * @param FolderEntity $parentFolder
      * @return mixed
      */
-    public function getParentFolder($parentFolder)
+    public function getParentFolder(FolderEntity $parentFolder)
     {
         return $this->foldersRepository->findOneById($parentFolder);
     }
@@ -101,7 +112,7 @@ class FolderService
      * @param ArchiveEntryEntity $newEntry
      * @param $userId
      */
-    public function prepareNewRootFolder(FolderEntity $newFolderEntity, ArchiveEntryEntity $newEntry, $userId)
+    public function prepareNewRootFolder(FolderEntity $newFolderEntity, ArchiveEntryEntity $newEntry, int $userId)
     {
         $newFolderEntity
             ->setArchiveEntry($newEntry)
@@ -113,11 +124,11 @@ class FolderService
     }
 
     /**
-     * @param Form $folderAddForm
+     * @param FormInterface $folderAddForm
      * @param int $userId
      * @return FolderEntity
      */
-    public function prepareNewFolder(Form $folderAddForm, $userId)
+    public function prepareNewFolder(FormInterface $folderAddForm, int $userId)
     {
         $newFolderEntity = $folderAddForm->getData();
         $parentFolder = $this->foldersRepository->findOneById($folderAddForm->get('parentFolder')->getViewData());
@@ -145,7 +156,7 @@ class FolderService
      * @param FileService $fileService
      * @return mixed
      */
-    public function removeFolder($folderId, $userId, FileService $fileService)
+    public function removeFolder(int $folderId, int $userId, FileService $fileService)
     {
         $deletedFolder = $this->foldersRepository->findById($folderId);
         foreach ($deletedFolder as $folder) {
@@ -169,7 +180,7 @@ class FolderService
      * @param $folderId
      * @return mixed
      */
-    public function restoreFolder($folderId)
+    public function restoreFolder(int $folderId)
     {
         $restoredFolder = $this->foldersRepository->findById($folderId);
         foreach ($restoredFolder as $folder) {
@@ -185,7 +196,7 @@ class FolderService
      * @param $folderId
      * @return mixed
      */
-    public function showEntryFolder($folderId)
+    public function showEntryFolder(int $folderId)
     {
         $options = array();
         $folderNode = $this->foldersRepository->findOneById($folderId);
@@ -222,5 +233,10 @@ class FolderService
         }
 
         return $pathEntry;
+    }
+
+    public function createFolder()
+    {
+
     }
 }

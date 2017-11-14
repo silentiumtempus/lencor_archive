@@ -148,12 +148,12 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="addFolder"]', createFolder);
 
         function createFolder() {
-            let entryId = $(this).parent().attr("id");
+            let folderId = $(this).parent().attr("id");
             /** Load folder creation form **/
             $.ajax({
                 url: "new_folder",
                 method: searchForm.attr('mehtod'),
-                data: {entryId: entryId},
+                data: {folderId: folderId},
                 success: function (loadFormResponse) {
                     createFolderBlock.html($(loadFormResponse));
                     createFolderBlock.show();
@@ -168,7 +168,7 @@ $(document).ready(function () {
                             data: folderSerialized,
                             success: function () {
                                 createFolderBlock.hide();
-                                let folderId = $folderAddForm.find('select[id="folder_add_form_parentFolder"]').val();
+                                //let folderId = $folderAddForm.find('select[id="folder_add_form_parentFolder"]').val();
                                 let folderContent = $('#folderContent_' + folderId);
                                 /** Reload folder view order **/
                                 $.ajax({
@@ -179,6 +179,7 @@ $(document).ready(function () {
                                         // @TODO: create proper design
                                         folderContent.hide();
                                         //openFolder(folderId);
+                                        alert(reloadResponse);
                                         folderContent.html(reloadResponse);
                                         folderContent.show();
                                         loadLastUpdateInfo(null, folderId);

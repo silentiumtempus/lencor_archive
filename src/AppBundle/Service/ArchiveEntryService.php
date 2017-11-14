@@ -83,6 +83,22 @@ class ArchiveEntryService
     }
 
     /**
+     * @param Request $request
+     * @return mixed
+     */
+    public function setFolderId(Request $request)
+    {
+        $session = $this->container->get('session');
+        $folderId = $request->get('folderId');
+        if ($folderId) {
+            $session->set('folderId', $request->get('folderId'));
+            return $folderId;
+        } else {
+            return $session->get('folderId');
+        }
+    }
+
+    /**
      * @param ArchiveEntryEntity $newEntry
      * @param FolderEntity $newFolder
      * @param $userId
