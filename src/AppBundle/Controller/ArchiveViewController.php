@@ -153,7 +153,7 @@ file_put_contents($file, $wr); */
         //}
         //}
 
-        return $this->render('lencor/admin/archive/archive_manager/view_entries.html.twig', array('folderId' => $folderId, 'entryId' => $entryId, 'addHeaderAndButtons' => $addHeaderAndButtons));
+        return $this->render('lencor/admin/archive/archive_manager/entries_head.html.twig', array('folderId' => $folderId, 'entryId' => $entryId, 'addHeaderAndButtons' => $addHeaderAndButtons));
     }
 
     /**
