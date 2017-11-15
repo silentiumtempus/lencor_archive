@@ -144,11 +144,12 @@ class FilesAndFoldersController extends Controller
         $entryId = $folderService->getFolderEntryId($folderId);
         $newFile = new FileEntity();
         $user = $this->getUser();
+        $isRoot = $folderService->isRoot($folderId);
 
         $fileAddForm = $this->createForm(
             FileAddForm::class,
             $newFile,
-            array('action' => $this->generateUrl('entries_new_file'), 'method' => 'POST', 'attr' => array('folderId' => $folderId, 'id' => 'file_add_form')));
+            array('action' => $this->generateUrl('entries_new_file'), 'method' => 'POST', 'attr' => array('isRoot' => $isRoot, 'folderId' => $folderId, 'id' => 'file_add_form')));
 
         $fileAddForm->handleRequest($request);
         if ($fileAddForm->isSubmitted() && $request->isMethod('POST')) {

@@ -84,10 +84,10 @@ class FileService
 
     /**
      * @param FileEntity $fileArrayEntity
-     * @param string $file
+     * @param $file
      * @return FileEntity
      */
-    public function createFileEntityFromArray(FileEntity $fileArrayEntity, string $file)
+    public function createFileEntityFromArray(FileEntity $fileArrayEntity, $file)
     {
         $newFileEntity = clone $fileArrayEntity;
         $newFileEntity->setFileName($file);

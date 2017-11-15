@@ -7,7 +7,7 @@ $(document).ready(function () {
         let searchForm = $("#archive_entry_search_form");
         let resetButton = $("#archive_entry_search_form_resetButton");
         let createFolderBlock = $("#addFolder");
-        let uploadFileBlock = $("#addFile");
+        let uploadFileBlock = $("#addFiles");
         let downloadFileBlock = $("#downloadFile");
 
         /** Seriously, it'a a bad idea  :) **/
@@ -196,7 +196,7 @@ $(document).ready(function () {
 
         /** Archive entries file upload with form loader **/
 
-        $(document).on("click", 'a[name="addFile"]', uploadFile);
+        $(document).on("click", 'a[name="addFiles"]', uploadFile);
 
         function uploadFile() {
             let folderId = $(this).parent().attr("id");
@@ -225,12 +225,14 @@ $(document).ready(function () {
                                 let folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
                                 let folderContent = $('#folderContent_' + folderId);
                                 let fileContent = $('#fileContent_' + folderId);
+                                alert(folderId);
                                 /** Reload folder view order **/
                                 $.ajax({
                                     url: "view_files",
                                     method: searchForm.attr('method'),
                                     data: {folderId: folderId},
-                                    success: function (reloadResponse) {
+                                    success: function (reloadResponse)
+                                    {
                                         // @TODO: create proper design
                                         fileContent.hide();
                                         //folderContent.hide();
