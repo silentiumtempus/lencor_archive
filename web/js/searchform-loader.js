@@ -222,25 +222,29 @@ $(document).ready(function () {
                             contentType: false,
                             success: function () {
                                 uploadFileBlock.hide();
-                                let folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
+                                if ($fileAddForm.find('select').length) {
+                                    folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
+                                } else {
+                                    folderId = $fileAddForm.attr('folderid');
+                                }
                                 let folderContent = $('#folderContent_' + folderId);
                                 let fileContent = $('#fileContent_' + folderId);
-                                /** Reload folder view order **/
-                                $.ajax({
-                                    url: "view_files",
-                                    method: searchForm.attr('method'),
-                                    data: {folderId: folderId},
-                                    success: function (reloadResponse)
-                                    {
-                                        // @TODO: create proper design
-                                        fileContent.hide();
-                                        //folderContent.hide();
-                                        //openFolder(folderId);
-                                        fileContent.html(reloadResponse);
-                                        fileContent.show();
-                                        loadLastUpdateInfo(null, folderId);
-                                    }
-                                });
+                                if (folderContent.is(':hidden')) {
+                                    openFolder(folderId);
+                                } else {
+                                    /** Reload folder view order **/
+                                    $.ajax({
+                                        url: "view_files",
+                                        method: searchForm.attr('method'),
+                                        data: {folderId: folderId},
+                                        success: function (reloadResponse) {
+                                            fileContent.hide();
+                                            fileContent.html(reloadResponse);
+                                            fileContent.show();
+                                        }
+                                    });
+                                }
+                                loadLastUpdateInfo(null, folderId);
                                 /** Load flash messages **/
                                 loadFlashMessagesSummary();
                             }
