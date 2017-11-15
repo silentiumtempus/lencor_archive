@@ -15,6 +15,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Elastica\Query\BoolQuery;
 use Elastica\Query;
 
+/**
+ * Class ArchiveViewController
+ * @package AppBundle\Controller
+ */
 class ArchiveViewController extends Controller
 {
 

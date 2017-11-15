@@ -23,6 +23,10 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class EntryAdditionController
+ * @package AppBundle\Controller
+ */
 class EntryAdditionController extends Controller
 {
     /**
