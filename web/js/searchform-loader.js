@@ -225,7 +225,6 @@ $(document).ready(function () {
                                 let folderId = $fileAddForm.find('select[id="file_add_form_parentFolder"]').val();
                                 let folderContent = $('#folderContent_' + folderId);
                                 let fileContent = $('#fileContent_' + folderId);
-                                alert(folderId);
                                 /** Reload folder view order **/
                                 $.ajax({
                                     url: "view_files",
