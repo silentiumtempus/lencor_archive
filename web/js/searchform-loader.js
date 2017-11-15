@@ -168,24 +168,33 @@ $(document).ready(function () {
                             data: folderSerialized,
                             success: function () {
                                 createFolderBlock.hide();
-                                let folderId = $folderAddForm.find('select[id="folder_add_form_parentFolder"]').val();
+                                if ($folderAddForm.find('select').length) {
+                                    folderId = $folderAddForm.find('select[id="folder_add_form_parentFolder"]').val();
+                                } else {
+                                    folderId = $folderAddForm.attr('folderid');
+                                }
                                 let folderContent = $('#folderContent_' + folderId);
                                 /** Reload folder view order **/
-                                $.ajax({
-                                    url: "view_folders",
-                                    method: searchForm.attr('method'),
-                                    data: {folderId: folderId},
-                                    success: function (reloadResponse) {
-                                        // @TODO: create proper design
-                                        folderContent.hide();
-                                        //openFolder(folderId);
-                                        folderContent.html(reloadResponse);
-                                        folderContent.show();
-                                        loadLastUpdateInfo(null, folderId);
-                                    }
-                                });
+                                if (folderContent.is(':hidden')) {
+                                    openFolder(folderId);
+                                } else {
+                                    $.ajax({
+                                        url: "view_folders",
+                                        method: searchForm.attr('method'),
+                                        data: {folderId: folderId},
+                                        success: function (reloadResponse) {
+                                            folderContent.hide();
+                                            folderContent.html(reloadResponse);
+                                            folderContent.show();
+                                            loadLastUpdateInfo(null, folderId);
+                                        }
+                                    });
+                                }
+                                loadLastUpdateInfo(null, folderId);
+                                /** Load flash messages **/
                                 loadFlashMessages();
                             }
+
                         });
                     });
                 }
