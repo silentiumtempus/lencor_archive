@@ -40,10 +40,10 @@ class FileChecksumService
 
     /**
      * @param FileEntity $requestedFile
-     * @param $filePath
+     * @param string $filePath
      * @return bool
      */
-    public function checkFile(FileEntity $requestedFile, $filePath)
+    public function checkFile(FileEntity $requestedFile, string $filePath)
     {
         $fs = new Filesystem();
         $absRoot = $this->container->getParameter('lencor_archive.storage_path');
@@ -60,10 +60,10 @@ class FileChecksumService
 
     /**
      * @param FileEntity $fileEntity
-     * @param $userId
+     * @param int $userId
      * @return bool
      */
-    public function newChecksumError(FileEntity $fileEntity, $userId)
+    public function newChecksumError(FileEntity $fileEntity, int $userId)
     {
         $newFileError = new FileChecksumError();
         $newFileError
@@ -80,10 +80,10 @@ class FileChecksumService
 
     /**
      * @param FileEntity $fileEntity
-     * @param $userId
+     * @param int $userId
      * @return bool
      */
-    public function reportChecksumError(FileEntity $fileEntity, $userId)
+    public function reportChecksumError(FileEntity $fileEntity, int $userId)
     {
         $fileError = $this->fileErrorsRepository->findOneByFileId($fileEntity->getId());
         if ($fileEntity->getSumError() == false) {
@@ -108,10 +108,10 @@ class FileChecksumService
 
     /**
      * @param FileEntity $fileEntity
-     * @param $userId
+     * @param int $userId
      * @return bool
      */
-    public function validateChecksumValue(FileEntity $fileEntity, $userId)
+    public function validateChecksumValue(FileEntity $fileEntity, int $userId)
     {
         if ($fileEntity->getSumError() ==  true) {
             $fileEntity->setSumError(false);
@@ -129,10 +129,10 @@ class FileChecksumService
 
     /**
      * @param FileChecksumError $fileChecksumError
-     * @param $status
-     * @param $userId
+     * @param int $status
+     * @param int $userId
      */
-    public function changeErrorStatus(FileChecksumError $fileChecksumError, $status, $userId)
+    public function changeErrorStatus(FileChecksumError $fileChecksumError, int $status, int $userId)
     {
         $fileChecksumError
             ->setStatus($status)

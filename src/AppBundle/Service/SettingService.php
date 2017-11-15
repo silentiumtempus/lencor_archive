@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\FactoryEntity;
 use AppBundle\Entity\SettingEntity;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -34,10 +35,10 @@ class SettingService
     }
 
     /**
-     * @param $factory
+     * @param FactoryEntity $factory
      * @return mixed
      */
-    public function findSettingsByFactory($factory)
+    public function findSettingsByFactory(FactoryEntity $factory)
     {
        return $this->settingsRepository->findByFactory($factory, array('id' => 'asc'));
     }

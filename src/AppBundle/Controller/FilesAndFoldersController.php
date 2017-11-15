@@ -140,10 +140,10 @@ class FilesAndFoldersController extends Controller
     public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, ArchiveEntryService $archiveEntryService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
+        $folderId = $archiveEntryService->setFolderId($request);
+        $entryId = $folderService->getFolderEntryId($folderId);
         $newFile = new FileEntity();
-        $entryId = $entryId = $archiveEntryService->setEntryId($request);
         $user = $this->getUser();
-        $folderId = $folderService->getRootFolder($entryId);
 
         $fileAddForm = $this->createForm(
             FileAddForm::class,

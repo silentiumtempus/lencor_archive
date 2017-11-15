@@ -36,20 +36,20 @@ class FileService
     }
 
     /**
-     * @param $fileId
+     * @param int $fileId
      * @return mixed
      */
-    public function getFileById($fileId)
+    public function getFileById(int $fileId)
     {
         return $this->filesRepository->findOneById($fileId);
     }
 
     /**
-     * @param $folderAbsPath
-     * @param $originalName
+     * @param string $folderAbsPath
+     * @param string $originalName
      * @return string
      */
-    public function constructFileAbsPath($folderAbsPath, $originalName)
+    public function constructFileAbsPath(string $folderAbsPath, string $originalName)
     {
         return $folderAbsPath . "/" . $originalName;
     }
@@ -71,10 +71,10 @@ class FileService
     }
 
     /**
-     * @param $filePath
+     * @param string $filePath
      * @return string
      */
-    public function getFileHttpUrl($filePath)
+    public function getFileHttpUrl(string $filePath)
     {
         $httpRoot = $this->container->getParameter('lencor_archive.http_path');
         $httpPath = $httpRoot . $filePath;
@@ -84,10 +84,10 @@ class FileService
 
     /**
      * @param FileEntity $fileArrayEntity
-     * @param $file
+     * @param string $file
      * @return FileEntity
      */
-    public function createFileEntityFromArray(FileEntity $fileArrayEntity, $file)
+    public function createFileEntityFromArray(FileEntity $fileArrayEntity, string $file)
     {
         $newFileEntity = clone $fileArrayEntity;
         $newFileEntity->setFileName($file);
@@ -126,11 +126,11 @@ class FileService
 
     //@TODO: Unite two methods below
     /**
-     * @param $fileId
-     * @param $userId
+     * @param int $fileId
+     * @param int $userId
      * @return mixed
      */
-    public function removeFile($fileId, $userId)
+    public function removeFile(int $fileId, int $userId)
     {
         $deletedFile = $this->filesRepository->findById($fileId);
 
@@ -144,10 +144,10 @@ class FileService
     }
 
     /**
-     * @param $fileId
+     * @param int $fileId
      * @return mixed
      */
-    public function restoreFile($fileId)
+    public function restoreFile(int $fileId)
     {
         $restoredFile = $this->filesRepository->findById($fileId);
         foreach ($restoredFile as $file) {
@@ -160,11 +160,11 @@ class FileService
     }
 
     /**
-     * @param $folderId
-     * @param $userId
+     * @param int $folderId
+     * @param int $userId
      * @return bool
      */
-    public function removeFilesByParentFolder($folderId, $userId)
+    public function removeFilesByParentFolder(int $folderId, int $userId)
     {
         $childFiles = $this->filesRepository->findByParentFolder($folderId);
         if ($childFiles) {
@@ -180,19 +180,19 @@ class FileService
     }
 
     /**
-     * @param $folderId
+     * @param int $folderId
      * @return mixed
      */
-    public function showEntryFiles($folderId)
+    public function showEntryFiles(int $folderId)
     {
         return $this->filesRepository->findByParentFolder($folderId);
     }
 
     /**
-     * @param $fileId
+     * @param int $fileId
      * @return mixed
      */
-    public function reloadFileDetails($fileId)
+    public function reloadFileDetails(int $fileId)
     {
         return $this->filesRepository->findOneById($fileId);
     }

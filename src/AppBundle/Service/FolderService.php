@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -48,7 +47,6 @@ class FolderService
 
         $folderAbsPath = $this->pathRoot;
         $binaryPath = $this->foldersRepository->getPath($parentFolder);
-
         foreach ($binaryPath as $folderName) {
             $folderAbsPath .= "/" . $folderName;
         }
@@ -90,10 +88,10 @@ class FolderService
     }
 
     /**
-     * @param FolderEntity $parentFolder
+     * @param $parentFolder
      * @return mixed
      */
-    public function getParentFolder(FolderEntity $parentFolder)
+    public function getParentFolder($parentFolder)
     {
         return $this->foldersRepository->findOneById($parentFolder);
     }
