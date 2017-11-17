@@ -133,13 +133,14 @@ body .content .table-entries thead{
     background-color: #f8f8f8;
 }
 
+/*
 body .content .table-entries tbody tr:nth-child(1) {
     background-color: #c2dde6;
 }
 body .content .table-entries tbody tr:nth-child(4n+5) {
     background-color: #c2dde6;
 }
-
+*/
 /** Search form **/
 body .form-row {
     font-size: 14px;
