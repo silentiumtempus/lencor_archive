@@ -1,5 +1,5 @@
 # lencor_archive
-Lencor archive application
+Lencor archive application is based on PHP Symfony framework
 
 ElasticSearch is required to be installed and configured to run this application
 
