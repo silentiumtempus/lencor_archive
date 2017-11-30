@@ -24,7 +24,7 @@
                     </span>
                     <span>ID: {{ folder.addedByUserId }}</span>
                     <span>{{ folder.addTimestamp|date('Y-m-d H:i:s') }}</span>
-                    <span>
+                    <span class="text-right">
                     {% if folder.deleteMark != 0 %}
                         <i class="fa fa-ban" id="isRemoved"></i>
                     {% else %}
@@ -36,7 +36,7 @@
                     {% endif %}
                         &nbsp;<i class="fa fa-user" id="lastChangeInfo"></i>
                     </span>
-                    <span id="{{ folder.id }}">
+                    <span id="{{ folder.id }}" class="text-right">
                     {% if folder.deleteMark != 0 %}
                         <a href="#" name="restoreFolder"><i class="fa fa-undo"></i></a>
                     {% else %}

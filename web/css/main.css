@@ -40,6 +40,10 @@ i {
     float: right;
 }
 
+.text-right {
+    text-align: right;
+}
+
 .table {
     margin-bottom: 0 !important;
     width: 100%;
