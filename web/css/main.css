@@ -44,6 +44,14 @@ i {
     text-align: right;
 }
 
+.width-66 {
+    width:60% !important;
+}
+
+.width-50 {
+    width: 50% !important;
+}
+
 .table {
     margin-bottom: 0 !important;
     width: 100%;

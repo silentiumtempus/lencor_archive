@@ -12,7 +12,7 @@
             </span>
             <span>ID: {{ file.addedByUserId }}</span>
             <span> {{ file.addTimestamp|date('Y-m-d H:i:s') }} </span>
-            <span class="text-right">
+            <span class="text-right width-66">
         {% if file.deleteMark != 0 %}
                 <i class="fa fa-ban" id="isRemoved"> </i>
         {% else %}
@@ -24,7 +24,7 @@
         {% endif %}
                 &nbsp;<i class="fa fa-user" id="lastChangeInfo"> </i>
             </span>
-            <span id="{{ file.id }}" class="text-right">
+            <span id="{{ file.id }}" class="text-right width-66">
         {% if file.deleteMark != 0 %}
                 <a href="#" name="restoreFile"><i class="fa fa-undo"></i></a>&nbsp;
         {% else %}
