@@ -18,6 +18,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class ArchiveEntrySearchForm
+ * @package AppBundle\Form
+ */
 class ArchiveEntrySearchForm extends AbstractType
 {
     protected $em;
@@ -45,12 +49,12 @@ class ArchiveEntrySearchForm extends AbstractType
             ->add('year', ChoiceType::class, array(
                 'choices' => $this->getYears(1990),
                 'label' => false,
-                'placeholder' => 'Выберите год'
+                'placeholder' => 'entries.search.year.placeholder'
             ))
             ->add('factory', EntityType::class, array(
                 'class' => 'AppBundle:FactoryEntity',
                 'label' => false,
-                'placeholder' => 'Выберите завод',
+                'placeholder' => 'entries.search.factory.placeholder',
                 'choice_value' => 'id'
             ));
 
@@ -68,7 +72,7 @@ class ArchiveEntrySearchForm extends AbstractType
                 'class' => 'AppBundle:SettingEntity',
                 'choices' => $settingsList,
                 'label' => false,
-                'placeholder' => 'Выберите установку',
+                'placeholder' => 'entries.search.setting.placeholder',
                 'disabled' => $status
             ));
         };
@@ -97,8 +101,8 @@ class ArchiveEntrySearchForm extends AbstractType
             ->add('fullConclusionName', TextType::class, array('label' => false));
 
         $builder
-            ->add('submitButton', SubmitType::class, array('label' => 'Поиск'))
-            ->add('resetButton', ResetType::class, array('label' => 'Сброс'));
+            ->add('submitButton', SubmitType::class, array('label' => 'entries.search.search.label'))
+            ->add('resetButton', ResetType::class, array('label' => 'entries.search.reset.label'));
     }
 
     /**

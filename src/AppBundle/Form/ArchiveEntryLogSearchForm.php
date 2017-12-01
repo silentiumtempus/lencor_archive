@@ -2,18 +2,19 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\FactoryEntity;
+
+use AppBundle\Entity\ArchiveEntryEntity;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class FactoryAddForm
+ * Class ArchiveEntryLogSearchForm
  * @package AppBundle\Form
  */
-class FactoryAddForm extends AbstractType
+class ArchiveEntryLogSearchForm extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -22,11 +23,11 @@ class FactoryAddForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add ('factoryName', TextType::class, array(
-                'label' => 'factories.add.name.label',
-                'attr' => array('size' => 30)
+            ->add('id', NumberType::class, array(
+                'label' => 'logs.search.placeholder',
+                'attr' => array('size' => 10)
             ))
-            ->add('submitButton', SubmitType::class, array('label' => 'button.factory.create'));
+            ->add('submitButton', SubmitType::class, array('label' => 'logs.search.submit'));
     }
 
     /**
@@ -35,11 +36,8 @@ class FactoryAddForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => FactoryEntity::class,
-            'validation_groups' => array('factory_addition'),
-            'attr' => array('id' => 'factory_add_form')
+           'data_class' => ArchiveEntryEntity::class,
+            'attr' => array('id' => 'entry_logs_search_form')
         ));
     }
 }
-
-

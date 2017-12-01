@@ -58,6 +58,17 @@ entries:
     conclusion_fullname:
       label: 'Полное название заключения'
       placeholder: 'Введите полное название заключения'
+  search:
+    year:
+      placeholder: 'Выберите год'
+    factory:
+      placeholder: 'Выберите завод'
+    setting:
+      placeholder: 'Выберите установку'
+    reset:
+      label: 'Сброс'
+    search:
+      label: 'Поиск'
 factories:
   title:
     new: 'Добавление завода'
@@ -94,3 +105,17 @@ folder:
     parent:
       label: 'Родительская директория'
       placeholder: 'Выберите родителя'
+logs:
+  title:
+    search: 'Поиск по номеру архивной записи'
+    list: 'Зарегистрированные события'
+  header:
+    timestamp: 'Метка времени'
+    eventtype: 'Тип события'
+    record: 'Запись'
+    details: 'Детализация'
+    info: 'Информация'
+    actions: 'Действия'
+  search:
+    placeholder: 'Введите ИН'
+    submit: 'Показать логи'

@@ -17,6 +17,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class ArchiveEntryAddForm
+ * @package AppBundle\Form
+ */
 class ArchiveEntryAddForm extends AbstractType
 {
     protected $em;

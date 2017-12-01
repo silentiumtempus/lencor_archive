@@ -53,6 +53,11 @@ services:
         arguments: ['@doctrine.orm.entity_manager']
         tags:
           - { name: form.type }
+      archiveentrylogsearchform:
+        class: AppBundle\Form\ArchiveEntryLogSearchForm
+        arguments: ['@doctrine.orm.entity_manager']
+        tags:
+          - { name: form.type}
     # application services
     service:
       folderservice:

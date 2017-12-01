@@ -1,7 +1,7 @@
 {% if archiveEntries is not empty %}
     {% for entry in archiveEntries %}
         <tr id="entry_{{ entry.id }}" class="description{% if entry.deleteMark != 0 %} deleted {% endif %}">
-            <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i class="fa fa-angle-down"></i><i class="fa fa-folder-o" title="Номер ячейки: {{ entry.id }}"> </i></a></td>
+            <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i class="fa fa-angle-down"></i><i class="fa fa-folder-o"> </i></a></td>
             <td>
                 {% if entry.deleteMark != 0 %}
                     <i class="fa fa-remove"></i>

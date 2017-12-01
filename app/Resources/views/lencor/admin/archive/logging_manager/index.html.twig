@@ -1,9 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block body_id %}
-
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('js/logsearch-loader.js') }}"></script>
 {% endblock %}
 
 {% block main %}
-    Логирование
+    <div>
+        <h3>{{ 'logs.title.search'|trans }}</h3>
+    </div>
+    <div>
+        {{ form_start(logSearchForm) }}
+        <ul id="main-table" class="form-row" data-path="{{ path('entries') }}">
+            <li>
+                <span>{{ form_row(logSearchForm.id) }}</span>
+                <span>{{ form_row(logSearchForm.submitButton) }}</span>
+            </li>
+        </ul>
+        {{ form_errors(logSearchForm) }}
+        {{ form_end(logSearchForm) }}
+    </div>
+    <div>
+        <div class="left"><h3>{{ 'logs.title.list'|trans }}</h3></div>
+        <div class="right">
+            {#<a href="{{ path('entries_new') }}" class="button right">
+                <i class="fa fa-pencil" aria-hidden="true"></i> {{ 'button.entry.create'|trans }}
+            </a> #}
+        </div>
+    </div>
+    <table class="table white table-entries" id="main-table" data-path="{{ path('entries') }}">
+        <thead>
+        <tr>
+            <td></td>
+            <td scope="col">{{ 'logs.header.timestamp'|trans }}</td>
+            <td scope="col">{{ 'logs.header.eventtype'|trans }}</td>
+            <td scope="col">{{ 'logs.header.record'|trans }}</td>
+            <td scope="col">{{ 'logs.header.details'|trans }}</td>
+            <td scope="col" class="text-center"><i class="fa fa-info"
+                                                   aria-hidden="true"></i> {{ 'logs.header.info'|trans }}</td>
+            <td scope="col" class="text-center"><i class="fa fa-cogs"
+                                                   aria-hidden="true"></i> {{ 'logs.header.actions'|trans }}</td>
+        </tr>
+        </thead>
+        <tbody id="main-tbody" class="entries" data-path="{{ path('logging') }}">
+        {% block entries %}
+
+        {% endblock %}
+        </tbody>
+    </table>
 {% endblock %}

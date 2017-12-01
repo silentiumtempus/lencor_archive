@@ -12,6 +12,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Yavin\Symfony\Form\Type\TreeType;
 
+/**
+ * Class FolderAddForm
+ * @package AppBundle\Form
+ */
 class FolderAddForm extends AbstractType
 {
     protected $em;
