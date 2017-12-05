@@ -7,6 +7,8 @@ use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Class LoggingService
@@ -69,5 +71,17 @@ class LoggingService
         $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         $entryPath = $this->pathRoot . "/" . $rootFolder->getFolderName();
         $this->logEntry($entry, $entryPath, $user, $messages);
+    }
+
+    public function getEntryLogs(FormInterface $logSearchForm)
+    {
+        //$entryId = $logSearchForm->getViewData()->get('id');
+        //$entryId = 2;
+        //$entryFolder = $this->foldersRepository->findOneById($entryId);
+        //$folderPath = $this->pathRoot . "/" . $entryFolder->getFolderName();
+
+        $folderPath = $this->pathRoot;
+
+        return $folderPath;
     }
 }

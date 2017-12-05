@@ -37,7 +37,8 @@ class EntryAdditionController extends Controller
      * @param FolderService $folderService
      * @param LoggingService $loggingService
      * @return Response
-     * @Route("/entries/new", name="entries_new")
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function archiveEntryAdd(
         Request $request,

@@ -21,6 +21,8 @@ class ArchiveEntrySearchService
     /**
      * ArchiveEntrySearchService constructor.
      * @param ContainerInterface $container
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __construct(ContainerInterface $container)
     {

@@ -101,7 +101,6 @@ class FileService
      * @param FolderEntity $parentFolder
      * @param string $originalName
      * @param User $user
-     * @return FileEntity
      */
     public function prepareNewFile(FileEntity $newFileEntity, FolderEntity $parentFolder, string $originalName, User $user)
     {

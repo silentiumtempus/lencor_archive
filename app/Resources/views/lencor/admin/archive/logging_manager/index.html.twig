@@ -11,7 +11,7 @@
     </div>
     <div>
         {{ form_start(logSearchForm) }}
-        <ul id="main-table" class="form-row" data-path="{{ path('entries') }}">
+        <ul id="main-table" class="form-row" data-path="{{ path('logging') }}">
             <li>
                 <span>{{ form_row(logSearchForm.id) }}</span>
                 <span>{{ form_row(logSearchForm.submitButton) }}</span>
@@ -28,7 +28,7 @@
             </a> #}
         </div>
     </div>
-    <table class="table white table-entries" id="main-table" data-path="{{ path('entries') }}">
+    <table class="table white table-entries" id="main-table" data-path="{{ path('logging') }}">
         <thead>
         <tr>
             <td></td>
@@ -43,7 +43,11 @@
         </tr>
         </thead>
         <tbody id="main-tbody" class="entries" data-path="{{ path('logging') }}">
-        {% block entries %}
+        <tr>
+            <td colspan="6"> folderPath: {{ folderPath }} </td>
+        </tr>
+        {% block logs %}
+
 
         {% endblock %}
         </tbody>

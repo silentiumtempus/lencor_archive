@@ -206,6 +206,8 @@ class FolderService
     /**
      * @param ArchiveEntryEntity $archiveEntryEntity
      * @return string
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity)
     {
