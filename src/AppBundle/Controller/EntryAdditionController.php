@@ -18,7 +18,6 @@ use Doctrine\ORM\ORMException;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,7 +37,8 @@ class EntryAdditionController extends Controller
      * @param LoggingService $loggingService
      * @return Response
      * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Psr\Container\
+     * @Route("/entries/new", name="entries_new")
      */
     public function archiveEntryAdd(
         Request $request,
@@ -110,7 +110,7 @@ class EntryAdditionController extends Controller
                         }
                     }
                     $loggingService->logEntry($newEntryEntity, $entryPath, $this->getUser(), $session->getFlashBag()->peekAll());
-                } catch (Exception $exception) {
+                } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Произошла непредвиденная ошибка:' . $exception->getMessage());
                 }
             } else {

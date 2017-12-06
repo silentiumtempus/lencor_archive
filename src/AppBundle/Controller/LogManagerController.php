@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Form\ArchiveEntryLogSearchForm;
 use AppBundle\Service\LoggingService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -26,16 +25,16 @@ class LogManagerController extends Controller
     {
         $logSearchForm = $this->createForm(ArchiveEntryLogSearchForm::class);
         try {
-            $folderPath = '';
+            $logRecords = '';
             $logSearchForm->handleRequest($request);
-            if ($logSearchForm->isSubmitted()) //&& $logSearchForm->isValid() && $request->isMethod('POST'))
+            if ($logSearchForm->isSubmitted() && $logSearchForm->isValid() && $request->isMethod('POST'))
             {
-                $folderPath = $loggingService->getEntryLogs($logSearchForm);
+                $logRecords = $loggingService->getEntryLogs($logSearchForm);
             }
         } catch (\Exception $e) {
-            $folderPath = "failed : " . $e->getMessage();
+            //$folderPath = "failed : " . $e->getMessage();
         }
 
-        return $this->render('lencor/admin/archive/logging_manager/index.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'folderPath' => $folderPath));
+        return $this->render('lencor/admin/archive/logging_manager/show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logRecords' => $logRecords));
     }
 }

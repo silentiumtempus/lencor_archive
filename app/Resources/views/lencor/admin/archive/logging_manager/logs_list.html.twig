@@ -1,0 +1,15 @@
+{#{% if logRecords is not empty %}
+    {% for logFile in logRecords %}
+        <tr>
+            <td colspan="6"> folderPath: {{ logFile }} </td>
+        </tr>
+    {% endfor %}
+{% else %}
+<tr>
+    <td colspan="6"> No logs </td>
+</tr>
+{% endif %}
+#}
+<tr>
+    <td colspan="6"> logRecords: {{ logRecords }}</td>
+</tr>

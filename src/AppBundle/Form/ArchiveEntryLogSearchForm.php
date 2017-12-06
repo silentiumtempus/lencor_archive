@@ -35,7 +35,7 @@ class ArchiveEntryLogSearchForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-           'data_class' => ArchiveEntryEntity::class,
+           //'data_class' => ArchiveEntryEntity::class,
             'attr' => array('id' => 'entry_logs_search_form')
         ));
     }

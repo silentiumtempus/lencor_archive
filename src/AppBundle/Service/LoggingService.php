@@ -7,7 +7,7 @@ use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Form\Form;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -21,6 +21,7 @@ class LoggingService
     protected $pathRoot;
     protected $foldersRepository;
     protected $entriesRepository;
+    protected $pathPermissions;
 
     /**
      * LoggingService constructor.
@@ -34,6 +35,7 @@ class LoggingService
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
         $this->foldersRepository = $this->em->getRepository('AppBundle:FolderEntity');
         $this->entriesRepository = $this->em->getRepository('AppBundle:ArchiveEntryEntity');
+        $this->pathPermissions = $this->container->getParameter('lencor_archive.storage_permissions');
     }
 
     /**
@@ -45,7 +47,12 @@ class LoggingService
     public function logEntry(ArchiveEntryEntity $archiveEntryEntity, string $entryPath, User $user, array $flashArray)
     {
         $fs = new Filesystem();
-        $logFileName = $entryPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".log";
+        $logsDir = $entryPath . "/logs/";
+        if (!$fs->exists($logsDir)) {
+            $fs->mkdir($logsDir, $this->pathPermissions);
+        }
+        $logFileName = $logsDir . $archiveEntryEntity->getArchiveNumber() . ".log";
+
         if (!$fs->exists($logFileName)) {
             $fs->touch($logFileName);
         }
@@ -73,15 +80,16 @@ class LoggingService
         $this->logEntry($entry, $entryPath, $user, $messages);
     }
 
+    /**
+     * @param FormInterface $logSearchForm
+     */
     public function getEntryLogs(FormInterface $logSearchForm)
     {
-        //$entryId = $logSearchForm->getViewData()->get('id');
-        //$entryId = 2;
-        //$entryFolder = $this->foldersRepository->findOneById($entryId);
-        //$folderPath = $this->pathRoot . "/" . $entryFolder->getFolderName();
+        $finder = new Finder();
+        $entryId = $logSearchForm->getViewData('id');
+        $entryFolder = $this->foldersRepository->findOneById($entryId);
+        $logsPath = $this->pathRoot . "/" . $entryFolder->getFolderName() . "/logs/";
 
-        $folderPath = $this->pathRoot;
-
-        return $folderPath;
+        //return $finder->files()->in($logsPath);
     }
 }
