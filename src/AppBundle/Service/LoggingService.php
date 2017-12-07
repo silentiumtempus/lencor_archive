@@ -39,19 +39,27 @@ class LoggingService
     }
 
     /**
+     * @param string $entryFolderName
+     * @return string
+     */
+    public function getLogsPath(string $entryFolderName)
+    {
+        return $this->pathRoot . "/" . $entryFolderName . "/logs";
+    }
+
+    /**
      * @param ArchiveEntryEntity $archiveEntryEntity
-     * @param string $entryPath
+     * @param string $logsDir
      * @param User $user
      * @param array $flashArray
      */
-    public function logEntry(ArchiveEntryEntity $archiveEntryEntity, string $entryPath, User $user, array $flashArray)
+    public function logEntry(ArchiveEntryEntity $archiveEntryEntity, string $logsDir, User $user, array $flashArray)
     {
         $fs = new Filesystem();
-        $logsDir = $entryPath . "/logs/";
         if (!$fs->exists($logsDir)) {
             $fs->mkdir($logsDir, $this->pathPermissions);
         }
-        $logFileName = $logsDir . $archiveEntryEntity->getArchiveNumber() . ".log";
+        $logFileName = $logsDir . "/" . $archiveEntryEntity->getArchiveNumber() . ".log";
 
         if (!$fs->exists($logFileName)) {
             $fs->touch($logFileName);
@@ -76,20 +84,36 @@ class LoggingService
     {
         $entry = $this->entriesRepository->findOneById($entryId);
         $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
-        $entryPath = $this->pathRoot . "/" . $rootFolder->getFolderName();
-        $this->logEntry($entry, $entryPath, $user, $messages);
+        $logsDir = $this->getLogsPath($rootFolder->getFolderName());
+        $this->logEntry($entry, $logsDir, $user, $messages);
     }
 
     /**
      * @param FormInterface $logSearchForm
+     * @return string
      */
-    public function getEntryLogs(FormInterface $logSearchForm)
+    public function getEntryLogsFolder(FormInterface $logSearchForm)
     {
-        $finder = new Finder();
         $entryId = $logSearchForm->getViewData('id');
         $entryFolder = $this->foldersRepository->findOneById($entryId);
-        $logsPath = $this->pathRoot . "/" . $entryFolder->getFolderName() . "/logs/";
+        return $entryFolder ? $this->getLogsPath($entryFolder->getFolderName()) : '';
+    }
 
-        //return $finder->files()->in($logsPath);
+    /**
+     * @param string $logsPath
+     * @return array
+     */
+    public function getEntryLogs(string $logsPath)
+    {
+        $files = [];
+        $finder = new Finder();
+        $finder->files()->in($logsPath);
+        $finder->sortByModifiedTime();
+        foreach ($finder as $file)
+        {
+            $files[] = $file->getFilename();
+        }
+            //$files = iterator_to_array($finder->files()->in($logsPath));
+        return $files;
     }
 }

@@ -25,16 +25,18 @@ class LogManagerController extends Controller
     {
         $logSearchForm = $this->createForm(ArchiveEntryLogSearchForm::class);
         try {
-            $logRecords = '';
+            $logsFolder = null;
+            $logRecords = null;
             $logSearchForm->handleRequest($request);
             if ($logSearchForm->isSubmitted() && $logSearchForm->isValid() && $request->isMethod('POST'))
             {
-                $logRecords = $loggingService->getEntryLogs($logSearchForm);
+                $logsFolder = $loggingService->getEntryLogsFolder($logSearchForm);
+                $logRecords = $loggingService->getEntryLogs($logsFolder);
             }
         } catch (\Exception $e) {
             //$folderPath = "failed : " . $e->getMessage();
         }
 
-        return $this->render('lencor/admin/archive/logging_manager/show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logRecords' => $logRecords));
+        return $this->render('lencor/admin/archive/logging_manager/show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsFolder' => $logsFolder, 'logRecords' => $logRecords));
     }
 }

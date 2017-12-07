@@ -18,6 +18,7 @@ $(document).ready(function () {
                 method: $logSearchForm.attr('method'),
                 data: $logSearchFormSerialized,
                 success: function (response) {
+                    $('#main-tbody').replaceWith($(response).find('#main-tbody'));
                 }
             });
 
