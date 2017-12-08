@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Form\ArchiveEntryLogSearchForm;
+use AppBundle\Service\ArchiveEntryService;
 use AppBundle\Service\LoggingService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,25 +19,30 @@ class LogManagerController extends Controller
     /**
      * @param Request $request
      * @param LoggingService $loggingService
+     * @param ArchiveEntryService $archiveEntryService
      * @return Response
      * @Route("/logging/", name="logging")
      */
-    public function logManagerIndex(Request $request, LoggingService $loggingService)
+    public function logManagerIndex(Request $request, LoggingService $loggingService, ArchiveEntryService $archiveEntryService)
     {
         $logSearchForm = $this->createForm(ArchiveEntryLogSearchForm::class);
         try {
-            $logsFolder = null;
+            $logsPath = null;
             $logRecords = null;
+            $entryExists = false;
             $logSearchForm->handleRequest($request);
-            if ($logSearchForm->isSubmitted() && $logSearchForm->isValid() && $request->isMethod('POST'))
-            {
-                $logsFolder = $loggingService->getEntryLogsFolder($logSearchForm);
-                $logRecords = $loggingService->getEntryLogs($logsFolder);
+            if ($logSearchForm->isSubmitted() && $logSearchForm->isValid() && $request->isMethod('POST')) {
+                $entryId = $logSearchForm->get('id')->getData();
+                if ($archiveEntryService->getEntryById($entryId)) {
+                    $entryExists = true;
+                    $logsPath = $loggingService->getLogsHTTPPath($entryId);
+                    $logRecords = $loggingService->getEntryLogs($entryId);
+                }
             }
         } catch (\Exception $e) {
             //$folderPath = "failed : " . $e->getMessage();
         }
 
-        return $this->render('lencor/admin/archive/logging_manager/show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsFolder' => $logsFolder, 'logRecords' => $logRecords));
+        return $this->render('lencor/admin/archive/logging_manager/show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsPath' => $logsPath, 'logRecords' => $logRecords, 'entryExists' => $entryExists));
     }
 }

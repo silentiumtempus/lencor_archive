@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Form\FormInterface;
 
 /**
  * Class LoggingService
@@ -19,6 +18,7 @@ class LoggingService
     protected $em;
     protected $container;
     protected $pathRoot;
+    protected $pathHTTP;
     protected $foldersRepository;
     protected $entriesRepository;
     protected $pathPermissions;
@@ -33,18 +33,40 @@ class LoggingService
         $this->em = $entityManager;
         $this->container = $container;
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->pathHTTP = $this->container->getParameter('lencor_archive.http_path');
         $this->foldersRepository = $this->em->getRepository('AppBundle:FolderEntity');
         $this->entriesRepository = $this->em->getRepository('AppBundle:ArchiveEntryEntity');
         $this->pathPermissions = $this->container->getParameter('lencor_archive.storage_permissions');
     }
 
     /**
-     * @param string $entryFolderName
+     * @param int $entryId
      * @return string
      */
-    public function getLogsPath(string $entryFolderName)
+    public function getLogsPath(int $entryId)
     {
-        return $this->pathRoot . "/" . $entryFolderName . "/logs";
+        $entryFolder = $this->foldersRepository->findOneById($entryId);
+        if ($entryFolder)
+        {
+            return $this->pathRoot . "/" . $entryFolder->getFolderName() . "/logs";
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param int $entryId
+     * @return string
+     */
+    public function getLogsHTTPPath(int $entryId)
+    {
+        $entryFolder = $this->foldersRepository->findOneById($entryId);
+        if ($entryFolder)
+        {
+            return $this->pathHTTP . "/" . $entryFolder->getFolderName() . "/logs";
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -89,31 +111,24 @@ class LoggingService
     }
 
     /**
-     * @param FormInterface $logSearchForm
-     * @return string
-     */
-    public function getEntryLogsFolder(FormInterface $logSearchForm)
-    {
-        $entryId = $logSearchForm->getViewData('id');
-        $entryFolder = $this->foldersRepository->findOneById($entryId);
-        return $entryFolder ? $this->getLogsPath($entryFolder->getFolderName()) : '';
-    }
-
-    /**
-     * @param string $logsPath
+     * @param int $entryId
      * @return array
      */
-    public function getEntryLogs(string $logsPath)
+    public function getEntryLogs(int $entryId)
     {
         $files = [];
         $finder = new Finder();
-        $finder->files()->in($logsPath);
-        $finder->sortByModifiedTime();
-        foreach ($finder as $file)
-        {
-            $files[] = $file->getFilename();
-        }
+        $logsPath = $this->getLogsPath($entryId);
+        if ($logsPath) {
+            $finder->files()->in($logsPath);
+            $finder->sortByModifiedTime();
+            foreach ($finder as $file) {
+                $files[] = $file->getFilename();
+            }
             //$files = iterator_to_array($finder->files()->in($logsPath));
-        return $files;
+            return $files;
+        } else {
+            return null;
+        }
     }
 }
