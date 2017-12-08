@@ -3,7 +3,6 @@ $(document).ready(function () {
     } else {
         let $path = $("#main-table").attr("data-path");
         let $logSearchForm = $('#entry_logs_search_form');
-        let $entryIdInputField = $('#archive_entry_log_search_form_id');
 
         $logSearchForm.on("submit", function (event) {
             event.preventDefault();
@@ -18,12 +17,24 @@ $(document).ready(function () {
                 method: $logSearchForm.attr('method'),
                 data: $logSearchFormSerialized,
                 success: function (response) {
-                    $('#main-tbody').replaceWith($(response).find('#main-tbody'));
+                    $('#logFiles').replaceWith($(response).find('#logFiles'));
                 }
             });
 
             return true;
         }
+
+        $(document).on("click", 'a[name="openLog"]', function(event) {
+            event.preventDefault();
+            $.ajax({
+                url: "open-file",
+                method: "POST",
+                data: null,
+                success: function (response) {
+
+                }
+            })
+        })
 
     }
 });

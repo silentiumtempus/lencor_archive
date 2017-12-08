@@ -45,4 +45,14 @@ class LogManagerController extends Controller
 
         return $this->render('lencor/admin/archive/logging_manager/show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsPath' => $logsPath, 'logRecords' => $logRecords, 'entryExists' => $entryExists));
     }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("/logging/open-file", name="open-file")
+     */
+    public function openLogFile(Request $request)
+    {
+        return new Response();
+    }
 }

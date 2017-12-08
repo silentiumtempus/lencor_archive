@@ -1,17 +1,11 @@
 {% if entryExists %}
     {% if logRecords is not empty %}
         {% for logFile in logRecords %}
-            <tr>
-                <td colspan="6"><a href="{{ logsPath }}/{{ logFile }}">{{ logFile }}</a> </td>
-            </tr>
+            <a class="button" name="openLog" id="openLog" href="{{ logsPath }}/{{ logFile }}">{{ logFile }}</a>
         {% endfor %}
     {% else %}
-        <tr>
-            <td colspan="6">В директории логов записи отсутствуют<td>
-        </tr>
+        В директории логов записи отсутствуют
     {% endif %}
 {% else %}
-    <tr>
-        <td colspan="6">Архивная запись не найдена</td>
-    </tr>
+    Архивная запись не найдена
 {% endif %}
