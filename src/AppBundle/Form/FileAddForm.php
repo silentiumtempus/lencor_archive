@@ -25,7 +25,7 @@ class FileAddForm extends AbstractType
      * FileAddForm constructor.
      * @param EntityManagerInterface $em
      */
-    function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
         $this->folderRepository = $this->em->getRepository('AppBundle:FolderEntity');

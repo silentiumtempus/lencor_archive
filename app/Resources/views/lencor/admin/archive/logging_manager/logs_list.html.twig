@@ -1,7 +1,7 @@
 {% if entryExists %}
     {% if logRecords is not empty %}
         {% for logFile in logRecords %}
-            <a class="button" name="openLog" id="openLog" href="{{ logsPath }}/{{ logFile }}">{{ logFile }}</a>
+            <a id="{{ entryId }}" class="button" name="openLog" href="#">{{ logFile }}</a>
         {% endfor %}
     {% else %}
         В директории логов записи отсутствуют

@@ -33,7 +33,7 @@ class ArchiveEntrySearchForm extends AbstractType
      * @param EntityManagerInterface $em
      * @param SettingService $settingService
      */
-    function __construct(EntityManagerInterface $em, SettingService $settingService)
+    public function __construct(EntityManagerInterface $em, SettingService $settingService)
     {
         $this->em = $em;
         $this->settingService = $settingService;

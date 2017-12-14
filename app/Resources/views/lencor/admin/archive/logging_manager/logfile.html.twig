@@ -1,0 +1,7 @@
+{% if fileContent is not empty %}
+    {% for line in fileContent %}
+    {{ line }} <br>
+    {% endfor %}
+{% else %}
+    В файле не найдено записей
+{% endif %}

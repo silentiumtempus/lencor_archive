@@ -129,7 +129,7 @@ body .content .button {
     vertical-align: middle;
     text-align: center;
     padding: 5px 10px;
-    margin: 10px 15px 0;
+    margin: 10px 10px;
     font-size: 15px;
     color: #ffffff !important;
     text-decoration: none !important;
@@ -142,6 +142,10 @@ body .content .button:hover {
 }
 
 body .content .table-entries thead{
+    background-color: #f8f8f8;
+}
+
+body .content .table-entries tfoot{
     background-color: #f8f8f8;
 }
 
@@ -278,7 +282,6 @@ body .entries .icons a {
 body .entries .header {
     background: #2c3e50;
     color: #ffffff;
-    margin: 10px 0 0 0 !important;
     padding: 10px 2% 10px 2%;
     border: 1px solid silver;
 }

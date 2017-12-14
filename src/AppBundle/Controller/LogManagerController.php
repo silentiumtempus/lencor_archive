@@ -27,6 +27,7 @@ class LogManagerController extends Controller
     {
         $logSearchForm = $this->createForm(ArchiveEntryLogSearchForm::class);
         try {
+            $entryId = null;
             $logsPath = null;
             $logRecords = null;
             $entryExists = false;
@@ -43,16 +44,24 @@ class LogManagerController extends Controller
             //$folderPath = "failed : " . $e->getMessage();
         }
 
-        return $this->render('lencor/admin/archive/logging_manager/show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsPath' => $logsPath, 'logRecords' => $logRecords, 'entryExists' => $entryExists));
+        return $this->render(':lencor/admin/archive/logging_manager:show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsPath' => $logsPath, 'logRecords' => $logRecords, 'entryExists' => $entryExists, 'entryId' => $entryId));
     }
 
     /**
      * @param Request $request
+     * @param LoggingService $loggingService
      * @return Response
      * @Route("/logging/open-file", name="open-file")
      */
-    public function openLogFile(Request $request)
+    public function openLogFile(Request $request, LoggingService $loggingService)
     {
-        return new Response();
+        $fileContent = null;
+        $path = $loggingService->getLogsPath($request->get('entryId'));
+        $file = $path . "/" . $request->get('file');
+        if (filesize($file)>0) {
+            $fileContent = explode("\n", file_get_contents($file));
+        }
+        $entryId = $request->get('entryId') ;
+        return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array('entryId' => $entryId, 'fileContent' => $fileContent));
     }
 }

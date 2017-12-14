@@ -26,15 +26,17 @@ $(document).ready(function () {
 
         $(document).on("click", 'a[name="openLog"]', function(event) {
             event.preventDefault();
+            let entryId = $(this).attr("id");
+            let file = $(this).text();
             $.ajax({
                 url: "open-file",
                 method: "POST",
-                data: null,
+                data: {entryId: entryId, file: file},
                 success: function (response) {
+                    $('#logfile-content').html(response);
 
                 }
             })
         })
-
     }
 });
