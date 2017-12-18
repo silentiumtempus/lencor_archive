@@ -11,7 +11,7 @@
     </div>
     <div>
         {{ form_start(logSearchForm) }}
-        <ul id="main-table" class="form-row" data-path="{{ path('logging') }}">
+        <ul id="log-search" class="form-row" data-path="{{ path('logging') }}">
             <li>
                 <span>{{ form_row(logSearchForm.id) }}</span>
                 <span>{{ form_row(logSearchForm.submitButton) }}</span>
@@ -29,12 +29,19 @@
             {% endblock %}
         </div>
     </div>
-    <div><h4>{{ 'logs.title.filescontent'|trans }}</h4>
+    <div>
+        <h4>{{ 'logs.title.filescontent'|trans }}</h4>
     </div>
-    <table class="table white table-entries" id="main-table" data-path="{{ path('logging') }}">
+
+    {% block logsRowsCount %}
+
+    {% endblock %}
+
+    <table class="table white table-entries" data-path="{{ path('logging') }}">
         <thead>
         <tr>
-            <td></td>
+            <td>
+            </td>
             {#<td scope="col">{{ 'logs.header.timestamp'|trans }}</td>
             <td scope="col">{{ 'logs.header.eventtype'|trans }}</td>
             <td scope="col">{{ 'logs.header.record'|trans }}</td>

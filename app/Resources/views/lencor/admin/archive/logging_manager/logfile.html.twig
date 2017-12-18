@@ -1,4 +1,7 @@
 {% if fileContent is not empty %}
+    {% block logsRowsCount %}
+        {{ include(':lencor/admin/archive/logging_manager:logs_rows_count.html.twig') }}
+    {% endblock %}
     {% for line in fileContent %}
     {{ line }} <br>
     {% endfor %}

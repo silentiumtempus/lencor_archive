@@ -1,0 +1,13 @@
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('js/logRowsCount.js') }}"></script>
+{% endblock %}
+{% if rowsCountForm is defined %}
+    {{ form_start(rowsCountForm) }}
+        <ul class="form-row">
+            <li>
+                <span>{{ form_row(rowsCountForm.rowsCount) }}</span>
+                <span>{{ form_row(rowsCountForm.submitButton) }}</span>
+            </li>
+        </ul>
+    {{ form_end(rowsCountForm) }}
+{% endif %}

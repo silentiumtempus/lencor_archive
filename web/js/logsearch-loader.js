@@ -1,13 +1,18 @@
 $(document).ready(function () {
     if (!window.jQuery) {
     } else {
-        let $path = $("#main-table").attr("data-path");
+        let $path = $("#log-search").attr("data-path");
         let $logSearchForm = $('#entry_logs_search_form');
+        let $logsRowsCountForm = $('#logs_rows_count_form');
 
         $logSearchForm.on("submit", function (event) {
             event.preventDefault();
             logsLoader();
 
+        });
+
+        $logsRowsCountForm.on("submit", function (event) {
+            event.preventDefault();
         });
 
         function logsLoader() {
@@ -29,7 +34,7 @@ $(document).ready(function () {
             let entryId = $(this).attr("id");
             let file = $(this).text();
             $.ajax({
-                url: "open-file",
+                url: "logging/open-file",
                 method: "POST",
                 data: {entryId: entryId, file: file},
                 success: function (response) {

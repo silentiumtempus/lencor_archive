@@ -9,7 +9,7 @@ header:
     homepage: 'Главная'
     manager: 'Архив'
     system: 'Система'
-    control: 'Управление'
+    admin: 'Управление'
     logging: 'Логирование'
     stats: 'Статистика'
     login: 'Войти'
@@ -120,3 +120,6 @@ logs:
   search:
     placeholder: 'Введите ИН'
     submit: 'Показать логи'
+  rowsCount:
+    placeholder: 'Количество строк'
+    submit: 'Изменить'
