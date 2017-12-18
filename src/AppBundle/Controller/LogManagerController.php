@@ -5,10 +5,14 @@ namespace AppBundle\Controller;
 use AppBundle\Form\ArchiveEntryLogSearchForm;
 use AppBundle\Service\ArchiveEntryService;
 use AppBundle\Service\LoggingService;
+use PhpExtended\Tail\Tail;
+use PhpExtended\Tail\TailException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
+
 
 /**
  * Class LogManagerController
@@ -17,34 +21,40 @@ use Symfony\Component\Routing\Annotation\Route;
 class LogManagerController extends Controller
 {
     /**
+     * @param int $entryId
      * @param Request $request
      * @param LoggingService $loggingService
      * @param ArchiveEntryService $archiveEntryService
      * @return Response
-     * @Route("/logging/", name="logging")
+     * @Route("/logging/{entryId}", name="logging", requirements={"entryId"="\d+"}, defaults={"entryId" : "0"})
      */
-    public function logManagerIndex(Request $request, LoggingService $loggingService, ArchiveEntryService $archiveEntryService)
+    public function logManagerIndex(int $entryId, Request $request, LoggingService $loggingService, ArchiveEntryService $archiveEntryService)
     {
         $logSearchForm = $this->createForm(ArchiveEntryLogSearchForm::class);
         try {
-            $entryId = null;
             $logsPath = null;
-            $logRecords = null;
+            $logsHTTPPath = null;
+            $logFiles = null;
+            $logFolders = null;
             $entryExists = false;
             $logSearchForm->handleRequest($request);
             if ($logSearchForm->isSubmitted() && $logSearchForm->isValid() && $request->isMethod('POST')) {
                 $entryId = $logSearchForm->get('id')->getData();
-                if ($archiveEntryService->getEntryById($entryId)) {
-                    $entryExists = true;
-                    $logsPath = $loggingService->getLogsHTTPPath($entryId);
-                    $logRecords = $loggingService->getEntryLogs($entryId);
+            }
+            if ($archiveEntryService->getEntryById($entryId)) {
+                $entryExists = true;
+                $logsPath = $loggingService->getLogsPath($entryId);
+                $logsHTTPPath = $loggingService->getLogsHTTPPath($entryId);
+                if ($logsPath) {
+                    $logFolders = $loggingService->getEntryLogFolders($logsPath);
+                    $logFiles = $loggingService->getEntryLogFiles($logsPath);
                 }
             }
         } catch (\Exception $e) {
             //$folderPath = "failed : " . $e->getMessage();
         }
 
-        return $this->render(':lencor/admin/archive/logging_manager:show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsPath' => $logsPath, 'logRecords' => $logRecords, 'entryExists' => $entryExists, 'entryId' => $entryId));
+        return $this->render(':lencor/admin/archive/logging_manager:show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsPath' => $logsHTTPPath, 'logFolders' => $logFolders, 'logFiles' => $logFiles, 'entryExists' => $entryExists, 'entryId' => $entryId));
     }
 
     /**
@@ -59,7 +69,17 @@ class LogManagerController extends Controller
         $path = $loggingService->getLogsPath($request->get('entryId'));
         $file = $path . "/" . $request->get('file');
         if (filesize($file)>0) {
-            $fileContent = explode("\n", file_get_contents($file));
+            try {
+                $tail = new Tail($file);
+                $fileContent = $tail->smart(100, null, false);
+            } catch (TailException $tailException) {
+                $fileContent[0] = 'Exception : ' . $tailException->getMessage();
+            }
+
+            //$process = new Process("tail -100 " . $file . "");
+            //$process->run();
+            //$fileContent = $process->getOutput();
+            //$fileContent = explode("\n", file_get_contents($file));
         }
         $entryId = $request->get('entryId') ;
         return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array('entryId' => $entryId, 'fileContent' => $fileContent));

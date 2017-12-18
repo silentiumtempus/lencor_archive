@@ -453,7 +453,10 @@ body#admin_post_new td:nth-child(2){
     float: right;
 }
 
+body .log-files ul li {
+    font-size: 16px;
+}
 
-
-
-
+body .log-files ul li a {
+    color: #2c3e50 !important;
+}

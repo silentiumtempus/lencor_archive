@@ -46,8 +46,7 @@ class LoggingService
     public function getLogsPath(int $entryId)
     {
         $entryFolder = $this->foldersRepository->findOneById($entryId);
-        if ($entryFolder)
-        {
+        if ($entryFolder) {
             return $this->pathRoot . "/" . $entryFolder->getFolderName() . "/logs";
         } else {
             return false;
@@ -61,8 +60,7 @@ class LoggingService
     public function getLogsHTTPPath(int $entryId)
     {
         $entryFolder = $this->foldersRepository->findOneById($entryId);
-        if ($entryFolder)
-        {
+        if ($entryFolder) {
             return $this->pathHTTP . "/" . $entryFolder->getFolderName() . "/logs";
         } else {
             return false;
@@ -111,24 +109,43 @@ class LoggingService
     }
 
     /**
-     * @param int $entryId
+     * @param Finder $finder
      * @return array
      */
-    public function getEntryLogs(int $entryId)
+    public function finderToArray(Finder $finder)
     {
-        $files = [];
-        $finder = new Finder();
-        $logsPath = $this->getLogsPath($entryId);
-        if ($logsPath) {
-            $finder->files()->in($logsPath);
-            $finder->sortByModifiedTime();
-            foreach ($finder as $file) {
-                $files[] = $file->getFilename();
-            }
-            //$files = iterator_to_array($finder->files()->in($logsPath));
-            return $files;
-        } else {
-            return null;
+        $array = [];
+        foreach ($finder as $element) {
+            $array[] = $element->getFilename();
         }
+        return $array;
+    }
+
+    /**
+     * @param string $logsPath
+     * @return array
+     */
+    public function getEntryLogFolders(string $logsPath)
+    {
+        $finder = new Finder();
+        $finder->directories()->in($logsPath);
+        $finder->sortByName();
+        $folders = $this->finderToArray($finder);
+
+        return $folders;
+    }
+
+    /**
+     * @param string $logsPath
+     * @return array
+     */
+    public function getEntryLogFiles(string $logsPath)
+    {
+        $finder = new Finder();
+        $finder->files()->in($logsPath);
+        $finder->sortByModifiedTime();
+        $files = $this->finderToArray($finder);
+
+        return $files;
     }
 }

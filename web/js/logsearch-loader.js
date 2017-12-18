@@ -17,7 +17,7 @@ $(document).ready(function () {
                 method: $logSearchForm.attr('method'),
                 data: $logSearchFormSerialized,
                 success: function (response) {
-                    $('#logFiles').replaceWith($(response).find('#logFiles'));
+                    $('#log-files').replaceWith($(response).find('#log-files'));
                 }
             });
 

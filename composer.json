@@ -29,6 +29,7 @@
         "jms/serializer-bundle": "^1.4",
         "monolog/monolog": "^1.22",
         "ninsuo/symfony-collection": "^2.0",
+        "php-extended/php-tail": "^2.0",
         "robloach/component-installer": "^0.2.3",
         "sensio/distribution-bundle": "^5.0.19",
         "sensio/framework-extra-bundle": "^3.0.2",

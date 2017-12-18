@@ -1,10 +1,21 @@
 {% if entryExists %}
-    {% if logRecords is not empty %}
-        {% for logFile in logRecords %}
-            <a id="{{ entryId }}" class="button" name="openLog" href="#">{{ logFile }}</a>
-        {% endfor %}
-    {% else %}
+    {% if logFiles is empty and logFolders is empty %}
         В директории логов записи отсутствуют
+    {% else %}
+        <ul class="fa-ul">
+
+        {% for logFolder in logFolders %}
+            <li class="row">
+            <span><i class="fa fa-folder"></i><a id="{{ entryId }}" class="" name="openLogDir" href="#">{{ logFolder }}</a></span>
+            </li>
+        {% endfor %}
+        {% for logFile in logFiles %}
+            <li class="row">
+            <span><i class="fa fa-file-text"> </i><a id="{{ entryId }}" class="" name="openLog" href="#">{{ logFile }}</a></span>
+            </li>
+        {% endfor %}
+
+        </ul>
     {% endif %}
 {% else %}
     Архивная запись не найдена
