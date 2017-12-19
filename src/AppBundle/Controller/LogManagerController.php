@@ -66,12 +66,12 @@ class LogManagerController extends Controller
     public function openLogFile(Request $request, LoggingService $loggingService)
     {
         $rowsCount = 100;
+        $fileContent = null;
         $rowsCountForm = $this->createForm(LogRowsCountForm::class);
         $rowsCountForm->handleRequest($request);
         if ($rowsCountForm->isSubmitted() && $rowsCountForm->isValid() && $request->isMethod('POST')) {
             $rowsCount = $rowsCountForm->get('rowsCount')->getData();
         }
-        $fileContent = null;
         $path = $loggingService->getLogsPath($request->get('entryId'));
         $file = $path . "/" . $request->get('file');
         if (filesize($file)>0) {
@@ -88,6 +88,6 @@ class LogManagerController extends Controller
             //$fileContent = explode("\n", file_get_contents($file));
         }
         $entryId = $request->get('entryId') ;
-        return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array('rowsCountForm' => $rowsCountForm->createView(),'entryId' => $entryId, 'fileContent' => $fileContent));
+        return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array('rowsCountForm' => $rowsCountForm->createView(), 'entryId' => $entryId, 'fileContent' => $fileContent));
     }
 }

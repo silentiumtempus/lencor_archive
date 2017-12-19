@@ -3,6 +3,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript" src="{{ asset('js/logSearch.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/logRowsCount.js') }}"></script>
 {% endblock %}
 
 {% block main %}
@@ -33,9 +34,6 @@
         <h4>{{ 'logs.title.filescontent'|trans }}</h4>
     </div>
 
-    {% block logsRowsCount %}
-
-    {% endblock %}
 
     <table class="table white table-entries" data-path="{{ path('logging') }}">
         <thead>

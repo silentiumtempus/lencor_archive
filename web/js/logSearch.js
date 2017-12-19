@@ -3,18 +3,13 @@ $(document).ready(function () {
     } else {
         let $path = $("#log-search").attr("data-path");
         let $logSearchForm = $('#entry_logs_search_form');
-        let $logsRowsCountForm = $('#logs_rows_count_form');
 
         $logSearchForm.on("submit", function (event) {
             event.preventDefault();
             logsLoader();
 
         });
-
-        $logsRowsCountForm.on("submit", function (event) {
-            event.preventDefault();
-        });
-
+        /** Load log files and folders **/
         function logsLoader() {
             let $logSearchFormSerialized = $logSearchForm.serialize();
             $.ajax({
@@ -26,9 +21,9 @@ $(document).ready(function () {
                 }
             });
 
-            return true;
+            return false;
         }
-
+        /** Load log file contents **/
         $(document).on("click", 'a[name="openLog"]', function(event) {
             event.preventDefault();
             let entryId = $(this).attr("id");
