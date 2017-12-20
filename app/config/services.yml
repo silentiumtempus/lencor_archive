@@ -53,9 +53,12 @@ services:
         arguments: ['@doctrine.orm.entity_manager']
         tags:
           - { name: form.type }
-      archiveentrylogsearchform:
-        class: AppBundle\Form\ArchiveEntryLogSearchForm
-        arguments: ['@doctrine.orm.entity_manager']
+      logsearchform:
+        class: AppBundle\Form\LogSearchForm
+        tags:
+          - { name: form.type}
+      logrowscountform:
+        class: AppBundle\Form\LogRowsCountForm
         tags:
           - { name: form.type}
     # application services

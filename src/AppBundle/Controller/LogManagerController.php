@@ -65,15 +65,19 @@ class LogManagerController extends Controller
      */
     public function openLogFile(Request $request, LoggingService $loggingService)
     {
-        $rowsCount = 100;
         $fileContent = null;
-        $rowsCountForm = $this->createForm(LogRowsCountForm::class);
+        $file = $request->get('file');
+        $rowsCountForm = $this->createForm(LogRowsCountForm::class, null, array('attr' => array('file' => $file, 'entryId' => $request->get('entryId'), 'id' => 'logs_rows_count_form')));
         $rowsCountForm->handleRequest($request);
         if ($rowsCountForm->isSubmitted() && $rowsCountForm->isValid() && $request->isMethod('POST')) {
             $rowsCount = $rowsCountForm->get('rowsCount')->getData();
+            $path = $loggingService->getLogsPath($rowsCountForm->get('entryId')->getViewData());
+            $file = $path . "/" . $rowsCountForm->get('file')->getViewData();
+        } else {
+            $path = $loggingService->getLogsPath($request->get('entryId'));
+            $rowsCount = 100;
+            $file = $path . "/" . $file;
         }
-        $path = $loggingService->getLogsPath($request->get('entryId'));
-        $file = $path . "/" . $request->get('file');
         if (filesize($file)>0) {
             try {
                 $tail = new Tail($file);
@@ -81,11 +85,6 @@ class LogManagerController extends Controller
             } catch (TailException $tailException) {
                 $fileContent[0] = 'Exception : ' . $tailException->getMessage();
             }
-
-            //$process = new Process("tail -100 " . $file . "");
-            //$process->run();
-            //$fileContent = $process->getOutput();
-            //$fileContent = explode("\n", file_get_contents($file));
         }
         $entryId = $request->get('entryId') ;
         return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array('rowsCountForm' => $rowsCountForm->createView(), 'entryId' => $entryId, 'fileContent' => $fileContent));

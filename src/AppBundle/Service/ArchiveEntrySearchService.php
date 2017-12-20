@@ -51,6 +51,7 @@ class ArchiveEntrySearchService
                 }
             }
         }
+
         return $filterQuery;
     }
 

@@ -39,8 +39,8 @@ $(document).ready(function () {
         /** Archive new factory submission **/
 
         $factoryAddForm.on("submit", function (event) {
-            event.preventDefault();
-            let factorySerialized = $factoryAddForm.serialize();
+            event.preventDefault();let factorySerialized = $factoryAddForm.serialize();
+
             $.ajax({
                 url: path,
                 method: $factoryAddForm.attr('method'),
