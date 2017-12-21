@@ -4,7 +4,10 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\User;
+use AppBundle\Model\LogFileModel;
 use Doctrine\ORM\EntityManagerInterface;
+use PhpExtended\Tail\Tail;
+use PhpExtended\Tail\TailException;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -116,7 +119,7 @@ class LoggingService
     {
         $array = [];
         foreach ($finder as $element) {
-            $array[] = $element->getFilename();
+            $array[] = $element;
         }
         return $array;
     }
@@ -147,5 +150,22 @@ class LoggingService
         $files = $this->finderToArray($finder);
 
         return $files;
+    }
+
+    /**
+     * @param string $file
+     * @param int $rowsCount
+     * @return string[]
+     */
+    public function getFileContent(string $file, int $rowsCount)
+    {
+        try {
+            $tail = new Tail($file);
+            $fileContent = $tail->cheat($rowsCount, null, false);
+        } catch (TailException $tailException) {
+            $fileContent[0] = 'Exception : ' . $tailException->getMessage();
+        }
+
+        return $fileContent;
     }
 }

@@ -6,14 +6,26 @@
             {% for logFolder in logFolders %}
                 <li class="row">
                     <span>
-                        <i class="fa fa-folder"></i><a id="{{ entryId }}" class="" name="openLogDir" href="#">{{ logFolder }}</a>
+                        <i class="fa fa-folder"></i><a id="{{ entryId }}" class="" name="openLogDir" href="#">{{ logFolder.fileName }}</a> |
+                    </span>
+                    <span>
+                        {{ logFolder.size }} |
+                    </span>
+                    <span>
+                        {{ logFolder.mTime }} |
                     </span>
                 </li>
             {% endfor %}
             {% for logFile in logFiles %}
                 <li class="row">
                     <span>
-                        <i class="fa fa-file-text"> </i><a id="{{ entryId }}" class="" name="openLog" href="#">{{ logFile }}</a>
+                        <i class="fa fa-file-text"> </i><a id="{{ entryId }}" class="" name="openLog" href="#">{{ logFile.fileName }}</a> |
+                    </span>
+                    <span>
+                        {{ logFile.size }} |
+                    </span>
+                    <span>
+                        {{ logFile.mTime }} |
                     </span>
                 </li>
             {% endfor %}

@@ -79,12 +79,7 @@ class LogManagerController extends Controller
             $file = $path . "/" . $file;
         }
         if (filesize($file)>0) {
-            try {
-                $tail = new Tail($file);
-                $fileContent = $tail->smart($rowsCount, null, false);
-            } catch (TailException $tailException) {
-                $fileContent[0] = 'Exception : ' . $tailException->getMessage();
-            }
+            $fileContent = $loggingService->getFileContent($file, $rowsCount);
         }
         $entryId = $request->get('entryId') ;
         return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array('rowsCountForm' => $rowsCountForm->createView(), 'entryId' => $entryId, 'fileContent' => $fileContent));
