@@ -2,12 +2,14 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\ArchiveEntryEntity;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
 
 /**
  * Class LogSearchForm
@@ -24,8 +26,13 @@ class LogSearchForm extends AbstractType
         $builder
             ->add('id', NumberType::class, array(
                 'label' => 'logs.search.placeholder',
-                'attr' => array('size' => 10)
-            ))
+                'attr' => array('size' => 10),
+                'constraints' => array(
+                    new NotBlank()
+                    //new Length(array('min' => 2)),
+                    //new Type(array('type' => 'int'))
+
+            )))
             ->add('submitButton', SubmitType::class, array('label' => 'logs.search.submit'));
     }
 
