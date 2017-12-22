@@ -215,6 +215,7 @@ class FolderService
         $pathYear = $this->pathRoot . "/" . $archiveEntryEntity->getYear();
         $pathFactory = $pathYear . "/" . $archiveEntryEntity->getFactory()->getId();
         $pathEntry = $pathFactory . "/" . $archiveEntryEntity->getArchiveNumber();
+        $pathLogs = $pathEntry . "/logs";
 
         try {
             if (!$fs->exists($pathYear)) {
@@ -226,7 +227,12 @@ class FolderService
             if (!$fs->exists($pathEntry)) {
                 $fs->mkdir($pathEntry, $this->pathPermissions);
             } else {
-                $this->container->get('session')->getFlashBag()->add('warning', 'Внимание: директория для новой ячейки: ' . $pathEntry . ' уже существует');
+                $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! директория для новой ячейки: ' . $pathEntry . ' уже существует');
+            }
+            if (!$fs->exists($pathLogs)) {
+                $fs->mkdir($pathLogs, $this->pathPermissions);
+            } else {
+                $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! директория логов: ' . $pathEntry . ' уже существует');
             }
         } catch (IOException $IOException) {
             $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка создания директории: ' . $IOException->getMessage());

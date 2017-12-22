@@ -90,6 +90,7 @@ class EntryAdditionController extends Controller
                     $newEntryEntity = $entryForm->getData();
                     $entryPath = $folderService->checkAndCreateFolders($newEntryEntity);
                     $filename = $entryPath . "/" . $newEntryEntity->getArchiveNumber() . ".txt";
+                    $logsDir = $entryPath . "/logs";
 
                     //TODO: mb change the below design ?
                     if ($fs->exists($filename)) {
@@ -109,7 +110,7 @@ class EntryAdditionController extends Controller
                             $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $ORMException->getMessage());
                         }
                     }
-                    $loggingService->logEntry($newEntryEntity, $entryPath, $this->getUser(), $session->getFlashBag()->peekAll());
+                    $loggingService->logEntry($newEntryEntity, $logsDir, $this->getUser(), $session->getFlashBag()->peekAll());
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Произошла непредвиденная ошибка:' . $exception->getMessage());
                 }

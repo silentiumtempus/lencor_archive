@@ -48,7 +48,7 @@ class LoggingService
      */
     public function getLogsPath(int $entryId)
     {
-        $entryFolder = $this->foldersRepository->findOneById($entryId);
+        $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         if ($entryFolder) {
             return $this->pathRoot . "/" . $entryFolder->getFolderName() . "/logs";
         } else {
@@ -62,7 +62,7 @@ class LoggingService
      */
     public function getLogsHTTPPath(int $entryId)
     {
-        $entryFolder = $this->foldersRepository->findOneById($entryId);
+        $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         if ($entryFolder) {
             return $this->pathHTTP . "/" . $entryFolder->getFolderName() . "/logs";
         } else {
