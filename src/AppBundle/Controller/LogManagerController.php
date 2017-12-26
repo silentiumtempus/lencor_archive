@@ -6,8 +6,6 @@ use AppBundle\Form\LogRowsCountForm;
 use AppBundle\Form\LogSearchForm;
 use AppBundle\Service\ArchiveEntryService;
 use AppBundle\Service\LoggingService;
-use PhpExtended\Tail\Tail;
-use PhpExtended\Tail\TailException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -70,18 +68,11 @@ class LogManagerController extends Controller
         $rowsCountForm = $this->createForm(LogRowsCountForm::class, null, array('attr' => array('file' => $file, 'entryId' => $request->get('entryId'), 'id' => 'logs_rows_count_form')));
         $rowsCountForm->handleRequest($request);
         if ($rowsCountForm->isSubmitted() && $rowsCountForm->isValid() && $request->isMethod('POST')) {
-            $rowsCount = $rowsCountForm->get('rowsCount')->getData();
-            $path = $loggingService->getLogsPath($rowsCountForm->get('entryId')->getViewData());
-            $file = $path . "/" . $rowsCountForm->get('file')->getViewData();
+            $fileContent = $loggingService->getFileContent($rowsCountForm->get('entryId')->getViewData(), $rowsCountForm->get('file')->getViewData(), $rowsCountForm->get('rowsCount')->getData());
         } else {
-            $path = $loggingService->getLogsPath($request->get('entryId'));
-            $rowsCount = 100;
-            $file = $path . "/" . $file;
+            $fileContent = $loggingService->getFileContent($request->get('entryId'), $file, 100);
         }
-        if (filesize($file)>0) {
-            $fileContent = $loggingService->getFileContent($file, $rowsCount);
-        }
-        $entryId = $request->get('entryId') ;
+        $entryId = $request->get('entryId');
         return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array('rowsCountForm' => $rowsCountForm->createView(), 'entryId' => $entryId, 'fileContent' => $fileContent));
     }
 }

@@ -153,19 +153,26 @@ class LoggingService
     }
 
     /**
+     * @param int $entryId
      * @param string $file
      * @param int $rowsCount
-     * @return string[]
+     * @return null|string[]
      */
-    public function getFileContent(string $file, int $rowsCount)
+    public function getFileContent(int $entryId, string $file, int $rowsCount)
     {
-        try {
-            $tail = new Tail($file);
-            $fileContent = $tail->cheat($rowsCount, null, false);
-        } catch (TailException $tailException) {
-            $fileContent[0] = 'Exception : ' . $tailException->getMessage();
-        }
+        $path = $this->getLogsPath($entryId);
+        $file = $path . "/" . $file;
 
-        return $fileContent;
+        if (filesize($file)>0) {
+            try {
+                $tail = new Tail($file);
+                $fileContent = $tail->cheat($rowsCount, null, false);
+            } catch (TailException $tailException) {
+                $fileContent[0] = 'Exception : ' . $tailException->getMessage();
+            }
+            return $fileContent;
+        } else {
+            return null;
+        }
     }
 }
