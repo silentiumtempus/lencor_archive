@@ -37,6 +37,10 @@ $(document).ready(function () {
 
                 }
             })
+        });
+
+        $(document).on("clock", 'a[name="openSubDir"]', function (event) {
+            event.preventDefault();
         })
     }
 });

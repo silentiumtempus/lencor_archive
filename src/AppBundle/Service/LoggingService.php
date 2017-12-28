@@ -4,7 +4,6 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\User;
-use AppBundle\Model\LogFileModel;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpExtended\Tail\Tail;
 use PhpExtended\Tail\TailException;

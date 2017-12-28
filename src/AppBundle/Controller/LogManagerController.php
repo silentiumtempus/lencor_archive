@@ -52,7 +52,18 @@ class LogManagerController extends Controller
             //$folderPath = "failed : " . $e->getMessage();
         }
 
-        return $this->render(':lencor/admin/archive/logging_manager:show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsPath' => $logsHTTPPath, 'logFolders' => $logFolders, 'logFiles' => $logFiles, 'entryExists' => $entryExists, 'entryId' => $entryId));
+        return $this->render(':lencor/admin/archive/logging_manager:show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsPath' => $logsPath, 'logsHTTPPath' => $logsHTTPPath, 'logFolders' => $logFolders, 'logFiles' => $logFiles, 'entryExists' => $entryExists, 'entryId' => $entryId));
+    }
+
+    /**
+     * @param Request $request
+     * @param LoggingService $loggingService
+     * @return Response
+     */
+    public function openSubDir(Request $request, LoggingService $loggingService)
+    {
+
+        return $this->render(':lencor/admin/archive/logging_manager:logs_list.html.twig');
     }
 
     /**
