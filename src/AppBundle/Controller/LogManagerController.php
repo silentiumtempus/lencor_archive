@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-
 /**
  * Class LogManagerController
  * @package AppBundle\Controller
@@ -30,6 +29,7 @@ class LogManagerController extends Controller
     {
         $logSearchForm = $this->createForm(LogSearchForm::class);
         try {
+            $currentFolder = "";
             $logsPath = null;
             $logsHTTPPath = null;
             $logFiles = null;
@@ -52,18 +52,39 @@ class LogManagerController extends Controller
             //$folderPath = "failed : " . $e->getMessage();
         }
 
-        return $this->render(':lencor/admin/archive/logging_manager:show_logs.html.twig', array('logSearchForm' => $logSearchForm->createView(), 'logsPath' => $logsPath, 'logsHTTPPath' => $logsHTTPPath, 'logFolders' => $logFolders, 'logFiles' => $logFiles, 'entryExists' => $entryExists, 'entryId' => $entryId));
+        return $this->render(':lencor/admin/archive/logging_manager:show_logs.html.twig', array(
+            'logSearchForm' => $logSearchForm->createView(),
+            'logsPath' => $logsPath,
+            'logsHTTPPath' => $logsHTTPPath,
+            'logFolders' => $logFolders,
+            'logFiles' => $logFiles,
+            'currentFolder' => $currentFolder,
+            'entryExists' => $entryExists,
+            'entryId' => $entryId));
     }
 
     /**
      * @param Request $request
      * @param LoggingService $loggingService
      * @return Response
+     * @Route("logging/open-sub-dir", name="opensubdir")
      */
     public function openSubDir(Request $request, LoggingService $loggingService)
     {
+        $entryId = $request->get('entryId');
+        $folder = $request->get('folder');
+        $logsPath = $loggingService->getLogsPath($entryId) . "/" . $folder;
+        $logFolders = $loggingService->getEntryLogFolders($logsPath);
+        $logFiles = $loggingService->getEntryLogFiles($logsPath);
 
-        return $this->render(':lencor/admin/archive/logging_manager:logs_list.html.twig');
+        return $this->render(':lencor/admin/archive/logging_manager:logs_list.html.twig', array(
+            'entryExists' => true,
+            'logsPath' => $logsPath,
+            'logsHTTPPath' => null,
+            'currentFolder' => $folder,
+            'entryId' => $entryId,
+            'logFolders' => $logFolders,
+            'logFiles' => $logFiles));
     }
 
     /**
@@ -75,15 +96,29 @@ class LogManagerController extends Controller
     public function openLogFile(Request $request, LoggingService $loggingService)
     {
         $fileContent = null;
-        $file = $request->get('file');
-        $rowsCountForm = $this->createForm(LogRowsCountForm::class, null, array('attr' => array('file' => $file, 'entryId' => $request->get('entryId'), 'id' => 'logs_rows_count_form')));
+        $file = $request->get('parentFolder') . "/" . $request->get('file');
+        $rowsCountForm = $this->createForm(
+            LogRowsCountForm::class,
+            null,
+            array('attr' => array(
+                'file' => $file,
+                'entryId' => $request->get('entryId'),
+                'id' => 'logs_rows_count_form'
+            )));
         $rowsCountForm->handleRequest($request);
         if ($rowsCountForm->isSubmitted() && $rowsCountForm->isValid() && $request->isMethod('POST')) {
-            $fileContent = $loggingService->getFileContent($rowsCountForm->get('entryId')->getViewData(), $rowsCountForm->get('file')->getViewData(), $rowsCountForm->get('rowsCount')->getData());
+            $fileContent = $loggingService->getFileContent(
+                $rowsCountForm->get('entryId')->getViewData(),
+                $rowsCountForm->get('file')->getViewData(),
+                $rowsCountForm->get('rowsCount')->getData()
+            );
         } else {
             $fileContent = $loggingService->getFileContent($request->get('entryId'), $file, 100);
         }
         $entryId = $request->get('entryId');
-        return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array('rowsCountForm' => $rowsCountForm->createView(), 'entryId' => $entryId, 'fileContent' => $fileContent));
+        return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array(
+            'rowsCountForm' => $rowsCountForm->createView(),
+            'entryId' => $entryId,
+            'fileContent' => $fileContent));
     }
 }

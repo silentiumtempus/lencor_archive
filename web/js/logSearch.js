@@ -26,12 +26,13 @@ $(document).ready(function () {
         /** Load log file contents **/
         $(document).on("click", 'a[name="openLog"]', function(event) {
             event.preventDefault();
-            let entryId = $(this).attr("id");
+            let entryId = $(this).attr('id');
             let file = $(this).text();
+            let parentFolder = $(this).parent('span').attr('id');
             $.ajax({
                 url: "logging/open-file",
                 method: "POST",
-                data: {entryId: entryId, file: file},
+                data: {entryId: entryId, file: file, parentFolder: parentFolder},
                 success: function (response) {
                     $('#logfile-content').html(response);
 
@@ -39,8 +40,21 @@ $(document).ready(function () {
             })
         });
 
-        $(document).on("clock", 'a[name="openSubDir"]', function (event) {
+        /** Load contents of subdirectory in logs **/
+        $(document).on("click", 'a[name="openSubDir"]', function (event) {
             event.preventDefault();
+            let $folder = $(this).text();
+            let $entryId = $(this).parents('ul').attr('id');
+
+            $.ajax({
+                url: "logging/open-sub-dir",
+                method: "POST",
+                data: {folder: $folder, entryId: $entryId},
+                success: function (response) {
+                    //alert(response);
+                    $('#log-files').html($(response));
+                }
+            })
         })
     }
 });

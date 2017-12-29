@@ -108,8 +108,9 @@ folder:
 logs:
   title:
     search: 'Поиск по номеру архивной записи'
-    fileslist: 'Список файлов'
+    fileslist: 'Список файлов и каталогов'
     filescontent: 'Записи событий'
+    rootDir: 'Корневая директория'
   header:
     timestamp: 'Метка времени'
     eventtype: 'Тип события'
