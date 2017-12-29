@@ -42,7 +42,7 @@ class LogManagerController extends Controller
             if ($archiveEntryService->getEntryById($entryId)) {
                 $entryExists = true;
                 $logsPath = $loggingService->getLogsPath($entryId);
-                $logsHTTPPath = $loggingService->getLogsHTTPPath($entryId);
+                //$logsHTTPPath = $loggingService->getLogsHTTPPath($entryId);
                 if ($logsPath) {
                     $logFolders = $loggingService->getEntryLogFolders($logsPath);
                     $logFiles = $loggingService->getEntryLogFiles($logsPath);
@@ -54,8 +54,6 @@ class LogManagerController extends Controller
 
         return $this->render(':lencor/admin/archive/logging_manager:show_logs.html.twig', array(
             'logSearchForm' => $logSearchForm->createView(),
-            'logsPath' => $logsPath,
-            'logsHTTPPath' => $logsHTTPPath,
             'logFolders' => $logFolders,
             'logFiles' => $logFiles,
             'currentFolder' => $currentFolder,
@@ -67,22 +65,19 @@ class LogManagerController extends Controller
      * @param Request $request
      * @param LoggingService $loggingService
      * @return Response
-     * @Route("logging/open-sub-dir", name="opensubdir")
+     * @Route("logging/open-sub-dir", name="open-sub-dir")
      */
     public function openSubDir(Request $request, LoggingService $loggingService)
     {
         $entryId = $request->get('entryId');
-        $relativePath = $request->get('parentFolder');
-        $folder = $relativePath . "/" . $request->get('folder');
-        $logsPath = $loggingService->getLogsPath($entryId) . "/" . $folder;
+        $currentFolder = $request->get('parentFolder') . "/" . $request->get('folder');
+        $logsPath = $loggingService->getLogsPath($entryId) . "/" . $currentFolder;
         $logFolders = $loggingService->getEntryLogFolders($logsPath);
         $logFiles = $loggingService->getEntryLogFiles($logsPath);
 
         return $this->render(':lencor/admin/archive/logging_manager:logs_list.html.twig', array(
             'entryExists' => true,
-            'logsPath' => $logsPath,
-            'logsHTTPPath' => null,
-            'currentFolder' => $folder,
+            'currentFolder' => $currentFolder,
             'entryId' => $entryId,
             'logFolders' => $logFolders,
             'logFiles' => $logFiles));

@@ -2,10 +2,6 @@
     {% if logFiles is empty and logFolders is empty %}
         В директории логов записи отсутствуют
     {% else %}
-        <div>
-            <br>
-            <br>
-        </div>
         <a class="button" name="openSubDir">{{ 'logs.title.rootDir'|trans }}</a>
         <ul class="fa-ul" id="{{ entryId }}">
             {% for logFolder in logFolders %}
