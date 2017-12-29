@@ -77,6 +77,7 @@ class LogManagerController extends Controller
 
         return $this->render(':lencor/admin/archive/logging_manager:logs_list.html.twig', array(
             'entryExists' => true,
+            'parentFolder' => $request->get('folder'),
             'currentFolder' => $currentFolder,
             'entryId' => $entryId,
             'logFolders' => $logFolders,

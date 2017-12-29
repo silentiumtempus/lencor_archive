@@ -4,10 +4,15 @@
     {% else %}
         <a class="button" name="openSubDir">{{ 'logs.title.rootDir'|trans }}</a>
         <ul class="fa-ul" id="{{ entryId }}">
+            {% if parentFolder is defined %}
+                <li class="row">
+                    {{ parentFolder }}
+                </li>
+            {% endif %}
             {% for logFolder in logFolders %}
                 <li class="row">
                     <span id="{{ currentFolder }}">
-                        <i class="fa fa-folder"> </i><a id="{% if dirPath is defined %}{{ dirPath }}{% endif %}" class="" name="openSubDir" href="">{{ logFolder.fileName }}</a> |
+                        <i class="fa fa-folder"> </i><a id="" class="" name="openSubDir" href="">{{ logFolder.fileName }}</a> |
                     </span>
                     <span>
                         {{ logFolder.size }} |
