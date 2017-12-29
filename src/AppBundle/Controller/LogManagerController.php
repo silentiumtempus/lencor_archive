@@ -72,7 +72,8 @@ class LogManagerController extends Controller
     public function openSubDir(Request $request, LoggingService $loggingService)
     {
         $entryId = $request->get('entryId');
-        $folder = $request->get('folder');
+        $relativePath = $request->get('parentFolder');
+        $folder = $relativePath . "/" . $request->get('folder');
         $logsPath = $loggingService->getLogsPath($entryId) . "/" . $folder;
         $logFolders = $loggingService->getEntryLogFolders($logsPath);
         $logFiles = $loggingService->getEntryLogFiles($logsPath);

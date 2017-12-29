@@ -45,13 +45,12 @@ $(document).ready(function () {
             event.preventDefault();
             let $folder = $(this).text();
             let $entryId = $(this).parents('ul').attr('id');
-
+            let $parentFolder = $(this).parent('span').attr('id');
             $.ajax({
                 url: "logging/open-sub-dir",
                 method: "POST",
-                data: {folder: $folder, entryId: $entryId},
+                data: {folder: $folder, entryId: $entryId, parentFolder: $parentFolder},
                 success: function (response) {
-                    //alert(response);
                     $('#log-files').html($(response));
                 }
             })

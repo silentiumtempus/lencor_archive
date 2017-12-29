@@ -130,6 +130,7 @@ class LoggingService
     public function getEntryLogFolders(string $logsPath)
     {
         $finder = new Finder();
+        $finder->depth('== 0');
         $finder->directories()->in($logsPath);
         $finder->sortByName();
         $folders = $this->finderToArray($finder);
@@ -144,6 +145,7 @@ class LoggingService
     public function getEntryLogFiles(string $logsPath)
     {
         $finder = new Finder();
+        $finder->depth('== 0');
         $finder->files()->in($logsPath);
         $finder->sortByModifiedTime();
         $files = $this->finderToArray($finder);
