@@ -6,7 +6,7 @@ ElasticSearch is required to be installed and configured to run this application
 
 How to install application
 
-You need apache2, php=>7.0.24, mysql-server=>5.5, elasticsearch=5.5, composer=>1.2 installed and configured properly.
+You need apache2, php=>7.1.12, mysql-server=>5.5, elasticsearch=5.5, composer=>1.2 installed and configured properly.
 MySQL Database with specific user to access is advisable to have.
 You may also require phpmyadmin to maintain the application if necessary.
 
