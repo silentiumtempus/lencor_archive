@@ -75,7 +75,21 @@ class LoggingService
      * @return array|string
      */
     public function getLogsNavigationPath(string $parentFolder, string $folder) {
-        return (($parentFolder != "") ? explode('/', ($parentFolder . "/" .  $folder)) : $folder);
+        if ($parentFolder == "") {
+            return ["" => $folder];
+        } else {
+            $pathsArray = [];
+            $path = "";
+            $parentFolder = ltrim($parentFolder, "/");
+            $folderArray = explode('/', ($parentFolder . "/" . $folder));
+            foreach ($folderArray as $folder) {
+                $pathsArray[$path] = $folder;
+                $path .= "/" . $folder;
+            }
+            return $pathsArray;
+        }
+
+        //return (($parentFolder != "") ? explode('/', ($parentFolder . "/" .  $folder)) : $folder);
     }
 
     /**
