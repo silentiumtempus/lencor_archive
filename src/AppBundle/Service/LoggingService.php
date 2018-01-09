@@ -45,7 +45,7 @@ class LoggingService
      * @param int $entryId
      * @return string
      */
-    public function getLogsPath(int $entryId)
+    public function getLogsRootPath(int $entryId)
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         if ($entryFolder) {
@@ -67,6 +67,24 @@ class LoggingService
         } else {
             return false;
         }
+    }
+
+    /**
+     * @param string $parentFolder
+     * @param string $folder
+     * @return array|string
+     */
+    public function getLogsNavigationPath(string $parentFolder, string $folder) {
+        return (($parentFolder != "") ? explode('/', ($parentFolder . "/" .  $folder)) : $folder);
+    }
+
+    /**
+     * @param string $parentFolder
+     * @param string $folder
+     * @return string
+     */
+    public function getLogsCurrentFolder(string $parentFolder, string  $folder) {
+        return (($parentFolder != "") ? $parentFolder . "/" : null) . $folder;
     }
 
     /**
@@ -106,7 +124,7 @@ class LoggingService
     {
         $entry = $this->entriesRepository->findOneById($entryId);
         $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
-        $logsDir = $this->getLogsPath($rootFolder->getFolderName());
+        $logsDir = $this->getLogsRootPath($rootFolder->getFolderName());
         $this->logEntry($entry, $logsDir, $user, $messages);
     }
 
@@ -161,7 +179,7 @@ class LoggingService
      */
     public function getFileContent(int $entryId, string $file, int $rowsCount)
     {
-        $path = $this->getLogsPath($entryId);
+        $path = $this->getLogsRootPath($entryId);
         $file = $path . "/" . $file;
 
         if (filesize($file)>0) {

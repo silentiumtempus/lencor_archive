@@ -1,14 +1,23 @@
 {% if entryExists %}
+        <a class="button" name="openSubDir">{{ 'logs.title.rootDir'|trans }}</a>/
+    {% if logsFolderPath is defined %}
+            {% if logsFolderPath is iterable %}
+                {% for folder in logsFolderPath %}
+                    <a class="button">
+                        {{ folder }}
+                    </a>/
+                {% endfor %}
+            {% else %}
+                <a class="button">
+                    {{ logsFolderPath }}
+                </a>
+            {% endif %}
+        {% endif %}
     {% if logFiles is empty and logFolders is empty %}
         В директории логов записи отсутствуют
     {% else %}
-        <a class="button" name="openSubDir">{{ 'logs.title.rootDir'|trans }}</a>
         <ul class="fa-ul" id="{{ entryId }}">
-            {% if parentFolder is defined %}
-                <li class="row">
-                    {{ parentFolder }}
-                </li>
-            {% endif %}
+
             {% for logFolder in logFolders %}
                 <li class="row">
                     <span id="{{ currentFolder }}">

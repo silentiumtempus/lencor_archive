@@ -41,7 +41,7 @@ class LogManagerController extends Controller
             }
             if ($archiveEntryService->getEntryById($entryId)) {
                 $entryExists = true;
-                $logsPath = $loggingService->getLogsPath($entryId);
+                $logsPath = $loggingService->getLogsRootPath($entryId);
                 //$logsHTTPPath = $loggingService->getLogsHTTPPath($entryId);
                 if ($logsPath) {
                     $logFolders = $loggingService->getEntryLogFolders($logsPath);
@@ -69,17 +69,17 @@ class LogManagerController extends Controller
      */
     public function openSubDir(Request $request, LoggingService $loggingService)
     {
-        $entryId = $request->get('entryId');
-        $currentFolder = $request->get('parentFolder') . "/" . $request->get('folder');
-        $logsPath = $loggingService->getLogsPath($entryId) . "/" . $currentFolder;
+        $logsFolderPath = $loggingService->getLogsNavigationPath($request->get('parentFolder'), $request->get('folder'));
+        $currentFolder = $loggingService->getLogsCurrentFolder($request->get('parentFolder'), $request->get('folder'));
+        $logsPath = $loggingService->getLogsRootPath($request->get('entryId')) . "/" . $currentFolder;
         $logFolders = $loggingService->getEntryLogFolders($logsPath);
         $logFiles = $loggingService->getEntryLogFiles($logsPath);
 
         return $this->render(':lencor/admin/archive/logging_manager:logs_list.html.twig', array(
             'entryExists' => true,
-            'parentFolder' => $request->get('folder'),
+            'logsFolderPath' => $logsFolderPath,
             'currentFolder' => $currentFolder,
-            'entryId' => $entryId,
+            'entryId' => $request->get('entryId'),
             'logFolders' => $logFolders,
             'logFiles' => $logFiles));
     }
