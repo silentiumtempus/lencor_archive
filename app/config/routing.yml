@@ -8,3 +8,8 @@ app:
 fos_user:
   resource: "@FOSUserBundle/Resources/config/routing/all.xml"
   #prefix: /{_locale}
+
+#FOSJSRouting for AJAX requests
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
