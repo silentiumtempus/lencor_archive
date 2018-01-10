@@ -23,10 +23,10 @@
                         <i class="fa fa-folder"> </i><a id="{{ logFolder.fileName }}" class="" name="openSubDir" href="">{{ logFolder.fileName }}</a>
                     </span>
                     <span>
-                        {{ logFolder.size }} |
+                        {{ logFolder.size|bytes_convert }}
                     </span>
                     <span>
-                        {{ logFolder.mTime }} |
+                        {{ logFolder.mTime|date('d/m/Y H:m:s') }}
                     </span>
                 </li>
             {% endfor %}
@@ -36,10 +36,10 @@
                         <i class="fa fa-file-text"> </i><a id="{{ entryId }}" class="" name="openLog" href="">{{ logFile.fileName }}</a>
                     </span>
                     <span>
-                        {{ logFile.size }} |
+                        {{ logFile.size|bytes_convert }}
                     </span>
                     <span>
-                        {{ logFile.mTime }} |
+                        {{ logFile.mTime|date('d/m/Y H:m:s') }}
                     </span>
                 </li>
             {% endfor %}

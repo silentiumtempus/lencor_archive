@@ -49,7 +49,7 @@ class LoggingService
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         if ($entryFolder) {
-            
+
             return $this->pathRoot . "/" . $entryFolder->getFolderName() . "/logs";
         } else {
 
@@ -162,7 +162,7 @@ class LoggingService
     {
         $array = [];
         foreach ($finder as $element) {
-            $array[] = $element;
+             $array[] = $element;
         }
 
         return $array;

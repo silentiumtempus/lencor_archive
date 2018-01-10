@@ -3,6 +3,8 @@
 parameters:
 #    parameter_name: value
 
+    filesize_conversion_extension.twig.extension.class: AppBundle\Twig\FileSizeConverterExtension
+
 services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
@@ -84,3 +86,7 @@ services:
         arguments: [ "@doctrine" ]
         tags:
             - { name: form.type_guesser }
+    filesize_conversion.twig.extension:
+        class: "%filesize_conversion_extension.twig.extension.class%"
+        tags:
+            - { name: twig.extension }
