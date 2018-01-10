@@ -29,15 +29,15 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 9. run "**composer update**".
 
-10. run "**php bin/console fos:user:create**" to create an internal application user.
+10. run "**php bin/console assets:install --symlink web**".
 
-11. run "**php bin/console fos:user:promote**" and add **ROLE_ADMIN** for previously created user.
+11. run "**php bin/console fos:user:create**" to create an internal application user.
 
-12. Check the website index page at:
+12. run "**php bin/console fos:user:promote**" and add **ROLE_ADMIN** for previously created user.
+
+13. Check the website index page at:
  - http://website.url/web/app_dev.php/entries for dev environment
  - http://website.url/web/app.php/entries for prod environment 
-
-13. Enjoy!
 
 You need to be authorized to perform operations, for this use the Login button at the right-top of the application screen.
 
