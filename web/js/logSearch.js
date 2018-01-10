@@ -17,7 +17,7 @@ $(document).ready(function () {
                 method: $logSearchForm.attr('method'),
                 data: $logSearchFormSerialized,
                 success: function (response) {
-                    $('#log-files').replaceWith($(response).find('#log-files'));
+                    $('#logs').replaceWith($(response).find('#logs'));
                 }
             });
 
@@ -46,12 +46,13 @@ $(document).ready(function () {
             let $folder = $(this).attr('id');
             let $entryId = $(this).parents('ul').attr('id');
             let $parentFolder = $(this).parent('span').attr('id');
+            let $path = Routing.generate('open-sub-dir', {entryId: $entryId});
             $.ajax({
-                url: "logging/open-sub-dir",
+                url: $path,
                 method: "POST",
                 data: {folder: $folder, entryId: $entryId, parentFolder: $parentFolder},
                 success: function (response) {
-                    $('#log-files').html($(response));
+                    $('#logs').html($(response));
                 }
             })
         })

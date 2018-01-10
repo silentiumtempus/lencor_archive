@@ -1,10 +1,10 @@
 {% if archiveEntries is not empty %}
     {% for entry in archiveEntries %}
         <tr id="entry_{{ entry.id }}" class="description{% if entry.deleteMark != 0 %} deleted {% endif %}">
-            <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i class="fa fa-angle-down"></i><i class="fa fa-folder-o"> </i></a></td>
+            <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i class="fa fa-angle-down"> </i><i class="fa fa-folder-o"> </i></a></td>
             <td>
                 {% if entry.deleteMark != 0 %}
-                    <i class="fa fa-remove"></i>
+                    <i class="fa fa-remove"> </i>
                 {% endif %}
                 {{ entry.year }}
             </td>
@@ -26,10 +26,10 @@
             </td>
             <td class="icons" id="{{ entry.id }}">
                 <a href="#" name="openPath" class="open" target="_blank"><i class="fa fa-hdd-o"> </i></a>
-                <a href="#" name="addFiles"><i class="fa fa-upload"></i></a>&nbsp;
-                <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"></i><i class="fa fa-folder-o"></i></a>&nbsp;
+                <a href="#" name="addFiles"><i class="fa fa-upload"> </i></a>&nbsp;
+                <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"> </i><i class="fa fa-folder-o"> </i></a>&nbsp;
                 {% if entry.deleteMark !=0 %}
-                    <a href="#" name="restoreEntry"><i class="fa fa-undo" title="Восстановить ячейку"></i></a>
+                    <a href="#" name="restoreEntry"><i class="fa fa-undo" title="Восстановить ячейку"> </i></a>
                 {% else %}
                     <a href="#" name="removeEntry" ><i class="fa fa-trash" title="Пометить к удалению"> </i></a>
                 {% endif %}

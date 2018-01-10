@@ -40,14 +40,14 @@
         <div class="left"><h3>{{ 'entries.title.list'|trans }}</h3></div>
         <div class="right">
             <a href="{{ path('entries_new') }}" class="button right">
-            <i class="fa fa-pencil" aria-hidden="true"></i> {{ 'button.entry.create'|trans }}
+            <i class="fa fa-pencil" aria-hidden="true"> </i> {{ 'button.entry.create'|trans }}
             </a>
         </div>
     </div>
     <table class="table white table-entries" id="main-table" data-path="{{ path('entries') }}">
         <thead>
         <tr>
-            <td></td>
+            <td> </td>
             <td scope="col">{{ 'entries.header.year'|trans }}</td>
             <td scope="col">{{ 'entries.header.factory'|trans }}</td>
             <td scope="col">{{ 'entries.header.setting'|trans }}</td>
@@ -55,10 +55,8 @@
             <td scope="col">{{ 'entries.header.register_number'|trans }}</td>
             <td scope="col">{{ 'entries.header.contract_number'|trans }}</td>
             <td scope="col">{{ 'entries.header.conclusion_fullname'|trans }}</td>
-            <td scope="col" class="text-center"><i class="fa fa-info"
-                                                   aria-hidden="true"></i> {{ 'entries.header.info'|trans }}</td>
-            <td scope="col" class="text-center"><i class="fa fa-cogs"
-                                                   aria-hidden="true"></i> {{ 'entries.header.actions'|trans }}</td>
+            <td scope="col" class="text-center"><i class="fa fa-info" aria-hidden="true"> </i> {{ 'entries.header.info'|trans }}</td>
+            <td scope="col" class="text-center"><i class="fa fa-cogs" aria-hidden="true"> </i> {{ 'entries.header.actions'|trans }}</td>
         </tr>
         </thead>
         <tbody id="main-tbody" class="entries" data-path="{{ path('entries') }}">

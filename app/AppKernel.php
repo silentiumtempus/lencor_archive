@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new FOS\ElasticaBundle\FOSElasticaBundle(),
             new Vich\UploaderBundle\VichUploaderBundle(),
             new Glifery\EntityHiddenTypeBundle\GliferyEntityHiddenTypeBundle(),
+            new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new AppBundle\AppBundle(),
 
         ];

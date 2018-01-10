@@ -1,24 +1,24 @@
 {% if placeholder is defined %}
 <li class="placeholder border-left {#border-top#}">
     <span><a href="#"><i class="fa fa-ellipsis-h"> </i></a></span>
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
+    <span> </span>
+    <span> </span>
+    <span> </span>
+    <span> </span>
 </li>
 {% endif %}
 {% if (folderTree is not empty) %}
     {% for folder in folderTree %}
-        <li id="folder_{{ folder.id }}" class="block {% if folder.deleteMark !=0 %} deleted {% endif %}">
+        <li id="folder_{{ folder.id }}" class="dashed {% if folder.deleteMark !=0 %} deleted {% endif %}">
             <ul>
                 <li class="row">
                     <span>
                     {% if folder.deleteMark != 0 %}
-                        <i class="fa fa-remove"></i>
-                        <i class="fa fa-folder"></i>{{ folder.folderName }}
+                        <i class="fa fa-remove"> </i>
+                        <i class="fa fa-folder"> </i>{{ folder.folderName }}
                     {% else %}
                         <a href="#" name="openFolder" id="{{ folder.id }}">
-                            <i class="fa fa-chevron-down"></i><i class="fa fa-folder"></i>{{ folder.folderName }}
+                            <i class="fa fa-chevron-down"> </i><i class="fa fa-folder"> </i>{{ folder.folderName }}
                         </a>
                     {% endif %}
                     </span>
@@ -26,31 +26,30 @@
                     <span>{{ folder.addTimestamp|date('Y-m-d H:i:s') }}</span>
                     <span class="text-right width-66">
                     {% if folder.deleteMark != 0 %}
-                        <i class="fa fa-ban" id="isRemoved"></i>
+                        <i class="fa fa-ban" id="isRemoved"> </i>
                     {% else %}
                         {% if folder.sumErrors is not null %}
-                            <i class="fa fa-exclamation" id="checkError"></i>({{ folder.sumErrors }})
+                            <i class="fa fa-exclamation" id="checkError"> </i>({{ folder.sumErrors }})
                         {% else %}
-                            <i class="fa fa-check-circle-o" id="checkPassed"></i>
+                            <i class="fa fa-check-circle-o" id="checkPassed"> </i>
                         {% endif %}
                     {% endif %}
-                        &nbsp;<i class="fa fa-user" id="lastChangeInfo"></i>
+                        &nbsp;<i class="fa fa-user" id="lastChangeInfo"> </i>
                     </span>
                     <span id="{{ folder.id }}" class="text-right width-66">
                     {% if folder.deleteMark != 0 %}
-                        <a href="#" name="restoreFolder"><i class="fa fa-undo"></i></a>
+                        <a href="#" name="restoreFolder"><i class="fa fa-undo"> </i></a>
                     {% else %}
                         <!--<a href="#" name="openContents"><i class="fa fa-angle-down"></i><i class="fa fa-folder" id="openContents"></i></a>-->
-                        <a href="#" name="addFiles"><i class="fa fa-upload" id=addFiles"></i></a>&nbsp;
-                        <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"></i><i class="fa fa-folder-o"></i></a>&nbsp;
-                        <a href="#" name="removeFolder"><i class="fa fa-trash-o" id="removeFolder"></i></a>&nbsp;
+                        <a href="#" name="addFiles"><i class="fa fa-upload" id=addFiles"> </i></a>
+                        <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"> </i><i class="fa fa-folder-o"> </i></a>
+                        <a href="#" name="removeFolder"><i class="fa fa-trash-o" id="removeFolder"> </i></a>
                     {% endif %}
                     </span>
                 </li>
             </ul>
             <ul class="border-left">
-                <li hidden id="folderContent_{{ folder.id }}" class="fa-ul"></li>
-                <li hidden id="fileContent_{{ folder.id }}" class="fa-ul"></li>
+                <li hidden id="folderContent_{{ folder.id }}" class="fa-ul"> </li>
             </ul>
         </li>
     {% endfor %}

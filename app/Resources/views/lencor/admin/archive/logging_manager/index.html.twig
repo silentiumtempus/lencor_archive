@@ -2,6 +2,8 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
     <script type="text/javascript" src="{{ asset('js/logSearch.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/logRowsCount.js') }}"></script>
 {% endblock %}
@@ -24,7 +26,7 @@
     <div>
         <div><h4>{{ 'logs.title.fileslist'|trans }}</h4>
         </div>
-        <div id="log-files" class="log-files">
+        <div id="logs" class="logs">
             {% block logs %}
 
             {% endblock %}

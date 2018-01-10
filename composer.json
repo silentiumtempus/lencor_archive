@@ -22,6 +22,7 @@
         "doctrine/doctrine-cache-bundle": "^1.3",
         "doctrine/orm": "^2.6",
         "friendsofsymfony/elastica-bundle": "^4.1",
+        "friendsofsymfony/jsrouting-bundle": "^2.1",
         "friendsofsymfony/user-bundle": "^2.0",
         "glifery/entity-hidden-type-bundle": "^2.1",
         "incenteev/composer-parameter-handler": "^2.1",

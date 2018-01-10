@@ -27,19 +27,12 @@
                 <div class="container">
                     <ul class="left">
                         <li>
-                            <span><a href="{{ path('index') }}"><i
-                                            class="fa fa-home"></i> {{ 'header.menu.homepage'|trans }} </a> </span>
-                            <span><a href="{{ path('entries') }}"><i
-                                            class="fa fa-archive"></i> {{ 'header.menu.manager'|trans }} <i
-                                            class="fa fa-angle-down"></i></a></span>
-                            <span><a href="{{ path('system') }}"><i class="fa fa-cog"></i> {{ 'header.menu.system'|trans }} <i
-                                            class="fa fa-angle-down"></i></a></span>
-                            <span><a href="{{ path('admin') }}"><i class="fa fa-wrench"></i> {{ 'header.menu.admin'|trans }} <i
-                                            class="fa fa-angle-down"></i></a></span>
-                            <span><a href="{{ path('logging') }}"><i class="fa fa-history"></i> {{ 'header.menu.logging'|trans }} <i
-                                            class="fa fa-angle-down"></i></a></span>
-                            <span><a href="{{ path('stats') }}"><i class="fa fa-info"></i> {{ 'header.menu.stats'|trans }} <i
-                                            class="fa fa-angle-down"></i></a></span>
+                            <span><a href="{{ path('index') }}"><i class="fa fa-home"> </i> {{ 'header.menu.homepage'|trans }} </a> </span>
+                            <span><a href="{{ path('entries') }}"><i class="fa fa-archive"> </i> {{ 'header.menu.manager'|trans }} <i class="fa fa-angle-down"> </i></a></span>
+                            <span><a href="{{ path('system') }}"><i class="fa fa-cog"> </i> {{ 'header.menu.system'|trans }} <i class="fa fa-angle-down"> </i></a></span>
+                            <span><a href="{{ path('admin') }}"><i class="fa fa-wrench"> </i> {{ 'header.menu.admin'|trans }} <i class="fa fa-angle-down"> </i></a></span>
+                            <span><a href="{{ path('logging') }}"><i class="fa fa-history"> </i> {{ 'header.menu.logging'|trans }} <i class="fa fa-angle-down"> </i></a></span>
+                            <span><a href="{{ path('stats') }}"><i class="fa fa-info"> </i> {{ 'header.menu.stats'|trans }} <i class="fa fa-angle-down"> </i></a></span>
                         </li>
                     </ul>
                     <ul class="right">
@@ -54,15 +47,13 @@
                         {% if app.user %}
                             <li>
                             <span>
-                                <a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-sign-out"
-                                                                                    aria-hidden="true"></i> {{ 'header.menu.logout'|trans }}</a>
+                                <a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-sign-out" aria-hidden="true"> </i> {{ 'header.menu.logout'|trans }}</a>
                             </span>
                             </li>
                         {% else %}
                             <li>
                             <span>
-                                <a href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in"
-                                                                                   aria-hidden="true"></i> {{ 'header.menu.login'|trans }}</a>
+                                <a href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in" aria-hidden="true"> </i> {{ 'header.menu.login'|trans }}</a>
                             </span>
                             </li>
                         {% endif %}
@@ -102,13 +93,13 @@
             <div id="footer-resources">
                 <p>
                     <a href="" title="">
-                        <i class="fa fa-twitter" aria-hidden="true"></i>
+                        <i class="fa fa-twitter" aria-hidden="true"> </i>
                     </a>
                     <a href="" title="">
-                        <i class="fa fa-vk" aria-hidden="true"></i>
+                        <i class="fa fa-vk" aria-hidden="true"> </i>
                     </a>
                     <a href="" title="">
-                        <i class="fa fa-rss" aria-hidden="true"></i>
+                        <i class="fa fa-rss" aria-hidden="true"> </i>
                     </a>
                 </p>
             </div>

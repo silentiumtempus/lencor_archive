@@ -1,5 +1,5 @@
 {% if entryExists %}
-    <ul class="fa-ul" id="{{ entryId }}">
+    <ul class="fa-ul logs-path" id="{{ entryId }}">
         <li class="row">
             <span id="">
                 <a id="" class="button" name="openSubDir">{{ 'logs.title.rootDir'|trans }}</a>/
@@ -12,13 +12,15 @@
                 {% endfor %}
             {% endif %}
         </li>
+    </ul>
+    <ul class="fa-ul logs-list dashed" id="{{ entryId }}">
         {% if logFiles is empty and logFolders is empty %}
             В директории логов записи отсутствуют
         {% else %}
             {% for logFolder in logFolders %}
                 <li class="row">
                     <span id="{{ currentFolder }}">
-                        <i class="fa fa-folder"> </i><a id="{{ logFolder.fileName }}" class="" name="openSubDir" href="">{{ logFolder.fileName }}</a> |
+                        <i class="fa fa-folder"> </i><a id="{{ logFolder.fileName }}" class="" name="openSubDir" href="">{{ logFolder.fileName }}</a>
                     </span>
                     <span>
                         {{ logFolder.size }} |
@@ -31,7 +33,7 @@
             {% for logFile in logFiles %}
                 <li class="row">
                     <span id="{{ currentFolder }}">
-                        <i class="fa fa-file-text"> </i><a id="{{ entryId }}" class="" name="openLog" href="">{{ logFile.fileName }}</a> |
+                        <i class="fa fa-file-text"> </i><a id="{{ entryId }}" class="" name="openLog" href="">{{ logFile.fileName }}</a>
                     </span>
                     <span>
                         {{ logFile.size }} |
