@@ -30,7 +30,7 @@ $(document).ready(function () {
             let file = $(this).text();
             let parentFolder = $(this).parent('span').attr('id');
             $.ajax({
-                url: "logging/open-file",
+                url: Routing.generate('logging-open-file'),
                 method: "POST",
                 data: {entryId: entryId, file: file, parentFolder: parentFolder},
                 success: function (response) {
@@ -46,9 +46,8 @@ $(document).ready(function () {
             let $folder = $(this).attr('id');
             let $entryId = $(this).parents('ul').attr('id');
             let $parentFolder = $(this).parent('span').attr('id');
-            let $path = Routing.generate('open-sub-dir', {entryId: $entryId});
             $.ajax({
-                url: $path,
+                url: Routing.generate('logging-open-sub-dir', {entryId: $entryId}),
                 method: "POST",
                 data: {folder: $folder, entryId: $entryId, parentFolder: $parentFolder},
                 success: function (response) {

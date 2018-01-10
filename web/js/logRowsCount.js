@@ -6,7 +6,7 @@ $(document).ready(function () {
             event.preventDefault();
             let $logsRowsCountFormSerialized = $logsRowsCountForm.serialize();
             $.ajax({
-                url: "logging/open-file",
+                url: Routing.generate('logging-open-file'),
                 method: "POST",
                 data: $logsRowsCountFormSerialized,
                 success: function (response) {

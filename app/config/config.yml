@@ -128,10 +128,6 @@ fos_user:
     address: "%mailer_user%"
     sender_name: "%mailer_user%"
 
-# FOSJSRouting Bundle configuration
-fos_js_routing:
-  routes_to_expose: ['open-sub-dir']
-
 # StofDoctrineExtensions library Configuration
 
 stof_doctrine_extensions:

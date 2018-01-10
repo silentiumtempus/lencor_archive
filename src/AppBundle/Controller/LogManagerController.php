@@ -25,8 +25,8 @@ class LogManagerController extends Controller
      * @return Response
      * @Route("/logging/{entryId}",
      *     name = "logging",
-     *     requirements = {"entryId" = "\d+"},
-     *     defaults = {"entryId" : "0"})
+     *     requirements = { "entryId" = "\d+" },
+     *     defaults = { "entryId" : "0" })
      */
     public function logManagerIndex(int $entryId, Request $request, LoggingService $loggingService, ArchiveEntryService $archiveEntryService)
     {
@@ -69,10 +69,10 @@ class LogManagerController extends Controller
      * @param LoggingService $loggingService
      * @return Response
      * @Route("/logging/{entryId}/open-sub-dir",
-     *     requirements = {"entryId" = "\d+"},
-     *     defaults = {"entryId" : "0"},
-     *     options = {"expose" = true},
-     *     name = "open-sub-dir")
+     *     requirements = { "entryId" = "\d+" },
+     *     defaults = { "entryId" : "0" },
+     *     options = { "expose" = true },
+     *     name = "logging-open-sub-dir")
      */
     public function openSubDir(Request $request, LoggingService $loggingService)
     {
@@ -95,7 +95,9 @@ class LogManagerController extends Controller
      * @param Request $request
      * @param LoggingService $loggingService
      * @return Response
-     * @Route("/logging/open-file", name="open-file")
+     * @Route("/logging/open-file",
+     *     options = { "expose" = true },
+     *     name = "logging-open-file")
      */
     public function openLogFile(Request $request, LoggingService $loggingService)
     {
