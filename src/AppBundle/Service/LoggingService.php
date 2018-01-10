@@ -49,8 +49,10 @@ class LoggingService
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         if ($entryFolder) {
+            
             return $this->pathRoot . "/" . $entryFolder->getFolderName() . "/logs";
         } else {
+
             return false;
         }
     }
@@ -63,8 +65,10 @@ class LoggingService
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         if ($entryFolder) {
+
             return $this->pathHTTP . "/" . $entryFolder->getFolderName() . "/logs";
         } else {
+
             return false;
         }
     }
@@ -74,8 +78,13 @@ class LoggingService
      * @param string $folder
      * @return array|string
      */
-    public function getLogsNavigationPath(string $parentFolder, string $folder) {
-        if ($parentFolder == "") {
+    public function getLogsNavigationPath(string $parentFolder, string $folder)
+    {
+        if ($folder == "" and $parentFolder == "") {
+
+            return null;
+        } elseif ($parentFolder == "") {
+
             return ["" => $folder];
         } else {
             $pathsArray = [];
@@ -86,6 +95,7 @@ class LoggingService
                 $pathsArray[$path] = $folder;
                 $path .= "/" . $folder;
             }
+
             return $pathsArray;
         }
 
@@ -97,7 +107,9 @@ class LoggingService
      * @param string $folder
      * @return string
      */
-    public function getLogsCurrentFolder(string $parentFolder, string  $folder) {
+    public function getLogsCurrentFolder(string $parentFolder, string $folder)
+    {
+
         return (($parentFolder != "") ? $parentFolder . "/" : null) . $folder;
     }
 
@@ -152,6 +164,7 @@ class LoggingService
         foreach ($finder as $element) {
             $array[] = $element;
         }
+
         return $array;
     }
 
@@ -196,15 +209,17 @@ class LoggingService
         $path = $this->getLogsRootPath($entryId);
         $file = $path . "/" . $file;
 
-        if (filesize($file)>0) {
+        if (filesize($file) > 0) {
             try {
                 $tail = new Tail($file);
                 $fileContent = $tail->cheat($rowsCount, null, false);
             } catch (TailException $tailException) {
                 $fileContent[0] = 'Exception : ' . $tailException->getMessage();
             }
+
             return $fileContent;
         } else {
+
             return null;
         }
     }

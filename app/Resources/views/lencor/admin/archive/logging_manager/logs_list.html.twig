@@ -1,32 +1,24 @@
 {% if entryExists %}
     <ul class="fa-ul" id="{{ entryId }}">
-    <li class="row">
-    <span id="logsRootDirectory">
-        <a class="button" name="openSubDir">{{ 'logs.title.rootDir'|trans }}</a>/
-    </span>
-    {% if logsFolderPath is defined %}
-            {% if logsFolderPath is iterable %}
+        <li class="row">
+            <span id="">
+                <a id="" class="button" name="openSubDir">{{ 'logs.title.rootDir'|trans }}</a>/
+            </span>
+            {% if logsFolderPath is defined and logsFolderPath is not null %}
                 {% for parentFolder, folder in logsFolderPath %}
                     <span id="{{ parentFolder }}">
-                        <a class="button" name="openSubDir" href="">{{ folder }}</a>/
+                        <a id="{{ folder }}" class="button" name="openSubDir" href="">{{ folder }}</a>/
                     </span>
                 {% endfor %}
-            {% else %}
-                <span>
-                    <a class="button">{{ logsFolderPath }}</a>
-                </span>
             {% endif %}
-
-        {% endif %}
-    </li>
-    {% if logFiles is empty and logFolders is empty %}
-        В директории логов записи отсутствуют
-    {% else %}
-
+        </li>
+        {% if logFiles is empty and logFolders is empty %}
+            В директории логов записи отсутствуют
+        {% else %}
             {% for logFolder in logFolders %}
                 <li class="row">
                     <span id="{{ currentFolder }}">
-                        <i class="fa fa-folder"> </i><a id="" class="" name="openSubDir" href="">{{ logFolder.fileName }}</a> |
+                        <i class="fa fa-folder"> </i><a id="{{ logFolder.fileName }}" class="" name="openSubDir" href="">{{ logFolder.fileName }}</a> |
                     </span>
                     <span>
                         {{ logFolder.size }} |
@@ -49,8 +41,8 @@
                     </span>
                 </li>
             {% endfor %}
-        </ul>
-    {% endif %}
+        {% endif %}
+    </ul>
 {% else %}
     Архивная запись не найдена
 {% endif %}

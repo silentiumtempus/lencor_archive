@@ -43,7 +43,7 @@ $(document).ready(function () {
         /** Load contents of subdirectory in logs **/
         $(document).on("click", 'a[name="openSubDir"]', function (event) {
             event.preventDefault();
-            let $folder = $(this).text();
+            let $folder = $(this).attr('id');
             let $entryId = $(this).parents('ul').attr('id');
             let $parentFolder = $(this).parent('span').attr('id');
             $.ajax({
