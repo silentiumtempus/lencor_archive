@@ -59,6 +59,14 @@ i {
     border-collapse: collapse;
 }
 
+.green {
+    color: #2ca02c;
+}
+
+.red {
+    color: #9a0000;
+}
+
 .white {
     background-color: #ffffff;
 }
@@ -483,4 +491,22 @@ body .logs .row {
     display: flex;
     margin-right: 0;
     margin-left: 0 ;
+}
+
+body .logs .header {
+    background: #2c3e50;
+    color: #ffffff;
+    padding: 10px 2% 10px 2%;
+    border: 1px solid silver;
+}
+
+body .logs .header li {
+    display: flex;
+    width:100%;
+}
+
+body .logs .header li span {
+    font-size: 15px;
+    font-weight: bold;
+    width:100%
 }

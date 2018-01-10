@@ -3,18 +3,18 @@
     <tr class="add-buttons">
         <td id="last-update" class="last-update">
         </td>
-        <td id="{{ folderId }}"><a class="button" href="#" name="addFolder" title="Добавить директорию"><i class="fa fa-folder-o" ></i> Добавить директорию </a></td>
+        <td id="{{ folderId }}"><a class="button" href="#" name="addFolder" title="Добавить директорию"><i class="fa fa-folder-o" > </i> Добавить директорию </a></td>
         <td id="{{ folderId }}"><a class="button" href="#" name="addFiles" title="Добавить файл"><i class="fa fa-file-o"> </i> Добавить файл </a></td>
     </tr>
     <tr>
         <td class="container" colspan="9">
             <ul class="header">
                 <li>
-                    <span>Название</span>
-                    <span>Добавлено пользователем</span>
-                    <span>Дата и время добавления</span>
-                    <span class="text-right width-50">Информация</span>
-                    <span class="text-right width-50">Действия</span>
+                    <span>{{ 'entries.content.header.name'|trans }}</span>
+                    <span>{{ 'entries.content.header.added_by'|trans }}</span>
+                    <span>{{ 'entries.content.header.added_date'|trans }}</span>
+                    <span class="text-right width-50">{{ 'entries.content.header.info'|trans }}</span>
+                    <span class="text-right width-50">{{ 'entries.content.header.actions'|trans }}</span>
                 </li>
             </ul>
         </td>

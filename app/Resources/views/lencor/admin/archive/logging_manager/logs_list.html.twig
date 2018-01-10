@@ -13,21 +13,30 @@
             {% endif %}
         </li>
     </ul>
+    <ul class="header">
+        <li>
+            <span>{{ 'logs.header.name'|trans }}</span>
+            <span>{{ 'logs.header.size'|trans }}</span>
+            <span>{{ 'logs.header.timestamp'|trans }}</span>
+            <span>{{ 'logs.header.permissions'|trans }}</span>
+            <span>{{ 'logs.header.writable'|trans }}</span>
+            <span>{{ 'logs.header.readable'|trans }}</span>
+        </li>
+    </ul>
     <ul class="fa-ul logs-list dashed" id="{{ entryId }}">
         {% if logFiles is empty and logFolders is empty %}
-            В директории логов записи отсутствуют
+            {{ 'logs.messages.empty'|trans }}
         {% else %}
             {% for logFolder in logFolders %}
                 <li class="row">
                     <span id="{{ currentFolder }}">
                         <i class="fa fa-folder"> </i><a id="{{ logFolder.fileName }}" class="" name="openSubDir" href="">{{ logFolder.fileName }}</a>
                     </span>
-                    <span>
-                        {{ logFolder.size|bytes_convert }}
-                    </span>
-                    <span>
-                        {{ logFolder.mTime|date('d/m/Y H:m:s') }}
-                    </span>
+                    <span>{{ logFolder.size|bytes_convert }}</span>
+                    <span>{{ logFolder.mTime|date('d/m/Y H:m:s') }}</span>
+                    <span>{{ logFolder.perms }}</span>
+                    <span><i class="fa-circle {% if logFolder.writable %} green{% else %} red{% endif %}"> </i></span>
+                    <span><i class="fa-circle {% if logFolder.readable %} green{% else %} red{% endif %}"> </i></span>
                 </li>
             {% endfor %}
             {% for logFile in logFiles %}
@@ -35,16 +44,15 @@
                     <span id="{{ currentFolder }}">
                         <i class="fa fa-file-text"> </i><a id="{{ entryId }}" class="" name="openLog" href="">{{ logFile.fileName }}</a>
                     </span>
-                    <span>
-                        {{ logFile.size|bytes_convert }}
-                    </span>
-                    <span>
-                        {{ logFile.mTime|date('d/m/Y H:m:s') }}
-                    </span>
+                    <span>{{ logFile.size|bytes_convert }}</span>
+                    <span>{{ logFile.mTime|date('d/m/Y H:m:s') }}</span>
+                    <span>{{ logFile.perms }}</span>
+                    <span><i class="fa-circle {% if logFile.writable %} green{% else %} red{% endif %}"> </i></span>
+                    <span><i class="fa-circle {% if logFile.readable %} green{% else %} red{% endif %}"> </i></span>
                 </li>
             {% endfor %}
         {% endif %}
     </ul>
 {% else %}
-    Архивная запись не найдена
+    {{ 'logs.messages.not_found'|trans }}
 {% endif %}

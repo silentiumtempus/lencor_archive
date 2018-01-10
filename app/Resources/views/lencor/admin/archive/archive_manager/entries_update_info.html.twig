@@ -1,5 +1,5 @@
-    Последние изменения:
+    {{ 'entries.last_update.start'|trans }}
     {% for data in lastUpdateInfo %}
-        {{ data.lastModified|date('d-m-Y H:i:s') }} пользователем <b>{{ data.usernameCanonical }}</b>
+        {{ data.lastModified|date('d-m-Y H:i:s') }} {{ 'entries.last_update.by_user'|trans }} <b>{{ data.usernameCanonical }}</b>
     {% endfor %}
     .

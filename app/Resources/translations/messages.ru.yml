@@ -36,6 +36,16 @@ entries:
     conclusion_fullname: 'Полное название заключения'
     info: 'Инфо'
     actions: 'Действия'
+  last_update:
+    start: 'Последние изменения:'
+    by_user: 'пользователем'
+  content:
+    header:
+      name: 'Наименование'
+      added_by: 'Добавлено пользователем'
+      added_date: 'Дата и время добавления'
+      info: 'Информация'
+      actions: 'Действия'
   add:
     year:
       label: 'Год'
@@ -112,15 +122,26 @@ logs:
     filescontent: 'Записи событий'
     rootDir: 'Корневая директория'
   header:
-    timestamp: 'Метка времени'
-    eventtype: 'Тип события'
-    record: 'Запись'
-    details: 'Детализация'
-    info: 'Информация'
-    actions: 'Действия'
+    name: 'Наименование'
+    size: 'Размер'
+    timestamp: 'Последнее изменение'
+    permissions: 'Права доступа'
+    writable: 'Запись'
+    readable: 'Чтение'
+  content:
+    header:
+      timestamp: 'Метка времени'
+      eventtype: 'Тип события'
+      record: 'Запись'
+      details: 'Детализация'
+      info: 'Информация'
+      actions: 'Действия'
   search:
     placeholder: 'Введите ИН'
     submit: 'Показать логи'
   rowsCount:
     placeholder: 'Количество строк'
     submit: 'Изменить'
+  messages:
+    empty: 'В директории логов записи отсутствуют'
+    not_found: 'Архивная запись не найдена'
