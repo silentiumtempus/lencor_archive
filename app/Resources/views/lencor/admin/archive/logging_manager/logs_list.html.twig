@@ -48,7 +48,7 @@
                     </span>
                     <span>{{ logFolder.size|bytes_convert }}</span>
                     <span>{{ logFolder.mTime|date('d/m/Y H:m:s') }}</span>
-                    <span>{{ logFolder.perms }}</span>
+                    <span>{{ logFolder.perms|perms_convert }}</span>
                     <span><i class="fa fa-circle {% if logFolder.writable %} green{% else %} red{% endif %}"> </i></span>
                     <span><i class="fa fa-circle {% if logFolder.readable %} green{% else %} red{% endif %}"> </i></span>
                 </li>
@@ -60,7 +60,7 @@
                     </span>
                     <span>{{ logFile.size|bytes_convert }}</span>
                     <span>{{ logFile.mTime|date('d/m/Y H:m:s') }}</span>
-                    <span>{{ logFile.perms }}</span>
+                    <span>{{ logFile.perms|perms_convert }}</span>
                     <span><i class="fa fa-circle {% if logFile.writable %} green{% else %} red{% endif %}"> </i></span>
                     <span><i class="fa fa-circle {% if logFile.readable %} green{% else %} red{% endif %}"> </i></span>
                 </li>

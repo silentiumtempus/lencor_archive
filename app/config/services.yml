@@ -3,7 +3,9 @@
 parameters:
 #    parameter_name: value
 
-    filesize_conversion_extension.twig.extension.class: AppBundle\Twig\FileSizeConverterExtension
+    fs_size_conversion.twig.extension.class: AppBundle\Twig\FileSystemSizeConverterExtension
+    fs_permissions_conversion.twig.extension.class: AppBundle\Twig\FilesystemPermissionsConverterExtension
+
 
 services:
 #    service_name:
@@ -86,7 +88,11 @@ services:
         arguments: [ "@doctrine" ]
         tags:
             - { name: form.type_guesser }
-    filesize_conversion.twig.extension:
-        class: "%filesize_conversion_extension.twig.extension.class%"
+    fs_size_conversion.twig.extension:
+        class: "%fs_size_conversion.twig.extension.class%"
+        tags:
+            - { name: twig.extension }
+    fs_permissions_conversion.twig.extension:
+        class: "%fs_permissions_conversion.twig.extension.class%"
         tags:
             - { name: twig.extension }

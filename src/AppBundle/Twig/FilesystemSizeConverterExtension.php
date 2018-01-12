@@ -8,7 +8,7 @@ use Twig\Extension\AbstractExtension;
  * Class FileSizeConverterExtension
  * @package AppBundle\Twig
  */
-class FileSizeConverterExtension extends AbstractExtension
+class FilesystemSizeConverterExtension extends AbstractExtension
 {
     /**
      * @return array|\Twig_Filter[]
@@ -30,11 +30,11 @@ class FileSizeConverterExtension extends AbstractExtension
     }
 
     /**
-     * @param $bytes
+     * @param int $bytes
      * @param int $precision
      * @return string
      */
-    function bytesConvert($bytes, $precision = 2)
+    function bytesConvert(int $bytes, int $precision = 2)
     {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
         $bytes = max($bytes, 0);
