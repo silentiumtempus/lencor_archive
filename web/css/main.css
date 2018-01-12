@@ -244,7 +244,6 @@ body .entries .deleted {
     opacity: 0.5;
 }
 
-
 /** Entries content block **/
 
 body .entries .container {
@@ -353,6 +352,15 @@ body .entries .content .row {
     display: flex;
     margin-left: 0 !important;
     margin-right: 0 !important;
+}
+
+body .table-entries .loading-spinner {
+    font-weight: bold;
+}
+
+body .table-entries .loading-spinner td {
+    background-color: #ffffff;
+    text-align: center;
 }
 
 .folder-add {

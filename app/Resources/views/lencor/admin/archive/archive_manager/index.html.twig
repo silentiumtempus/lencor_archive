@@ -64,6 +64,15 @@
 
         {% endblock %}
         </tbody>
+        <tfoot>
+            <tr id="loading-spinner" class="loading-spinner" hidden>
+                <td colspan="10">
+                    <i class="fa fa-spinner fa-pulse fa-2x fa-fw"> </i>
+                    <br>
+                    {{ 'entries.loading'|trans }}
+                </td>
+            </tr>
+        </tfoot>
     </table>
     <div id="addFolder" class="folder-add">
     </div>

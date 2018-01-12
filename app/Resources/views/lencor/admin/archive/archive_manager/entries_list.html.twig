@@ -34,7 +34,7 @@
                     <a href="#" name="removeEntry" ><i class="fa fa-trash" title="Пометить к удалению"> </i></a>
                 {% endif %}
                 <a href="#"><i class="fa fa-edit" title="Редактировать"> </i></a>
-                <a href="{{ path('logging', {'entryId' : entry.id}) }}"><i class="fa fa-history" title="Открыть записи изменений"> </i></a>
+                <a href="{{ path('logging', {'entryId' : entry.id}) }}" target="_blank"><i class="fa fa-history" title="Открыть записи изменений"> </i></a>
             </td>
         </tr>
         <tr>
@@ -44,6 +44,6 @@
     {% endfor %}
 {% else %}
 <tr>
-    <td colspan="9" align="center">{{ 'post.no_posts_found'|trans }}</td>
+    <td colspan="9" align="center">{{ 'entries.not_found'|trans }}</td>
 </tr>
 {% endif %}

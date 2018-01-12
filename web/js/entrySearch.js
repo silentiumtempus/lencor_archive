@@ -35,6 +35,8 @@ $(document).ready(function () {
 
         searchForm.on("submit", function searchAction(event) {
             event.preventDefault();
+            $('#main-tbody').hide();
+            $('#loading-spinner').show().css('display', 'contents');
             let fields = searchForm.serializeArray();
             let values = {};
             jQuery.each(fields, function (i, field) {
@@ -45,12 +47,12 @@ $(document).ready(function () {
                 method: searchForm.attr('method'),
                 data: values,
                 success: function (response) {
+                    $('#loading-spinner').hide();
                     $('#main-tbody').replaceWith(
                         $(response).find('#main-tbody')
                     );
                 }
             });
-
             return false;
         });
 
@@ -58,11 +60,14 @@ $(document).ready(function () {
 
         resetButton.on("click", function resetAction() {
             searchForm.trigger('reset');
+            $('#main-tbody').hide();
+            $('#loading-spinner').show().css('display', 'contents');
             $.ajax({
                 url: path,
                 method: searchForm.attr('method'),
                 data: null,
                 success: function (response) {
+                    $('#loading-spinner').hide();
                     $('#main-tbody').replaceWith(
                         $(response).find('#main-tbody'));
                     $('#archive_entry_search_form_setting').attr('disabled', 'disabled');
@@ -295,19 +300,21 @@ $(document).ready(function () {
         }
 
         /** Last entry update information load & refresh **/
-
         function loadLastUpdateInfo(entryId, folderId) {
             if (entryId !== null) {
+                $('#update-info-spinner').show().css('display', 'contents');
                 $.ajax({
                     url: "last_update_info",
                     method: "POST",
                     data: {entryId: entryId},
                     success: function (reloadLastUpdateInfo) {
+                        $('#update-info-spinner').hide();
                         $($('#entryContent_' + entryId).find('#last-update')).html(reloadLastUpdateInfo);
                     }
                 });
             }
             else if (folderId !== null) {
+                $('#update-info-spinner').show().css('display', 'contents');
                 $.ajax({
                         url: "get_folder_entryId",
                         method: "POST",
@@ -318,6 +325,7 @@ $(document).ready(function () {
                                 method: "POST",
                                 data: {folderId: folderId},
                                 success: function (reloadLastUpdateInfo) {
+                                    $('#update-info-spinner').hide();
                                     $($('#entryContent_' + entryId).find('#last-update')).html(reloadLastUpdateInfo);
                                 }
                             });
