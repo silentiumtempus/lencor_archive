@@ -66,6 +66,7 @@ class LogManagerController extends Controller
 
     /**
      * @param Request $request
+     * @param int $entryId
      * @param LoggingService $loggingService
      * @return Response
      * @Route("/logging/{entryId}/open-sub-dir",
@@ -74,11 +75,11 @@ class LogManagerController extends Controller
      *     options = { "expose" = true },
      *     name = "logging-open-sub-dir")
      */
-    public function openSubDir(Request $request, LoggingService $loggingService)
+    public function openSubDir(Request $request, int $entryId, LoggingService $loggingService)
     {
         $logsFolderPath = $loggingService->getLogsNavigationPath($request->get('parentFolder'), $request->get('folder'));
         $currentFolder = $loggingService->getLogsCurrentFolder($request->get('parentFolder'), $request->get('folder'));
-        $logsPath = $loggingService->getLogsRootPath($request->get('entryId')) . "/" . $currentFolder;
+        $logsPath = $loggingService->getLogsRootPath($entryId) . "/" . $currentFolder;
         $logFolders = $loggingService->getEntryLogFolders($logsPath);
         $logFiles = $loggingService->getEntryLogFiles($logsPath);
 
@@ -86,7 +87,7 @@ class LogManagerController extends Controller
             'entryExists' => true,
             'logsFolderPath' => $logsFolderPath,
             'currentFolder' => $currentFolder,
-            'entryId' => $request->get('entryId'),
+            'entryId' => $entryId,
             'logFolders' => $logFolders,
             'logFiles' => $logFiles));
     }

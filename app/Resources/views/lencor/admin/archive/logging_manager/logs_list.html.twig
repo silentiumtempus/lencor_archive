@@ -1,12 +1,18 @@
 {% if entryExists %}
+    {% set upperFolderParent = "" %}
+    {% set upperFolder = "" %}
     <ul class="fa-ul logs-path" id="{{ entryId }}">
-        <li class="row">
+        <li class="path-row">
             <span id="">
                 <a id="" class="button" name="openSubDir">{{ 'logs.title.rootDir'|trans }}</a>/
             </span>
             {% if logsFolderPath is defined and logsFolderPath is not null %}
-                {% for parentFolder, folder in logsFolderPath %}
-                    <span id="{{ parentFolder }}">
+                {% for parent, folder in logsFolderPath %}
+                    {% if loop.index == logsFolderPath|length-1  %}
+                        {% set upperFolderParent = parent %}
+                        {% set upperFolder = folder %}
+                    {% endif %}
+                    <span id="{{ parent }}">
                         <a id="{{ folder }}" class="button" name="openSubDir" href="">{{ folder }}</a>/
                     </span>
                 {% endfor %}
@@ -24,6 +30,14 @@
         </li>
     </ul>
     <ul class="fa-ul logs-list dashed" id="{{ entryId }}">
+        {% if logsFolderPath is defined and logsFolderPath is not null %}
+        <li class="row">
+            <span id="{{ upperFolderParent }}">
+                <a id="{{ upperFolder }}" name="openSubDir" href="#"><i class="fa fa-ellipsis-h"> </i></a>
+            </span>
+        </li>
+        {% endif %}
+
         {% if logFiles is empty and logFolders is empty %}
             {{ 'logs.messages.empty'|trans }}
         {% else %}
@@ -35,8 +49,8 @@
                     <span>{{ logFolder.size|bytes_convert }}</span>
                     <span>{{ logFolder.mTime|date('d/m/Y H:m:s') }}</span>
                     <span>{{ logFolder.perms }}</span>
-                    <span><i class="fa-circle {% if logFolder.writable %} green{% else %} red{% endif %}"> </i></span>
-                    <span><i class="fa-circle {% if logFolder.readable %} green{% else %} red{% endif %}"> </i></span>
+                    <span><i class="fa fa-circle {% if logFolder.writable %} green{% else %} red{% endif %}"> </i></span>
+                    <span><i class="fa fa-circle {% if logFolder.readable %} green{% else %} red{% endif %}"> </i></span>
                 </li>
             {% endfor %}
             {% for logFile in logFiles %}
@@ -47,8 +61,8 @@
                     <span>{{ logFile.size|bytes_convert }}</span>
                     <span>{{ logFile.mTime|date('d/m/Y H:m:s') }}</span>
                     <span>{{ logFile.perms }}</span>
-                    <span><i class="fa-circle {% if logFile.writable %} green{% else %} red{% endif %}"> </i></span>
-                    <span><i class="fa-circle {% if logFile.readable %} green{% else %} red{% endif %}"> </i></span>
+                    <span><i class="fa fa-circle {% if logFile.writable %} green{% else %} red{% endif %}"> </i></span>
+                    <span><i class="fa fa-circle {% if logFile.readable %} green{% else %} red{% endif %}"> </i></span>
                 </li>
             {% endfor %}
         {% endif %}

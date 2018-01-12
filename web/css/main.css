@@ -124,6 +124,10 @@ header .info-title {
     padding-top: 15px;
 }
 
+body .fa-ellipsis-h {
+    color: #8aa4be;
+}
+
 body .content {
     /*background: #ecf0f1; */
 }
@@ -234,10 +238,6 @@ body .entries .fa-download{
 
 body .entries .fa-undo {
     color: #2c3e50 !important;
-}
-
-body .entries .fa-ellipsis-h {
-    color: #8aa4be;
 }
 
 body .entries .deleted {
@@ -490,7 +490,12 @@ body .logs .logs-list li span {
 body .logs .row {
     display: flex;
     margin-right: 0;
-    margin-left: 0 ;
+    margin-left: 0;
+}
+
+body .logs .path-row {
+    margin-right: 0;
+    margin-left: 0;
 }
 
 body .logs .header {
