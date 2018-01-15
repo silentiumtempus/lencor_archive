@@ -4,7 +4,7 @@ $(document).ready(function () {
         let $logsRowsCountForm = $('#logs_rows_count_form');
         $logsRowsCountForm.on("submit", function (event) {
             event.preventDefault();
-            $('#logfile-content').hide();
+            $('#logfile-text').hide();
             $('#loading-spinner').show().css('display', 'contents');
             let $logsRowsCountFormSerialized = $logsRowsCountForm.serialize();
             $.ajax({
@@ -13,8 +13,8 @@ $(document).ready(function () {
                 data: $logsRowsCountFormSerialized,
                 success: function (response) {
                     $('#loading-spinner').hide();
-                    $('#logfile-content').html(response);
-                    $('#logfile-content').show();
+                    $('#logfile-text').replaceWith($(response).find('#logfile-text'));
+                    $('#logfile-text').show();
                 }
             });
         });
