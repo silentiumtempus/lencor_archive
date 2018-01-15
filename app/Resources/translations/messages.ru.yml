@@ -26,6 +26,8 @@ entries:
     search: 'Поиск по архиву'
     list: 'Список записей'
     new: 'Создание записи'
+  loading: 'Ведётся поиск...'
+  not_found: 'Записей не обнаружено'
   header:
     year: 'Год'
     factory: 'Завод'
@@ -129,6 +131,7 @@ logs:
     writable: 'Запись'
     readable: 'Чтение'
   content:
+    loading: 'Загрузка содержимого...'
     header:
       timestamp: 'Метка времени'
       eventtype: 'Тип события'

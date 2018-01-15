@@ -35,8 +35,6 @@
     <div>
         <h4>{{ 'logs.title.filescontent'|trans }}</h4>
     </div>
-
-
     <table class="table white table-entries" data-path="{{ path('logging') }}">
         <thead>
         <tr>
@@ -52,14 +50,18 @@
                                                    aria-hidden="true"></i> {{ 'logs.header.actions'|trans }}</td>#}
         </tr>
         </thead>
-        <tbody id="main-tbody" class="entries" data-path="{{ path('logging') }}">
+        <tbody id="log-contents" class="entries" data-path="{{ path('logging') }}" >
         <tr>
-            <td id="logfile-content"> </td>
+            <td id="logfile-block"> </td>
         </tr>
         </tbody>
         <tfoot>
-        <tr>
-            <td> </td>
+        <tr id="loading-spinner" class="loading-spinner">
+            <td>
+                <i class="fa fa-spinner fa-pulse fa-2x fa-fw"> </i>
+                <br>
+                {{ 'logs.content.loading'|trans }}
+            </td>
         </tr>
         </tfoot>
     </table>

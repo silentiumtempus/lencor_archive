@@ -361,6 +361,7 @@ body .table-entries .loading-spinner {
 body .table-entries .loading-spinner td {
     background-color: #ffffff;
     text-align: center;
+    display: block;
 }
 
 .folder-add {

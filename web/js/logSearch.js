@@ -6,6 +6,7 @@ $(document).ready(function () {
 
         $logSearchForm.on("submit", function (event) {
             event.preventDefault();
+            $('#logfile-content').hide();
             logsLoader();
 
         });
@@ -26,6 +27,8 @@ $(document).ready(function () {
         /** Load log file contents **/
         $(document).on("click", 'a[name="openLog"]', function(event) {
             event.preventDefault();
+            $('#logfile-content').hide();
+            $('#loading-spinner').show().css('display', 'block');
             let entryId = $(this).attr('id');
             let file = $(this).text();
             let parentFolder = $(this).parent('span').attr('id');
@@ -34,7 +37,9 @@ $(document).ready(function () {
                 method: "POST",
                 data: {entryId: entryId, file: file, parentFolder: parentFolder},
                 success: function (response) {
-                    $('#logfile-content').html(response);
+                    $('#loading-spinner').hide();
+                    $('#logfile-block').html(response);
+                    $('#logfile-content').show();
 
                 }
             })
@@ -43,6 +48,7 @@ $(document).ready(function () {
         /** Load contents of subdirectory in logs **/
         $(document).on("click", 'a[name="openSubDir"]', function (event) {
             event.preventDefault();
+            $('#logfile-content').hide();
             let $folder = $(this).attr('id');
             let $entryId = $(this).parents('ul').attr('id');
             let $parentFolder = $(this).parent('span').attr('id');
