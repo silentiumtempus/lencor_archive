@@ -19,7 +19,7 @@ class AdministrationController extends Controller
      * @return Response
      * @Route("/admin/", name="admin")
      */
-    public function statsIndex(Request $request)
+    public function adminIndex(Request $request)
     {
         return $this->render(':lencor/admin/archive/administration:index.html.twig');
     }

@@ -162,7 +162,7 @@ header .top-menu ul {
     list-style: none;
 }
 
-header .top-menu span {
+header .top-menu li {
     padding-left: 13px;
     padding-right: 13px;
 }
@@ -175,6 +175,21 @@ header .top-menu a {
 
 header .top-menu a:hover {
     color: #c4e3f3;
+}
+
+header .top-menu .drop-menu {
+    position: absolute;
+    background-color: #ffffff;
+    min-width: 200px;
+}
+
+header .top-menu .drop-menu a {
+    color: #2c3e50;
+}
+
+header .top-menu .tmenu-1 {
+
+
 }
 
 header .info-block {
@@ -197,15 +212,11 @@ header .info-title {
     height: 44px;
     vertical-align: middle;
     font-size: 19px;
-    padding-top: 15px;
+    padding-top: 10px;
 }
 
 body .fa-ellipsis-h {
     color: #8aa4be;
-}
-
-body .content {
-    /*background: #ecf0f1; */
 }
 
 body .content .button {

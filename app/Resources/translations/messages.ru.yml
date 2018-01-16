@@ -7,10 +7,17 @@ login:
 header:
   menu:
     homepage: 'Главная'
-    manager: 'Архив'
+    manager:
+      menu0: 'Архив'
+      menu1: 'Записи'
+      menu2: 'Создать запись'
     system: 'Система'
-    admin: 'Управление'
-    logging: 'Логирование'
+    admin:
+      menu0: 'Управление'
+      menu1: 'Заводы и установки'
+    logging:
+      menu0: 'Логирование'
+      menu1: 'Просмотр логов'
     stats: 'Статистика'
     login: 'Войти'
     logout: 'Выйти'

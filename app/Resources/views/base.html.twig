@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/font-lato.css') }}">
         <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/menu-styles.css') }}">
     {% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
 </head>
@@ -16,6 +17,7 @@
 <body id="{% block body_id %}{% endblock %}">
 {% block javascripts %}
     <script src="{{ asset('jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/menuScript.js') }}"></script>
 
 {% endblock %}
 
@@ -23,15 +25,57 @@
     <header>
         {% block header_navigation_menu %}
             <div class="top-menu left" role="navigation">
-                <div class="container">
+                <div class="container" id="cssmenu">
                     <ul class="left">
+                        <li class="active has-sub">
+                            <a href="{{ path('index') }}">
+                                <span> <i class="fa fa-home"> </i> {{ 'header.menu.homepage'|trans }} </span>
+                            </a>
+                        </li>
                         <li>
-                            <span><a href="{{ path('index') }}"><i class="fa fa-home"> </i> {{ 'header.menu.homepage'|trans }} </a></span>
-                            <span><a href="{{ path('entries') }}"><i class="fa fa-archive"> </i> {{ 'header.menu.manager'|trans }} <i class="fa fa-angle-down"> </i></a></span>
-                            <span><a href="{{ path('system') }}"><i class="fa fa-cog"> </i> {{ 'header.menu.system'|trans }} <i class="fa fa-angle-down"> </i></a></span>
-                            <span><a href="{{ path('admin') }}"><i class="fa fa-wrench"> </i> {{ 'header.menu.admin'|trans }} <i class="fa fa-angle-down"> </i></a></span>
-                            <span><a href="{{ path('logging') }}"><i class="fa fa-history"> </i> {{ 'header.menu.logging'|trans }} <i class="fa fa-angle-down"> </i></a></span>
-                            <span><a href="{{ path('stats') }}"><i class="fa fa-info"> </i> {{ 'header.menu.stats'|trans }} <i class="fa fa-angle-down"> </i></a></span>
+                            <a href="{{ path('entries') }}">
+                                <span>
+                                    <i class="fa fa-archive"> </i> {{ 'header.menu.manager.menu0'|trans }} <i class="fa fa-angle-down"> </i>
+                                </span>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{{ path('entries') }}">{{ 'header.menu.manager.menu1'|trans }}</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('entries_new') }}">{{ 'header.menu.manager.menu2'|trans }}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{ path('system') }}">
+                                <span><i class="fa fa-cog"> </i> {{ 'header.menu.system'|trans }} <i class="fa fa-angle-down"> </i> </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('admin') }}">
+                                <span><i class="fa fa-wrench"> </i> {{ 'header.menu.admin.menu0'|trans }} <i class="fa fa-angle-down"> </i></span>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="#">{{ 'header.menu.admin.menu1'|trans }}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{ path('logging') }}">
+                                <span><i class="fa fa-history"> </i> {{ 'header.menu.logging.menu0'|trans }} <i class="fa fa-angle-down"> </i></span>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{{ path('logging') }}"> {{ 'header.menu.logging.menu1'|trans }}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{ path('stats') }}">
+                                <span><i class="fa fa-info"> </i> {{ 'header.menu.stats'|trans }} <i class="fa fa-angle-down"> </i></span>
+                            </a>
                         </li>
                     </ul>
                     <ul class="right">
@@ -45,14 +89,15 @@
                         {% endif %}
                         {% if app.user %}
                             <li>
-                            <span>
-                                <a href="{{ path('fos_user_security_logout') }}"><i class="fa fa-sign-out" aria-hidden="true"> </i> {{ 'header.menu.logout'|trans }}</a>
-                            </span>
+                                <a href="{{ path('fos_user_security_logout') }}">
+                                    <span><i class="fa fa-sign-out" aria-hidden="true"> </i> {{ 'header.menu.logout'|trans }}</span>
+                                </a>
                             </li>
                         {% else %}
                             <li>
                             <span>
-                                <a href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in" aria-hidden="true"> </i> {{ 'header.menu.login'|trans }}</a>
+                                <a href="{{ path('fos_user_security_login') }}">
+                                    <i class="fa fa-sign-in" aria-hidden="true"> </i> {{ 'header.menu.login'|trans }}</a>
                             </span>
                             </li>
                         {% endif %}
