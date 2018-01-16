@@ -23,7 +23,9 @@ table {
 }
 
 .table tbody tr td {
-
+    padding: 8px;
+    line-height: 1.42857143;
+    vertical-align: top;
 }
 
 .table thead tr td {
@@ -43,6 +45,24 @@ li {
 
 i {
     margin-right: 0.25em
+}
+
+button, input, optgroup, select, textarea {
+    color: inherit;
+    font: inherit;
+    margin: 0
+}
+
+button {
+    overflow: visible
+}
+
+button, select {
+    text-transform: none
+}
+
+input {
+    border-width: 2px;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -79,8 +99,6 @@ h6, .h6 {
 
 .container {
     width: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -145,7 +163,8 @@ header .top-menu ul {
 }
 
 header .top-menu span {
-    padding-left:16px;
+    padding-left: 13px;
+    padding-right: 13px;
 }
 
 header .top-menu a {
@@ -175,7 +194,7 @@ header .info-block a:hover {
 }
 
 header .info-title {
-    height: 60px;
+    height: 44px;
     vertical-align: middle;
     font-size: 19px;
     padding-top: 15px;
@@ -198,7 +217,7 @@ body .content .button {
     vertical-align: middle;
     text-align: center;
     padding: 5px 10px;
-    margin: 10px 10px;
+    /*margin: 10px 10px; */
     font-size: 15px;
     color: #ffffff !important;
     text-decoration: none !important;
@@ -348,6 +367,7 @@ body .entries .header {
     color: #ffffff;
     padding: 10px 2% 10px 2%;
     border: 1px solid silver;
+    box-sizing: border-box;
 }
 
 body .entries .header li {
@@ -374,6 +394,25 @@ body .entries .content table {
     width: 100%;
 }
 
+body .entries .content .dashed {
+    border-bottom: 1px dashed silver;
+}
+
+body .entries .content .dashed ul {
+    padding: 0;
+}
+
+body .entries .content .row {
+    display: flex;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+body .entries .content .add-buttons td {
+    padding: 0;
+    vertical-align: middle;
+}
+
 body .entries .add-buttons {
     margin: 5px 0 0 0;
     background-color: #ffffff !important;
@@ -393,26 +432,12 @@ body .entries .placeholder {
     border-left:0 !important;
 }
 
-body .entries .content .dashed {
-    border-bottom: 1px dashed silver;
-}
-
-body .entries .content .dashed ul {
-    padding: 0;
-}
-
 body .entries .border-left {
     border-left: 1px dashed silver;
 }
 
 body .entries .border-top {
     border-top: 1px dashed silver;
-}
-
-body .entries .content .row {
-    display: flex;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
 }
 
 body .table-entries .loading-spinner {
