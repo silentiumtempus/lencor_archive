@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>{% block title %}{{ 'title'|trans }}{% endblock %}</title>
     {% block stylesheets %}
-        <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/bootstrap-flatly-3.3.7.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/font-lato.css') }}">
@@ -27,7 +26,7 @@
                 <div class="container">
                     <ul class="left">
                         <li>
-                            <span><a href="{{ path('index') }}"><i class="fa fa-home"> </i> {{ 'header.menu.homepage'|trans }} </a> </span>
+                            <span><a href="{{ path('index') }}"><i class="fa fa-home"> </i> {{ 'header.menu.homepage'|trans }} </a></span>
                             <span><a href="{{ path('entries') }}"><i class="fa fa-archive"> </i> {{ 'header.menu.manager'|trans }} <i class="fa fa-angle-down"> </i></a></span>
                             <span><a href="{{ path('system') }}"><i class="fa fa-cog"> </i> {{ 'header.menu.system'|trans }} <i class="fa fa-angle-down"> </i></a></span>
                             <span><a href="{{ path('admin') }}"><i class="fa fa-wrench"> </i> {{ 'header.menu.admin'|trans }} <i class="fa fa-angle-down"> </i></a></span>
@@ -92,15 +91,6 @@
             </div>
             <div id="footer-resources">
                 <p>
-                    <a href="" title="">
-                        <i class="fa fa-twitter" aria-hidden="true"> </i>
-                    </a>
-                    <a href="" title="">
-                        <i class="fa fa-vk" aria-hidden="true"> </i>
-                    </a>
-                    <a href="" title="">
-                        <i class="fa fa-rss" aria-hidden="true"> </i>
-                    </a>
                 </p>
             </div>
         </div>

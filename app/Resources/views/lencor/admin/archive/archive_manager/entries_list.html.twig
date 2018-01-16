@@ -14,7 +14,7 @@
             <td>{{ entry.registerNumber }}</td>
             <td>{{ entry.contractNumber }}</td>
             <td>{{ entry.fullConclusionName }}</td>
-            <td>
+            <td class="text-center">
                 {% if entry.deleteMark != 0 %}
                     <i class="fa fa-ban" id="isRemoved"> </i>
                 {% endif %}
@@ -24,7 +24,7 @@
                     <i class="fa fa-check-circle" id="checkPassed"> </i>
                 {% endif %}
             </td>
-            <td class="icons" id="{{ entry.id }}">
+            <td class="icons text-center" id="{{ entry.id }}">
                 <a href="#" name="openPath" class="open" target="_blank"><i class="fa fa-hdd-o"> </i></a>
                 <a href="#" name="addFiles"><i class="fa fa-upload"> </i></a>&nbsp;
                 <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"> </i><i class="fa fa-folder-o"> </i></a>&nbsp;
