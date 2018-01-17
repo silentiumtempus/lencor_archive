@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,10 +16,30 @@ class AdministrationController extends Controller
     /**
      * @param Request $request
      * @return Response
-     * @Route("/admin/", name="admin")
+     * @Route("/admin", name="admin")
      */
     public function adminIndex(Request $request)
     {
         return $this->render(':lencor/admin/archive/administration:index.html.twig');
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("/admin/factories-and-settings", name="admin-factories-and-settings")
+     */
+    public function factoriesAndSettings(Request $request)
+    {
+        return $this->render(':lencor/admin/archive/administration:factories_and_settings.html.twig');
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("admin/news", name="admin-news")
+     */
+    public function news(Request $request)
+    {
+        return $this->render(':lencor/admin/archive/administration:news.html.twig');
     }
 }

@@ -17,6 +17,7 @@ class MainController extends Controller
      */
     public function Index()
     {
+
         return $this->render('lencor/admin/archive/index.html.twig');
     }
 
