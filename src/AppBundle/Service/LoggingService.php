@@ -149,8 +149,7 @@ class LoggingService
     public function logEntryContent(int $entryId, User $user, array $messages)
     {
         $entry = $this->entriesRepository->findOneById($entryId);
-        $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
-        $logsDir = $this->getLogsRootPath($rootFolder->getFolderName());
+        $logsDir = $this->getLogsRootPath($entryId);
         $this->logEntry($entry, $logsDir, $user, $messages);
     }
 
