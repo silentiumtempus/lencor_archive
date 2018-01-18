@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class FactoryService
 {
     protected $em;
+    protected $factoriesRepository;
 
     /**
      * FactoryService constructor.
@@ -20,6 +21,7 @@ class FactoryService
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
+        $this->factoriesRepository = $this->em->getRepository('AppBundle:FactoryEntity');
     }
 
     /**
@@ -29,5 +31,13 @@ class FactoryService
     {
         $this->em->persist($newFactory);
         $this->em->flush();
+    }
+
+    /**
+     * @return FactoryEntity[]|array
+     */
+    public function getFactories()
+    {
+        return $this->factoriesRepository->findAll();
     }
 }

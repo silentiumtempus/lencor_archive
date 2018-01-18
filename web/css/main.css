@@ -39,9 +39,6 @@ p, ul, ol {
     margin-bottom: 1.5em
 }
 
-li {
-    margin-bottom: 0.5em
-}
 
 i {
     margin-right: 0.25em
@@ -162,13 +159,13 @@ header .top-menu ul {
     list-style: none;
 }
 
-header .top-menu li {
+header .top-menu li a {
     padding-left: 13px;
     padding-right: 13px;
 }
 
 header .top-menu a {
-    color: #FFFFFF;
+    color: #ffffff;
     font-size: 16px;
     text-decoration: none;
 }
@@ -217,6 +214,10 @@ header .info-title {
 
 body .fa-ellipsis-h {
     color: #8aa4be;
+}
+
+body .content li {
+    margin-bottom: 0.5em
 }
 
 body .content .button {
@@ -565,59 +566,4 @@ body#admin_post_new td:nth-child(2){
 .new_setting {
     width: 50%;
     float: right;
-}
-
-body .logs ul li {
-    font-size: 16px;
-}
-
-body .logs ul li a {
-    color: #2c3e50 !important;
-}
-
-body .logs .logs-path {
-    margin-left: 0 !important;
-    margin-bottom: 0
-}
-
-body .logs .logs-list {
-    margin-left: 15px !important;
-    margin-right: 15px;
-}
-
-body .logs .logs-list li {
-    border-bottom: 1px dashed silver;
-}
-
-body .logs .logs-list li span {
-    width: 100%;
-}
-
-body .logs .row {
-    display: flex;
-    margin-right: 0;
-    margin-left: 0;
-}
-
-body .logs .path-row {
-    margin-right: 0;
-    margin-left: 0;
-}
-
-body .logs .header {
-    background: #2c3e50;
-    color: #ffffff;
-    padding: 10px 2% 10px 2%;
-    border: 1px solid silver;
-}
-
-body .logs .header li {
-    display: flex;
-    width:100%;
-}
-
-body .logs .header li span {
-    font-size: 15px;
-    font-weight: bold;
-    width:100%
 }

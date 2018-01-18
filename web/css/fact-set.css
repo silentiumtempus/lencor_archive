@@ -1,0 +1,23 @@
+body .factories-settings .content-list ul {
+    border: 1px solid silver;
+}
+
+body .factories-settings .content-list ul li {
+    margin-bottom: 0 !important;
+}
+
+body .factories-settings .content-list ul li:nth-child(odd) {
+    background-color: #ecf0f1;
+}
+
+body .factories-settings .content-list ul li:last-child {
+    margin-bottom: 0;
+}
+
+body .factories-settings .content-list ul li a {
+    color: #2c3e50;
+}
+
+body .factories-settings .content-list ul li a div{
+    padding: 8px;
+}

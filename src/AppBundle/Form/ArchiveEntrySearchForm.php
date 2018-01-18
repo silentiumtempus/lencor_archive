@@ -62,7 +62,7 @@ class ArchiveEntrySearchForm extends AbstractType
             $settingsList = array();
 
             if ($factory) {
-                $settingsList = $this->settingService->findSettingsByFactory($factory);
+                $settingsList = $this->settingService->findSettingsByFactoryId($factory->getId());
                 $status = false;
             } else {
                 $status = true;

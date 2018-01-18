@@ -1,0 +1,9 @@
+{% block settings %}
+    {% for setting in settings %}
+        <li>
+            <a href="#">
+                <div>{{ setting }}</div>
+            </a>
+        </li>
+    {% endfor %}
+{% endblock %}

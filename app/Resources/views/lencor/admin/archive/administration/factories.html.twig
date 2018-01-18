@@ -1,0 +1,9 @@
+{% block factories %}
+    {% for factory in factories %}
+        <li>
+            <a href="#" name="factory" id="{{ factory.id }}">
+                <div>{{ factory }}</div>
+            </a>
+        </li>
+    {% endfor %}
+{% endblock %}

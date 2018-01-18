@@ -103,6 +103,8 @@ settings:
     name:
       label: 'Наименование установки'
       placeholder: 'Введите наименование установки'
+factset:
+  title: 'Управление заводами и установками'
 button:
   entry:
     create: 'Добавить запись'

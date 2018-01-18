@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Service\FactoryService;
+use AppBundle\Service\SettingService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,12 +27,31 @@ class AdministrationController extends Controller
 
     /**
      * @param Request $request
+     * @param FactoryService $factoryService
+     * @param SettingService $settingService
      * @return Response
-     * @Route("/admin/factories-and-settings", name="admin-factories-and-settings")
+     * @Route("/admin/factories-and-settings", name = "admin-factories-and-settings")
      */
-    public function factoriesAndSettings(Request $request)
+    public function factoriesAndSettings(Request $request, FactoryService $factoryService, SettingService $settingService)
     {
-        return $this->render(':lencor/admin/archive/administration:factories_and_settings.html.twig');
+        $factories = $factoryService->getFactories();
+        $settings = $settingService->findSettingsByFactoryId($factories[0]->getId());
+
+        return $this->render(':lencor/admin/archive/administration:factories_and_settings.html.twig', array('factories' => $factories, 'settings' => $settings));
+    }
+
+    /**
+     * @param Request $request
+     * @param SettingService $settingService
+     * @return Response
+     * @Route("admin/settings",
+     *     options = { "expose" = true },
+     *     name = "admin-settings")
+     */
+    public function loadSettings(Request $request, SettingService $settingService)
+    {
+        $settings = $settingService->findSettingsByFactoryId($request->get('factoryId'));
+        return $this->render(':lencor/admin/archive/administration:settings.html.twig', array('settings' => $settings));
     }
 
     /**

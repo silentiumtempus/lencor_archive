@@ -1,9 +1,37 @@
 {% extends ':lencor/admin/archive/administration:index.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/fact-set.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    <script type="text/javascript" src="{{ asset('js/fact-set.js') }}"></script>
+{% endblock %}
+
 {% block main %}
-
-{{ parent() }}
-<br><br>
-Управление заводам и установками
-
+    <div>
+        <h3>{{ 'factset.title'|trans }}</h3>
+    </div>
+    <div class="factories-settings">
+        <div class="content-list factories left">
+            <ul class="fa-ul" id="factories" data-path="{{ path('admin-settings') }}">
+                {% block factories %}
+                    {{ include(':lencor/admin/archive/administration:factories.html.twig', { 'factories': factories }) }}
+                {% endblock %}
+            </ul>
+        </div>
+        <div class="content-list settings left">
+            {% if settings is defined %}
+                <ul class="fa-ul" id="settings">
+                    {% block settings %}
+                        {{ include(':lencor/admin/archive/administration:settings.html.twig', { 'settings': settings }) }}
+                    {% endblock %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

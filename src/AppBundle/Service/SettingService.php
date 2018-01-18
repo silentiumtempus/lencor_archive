@@ -35,10 +35,10 @@ class SettingService
     }
 
     /**
-     * @param FactoryEntity $factory
+     * @param int $factory
      * @return mixed
      */
-    public function findSettingsByFactory(FactoryEntity $factory)
+    public function findSettingsByFactoryId(int $factory)
     {
        return $this->settingsRepository->findByFactory($factory, array('id' => 'asc'));
     }
