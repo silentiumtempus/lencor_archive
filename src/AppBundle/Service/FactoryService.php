@@ -33,6 +33,11 @@ class FactoryService
         $this->em->flush();
     }
 
+    public function updateFactory()
+    {
+        $this->em->flush();
+    }
+
     /**
      * @return FactoryEntity[]|array
      */

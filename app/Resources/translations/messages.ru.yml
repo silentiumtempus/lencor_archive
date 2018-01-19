@@ -105,6 +105,8 @@ settings:
       placeholder: 'Введите наименование установки'
 factset:
   title: 'Управление заводами и установками'
+  settings:
+    placeholder: 'Выберите завод'
 button:
   entry:
     create: 'Добавить запись'

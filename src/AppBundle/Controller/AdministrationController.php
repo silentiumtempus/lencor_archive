@@ -2,8 +2,11 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\FactoryEntity;
+use AppBundle\Form\FactoryAddForm;
 use AppBundle\Service\FactoryService;
 use AppBundle\Service\SettingService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,9 +38,8 @@ class AdministrationController extends Controller
     public function factoriesAndSettings(Request $request, FactoryService $factoryService, SettingService $settingService)
     {
         $factories = $factoryService->getFactories();
-        $settings = $settingService->findSettingsByFactoryId($factories[0]->getId());
 
-        return $this->render(':lencor/admin/archive/administration:factories_and_settings.html.twig', array('factories' => $factories, 'settings' => $settings));
+        return $this->render(':lencor/admin/archive/administration:factories_and_settings.html.twig', array('factories' => $factories));
     }
 
     /**
@@ -51,7 +53,37 @@ class AdministrationController extends Controller
     public function loadSettings(Request $request, SettingService $settingService)
     {
         $settings = $settingService->findSettingsByFactoryId($request->get('factoryId'));
+
         return $this->render(':lencor/admin/archive/administration:settings.html.twig', array('settings' => $settings));
+    }
+
+    /**
+     * @param Request $request
+     * @param FactoryEntity $factory
+     * @param FactoryService $factoryService
+     * @return Response
+     * @Route("admin/factory/{factory}/edit",
+     *     options = { "expose" = true },
+     *     name = "admin-factory-edit")
+     * @ParamConverter("factory", class="AppBundle:FactoryEntity", options = {"id" = "factory"})
+     */
+    public function editFactory(Request $request, FactoryEntity $factory, FactoryService $factoryService)
+    {
+        $factoryEditForm = $this->createForm(FactoryAddForm::class, $factory);
+
+        $factoryEditForm->handleRequest($request);
+        if ($factoryEditForm->isSubmitted())
+        {
+            if ($factoryEditForm->isValid())
+            {
+                $factoryService->updateFactory();
+                return $this->render(':lencor/admin/archive/administration:factories.html.twig', array('factories' => $factory));
+            } else {
+                $this->addFlash('danger', 'Форма не валидна');
+            }
+        }
+
+        return $this->render(':lencor/admin/archive/administration:factory_edit.html.twig', array('factoryForm' => $factoryEditForm->createView()));
     }
 
     /**
@@ -61,6 +93,7 @@ class AdministrationController extends Controller
      */
     public function news(Request $request)
     {
+
         return $this->render(':lencor/admin/archive/administration:news.html.twig');
     }
 }

@@ -1,9 +1,17 @@
 {% block settings %}
-    {% for setting in settings %}
+    {% if settings is defined %}
+        {% for setting in settings %}
+            <li>
+                <span>{{ setting }}</span>
+                <span>
+                    <a href="#"><i class="fa fa-edit"> </i></a>
+                    <a href="#"><i class="fa fa-trash red"> </i></a>
+                </span>
+            </li>
+        {% endfor %}
+    {% else %}
         <li>
-            <a href="#">
-                <div>{{ setting }}</div>
-            </a>
+            <span>{{ 'factset.settings.placeholder'|trans }}</span>
         </li>
-    {% endfor %}
+    {% endif %}
 {% endblock %}

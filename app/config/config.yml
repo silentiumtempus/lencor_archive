@@ -158,6 +158,7 @@ monolog:
            # channels: [doctrine]
 
 # FOSElasticaBundle (search&filter engine) library configuration
+
 fos_elastica:
     #serializer: ~
     clients:
@@ -215,6 +216,8 @@ fos_elastica:
                     query_builder_method: createEntriesAndErrorsQueryBuilder
 
 # Vich Uploader Bundle configuration
+#to be removed, not used anywhere !
+
 vich_uploader:
     db_driver: orm
     mappings:
@@ -224,3 +227,10 @@ vich_uploader:
         inject_on_load: false
         delete_on_update: true
         delete_on_remove: true
+
+# Sensio Framework Extra Bundle configuration
+sensio_framework_extra:
+  request:
+    converters: true
+    auto_convert: false
+
