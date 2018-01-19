@@ -6,7 +6,7 @@ use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FolderEntity;
 use AppBundle\Entity\SettingEntity;
 use AppBundle\Form\ArchiveEntryAddForm;
-use AppBundle\Form\FactoryAddForm;
+use AppBundle\Form\FactoryForm;
 use AppBundle\Entity\FactoryEntity;
 use AppBundle\Form\SettingAddForm;
 use AppBundle\Service\ArchiveEntryService;
@@ -50,7 +50,7 @@ class EntryAdditionController extends Controller
     {
         $session = $this->container->get('session');
         $entryForm = $this->createForm(ArchiveEntryAddForm::class, new ArchiveEntryEntity());
-        $factoryForm = $this->createForm(FactoryAddForm::class, new FactoryEntity());
+        $factoryForm = $this->createForm(FactoryForm::class, new FactoryEntity(), array('attr' => array('function' => 'add')));
         $settingForm = $this->createForm(SettingAddForm::class, new SettingEntity());
         $pathRoot = $this->getParameter('lencor_archive.storage_path');
         $fs = new Filesystem();

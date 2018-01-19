@@ -74,6 +74,7 @@ class LogManagerController extends Controller
      *     defaults = { "entryId" : "0" },
      *     options = { "expose" = true },
      *     name = "logging-open-sub-dir")
+     * @TODO : use type-hint for entry in request instead of db querying
      */
     public function openSubDir(Request $request, int $entryId, LoggingService $loggingService)
     {

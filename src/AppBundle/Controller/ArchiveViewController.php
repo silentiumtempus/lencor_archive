@@ -202,6 +202,7 @@ file_put_contents($file, $wr); */
      */
     public function showFlashMessages()
     {
+
         return $this->render('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig');
     }
 
@@ -211,6 +212,7 @@ file_put_contents($file, $wr); */
      */
     public function showFlashMessagesSummary()
     {
+
         return $this->render('lencor/admin/archive/flash_messages/archive_manager/summary.html.twig');
     }
 

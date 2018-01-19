@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\FactoryEntity;
-use AppBundle\Form\FactoryAddForm;
+use AppBundle\Form\FactoryForm;
 use AppBundle\Service\FactoryService;
 use AppBundle\Service\SettingService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -69,8 +69,7 @@ class AdministrationController extends Controller
      */
     public function editFactory(Request $request, FactoryEntity $factory, FactoryService $factoryService)
     {
-        $factoryEditForm = $this->createForm(FactoryAddForm::class, $factory);
-
+        $factoryEditForm = $this->createForm(FactoryForm::class, $factory, array('attr' => array('function' => 'edit')));
         $factoryEditForm->handleRequest($request);
         if ($factoryEditForm->isSubmitted())
         {
