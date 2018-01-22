@@ -50,7 +50,7 @@ class EntryAdditionController extends Controller
     {
         $session = $this->container->get('session');
         $entryForm = $this->createForm(ArchiveEntryAddForm::class, new ArchiveEntryEntity());
-        $factoryForm = $this->createForm(FactoryForm::class, new FactoryEntity(), array('attr' => array('function' => 'add')));
+        $factoryForm = $this->createForm(FactoryForm::class, new FactoryEntity(), array('attr' => array('id' => 'factory_form', 'function' => 'add')));
         $settingForm = $this->createForm(SettingAddForm::class, new SettingEntity());
         $pathRoot = $this->getParameter('lencor_archive.storage_path');
         $fs = new Filesystem();

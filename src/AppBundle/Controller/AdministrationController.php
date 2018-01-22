@@ -69,7 +69,7 @@ class AdministrationController extends Controller
      */
     public function editFactory(Request $request, FactoryEntity $factory, FactoryService $factoryService)
     {
-        $factoryEditForm = $this->createForm(FactoryForm::class, $factory, array('attr' => array('function' => 'edit')));
+        $factoryEditForm = $this->createForm(FactoryForm::class, $factory, array('attr' => array('id' => 'factory_form', 'function' => 'edit')));
         $factoryEditForm->handleRequest($request);
         if ($factoryEditForm->isSubmitted())
         {
@@ -80,7 +80,7 @@ class AdministrationController extends Controller
             } else {
                 $this->addFlash('danger', 'Форма не валидна');
             }
-        }
+        } /*else { $this->addFlash('danger', 'No submit'); }; */
 
         return $this->render(':lencor/admin/archive/administration:factory_edit.html.twig', array('factoryForm' => $factoryEditForm->createView()));
     }

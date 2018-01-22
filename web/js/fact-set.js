@@ -25,18 +25,21 @@ $(document).ready(function () {
                 method: "POST",
                 success: function (response) {
                     $('#factory_' + $factory).html(response);
-                    let $factoryEditForm = $('#factory_add_form');
+                    let $factoryEditForm = $('#factory_form');
                     /** Update factory **/
                     $(document).on('submit', $factoryEditForm, function updateFactory(event) {
                         event.preventDefault();
                         let $factoryEditFormSerialized = $factoryEditForm.serialize();
-                        alert($factory);
+                        //alert($factory);
                         $.ajax({
                             url: Routing.generate('admin-factory-edit', {factory: $factory}),
                             method: "POST",
                             data: $factoryEditFormSerialized,
                             success: function (response) {
                                 $('#factory_' + $factory).replaceWith(response);
+                                $factoryEditFormSerialized = null;
+                                response = null;
+                                $factory = null;
                             }
                         });
                     });

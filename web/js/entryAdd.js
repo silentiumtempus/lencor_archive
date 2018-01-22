@@ -3,7 +3,7 @@ $(document).ready(function () {
         let path = $("#main-div").attr("data-path");
         let $factorySelect = $('#archive_entry_add_form_factory');
         let $entryAddForm = $('#archive_entry_add_form');
-        let $factoryAddForm = $('#factory_add_form');
+        let $factoryAddForm = $('#factory_form');
         let $settingAddForm = $('#setting_add_form');
 
         /** Settings list reload after page refresh **/
