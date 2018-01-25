@@ -41,14 +41,10 @@ $(document).ready(function () {
                     $factoryBlock.html(response);
                     $factoryEditFormsArray[$factory] = $factoryBlock.find('#factory_form_' + $factory);
                     /** Update factory **/
-                    $(document).on('submit', $factoryEditFormsArray[$factory] , function(event) {
+                    $factoryEditFormsArray[$factory].on('submit', function (event) {
                         event.preventDefault();
-
-                        alert('Submit form for factory: ' + $factory);
-                        let $factoryEditFormSerialized = $factoryEditFormsArray[$factory].serialize();
                         $(this).off('submit');
                         updateFactory($factory, $factoryEditFormsArray[$factory]);
-                        event.stopPropagation();
                         return false;
                     });
                     /** Factory editing cancellation **/
