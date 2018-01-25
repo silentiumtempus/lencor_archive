@@ -60,6 +60,21 @@ class AdministrationController extends Controller
     /**
      * @param Request $request
      * @param FactoryEntity $factory
+     * @return Response
+     * @Route("admin/factory/{factory}/load",
+     *     options = { "expose" = true },
+     *     name = "admin-factory-load")
+     * @ParamConverter("factory", class="AppBundle:FactoryEntity", options = {"id" = "factory"})
+     */
+    public function loadFactory(Request $request, FactoryEntity $factory)
+    {
+
+        return $this->render(':lencor/admin/archive/administration:factories.html.twig', array('factories' => $factory));
+    }
+
+    /**
+     * @param Request $request
+     * @param FactoryEntity $factory
      * @param FactoryService $factoryService
      * @return Response
      * @Route("admin/factory/{factory}/edit",

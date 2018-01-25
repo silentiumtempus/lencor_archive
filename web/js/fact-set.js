@@ -1,7 +1,6 @@
 $(document).ready(function () {
     if (!window.jQuery) {
     } else {
-        //let $path = $('#factories').attr('data-path');
         let $factoryEditFormsArray = [];
         /** Load settings list for selected factory **/
         $(document).on('click', 'a[name="openFactory"]', function loadSettings() {
@@ -45,12 +44,19 @@ $(document).ready(function () {
                         event.preventDefault();
                         $(this).off('submit');
                         updateFactory($factory, $factoryEditFormsArray[$factory]);
-                        return false;
                     });
                     /** Factory editing cancellation **/
-                    $(document).on('click', '#factory_form_cancelButton', function cancelFactoryEdit() {
+                    $factoryEditFormsArray[$factory].on('click', '#factory_form_cancelButton', function (event) {
+
+                        $.ajax({
+                            url: Routing.generate('admin-factory-load', {factory: $factory}),
+                            method: "POST",
+                            data: null,
+                            success: function (response) {
+                                $('#factory_' + $factory).replaceWith(response);
+                            }
+                        });
                     });
-                    return false;
                 }
             });
             return false;

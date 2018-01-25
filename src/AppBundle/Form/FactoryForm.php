@@ -28,13 +28,17 @@ class FactoryForm extends AbstractType
             ->add('factoryName', TextType::class, array(
                 'label' => 'factories.add.name.label',
                 'attr' => array('size' => 30)
-            ))
-            ->add('submitButton', SubmitType::class, array('label' => 'button.factory.create'));
-        switch ($function)
-        {
+            ));
+        switch ($function) {
+            case 'add' :
+                $builder
+                    ->add('submitButton', SubmitType::class, array('label' => 'button.factory.create'));
+                break;
             case 'edit' :
                 $builder
-                    ->add('cancelButton', ResetType::class, array('label' => 'button.cancel'));
+                    ->add('submitButton', SubmitType::class, array('label' => 'button.factory.edit'))
+                    ->add('cancelButton', ResetType::class, array('label' => 'button.factory.cancel'));
+                break;
         }
     }
 

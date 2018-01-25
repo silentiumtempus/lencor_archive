@@ -116,6 +116,8 @@ button:
     upload: 'Загрузить'
   factory:
     create: 'Добавить завод'
+    edit: 'Редактировать'
+    cancel: 'Отмена'
   setting:
     create: 'Добавить установку'
 file:
