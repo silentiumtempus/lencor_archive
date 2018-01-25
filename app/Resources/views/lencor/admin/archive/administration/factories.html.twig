@@ -1,14 +1,14 @@
 {% block factories %}
     {% if factories is iterable %}
         {% for factory in factories %}
-            <li id="factory_{{ factory.id }}">
-            <span>
-                <a href="#" id="{{ factory.id }}" name="openFactory">{{ factory }}</a>
-            </span>
-            <span>
-                <a href="#" id="{{ factory.id }}" name="editFactory"><i class="fa fa-edit"> </i></a>
-                <a href="#"><i class="fa fa-trash red"> </i></a>
-            </span>
+            <li id="factory_{{ factory.id }}" class="iterable">
+                <span>
+                    <a href="#" id="{{ factory.id }}" name="openFactory">{{ factory }}</a>
+                </span>
+                <span>
+                    <a href="#" id="{{ factory.id }}" name="editFactory"><i class="fa fa-edit"> </i></a>
+                    <a href="#"><i class="fa fa-trash red"> </i></a>
+                </span>
             </li>
         {% endfor %}
     {% else %}
