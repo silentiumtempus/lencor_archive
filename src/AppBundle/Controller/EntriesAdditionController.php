@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Class EntryAdditionController
  * @package AppBundle\Controller
  */
-class EntryAdditionController extends Controller
+class EntriesAdditionController extends Controller
 {
     /**
      * @param Request $request
@@ -38,7 +38,7 @@ class EntryAdditionController extends Controller
      * @return Response
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\
-     * @Route("/entries/new", name="entries_new")
+     * @Route("/entries/new", name="entry-new")
      */
     public function archiveEntryAdd(
         Request $request,

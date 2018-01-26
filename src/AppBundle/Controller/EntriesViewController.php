@@ -19,7 +19,7 @@ use Elastica\Query;
  * Class ArchiveViewController
  * @package AppBundle\Controller
  */
-class ArchiveViewController extends Controller
+class EntriesViewController extends Controller
 {
 
     /*set_include_path('/var/www/lencor/public_html/new/web/');
@@ -122,40 +122,6 @@ file_put_contents($file, $wr); */
             $entryId = $request->get('entryId');
             $folderId = $folderService->getRootFolder($entryId);
         }
-        /** for file system handling **/
-        //@TODO: review the code below
-        /*$entryId = $request->get('entryId');
-        $pathRoot = $this->getParameter('lencor_archive.storage_path');
-        $targetEntry = $this->getDoctrine()->getRepository('AppBundle:ArchiveEntryEntity')->find($entryId);
-        $entryCatalogue = $pathRoot . "/" . $targetEntry->getCataloguePath();
-
-        $finder = new Finder();
-        $filesystem = new Filesystem();
-        $entryDirectories = $finder->directories()->in($entryCatalogue);
-        $entryDirectories->sortByName();
-        $entryDirectories = array_keys(iterator_to_array($entryDirectories));
-
-        foreach ($entryDirectories as $key => $absolutePath) {
-            $relativePath = $filesystem->makePathRelative($absolutePath, $entryCatalogue);
-            unset($entryDirectories[$key]);
-            $entryDirectories[$relativePath] = $relativePath;
-        }
-
-        $entryFiles = $finder->files()->in($entryCatalogue)->depth('== 0');
-        $entryFiles->sortByName();
-        $entryFiles = array_keys(iterator_to_array($entryFiles));
-
-
-        foreach ($entryFiles as $key => $absolutePath) {
-            $relativePath = $filesystem->makePathRelative($absolutePath, $entryCatalogue);
-            $relativePath = rtrim($relativePath, "/");
-            unset($entryFiles[$key]);
-            $entryFiles[$absolutePath] = $relativePath; */
-        //}
-        //} catch (\Exception $exception) {
-        //    $this->addFlash('error', $exception->getMessage());
-        //}
-        //}
 
         return $this->render('lencor/admin/archive/archive_manager/entries_head.html.twig', array('folderId' => $folderId, 'entryId' => $entryId, 'addHeaderAndButtons' => $addHeaderAndButtons));
     }
