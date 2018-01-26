@@ -93,7 +93,6 @@ h6, .h6 {
     font-size: 13px
 }
 
-
 .container {
     width: 100%;
     margin-left: auto;
@@ -141,6 +140,14 @@ h6, .h6 {
 
 .white {
     background-color: #ffffff;
+}
+
+.deleted {
+    opacity: 0.5;
+}
+
+.disabled {
+    opacity: 0.2;
 }
 
 /*.hidden {
@@ -326,10 +333,6 @@ body .entries .fa-download{
 
 body .entries .fa-undo {
     color: #2c3e50 !important;
-}
-
-body .entries .deleted {
-    opacity: 0.5;
 }
 
 /** Entries content block **/

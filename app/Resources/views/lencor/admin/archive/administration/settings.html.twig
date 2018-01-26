@@ -6,7 +6,7 @@
                     <span>{{ setting }}</span>
                     <span>
                     <a href="#" id="{{ setting.id }}" name="editSetting"><i class="fa fa-edit"> </i></a>
-                    <a href="#"><i class="fa fa-trash red"> </i></a>
+                    <i class="fa fa-trash red disabled"> </i>
                 </span>
                 </li>
             {% endfor %}
@@ -15,7 +15,7 @@
             <span>{{ settings }}</span>
             <span>
                 <a href="#" id="{{ settings.id }}" name="editSetting"><i class="fa fa-edit"> </i></a>
-                <a href="#"><i class="fa fa-trash red"> </i></a>
+                <i class="fa fa-trash red disabled"> </i>
             </span>
         {% endif %}
     {% else %}
