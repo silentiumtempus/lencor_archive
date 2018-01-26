@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\EntrySearchByIdForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,9 +20,10 @@ class EntriesEditController extends Controller
      * @return Response
      * @Route("entries/edit", name = "entry-edit")
      */
-    public function loadEntryDetails(Request $request)
+    public function entryEditIndex(Request $request)
     {
+        $entrySearchByIdForm = $this->createForm(EntrySearchByIdForm::class);
 
-        return $this->render(':lencor/admin/archive/archive_manager:entry_edit.html.twig');
+        return $this->render(':lencor/admin/archive/administration:entry_edit.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
     }
 }

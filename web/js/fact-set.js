@@ -2,6 +2,7 @@ $(document).ready(function () {
     if (!window.jQuery) {
     } else {
         /** Load settings list for selected factory **/
+
         $(document).on('click', 'a[name="openFactory"]', function loadSettings() {
             let $factoryId = $(this).attr('id');
             $.ajax({
@@ -15,6 +16,7 @@ $(document).ready(function () {
         });
 
         /** Perform factory name update and show result **/
+
         function updateFactory($factory, $factoryEditForm) {
             let $factoryEditFormSerialized = $factoryEditForm.serialize();
             $.ajax({
@@ -30,6 +32,7 @@ $(document).ready(function () {
         }
 
         /** Load factory edit form **/
+
         $(document).on('click', 'a[name="editFactory"]', function loadFactoryEditForm() {
             let $factory = $(this).attr('id');
             $.ajax({
@@ -63,6 +66,7 @@ $(document).ready(function () {
         });
 
         /** Perform setting update and show result **/
+
         function updateSetting($setting, $settingEditForm) {
             let $settingEditFormSerialized = $settingEditForm.serialize();
             $.ajax({
@@ -76,6 +80,7 @@ $(document).ready(function () {
         }
 
         /** Load setting edit form **/
+
         $(document).on('click', 'a[name="editSetting"]', function loadSettingEditForm() {
             let $setting = $(this).attr('id');
             $.ajax({

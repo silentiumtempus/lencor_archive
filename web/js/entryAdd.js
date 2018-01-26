@@ -32,6 +32,8 @@ $(document).ready(function () {
             return false;
         }
 
+        /** Load settings list when other factory was selected **/
+
         $factorySelect.on("change", function () {
             settingsLoader();
         });
@@ -81,11 +83,11 @@ $(document).ready(function () {
                         url: path,
                         method: $settingAddForm.attr('method'),
                         data: null,
-                        success: function (response) {
+                        success: function () {
                             let $changedFactory = $settingAddForm.find('select[id="setting_add_form_factory"]').val();
                             let $selectedFactoryInAddForm = $entryAddForm.find('select[id="archive_entry_add_form_factory"]').val();
                             if($changedFactory === $selectedFactoryInAddForm) {
-                                settingsLoader()
+                                settingsLoader();
                             }
                         }
                     });

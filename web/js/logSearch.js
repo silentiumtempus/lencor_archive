@@ -11,6 +11,7 @@ $(document).ready(function () {
 
         });
         /** Load log files and folders **/
+
         function logsLoader() {
             let $logSearchFormSerialized = $logSearchForm.serialize();
             $.ajax({
@@ -25,6 +26,7 @@ $(document).ready(function () {
             return false;
         }
         /** Load log file contents **/
+
         $(document).on("click", 'a[name="openLog"]', function(event) {
             event.preventDefault();
             $('#logfile-content').hide();
@@ -46,6 +48,7 @@ $(document).ready(function () {
         });
 
         /** Load contents of subdirectory in logs **/
+
         $(document).on("click", 'a[name="openSubDir"]', function (event) {
             event.preventDefault();
             $('#logfile-content').hide();
