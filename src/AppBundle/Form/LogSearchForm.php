@@ -29,6 +29,7 @@ class LogSearchForm extends AbstractType
                 'attr' => array('size' => 10),
                 'constraints' => array(
                     new NotBlank()
+                    // TODO: additional validation required
                     //new Length(array('min' => 2)),
                     //new Type(array('type' => 'int'))
 

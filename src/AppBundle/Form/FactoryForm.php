@@ -4,7 +4,6 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\FactoryEntity;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -29,7 +28,8 @@ class FactoryForm extends AbstractType
                 'label' => 'factories.add.name.label',
                 'attr' => array('size' => 30)
             ));
-        switch ($function) {
+        switch ($function)
+        {
             case 'add' :
                 $builder
                     ->add('submitButton', SubmitType::class, array('label' => 'button.factory.create'));
@@ -50,7 +50,7 @@ class FactoryForm extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => FactoryEntity::class,
             'validation_groups' => array('factory_addition'),
-            'attr' => array('id' => 'factory_add_form')
+            'attr' => array('id' => 'factory_form')
         ));
     }
 }

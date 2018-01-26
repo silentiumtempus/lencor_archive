@@ -1,25 +1,31 @@
 {% block factories %}
-    {% if factories is iterable %}
-        {% for factory in factories %}
-            <li id="factory_{{ factory.id }}" class="iterable">
+    {% if factories is defined %}
+        {% if factories is iterable %}
+            {% for factory in factories %}
+                <li id="factory_{{ factory.id }}">
                 <span>
                     <a href="#" id="{{ factory.id }}" name="openFactory">{{ factory }}</a>
                 </span>
-                <span>
+                    <span>
                     <a href="#" id="{{ factory.id }}" name="editFactory"><i class="fa fa-edit"> </i></a>
                     <a href="#"><i class="fa fa-trash red"> </i></a>
                 </span>
-            </li>
-        {% endfor %}
-    {% else %}
-        <li id="factory_{{ factories.id }}">
+                </li>
+            {% endfor %}
+        {% else %}
+            <li id="factory_{{ factories.id }}">
             <span>
                 <a href="#" id="{{ factories.id }}" name="openFactory">{{ factories.factoryName }}</a>
             </span>
-            <span>
+                <span>
                 <a href="#" id="{{ factories.id }}" name="editFactory"><i class="fa fa-edit"> </i></a>
                 <a href="#"><i class="fa fa-trash red"> </i></a>
             </span>
+            </li>
+        {% endif %}
+    {% else %}
+        <li>
+            <span>{{ 'factset.factories.placeholder'|trans }}</span>
         </li>
     {% endif %}
 {% endblock %}

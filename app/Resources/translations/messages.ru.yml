@@ -105,6 +105,8 @@ settings:
       placeholder: 'Введите наименование установки'
 factset:
   title: 'Управление заводами и установками'
+  factories:
+    placeholder: 'Список заводов пуст'
   settings:
     placeholder: 'Выберите завод'
 button:
@@ -120,6 +122,8 @@ button:
     cancel: 'Отмена'
   setting:
     create: 'Добавить установку'
+    edit: 'Редактировать'
+    cancel: 'Отмена'
 file:
   upload:
     name: 'Выбрать файл(ы)'

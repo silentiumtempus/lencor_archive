@@ -1,7 +1,6 @@
 $(document).ready(function () {
     if (!window.jQuery) {
     } else {
-        let $factoryEditFormsArray = [];
         /** Load settings list for selected factory **/
         $(document).on('click', 'a[name="openFactory"]', function loadSettings() {
             let $factoryId = $(this).attr('id');
@@ -26,6 +25,7 @@ $(document).ready(function () {
                     $('#factory_' + $factory).replaceWith(response);
                 }
             });
+
             return false;
         }
 
@@ -38,16 +38,15 @@ $(document).ready(function () {
                 success: function (response) {
                     let $factoryBlock = $('#factory_' + $factory);
                     $factoryBlock.html(response);
-                    $factoryEditFormsArray[$factory] = $factoryBlock.find('#factory_form_' + $factory);
+                    let $factoryEditForm = $factoryBlock.find('#factory_form_' + $factory);
                     /** Update factory **/
-                    $factoryEditFormsArray[$factory].on('submit', function (event) {
+                    $factoryEditForm.on('submit', function (event) {
                         event.preventDefault();
                         $(this).off('submit');
-                        updateFactory($factory, $factoryEditFormsArray[$factory]);
+                        updateFactory($factory, $factoryEditForm);
                     });
                     /** Factory editing cancellation **/
-                    $factoryEditFormsArray[$factory].on('click', '#factory_form_cancelButton', function (event) {
-
+                    $factoryEditForm.on('click', '#factory_form_cancelButton', function () {
                         $.ajax({
                             url: Routing.generate('admin-factory-load', {factory: $factory}),
                             method: "POST",
@@ -59,6 +58,54 @@ $(document).ready(function () {
                     });
                 }
             });
+
+            return false;
+        });
+
+        /** Perform setting update and show result **/
+        function updateSetting($setting, $settingEditForm) {
+            let $settingEditFormSerialized = $settingEditForm.serialize();
+            $.ajax({
+                url: Routing.generate('admin-setting-edit', {setting: $setting}),
+                method: "POST",
+                data: $settingEditFormSerialized,
+                success: function (response) {
+                    $('#setting_' + $setting).replaceWith(response);
+                }
+            })
+        }
+
+        /** Load setting edit form **/
+        $(document).on('click', 'a[name="editSetting"]', function loadSettingEditForm() {
+            let $setting = $(this).attr('id');
+            $.ajax({
+                url: Routing.generate('admin-setting-edit', {setting: $setting}),
+                method: "POST",
+                success: function (response) {
+                    let $settingBlock = $('#setting_' + $setting);
+                    $settingBlock.html(response);
+                    let $settingEditForm = $settingBlock.find('#setting_form_' + $setting);
+                    /** Update setting **/
+                    $settingEditForm.on('submit', function (event) {
+                        event.preventDefault();
+                        $(this).off('submit');
+                        updateSetting($setting, $settingEditForm);
+                    });
+                    /** Setting editing cancellation **/
+                    $settingEditForm.on('click', '#setting_form_cancelButton', function () {
+                        $.ajax({
+                            url: Routing.generate('admin-setting-load', {setting: $setting}),
+                            method: "POST",
+                            data: null,
+                            success: function (response) {
+                                $('#setting_' + $setting).replaceWith(response);
+                            }
+                        });
+                    });
+
+                }
+            });
+
             return false;
         });
     }

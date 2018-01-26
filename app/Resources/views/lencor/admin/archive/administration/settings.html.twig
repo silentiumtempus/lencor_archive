@@ -1,15 +1,25 @@
 {% block settings %}
     {% if settings is defined %}
-        {% for setting in settings %}
-            <li>
-                <span>{{ setting }}</span>
-                <span>
-                    <a href="#"><i class="fa fa-edit"> </i></a>
+        {% if settings is iterable %}
+            {% for setting in settings %}
+                <li id="setting_{{ setting.id }}">
+                    <span>{{ setting }}</span>
+                    <span>
+                    <a href="#" id="{{ setting.id }}" name="editSetting"><i class="fa fa-edit"> </i></a>
                     <a href="#"><i class="fa fa-trash red"> </i></a>
                 </span>
-            </li>
-        {% endfor %}
+                </li>
+            {% endfor %}
+        {% else %}
+            <li id="setting_{{ settings.id }}">
+            <span>{{ settings }}</span>
+            <span>
+                <a href="#" id="{{ settings.id }}" name="editSetting"><i class="fa fa-edit"> </i></a>
+                <a href="#"><i class="fa fa-trash red"> </i></a>
+            </span>
+        {% endif %}
     {% else %}
+        </li>
         <li>
             <span>{{ 'factset.settings.placeholder'|trans }}</span>
         </li>

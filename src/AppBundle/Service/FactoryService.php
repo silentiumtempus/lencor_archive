@@ -33,6 +33,9 @@ class FactoryService
         $this->em->flush();
     }
 
+    /**
+     * This is called on factory property change submit
+     */
     public function updateFactory()
     {
         $this->em->flush();

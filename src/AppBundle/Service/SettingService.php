@@ -42,4 +42,12 @@ class SettingService
     {
        return $this->settingsRepository->findByFactory($factory, array('id' => 'asc'));
     }
+
+    /**
+     * This is called on setting property change submit
+     */
+    public function updateSetting()
+    {
+        $this->em->flush();
+    }
 }

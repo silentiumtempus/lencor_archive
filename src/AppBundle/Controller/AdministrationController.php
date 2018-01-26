@@ -3,7 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\FactoryEntity;
+use AppBundle\Entity\SettingEntity;
 use AppBundle\Form\FactoryForm;
+use AppBundle\Form\SettingForm;
 use AppBundle\Service\FactoryService;
 use AppBundle\Service\SettingService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -64,7 +66,7 @@ class AdministrationController extends Controller
      * @Route("admin/factory/{factory}/load",
      *     options = { "expose" = true },
      *     name = "admin-factory-load")
-     * @ParamConverter("factory", class="AppBundle:FactoryEntity", options = {"id" = "factory"})
+     * @ParamConverter("factory", class="AppBundle:FactoryEntity", options = { "id" = "factory" })
      */
     public function loadFactory(Request $request, FactoryEntity $factory)
     {
@@ -80,7 +82,7 @@ class AdministrationController extends Controller
      * @Route("admin/factory/{factory}/edit",
      *     options = { "expose" = true },
      *     name = "admin-factory-edit")
-     * @ParamConverter("factory", class="AppBundle:FactoryEntity", options = {"id" = "factory"})
+     * @ParamConverter("factory", class = "AppBundle:FactoryEntity", options = { "id" = "factory" })
      */
     public function editFactory(Request $request, FactoryEntity $factory, FactoryService $factoryService)
     {
@@ -92,6 +94,7 @@ class AdministrationController extends Controller
             if ($factoryEditForm->isValid())
             {
                 $factoryService->updateFactory();
+
                 return $this->render(':lencor/admin/archive/administration:factories.html.twig', array('factories' => $factory));
             } else {
                 $this->addFlash('danger', 'Форма не валидна');
@@ -99,6 +102,51 @@ class AdministrationController extends Controller
         }
 
         return $this->render(':lencor/admin/archive/administration:factory_edit.html.twig', array('factoryForm' => $factoryEditForm->createView()));
+    }
+
+    /**
+     * @param Request $request
+     * @param SettingEntity $setting
+     * @return Response
+     * @Route("admin/setting/{setting}/load",
+     *     options = { "expose" = true },
+     *     name = "admin-setting-load")
+     * @ParamConverter("setting", class="AppBundle:SettingEntity", options = { "id" = "setting" })
+     */
+    public function loadSetting(Request $request, SettingEntity $setting)
+    {
+
+        return $this->render(':lencor/admin/archive/administration:settings.html.twig', array('settings' => $setting));
+    }
+
+    /**
+     * @param Request $request
+     * @param SettingEntity $setting
+     * @param SettingService $settingService
+     * @return Response
+     * @Route("admin/setting/{setting}/edit",
+     *     options = { "expose" = true },
+     *     name = "admin-setting-edit")
+     * @ParamConverter("setting", class = "AppBundle:SettingEntity", options = { "id" = "setting" })
+     */
+    public function editSetting(Request $request, SettingEntity $setting, SettingService $settingService)
+    {
+        $form_id = 'setting_form_' . $setting->getId();
+        $settingEditForm = $this->createForm(SettingForm::class, $setting, array('attr' => array('id' => $form_id, 'function' => 'edit')));
+        $settingEditForm->handleRequest($request);
+        if ($settingEditForm->isSubmitted())
+        {
+            if ($settingEditForm->isValid())
+            {
+                $settingService->updateSetting();
+
+                return $this->render(':lencor/admin/archive/administration:settings.html.twig', array('settings' => $setting));
+            } else {
+                $this->addFlash('danger', 'Форма не валидна');
+            }
+        }
+
+        return $this->render(':lencor/admin/archive/administration:setting_edit.html.twig', array('settingForm' => $settingEditForm->createView()));
     }
 
     /**
