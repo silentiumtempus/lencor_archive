@@ -18,16 +18,16 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class ArchiveEntryAddForm
+ * Class EntryAddForm
  * @package AppBundle\Form
  */
-class ArchiveEntryAddForm extends AbstractType
+class EntryAddForm extends AbstractType
 {
     protected $em;
     protected $settingService;
 
     /**
-     * ArchiveEntryAddForm constructor.
+     * EntryAddForm constructor.
      * @param EntityManagerInterface $em
      * @param SettingService $settingService
      */

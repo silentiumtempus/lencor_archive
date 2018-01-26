@@ -19,17 +19,17 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class ArchiveEntrySearchForm
+ * Class EntrySearchForm
  * @package AppBundle\Form
  */
-class ArchiveEntrySearchForm extends AbstractType
+class EntrySearchForm extends AbstractType
 {
     protected $em;
     protected $status;
     protected $settingService;
 
     /**
-     * ArchiveEntrySearchForm constructor.
+     * EntrySearchForm constructor.
      * @param EntityManagerInterface $em
      * @param SettingService $settingService
      */

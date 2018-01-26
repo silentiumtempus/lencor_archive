@@ -6,7 +6,7 @@ use AppBundle\Entity\FileEntity;
 use AppBundle\Entity\FolderEntity;
 use AppBundle\Form\FileAddForm;
 use AppBundle\Form\FolderAddForm;
-use AppBundle\Service\ArchiveEntryService;
+use AppBundle\Service\EntryService;
 use AppBundle\Service\FileChecksumService;
 use AppBundle\Service\FileService;
 use AppBundle\Service\FolderService;
@@ -28,13 +28,13 @@ class FilesAndFoldersController extends Controller
     /**
      * @param Request $request
      * @param FolderService $folderService
-     * @param ArchiveEntryService $archiveEntryService
+     * @param EntryService $archiveEntryService
      * @param LoggingService $loggingService
      * @return Response
      * @Route("/entries/new_folder", name="entries_new_folder")
      */
 
-    public function createNewFolder(Request $request, FolderService $folderService, ArchiveEntryService $archiveEntryService, LoggingService $loggingService)
+    public function createNewFolder(Request $request, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
         $folderId = $archiveEntryService->setFolderId($request);
@@ -131,13 +131,13 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @param FolderService $folderService
-     * @param ArchiveEntryService $archiveEntryService
+     * @param EntryService $archiveEntryService
      * @param LoggingService $loggingService
      * @return Response
      * @Route("/entries/new_file", name="entries_new_file")
      */
 
-    public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, ArchiveEntryService $archiveEntryService, LoggingService $loggingService)
+    public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
         $folderId = $archiveEntryService->setFolderId($request);
@@ -303,11 +303,11 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param String $entryId
-     * @param ArchiveEntryService $archiveEntryService
+     * @param EntryService $archiveEntryService
      * @Route("/entries/change_last_update_info", name="entries_change_last_update_info")
      */
 
-    public function changeLastUpdateInfo($entryId, ArchiveEntryService $archiveEntryService)
+    public function changeLastUpdateInfo($entryId, EntryService $archiveEntryService)
     {
         try {
             $archiveEntryService->changeLastUpdateInfo($entryId, $this->getUser()->getId());
@@ -318,12 +318,12 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
-     * @param ArchiveEntryService $archiveEntryService
+     * @param EntryService $archiveEntryService
      * @return Response
      * @Route("/entries/last_update_info", name="entries_last_update_info")
      */
 
-    public function loadLastUpdateInfo(Request $request, ArchiveEntryService $archiveEntryService)
+    public function loadLastUpdateInfo(Request $request, EntryService $archiveEntryService)
     {
         $lastUpdateInfo = $archiveEntryService->loadLastUpdateInfo($request);
 

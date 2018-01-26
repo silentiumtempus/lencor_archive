@@ -10,16 +10,16 @@ use Elastica\Query;
 use Symfony\Component\Form\Form;
 
 /**
- * Class ArchiveEntrySearchService
+ * Class EntrySearchService
  * @package AppBundle\Service
  */
-class ArchiveEntrySearchService
+class EntrySearchService
 {
     protected $container;
     protected $elasticManager;
 
     /**
-     * ArchiveEntrySearchService constructor.
+     * EntrySearchService constructor.
      * @param ContainerInterface $container
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface

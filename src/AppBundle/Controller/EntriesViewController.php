@@ -3,9 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\ArchiveEntryEntity;
-use AppBundle\Form\ArchiveEntrySearchForm;
-use AppBundle\Service\ArchiveEntrySearchService;
-use AppBundle\Service\ArchiveEntryService;
+use AppBundle\Form\EntrySearchForm;
+use AppBundle\Service\EntrySearchService;
+use AppBundle\Service\EntryService;
 use AppBundle\Service\FileService;
 use AppBundle\Service\FolderService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -34,16 +34,16 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
-     * @param ArchiveEntrySearchService $entrySearchService
+     * @param EntrySearchService $entrySearchService
      * @return Response
      * @Route("/entries/", name="entries")
      */
-    public function loadEntries(Request $request, ArchiveEntrySearchService $entrySearchService)
+    public function loadEntries(Request $request, EntrySearchService $entrySearchService)
     {
         $finalQuery = new Query();
         $filterQuery = new BoolQuery();
         $entrySearchEntity = new ArchiveEntryEntity();
-        $searchForm = $this->createForm(ArchiveEntrySearchForm::class, $entrySearchEntity);
+        $searchForm = $this->createForm(EntrySearchForm::class, $entrySearchEntity);
         $searchForm->handleRequest($request);
         if ($searchForm->isSubmitted() && $searchForm->isValid() && $request->isMethod('POST')) {
             try {
@@ -128,11 +128,11 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
-     * @param ArchiveEntryService $archiveEntryService
+     * @param EntryService $archiveEntryService
      * @return Response
      * @Route("entries/remove_entry", name="entries_remove_entry")
      */
-    public function removeEntry(Request $request, ArchiveEntryService $archiveEntryService)
+    public function removeEntry(Request $request, EntryService $archiveEntryService)
     {
         $archiveEntries = array();
         if ($request->request->has('entryId'))
@@ -146,11 +146,11 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
-     * @param ArchiveEntryService $archiveEntryService
+     * @param EntryService $archiveEntryService
      * @return Response
      * @Route("entries/restore_entry", name="entries_restore_entry")
      */
-    public function restoreEntry(Request $request, ArchiveEntryService $archiveEntryService)
+    public function restoreEntry(Request $request, EntryService $archiveEntryService)
     {
         $archiveEntries = array();
         if ($request->request->has('entryId'))

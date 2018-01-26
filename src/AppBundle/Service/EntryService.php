@@ -11,10 +11,10 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class ArchiveEntryService
+ * Class EntryService
  * @package AppBundle\Services
  */
-class ArchiveEntryService
+class EntryService
 {
     protected $em;
     protected $container;
@@ -22,7 +22,7 @@ class ArchiveEntryService
     protected $foldersRepository;
 
     /**
-     * ArchiveEntryService constructor.
+     * EntryService constructor.
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      */

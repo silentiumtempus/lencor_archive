@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Form\LogRowsCountForm;
 use AppBundle\Form\LogSearchForm;
-use AppBundle\Service\ArchiveEntryService;
+use AppBundle\Service\EntryService;
 use AppBundle\Service\LoggingService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,14 +21,14 @@ class LogManagerController extends Controller
      * @param int $entryId
      * @param Request $request
      * @param LoggingService $loggingService
-     * @param ArchiveEntryService $archiveEntryService
+     * @param EntryService $archiveEntryService
      * @return Response
      * @Route("/logging/{entryId}",
      *     name = "logging",
      *     requirements = { "entryId" = "\d+" },
      *     defaults = { "entryId" : "0" })
      */
-    public function logManagerIndex(int $entryId, Request $request, LoggingService $loggingService, ArchiveEntryService $archiveEntryService)
+    public function logManagerIndex(int $entryId, Request $request, LoggingService $loggingService, EntryService $archiveEntryService)
     {
         $logSearchForm = $this->createForm(LogSearchForm::class);
         try {
