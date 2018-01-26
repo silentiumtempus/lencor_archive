@@ -108,30 +108,35 @@ class LogManagerController extends Controller
      */
     public function openLogFile(Request $request, LoggingService $loggingService)
     {
-        $fileContent = null;
-        $file = $request->get('parentFolder') . "/" . $request->get('file');
-        $rowsCountForm = $this->createForm(
-            LogRowsCountForm::class,
-            null,
-            array('attr' => array(
-                'file' => $file,
-                'entryId' => $request->get('entryId'),
-                'id' => 'logs_rows_count_form'
-            )));
-        $rowsCountForm->handleRequest($request);
-        if ($rowsCountForm->isSubmitted() && $rowsCountForm->isValid() && $request->isMethod('POST')) {
-            $fileContent = $loggingService->getFileContent(
-                $rowsCountForm->get('entryId')->getViewData(),
-                $rowsCountForm->get('file')->getViewData(),
-                $rowsCountForm->get('rowsCount')->getData()
-            );
+        if ($request->get('file')) {
+            $fileContent = null;
+            $file = $request->get('parentFolder') . "/" . $request->get('file');
+            $rowsCountForm = $this->createForm(
+                LogRowsCountForm::class,
+                null,
+                array('attr' => array(
+                    'file' => $file,
+                    'entryId' => $request->get('entryId'),
+                    'id' => 'logs_rows_count_form'
+                )));
+            $rowsCountForm->handleRequest($request);
+            if ($rowsCountForm->isSubmitted() && $rowsCountForm->isValid() && $request->isMethod('POST')) {
+                $fileContent = $loggingService->getFileContent(
+                    $rowsCountForm->get('entryId')->getViewData(),
+                    $rowsCountForm->get('file')->getViewData(),
+                    $rowsCountForm->get('rowsCount')->getData()
+                );
+            } else {
+                $fileContent = $loggingService->getFileContent($request->get('entryId'), $file, 100);
+            }
+            $entryId = $request->get('entryId');
+            return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array(
+                'rowsCountForm' => $rowsCountForm->createView(),
+                'entryId' => $entryId,
+                'fileContent' => $fileContent));
         } else {
-            $fileContent = $loggingService->getFileContent($request->get('entryId'), $file, 100);
+
+            return $this->redirectToRoute('logging');
         }
-        $entryId = $request->get('entryId');
-        return $this->render(':lencor/admin/archive/logging_manager:logfile.html.twig', array(
-            'rowsCountForm' => $rowsCountForm->createView(),
-            'entryId' => $entryId,
-            'fileContent' => $fileContent));
     }
 }
