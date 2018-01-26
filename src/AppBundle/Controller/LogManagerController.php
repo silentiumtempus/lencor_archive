@@ -78,19 +78,24 @@ class LogManagerController extends Controller
      */
     public function openSubDir(Request $request, int $entryId, LoggingService $loggingService)
     {
-        $logsFolderPath = $loggingService->getLogsNavigationPath($request->get('parentFolder'), $request->get('folder'));
-        $currentFolder = $loggingService->getLogsCurrentFolder($request->get('parentFolder'), $request->get('folder'));
-        $logsPath = $loggingService->getLogsRootPath($entryId) . "/" . $currentFolder;
-        $logFolders = $loggingService->getEntryLogFolders($logsPath);
-        $logFiles = $loggingService->getEntryLogFiles($logsPath);
+            if ($request->get('folder')) {
+                $logsFolderPath = $loggingService->getLogsNavigationPath($request->get('parentFolder'), $request->get('folder'));
+                $currentFolder = $loggingService->getLogsCurrentFolder($request->get('parentFolder'), $request->get('folder'));
+                $logsPath = $loggingService->getLogsRootPath($entryId) . "/" . $currentFolder;
+                $logFolders = $loggingService->getEntryLogFolders($logsPath);
+                $logFiles = $loggingService->getEntryLogFiles($logsPath);
 
-        return $this->render(':lencor/admin/archive/logging_manager:logs_list.html.twig', array(
-            'entryExists' => true,
-            'logsFolderPath' => $logsFolderPath,
-            'currentFolder' => $currentFolder,
-            'entryId' => $entryId,
-            'logFolders' => $logFolders,
-            'logFiles' => $logFiles));
+                return $this->render(':lencor/admin/archive/logging_manager:logs_list.html.twig', array(
+                    'entryExists' => true,
+                    'logsFolderPath' => $logsFolderPath,
+                    'currentFolder' => $currentFolder,
+                    'entryId' => $entryId,
+                    'logFolders' => $logFolders,
+                    'logFiles' => $logFiles));
+            } else {
+
+                return $this->redirectToRoute('logging', array('entryId' => $entryId));
+            }
     }
 
     /**

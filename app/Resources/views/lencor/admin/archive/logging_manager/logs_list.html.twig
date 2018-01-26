@@ -4,7 +4,7 @@
     <ul class="fa-ul logs-path" id="{{ entryId }}">
         <li class="path-row">
             <span id="">
-                <a id="" class="button" name="openSubDir">{{ 'logs.title.rootDir'|trans }}</a>/
+                <a id="/" class="button" name="openSubDir">{{ 'logs.title.rootDir'|trans }}</a>/
             </span>
             {% if logsFolderPath is defined and logsFolderPath is not null %}
                 {% for parent, folder in logsFolderPath %}

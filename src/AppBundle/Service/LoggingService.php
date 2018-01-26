@@ -80,7 +80,7 @@ class LoggingService
      */
     public function getLogsNavigationPath(string $parentFolder, string $folder)
     {
-        if ($folder == "" and $parentFolder == "") {
+        if ($folder == "/" and $parentFolder == "") {
 
             return null;
         } elseif ($parentFolder == "") {
@@ -109,8 +109,13 @@ class LoggingService
      */
     public function getLogsCurrentFolder(string $parentFolder, string $folder)
     {
+        if ($folder != "/") {
 
-        return (($parentFolder != "") ? $parentFolder . "/" : null) . $folder;
+            return (($parentFolder != "") ? $parentFolder . "/" : null) . $folder;
+        } else {
+
+            return "";
+        }
     }
 
     /**
