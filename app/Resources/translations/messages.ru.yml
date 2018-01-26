@@ -11,6 +11,7 @@ header:
       menu0: 'Архив'
       menu1: 'Записи'
       menu2: 'Создать запись'
+      menu3: 'Редактировать запись'
     system: 'Система'
     admin:
       menu0: 'Управление'
@@ -89,6 +90,9 @@ entries:
       label: 'Сброс'
     search:
       label: 'Поиск'
+  id-search:
+    placeholder: 'Введите ID записи'
+    submit: 'Открыть для редактирования'
 factories:
   title:
     new: 'Добавление завода'
