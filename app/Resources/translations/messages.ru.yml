@@ -116,17 +116,19 @@ factset:
 button:
   entry:
     create: 'Добавить запись'
+    edit: 'Сохранить'
+    cancel: 'Отмена'
   folder:
     create: 'Создать'
   files:
     upload: 'Загрузить'
   factory:
     create: 'Добавить завод'
-    edit: 'Редактировать'
+    edit: 'Сохранить'
     cancel: 'Отмена'
   setting:
     create: 'Добавить установку'
-    edit: 'Редактировать'
+    edit: 'Сохранить'
     cancel: 'Отмена'
 file:
   upload:

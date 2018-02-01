@@ -4,11 +4,13 @@
 
     {% block javascripts %}
         {{ parent() }}
+        <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+        <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
         <script type="text/javascript" src="{{ asset('js/entryAdd.js') }}"></script>
     {% endblock %}
 
 {% block main %}
-    <div id="main-div" data-path="{{ path('entry-new') }}">
+    <div id="main-div">
         {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
         <div class="new_entry">
             <h1>{{ 'entries.title.new'|trans }}</h1>
@@ -62,7 +64,7 @@
             <h1>{{ 'factories.title.new'|trans }}</h1>
             {% form_theme factoryForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(factoryForm) }}
-            <table id="factoryForm" data-path="{{ path('entry-new') }}">
+            <table id="factoryForm">
                 <tr>
                     <td colspan="2">{{ form_errors(factoryForm) }}</td>
                 </tr>
@@ -82,7 +84,7 @@
             <h1>{{ 'settings.title.new'|trans }}</h1>
             {% form_theme settingForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(settingForm) }}
-            <table id="settingForm" data-path="{{ path('entry-new') }}">
+            <table id="settingForm">
                 <tr>
                     <td><p>{{ form_label(settingForm.factory) }}</p></td>
                     <td><p>{{ form_widget(settingForm.factory) }}</p></td>

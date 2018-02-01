@@ -5,7 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Entity\FolderEntity;
 use AppBundle\Entity\SettingEntity;
-use AppBundle\Form\EntryAddForm;
+use AppBundle\Form\EntryForm;
 use AppBundle\Form\FactoryForm;
 use AppBundle\Entity\FactoryEntity;
 use AppBundle\Form\SettingForm;
@@ -38,7 +38,9 @@ class EntriesAdditionController extends Controller
      * @return Response
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\
-     * @Route("/entries/new", name="entry-new")
+     * @Route("/entries/new",
+     *     options = { "expose" = true },
+     *     name = "entries-new")
      */
     public function archiveEntryAdd(
         Request $request,
@@ -49,7 +51,7 @@ class EntriesAdditionController extends Controller
         LoggingService $loggingService)
     {
         $session = $this->container->get('session');
-        $entryForm = $this->createForm(EntryAddForm::class, new ArchiveEntryEntity());
+        $entryForm = $this->createForm(EntryForm::class, new ArchiveEntryEntity(), array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit')));
         $factoryForm = $this->createForm(FactoryForm::class, new FactoryEntity(), array('attr' => array('id' => 'factory_form', 'function' => 'add')));
         $settingForm = $this->createForm(SettingForm::class, new SettingEntity(), array('attr' => array('id' => 'setting_form', 'function' => 'add')));
         $pathRoot = $this->getParameter('lencor_archive.storage_path');

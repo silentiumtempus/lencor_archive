@@ -10,11 +10,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
- * Class LogSearchForm
+ * Class EntrySearchByIdForm
  * @package AppBundle\Form
  */
-class LogSearchForm extends AbstractType
+class EntrySearchByIdForm extends AbstractType
 {
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -23,7 +24,7 @@ class LogSearchForm extends AbstractType
     {
         $builder
             ->add('id', NumberType::class, array(
-                'label' => 'logs.search.placeholder',
+                'label' => 'entries.id-search.placeholder',
                 'attr' => array('size' => 10),
                 'constraints' => array(
                     new NotBlank()
@@ -31,8 +32,8 @@ class LogSearchForm extends AbstractType
                     //new Length(array('min' => 2)),
                     //new Type(array('type' => 'int'))
 
-            )))
-            ->add('submitButton', SubmitType::class, array('label' => 'logs.search.submit'));
+                )))
+            ->add('submitButton', SubmitType::class, array('label' => 'entries.id-search.submit'));
     }
 
     /**
@@ -41,7 +42,7 @@ class LogSearchForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'attr' => array('id' => 'entry_logs_search_form')
+            'attr' => array('id' => 'entry_search_by_id_form')
         ));
     }
 }

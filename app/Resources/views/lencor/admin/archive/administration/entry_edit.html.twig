@@ -1,29 +1,47 @@
-{% extends 'base.html.twig' %}
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/entries.css') }}">
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
-    <script type="text/javascript" src="{{ asset('js/entryEdit.js') }}"></script>
-{% endblock %}
-
-{% block main %}
-<div>
-    <h3>{{ 'logs.title.search'|trans }}</h3>
-</div>
-<div>
-    {{ form_start(entrySearchByIdForm) }}
-    <ul id="log-search" class="form-row" data-path="{{ path('entry-edit') }}">
-        <li>
-            <span>{{ form_row(entrySearchByIdForm.id) }}</span>
-            <span>{{ form_row(entrySearchByIdForm.submitButton) }}</span>
-        </li>
-    </ul>
-    {{ form_errors(entrySearchByIdForm) }}
-    {{ form_end(entrySearchByIdForm) }}
-</div>
-{% endblock %}
+{% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
+{{ form_start(entryForm) }}
+<table>
+    <tr>
+        <td><p>{{ form_label(entryForm.year) }}</p></td>
+        <td><p>{{ form_widget(entryForm.year) }}</p></td>
+    </tr>
+    <tr>
+        <td><p>{{ form_label(entryForm.factory) }}</p></td>
+        <td><p>{{ form_widget(entryForm.factory) }}</p></td>
+    </tr>
+    <tr>
+        <td><p>{{ form_label(entryForm.setting) }}</p></td>
+        <td><p>{{ form_widget(entryForm.setting) }}</p></td>
+    </tr>
+    <tr>
+        <td><p>{{ form_label(entryForm.archiveNumber) }}</p></td>
+        <td>
+            <p>{{ form_widget(entryForm.archiveNumber, { 'attr' : {'placeholder' : 'entries.add.archive_number.placeholder'|trans}}) }}</p>
+        </td>
+    </tr>
+    <tr>
+        <td><p>{{ form_label(entryForm.registerNumber) }}</p></td>
+        <td>
+            <p>{{ form_widget(entryForm.registerNumber, { 'attr' : {'placeholder' : 'entries.add.register_number.placeholder'|trans}}) }}</p>
+        </td>
+    </tr>
+    <tr>
+        <td><p>{{ form_label(entryForm.contractNumber) }}</p></td>
+        <td>
+            <p>{{ form_widget(entryForm.contractNumber, { 'attr' : {'placeholder' : 'entries.add.contract_number.placeholder'|trans}}) }}</p>
+        </td>
+    </tr>
+    <tr>
+        <td><p>{{ form_label(entryForm.fullConclusionName) }}</p></td>
+        <td>
+            <p>{{ form_widget(entryForm.fullConclusionName, { 'attr' : {'placeholder' : 'entries.add.conclusion_fullname.placeholder'|trans}}) }}</p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="">
+            <p>{{ form_widget(entryForm.submitButton) }} {{ form_widget(entryForm.cancelButton) }}</p>
+        </td>
+    </tr>
+</table>
+{{ form_errors(entryForm) }}
+{{ form_end(entryForm) }}

@@ -1,10 +1,10 @@
 $(document).ready(function () {
     if (window.jQuery) {
-        let path = $("#main-div").attr("data-path");
-        let $factorySelect = $('#archive_entry_add_form_factory');
-        let $entryAddForm = $('#archive_entry_add_form');
+        let path = Routing.generate('entries-new');
+        let $factorySelect = $('#entry_form_factory');
+        let $entryAddForm = $('#archive_entry_form');
         let $factoryAddForm = $('#factory_form');
-        let $settingAddForm = $('#setting_add_form');
+        let $settingAddForm = $('#setting_form');
 
         /** Settings list reload after page refresh **/
 
@@ -23,12 +23,13 @@ $(document).ready(function () {
                 url: path,
                 method: $entryAddForm.attr('method'),
                 data: data,
-                success: function (html) {
-                    $('#archive_entry_add_form_setting').replaceWith(
-                        $(html).find('#archive_entry_add_form_setting')
+                success: function (response) {
+                    $('#entry_form_setting').replaceWith(
+                        $(response).find('#entry_form_setting')
                     );
                 }
             });
+
             return false;
         }
 
@@ -41,7 +42,8 @@ $(document).ready(function () {
         /** Archive new factory submission **/
 
         $factoryAddForm.on("submit", function (event) {
-            event.preventDefault();let factorySerialized = $factoryAddForm.serialize();
+            event.preventDefault();
+            let factorySerialized = $factoryAddForm.serialize();
 
             $.ajax({
                 url: path,
@@ -56,14 +58,15 @@ $(document).ready(function () {
                         method: $entryAddForm.attr('method'),
                         data: null,
                         success: function (response) {
-                            $('#setting_add_form_factory').replaceWith(
-                                $(response).find('#setting_add_form_factory'));
-                            $('#archive_entry_add_form_factory').replaceWith(
-                                $(response).find('#archive_entry_add_form_factory'));
+                            $('#setting_form_factory').replaceWith(
+                                $(response).find('#setting_form_factory'));
+                            $('#entry_form_factory').replaceWith(
+                                $(response).find('#entry_form_factory'));
                         }
                     });
                 }
             });
+
             return false;
         });
 
@@ -84,15 +87,16 @@ $(document).ready(function () {
                         method: $settingAddForm.attr('method'),
                         data: null,
                         success: function () {
-                            let $changedFactory = $settingAddForm.find('select[id="setting_add_form_factory"]').val();
-                            let $selectedFactoryInAddForm = $entryAddForm.find('select[id="archive_entry_add_form_factory"]').val();
-                            if($changedFactory === $selectedFactoryInAddForm) {
+                            let $changedFactory = $settingAddForm.find('select[id="setting_form_factory"]').val();
+                            let $selectedFactoryInAddForm = $entryAddForm.find('select[id="entry_form_factory"]').val();
+                            if ($changedFactory === $selectedFactoryInAddForm) {
                                 settingsLoader();
                             }
                         }
                     });
                 }
             });
+
             return false;
         });
 
@@ -111,6 +115,7 @@ $(document).ready(function () {
                     );
                 }
             });
+
             return false;
         });
     }
