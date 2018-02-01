@@ -38,7 +38,7 @@ services:
     # application forms
     form:
       archiveentryaddform:
-        class: AppBundle\Form\ArchiveEntryAddForm
+        class: AppBundle\Form\EntryForm
         arguments: ['@doctrine.orm.entity_manager']
         tags:
           - { name: form.type }
@@ -48,7 +48,7 @@ services:
         tags:
           - { name: form.type }
       archiveentrysearchform:
-        class: AppBundle\Form\ArchiveEntrySearchForm
+        class: AppBundle\Form\EntrySearchForm
         arguments: ['@doctrine.orm.entity_manager']
         tags:
           - { name: form.type }
@@ -79,7 +79,7 @@ services:
         class: AppBundle\Service\FileService
         arguments: ['@doctrine.orm.entity_manager', '@service_container']
       archiveentryservice:
-        class: AppBundle\Service\ArchiveEntryService
+        class: AppBundle\Service\EntryService
         arguments: ['@doctrine.orm.entity_manager', '@service_container']
 
   #jms_serializer:
