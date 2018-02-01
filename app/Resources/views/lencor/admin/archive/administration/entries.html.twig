@@ -28,7 +28,7 @@
         {{ form_end(entrySearchByIdForm) }}
     </div>
     <div id="entryEdit">
-        {% if entryForm is not empty %}
+        {% if entryForm is defined %}
         {{ include(':lencor/admin/archive/administration:entry_edit.html.twig', {'entryForm' : entryForm}) }}
         {% endif %}
     </div>

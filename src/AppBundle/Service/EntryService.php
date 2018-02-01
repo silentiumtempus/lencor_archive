@@ -34,6 +34,10 @@ class EntryService
         $this->container = $container;
     }
 
+    /**
+     * @param int $entryId
+     * @return ArchiveEntryEntity|null
+     */
     public function getEntryById(int $entryId)
     {
         return $this->entriesRepository->findOneById($entryId);

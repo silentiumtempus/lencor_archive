@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Form\EntryForm;
 use AppBundle\Form\EntrySearchByIdForm;
+use AppBundle\Form\EntrySearchForm;
 use AppBundle\Service\EntryService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -30,23 +31,34 @@ class EntriesEditController extends Controller
      */
     public function entryEditIndex(Request $request, EntryService $entryService, int $entryId)
     {
-        $entryEditForm = null;
-        $entryEditFormView = null;
         $entrySearchByIdForm = $this->createForm(EntrySearchByIdForm::class);
         $entrySearchByIdForm->handleRequest($request);
         if ($entrySearchByIdForm->isSubmitted() && $request->isMethod("POST")) {
             if ($entrySearchByIdForm->isValid()) {
-                $entryId = $entrySearchByIdForm->get('id')->getData();
-                $this->addFlash('warning', $entryId);
+                $archiveEntryEntity = $entryService->getEntryById($entrySearchByIdForm->get('id')->getData());
+                if ($archiveEntryEntity) {
+                    $entryEditForm = $this->createForm(
+                        EntryForm::class,
+                        $archiveEntryEntity,
+                        array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit')));
+
+                    return $this->render(':lencor/admin/archive/administration:entry_edit.html.twig', array('entryForm' => $entryEditForm->createView()));
+                }
             }
+
+            return $this->render(':lencor/admin/archive/administration:entry_edit.html.twig');
         }
+
         $archiveEntryEntity = $entryService->getEntryById($entryId);
         if ($archiveEntryEntity) {
-            $entryEditForm = $this->createForm(EntryForm::class, $archiveEntryEntity, array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit')));
-            $entryEditFormView = $entryEditForm->createView();
+            $entryEditForm = $this->createForm(
+                EntryForm::class,
+                $archiveEntryEntity,
+                array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit')));
+
+            return $this->render(':lencor/admin/archive/administration:entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView(), 'entryForm' => $entryEditForm->createView()));
         }
 
-
-        return $this->render(':lencor/admin/archive/administration:entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView(), 'entryForm' => $entryEditFormView));
+        return $this->render(':lencor/admin/archive/administration:entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
     }
 }
