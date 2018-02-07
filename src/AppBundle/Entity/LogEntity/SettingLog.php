@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Vinegar
- * Date: 009 09.06.17
- * Time: 7:13
- */
 
 namespace AppBundle\Entity\LogEntity;
 
