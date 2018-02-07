@@ -40,7 +40,7 @@ class EntriesEditController extends Controller
                     $entryEditForm = $this->createForm(
                         EntryForm::class,
                         $archiveEntryEntity,
-                        array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit')));
+                        array('attr' => array('id' => 'archive_entry_form', 'function' => 'add')));
 
                     return $this->render(':lencor/admin/archive/administration:entry_edit.html.twig', array('entryForm' => $entryEditForm->createView()));
                 }

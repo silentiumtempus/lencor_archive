@@ -5,13 +5,15 @@ $(document).ready(function () {
         $searchByIdForm.on("submit", function (event) {
             event.preventDefault();
             let $entryId = event.currentTarget[0].value;
+            alert($entryId);
             let $searchByIdFormSerialized = $searchByIdForm.serialize();
             $.ajax({
-                url: Routing.generate('admin-entries'),
+                url: Routing.generate('admin-entries', {entryId: $entryId}),
                 data: $searchByIdFormSerialized,
                 method: "POST",
                 success: function (response) {
                     $('#entryEdit').html(response);
+
                 }
             });
         });

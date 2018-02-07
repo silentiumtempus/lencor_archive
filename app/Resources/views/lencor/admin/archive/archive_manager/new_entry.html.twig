@@ -15,50 +15,7 @@
         <div class="new_entry">
             <h1>{{ 'entries.title.new'|trans }}</h1>
             {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
-            {{ form_start(entryForm) }}
-            <table>
-                <tr>
-                    <td><p>{{ form_label(entryForm.year) }}</p></td>
-                    <td><p>{{ form_widget(entryForm.year) }}</p></td>
-                </tr>
-                <tr>
-                    <td><p>{{ form_label(entryForm.factory) }}</p></td>
-                    <td><p>{{ form_widget(entryForm.factory) }}</p></td>
-                </tr>
-                <tr>
-                    <td><p>{{ form_label(entryForm.setting) }}</p></td>
-                    <td><p>{{ form_widget(entryForm.setting) }}</p></td>
-                </tr>
-                <tr>
-                    <td><p>{{ form_label(entryForm.archiveNumber) }}</p></td>
-                    <td>
-                        <p>{{ form_widget(entryForm.archiveNumber, { 'attr' : {'placeholder' : 'entries.add.archive_number.placeholder'|trans}}) }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td><p>{{ form_label(entryForm.registerNumber) }}</p></td>
-                    <td>
-                        <p>{{ form_widget(entryForm.registerNumber, { 'attr' : {'placeholder' : 'entries.add.register_number.placeholder'|trans}}) }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td><p>{{ form_label(entryForm.contractNumber) }}</p></td>
-                    <td>
-                        <p>{{ form_widget(entryForm.contractNumber, { 'attr' : {'placeholder' : 'entries.add.contract_number.placeholder'|trans}}) }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td><p>{{ form_label(entryForm.fullConclusionName) }}</p></td>
-                    <td>
-                        <p>{{ form_widget(entryForm.fullConclusionName, { 'attr' : {'placeholder' : 'entries.add.conclusion_fullname.placeholder'|trans}}) }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><p>{{ form_widget(entryForm.submitButton) }}</p></td>
-                </tr>
-            </table>
-            {{ form_errors(entryForm) }}
-            {{ form_end(entryForm) }}
+            {{ include(':lencor/admin/archive/archive_manager:new_entry_form.html.twig') }}
         </div>
         <div class="new_factory">
             <h1>{{ 'factories.title.new'|trans }}</h1>

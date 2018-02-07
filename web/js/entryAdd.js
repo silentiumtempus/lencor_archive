@@ -15,15 +15,17 @@ $(document).ready(function () {
         /** Archive entries new entry page factory->settings AJAX loader **/
 
         function settingsLoader() {
-
             //create array for AJAX request
-            let data = {};
-            data[$factorySelect.attr('name')] = $factorySelect.val();
+            $factorySelect = $(document).find('#entry_form_factory');
+            let $data = {};
+            $data[$factorySelect.attr('name')] = $factorySelect.val();
+            alert($data[$factorySelect.attr('name')]);
             $.ajax({
-                url: path,
+                url: Routing.generate('admin-entries'),
                 method: $entryAddForm.attr('method'),
-                data: data,
+                data: $data,
                 success: function (response) {
+                    alert(response);
                     $('#entry_form_setting').replaceWith(
                         $(response).find('#entry_form_setting')
                     );
@@ -35,7 +37,7 @@ $(document).ready(function () {
 
         /** Load settings list when other factory was selected **/
 
-        $factorySelect.on("change", function () {
+        $(document).on("change", $factorySelect, function () {
             settingsLoader();
         });
 

@@ -15,6 +15,7 @@ class FilesystemSizeConverterExtension extends AbstractExtension
      */
     public function getFilters()
     {
+
         return array(
             new \Twig_SimpleFilter('bytes_convert', array($this, 'bytesConvert')),
         );

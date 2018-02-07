@@ -33,11 +33,10 @@ class AdministrationController extends Controller
     /**
      * @param Request $request
      * @param FactoryService $factoryService
-     * @param SettingService $settingService
      * @return Response
      * @Route("/admin/factories-and-settings", name = "admin-factories-and-settings")
      */
-    public function factoriesAndSettings(Request $request, FactoryService $factoryService, SettingService $settingService)
+    public function factoriesAndSettings(Request $request, FactoryService $factoryService)
     {
         $factories = $factoryService->getFactories();
 

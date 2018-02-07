@@ -30,6 +30,7 @@ class FileEntity
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
+
     protected $id;
 
     /**
@@ -37,6 +38,7 @@ class FileEntity
      * @Assert\NotBlank
      * @Gedmo\Versioned()
      */
+
     protected $fileName;
 
     /**
@@ -44,6 +46,7 @@ class FileEntity
      * @Assert\File
      * @Gedmo\Versioned()
      */
+
     protected $files;
 
     /**

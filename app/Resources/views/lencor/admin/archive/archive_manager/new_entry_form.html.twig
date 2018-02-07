@@ -1,5 +1,3 @@
-{% if entryForm is defined %}
-{% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
 {{ form_start(entryForm) }}
 <table>
     <tr>
@@ -39,15 +37,8 @@
         </td>
     </tr>
     <tr>
-        <td colspan="">
-            <p>{{ form_widget(entryForm.submitButton) }} {#{{ form_widget(entryForm.cancelButton) }}#}</p>
-        </td>
+        <td colspan="2"><p>{{ form_widget(entryForm.submitButton) }}</p></td>
     </tr>
 </table>
 {{ form_errors(entryForm) }}
 {{ form_end(entryForm) }}
-{% else %}
-
-Запись не найдена
-
-{% endif %}
