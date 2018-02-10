@@ -42,11 +42,6 @@ services:
         arguments: ['@doctrine.orm.entity_manager']
         tags:
           - { name: form.type }
-      factoryform:
-        class: AppBundle\Form\FactoryForm
-        arguments: ['@doctrine.orm.entity_manager']
-        tags:
-          - { name: form.type }
       archiveentrysearchform:
         class: AppBundle\Form\EntrySearchForm
         arguments: ['@doctrine.orm.entity_manager']
