@@ -4,6 +4,7 @@ security:
 
     encoders:
       FOS\UserBUndle\Model\UserInterface: bcrypt
+      AppBundle\Security\User: bcrypt
 
     role_hierarchy:
       ROLE_ADMIN:         ROLE_USER
@@ -14,6 +15,8 @@ security:
         fos_userbundle:
           id: fos_user.user_provider.username
 
+        user_provider:
+            id: AppBundle\Security\UserProvider
         in_memory:
             memory: ~
 
@@ -23,9 +26,10 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         #secured_area:
-         # pattern: ^/
+          #pattern: ^/
           #remote_user:
-           # provider: AppBundle\Security\UserProvider
+            #provider: AppBundle\Security\UserProvider
+            #provider: user_provider
 
         main:
             pattern: ^/
