@@ -27,9 +27,9 @@
         {{ form_errors(entrySearchByIdForm) }}
         {{ form_end(entrySearchByIdForm) }}
     </div>
-    <div id="entryEdit">
+    <div class="edit_entry" id="entryForm">
         {% if entryForm is defined %}
-        {{ include(':lencor/admin/archive/administration:entry_edit.html.twig', {'entryForm' : entryForm}) }}
+        {{ include(':lencor/admin/archive/administration:entry_edit.html.twig', {'entryForm' : entryForm, 'entryId' : entryId}) }}
         {% endif %}
     </div>
 {% endblock %}

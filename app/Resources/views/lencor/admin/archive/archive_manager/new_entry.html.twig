@@ -12,7 +12,7 @@
 {% block main %}
     <div id="main-div">
         {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
-        <div class="new_entry">
+        <div class="new_entry" id="entryForm">
             <h1>{{ 'entries.title.new'|trans }}</h1>
             {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ include(':lencor/admin/archive/archive_manager:new_entry_form.html.twig') }}

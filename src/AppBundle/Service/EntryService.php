@@ -168,4 +168,12 @@ class EntryService
 
         return $archiveEntry;
     }
+
+    /**
+     * This is called on entry update submit
+     */
+    public function updateEntry()
+    {
+        $this->em->flush();
+    }
 }

@@ -1,7 +1,7 @@
 {% if entryForm is defined %}
 {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
 {{ form_start(entryForm) }}
-<table>
+<table {% if entryId is defined %} id="{{ entryId }}" {% endif %}>
     <tr>
         <td><p>{{ form_label(entryForm.year) }}</p></td>
         <td><p>{{ form_widget(entryForm.year) }}</p></td>
@@ -40,7 +40,7 @@
     </tr>
     <tr>
         <td colspan="">
-            <p>{{ form_widget(entryForm.submitButton) }} {#{{ form_widget(entryForm.cancelButton) }}#}</p>
+            <p>{{ form_widget(entryForm.submitButton) }} {{ form_widget(entryForm.cancelButton) }}</p>
         </td>
     </tr>
 </table>

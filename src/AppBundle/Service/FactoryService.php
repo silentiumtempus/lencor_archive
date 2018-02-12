@@ -48,4 +48,13 @@ class FactoryService
     {
         return $this->factoriesRepository->findAll();
     }
+
+    /**
+     * @param int $factoryId
+     * @return FactoryEntity|null|object
+     */
+    public function findFactory(int $factoryId)
+    {
+        return $this->factoriesRepository->find($factoryId);
+    }
 }

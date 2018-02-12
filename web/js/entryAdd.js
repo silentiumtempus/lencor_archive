@@ -1,31 +1,35 @@
 $(document).ready(function () {
     if (window.jQuery) {
-        let path = Routing.generate('entries-new');
         let $factorySelect = $('#entry_form_factory');
-        let $entryAddForm = $('#archive_entry_form');
+        let $entryForm = $('#archive_entry_form');
         let $factoryAddForm = $('#factory_form');
         let $settingAddForm = $('#setting_form');
+        let $entryFormDiv = $('#entryForm');
 
-        /** Settings list reload after page refresh **/
-
-        //$(function () {
-        //    settingsLoader();
-        //});
+        let $formType = $entryFormDiv.attr('class');
+        let $path = null;
+        if ( $formType === 'new_entry')
+        {
+            $path = Routing.generate('entries-new');
+        } else if ($formType === 'edit_entry')
+        {
+            $path = Routing.generate('admin-entries', {entryId : $entryForm.find('table').attr('id')});
+        } else {
+            $path = Routing.generate('entries-new')
+        }
 
         /** Archive entries new entry page factory->settings AJAX loader **/
 
         function settingsLoader() {
             //create array for AJAX request
-            $factorySelect = $(document).find('#entry_form_factory');
+            $factorySelect = $($entryFormDiv).find('#entry_form_factory');
             let $data = {};
             $data[$factorySelect.attr('name')] = $factorySelect.val();
-            alert($data[$factorySelect.attr('name')]);
             $.ajax({
-                url: Routing.generate('admin-entries'),
-                method: $entryAddForm.attr('method'),
+                url: $path,
+                method: $entryForm.attr('method'),
                 data: $data,
                 success: function (response) {
-                    alert(response);
                     $('#entry_form_setting').replaceWith(
                         $(response).find('#entry_form_setting')
                     );
@@ -37,8 +41,10 @@ $(document).ready(function () {
 
         /** Load settings list when other factory was selected **/
 
-        $(document).on("change", $factorySelect, function () {
+        $entryFormDiv.on("change", $factorySelect, function () {
             settingsLoader();
+
+            return false;
         });
 
         /** Archive new factory submission **/
@@ -48,16 +54,15 @@ $(document).ready(function () {
             let factorySerialized = $factoryAddForm.serialize();
 
             $.ajax({
-                url: path,
+                url: Routing.generate('entries-new'),
                 method: $factoryAddForm.attr('method'),
                 data: factorySerialized,
                 success: function (response) {
-                    //alert(response);
                     $('#flash-messages').replaceWith(
                         $(response).find('#flash-messages'));
                     $.ajax({
-                        url: path,
-                        method: $entryAddForm.attr('method'),
+                        url: $path,
+                        method: $entryForm.attr('method'),
                         data: null,
                         success: function (response) {
                             $('#setting_form_factory').replaceWith(
@@ -78,19 +83,19 @@ $(document).ready(function () {
             event.preventDefault();
             let settingSerialized = $settingAddForm.serialize();
             $.ajax({
-                url: path,
+                url: $path,
                 method: $settingAddForm.attr('method'),
                 data: settingSerialized,
                 success: function (response) {
                     $('#flash-messages').replaceWith(
                         $(response).find('#flash-messages'));
                     $.ajax({
-                        url: path,
+                        url: $path,
                         method: $settingAddForm.attr('method'),
                         data: null,
                         success: function () {
                             let $changedFactory = $settingAddForm.find('select[id="setting_form_factory"]').val();
-                            let $selectedFactoryInAddForm = $entryAddForm.find('select[id="entry_form_factory"]').val();
+                            let $selectedFactoryInAddForm = $entryForm.find('select[id="entry_form_factory"]').val();
                             if ($changedFactory === $selectedFactoryInAddForm) {
                                 settingsLoader();
                             }
@@ -104,12 +109,12 @@ $(document).ready(function () {
 
         /** Archive new entry submission **/
 
-        $entryAddForm.on("submit", function (event) {
+        $entryFormDiv.on("submit", $entryForm, function (event) {
             event.preventDefault();
-            let entrySerialized = $entryAddForm.serialize();
+            let entrySerialized = $entryForm.serialize();
             $.ajax({
-                url: path,
-                method: $entryAddForm.attr('method'),
+                url: $path,
+                method: $entryForm.attr('method'),
                 data: entrySerialized,
                 success: function (response) {
                     $('#flash-messages').replaceWith(

@@ -116,6 +116,9 @@ class SettingEntity
         return $this->settingName;
     }
 
+    /**
+     * @return mixed
+     */
     public function __toString()
     {
         return $this->settingName;

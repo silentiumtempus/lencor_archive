@@ -19,7 +19,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class EntryForm
+ * Class EntryFormTrait
  * @package AppBundle\Form
  */
 class EntryForm extends AbstractType
@@ -28,7 +28,7 @@ class EntryForm extends AbstractType
     protected $settingService;
 
     /**
-     * EntryForm constructor.
+     * EntryFormTrait constructor.
      * @param EntityManagerInterface $em
      * @param SettingService $settingService
      */
