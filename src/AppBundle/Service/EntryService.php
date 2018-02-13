@@ -174,13 +174,6 @@ class EntryService
      */
     public function updateEntry()
     {
-        try {
-            $this->em->flush();
-
-            return true;
-        } catch (\Exception $exception) {
-
-            return false;
-        }
+        $this->em->flush();
     }
 }

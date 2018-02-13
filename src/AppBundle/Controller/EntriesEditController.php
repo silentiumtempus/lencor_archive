@@ -51,8 +51,12 @@ class EntriesEditController extends Controller
                 $entryForm->handleRequest($request);
                 if ($entryForm->isSubmitted()) {
                     if ($entryForm->isValid()) {
-                        $this->addFlash('warning', 'Пыщ!');
-                        $updateStatus = $entryService->updateEntry();
+                        try {
+                            $entryService->updateEntry();
+                            $updateStatus = true;
+                        } catch (\Exception $exception) {
+                            $this->addFlash('danger', 'Ошбика обновления ячейки: ' . $exception->getMessage());
+                        }
                     }
                 }
                 if (!$entryId || $updateStatus) {
