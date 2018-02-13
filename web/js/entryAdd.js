@@ -40,8 +40,7 @@ $(document).ready(function () {
 
         /** Load settings list when other factory was selected **/
 
-        $(document).on("change", '#entry_form_factory', function (event) {
-            event.stopPropagation();
+        $(document).on("change", '#entry_form_factory', function () {
             settingsLoader();
 
             return false;
@@ -113,7 +112,7 @@ $(document).ready(function () {
             event.preventDefault();
             let entrySerialized = $entryForm.serialize();
             $.ajax({
-                url: $path,
+                url: Routing.generate('admin-entries', {entryId : $('#archive_entry_form').find('table').attr('id')}),
                 method: $entryForm.attr('method'),
                 data: entrySerialized,
                 success: function (response) {

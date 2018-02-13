@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\ArchiveEntryEntity;
 use AppBundle\Form\EntryForm;
 use AppBundle\Form\EntrySearchByIdForm;
 use AppBundle\Service\EntryService;
@@ -30,6 +31,7 @@ class EntriesEditController extends Controller
      */
     public function entryEditIndex(Request $request, EntryService $entryService, $entryId)
     {
+        $updateStatus = false;
         $archiveEntryEntity = null;
         $entrySearchByIdForm = $this->createForm(EntrySearchByIdForm::class);
         $entrySearchByIdForm->handleRequest($request);
@@ -50,14 +52,10 @@ class EntriesEditController extends Controller
                 if ($entryForm->isSubmitted()) {
                     if ($entryForm->isValid()) {
                         $this->addFlash('warning', 'Пыщ!');
-                        $entryService->updateEntry();
-                        return $this->render(':lencor/admin/archive/administration:entry_edit.html.twig', array(
-                                'entryForm' => $entryForm->createView(),
-                                'entryId' => $archiveEntryEntity->getId())
-                        );
+                        $updateStatus = $entryService->updateEntry();
                     }
                 }
-                if (!$entryId) {
+                if (!$entryId || $updateStatus) {
 
                     return $this->render(':lencor/admin/archive/administration:entry_edit.html.twig', array(
                             'entryForm' => $entryForm->createView(),
