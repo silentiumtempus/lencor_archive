@@ -2,10 +2,10 @@ $(document).ready(function () {
     if (!window.jQuery) {
     } else {
         /** Do not touch this **/
-        let path = $("#main-table").attr("data-path");
-        let $factory = $('#archive_entry_search_form_factory');
-        let searchForm = $("#archive_entry_search_form");
-        let resetButton = $("#archive_entry_search_form_resetButton");
+        let $path = Routing.generate('entries');
+        let $factory = $('#entry_search_form_factory');
+        let searchForm = $("#entry_search_form");
+        let resetButton = $("#entry_search_form_resetButton");
         let createFolderBlock = $("#addFolder");
         let uploadFileBlock = $("#addFiles");
         let downloadFileBlock = $("#downloadFile");
@@ -18,12 +18,12 @@ $(document).ready(function () {
             let data = {};
             data[$factory.attr('name')] = $factory.val();
             $.ajax({
-                url: path,
+                url: $path,
                 method: searchForm.attr('method'),
                 data: data,
                 success: function (response) {
-                    $('#archive_entry_search_form_setting').replaceWith(
-                        $(response).find('#archive_entry_search_form_setting')
+                    $('#entry_search_form_setting').replaceWith(
+                        $(response).find('#entry_search_form_setting')
                     );
                 }
             });
@@ -43,7 +43,7 @@ $(document).ready(function () {
                 values[field.name] = field.value;
             });
             $.ajax({
-                url: path,
+                url: $path,
                 method: searchForm.attr('method'),
                 data: values,
                 success: function (response) {
@@ -53,6 +53,7 @@ $(document).ready(function () {
                     );
                 }
             });
+
             return false;
         });
 
@@ -63,14 +64,14 @@ $(document).ready(function () {
             $('#main-tbody').hide();
             $('#loading-spinner').show().css('display', 'contents');
             $.ajax({
-                url: path,
+                url: $path,
                 method: searchForm.attr('method'),
                 data: null,
                 success: function (response) {
                     $('#loading-spinner').hide();
                     $('#main-tbody').replaceWith(
                         $(response).find('#main-tbody'));
-                    $('#archive_entry_search_form_setting').attr('disabled', 'disabled');
+                    $('#entry_search_form_setting').attr('disabled', 'disabled');
                     $('#addFolder').hide();
                 }
             });
@@ -225,7 +226,6 @@ $(document).ready(function () {
                     let $fileAddForm = uploadFileBlock.find('#file_add_form');
                     $fileAddForm.on("submit", function uploadFile(event) {
                         event.preventDefault();
-                        //var fileSerialized = $fileAddForm.serialize();
                         let fileSerialized = new FormData($(this)[0]);
                         /** Submit new file **/
                         $.ajax({

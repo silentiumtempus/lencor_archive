@@ -36,7 +36,9 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param EntrySearchService $entrySearchService
      * @return Response
-     * @Route("/entries/", name="entries")
+     * @Route("/entries/", name="entries",
+     *     options = { "expose" = true }
+     *     )
      */
     public function loadEntries(Request $request, EntrySearchService $entrySearchService)
     {

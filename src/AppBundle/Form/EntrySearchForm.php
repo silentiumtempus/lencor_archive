@@ -123,7 +123,7 @@ class EntrySearchForm extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => ArchiveEntryEntity::class,
-            'attr' => array('novalidate' => 'novalidate', 'id' => 'archive_entry_search_form')
+            'attr' => array('novalidate' => 'novalidate', 'id' => 'entry_search_form')
         ));
     }
 }

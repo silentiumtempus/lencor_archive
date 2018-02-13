@@ -48,9 +48,13 @@ class EntriesEditController extends Controller
                     array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit')));
                 $entryForm->handleRequest($request);
                 if ($entryForm->isSubmitted()) {
-                    $this->addFlash('warning', 'Пыщ!');
                     if ($entryForm->isValid()) {
+                        $this->addFlash('warning', 'Пыщ!');
                         $entryService->updateEntry();
+                        return $this->render(':lencor/admin/archive/administration:entry_edit.html.twig', array(
+                                'entryForm' => $entryForm->createView(),
+                                'entryId' => $archiveEntryEntity->getId())
+                        );
                     }
                 }
                 if (!$entryId) {

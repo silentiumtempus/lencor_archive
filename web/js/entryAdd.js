@@ -21,13 +21,12 @@ $(document).ready(function () {
         /** Archive entries new entry page factory->settings AJAX loader **/
 
         function settingsLoader() {
-            //create array for AJAX request
             $factorySelect = $($entryFormDiv).find('#entry_form_factory');
             let $data = {};
             $data[$factorySelect.attr('name')] = $factorySelect.val();
             $.ajax({
-                url: $path,
-                method: $entryForm.attr('method'),
+                url: Routing.generate('admin-entries', {entryId : $('#archive_entry_form').find('table').attr('id')}),
+                method: "POST",
                 data: $data,
                 success: function (response) {
                     $('#entry_form_setting').replaceWith(
@@ -41,7 +40,8 @@ $(document).ready(function () {
 
         /** Load settings list when other factory was selected **/
 
-        $entryFormDiv.on("change", $factorySelect, function () {
+        $(document).on("change", '#entry_form_factory', function (event) {
+            event.stopPropagation();
             settingsLoader();
 
             return false;
