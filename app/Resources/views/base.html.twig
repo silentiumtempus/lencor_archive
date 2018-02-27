@@ -119,6 +119,9 @@
                         <a class="left" href="{{ path('index') }}">
                             {{ 'header.title'|trans }}
                         </a>
+                        {% if app.user %}
+                        <div class="greeting">{{ 'header.greeting'|trans }} {{ app.user.username }}!</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -24,6 +24,7 @@ header:
     login: 'Войти'
     logout: 'Выйти'
   title: 'Архив НПО Ленкор'
+  greeting: 'приветствует,'
 search:
   placeholder:
     archive_number: 'Введите архивный номер'

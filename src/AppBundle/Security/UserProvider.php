@@ -18,8 +18,7 @@ class UserProvider implements UserProviderInterface
      */
     public function loadUserByUsername($username)
     {
-
-        return new User(null, null, null, null, array());
+        return new User(null, $username, null, null, array('ROLE_ADMIN'));
     }
 
     /**

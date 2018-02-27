@@ -219,6 +219,12 @@ header .info-title {
     padding-top: 10px;
 }
 
+header .greeting {
+    float: left;
+    margin-left: 5px;
+    color: #ffffff;
+}
+
 body .fa-ellipsis-h {
     color: #8aa4be;
 }

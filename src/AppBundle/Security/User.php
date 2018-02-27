@@ -35,6 +35,15 @@ class User implements UserInterface, EquatableInterface
         $this->roles = $roles;
     }
 
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->username;
+    }
+
     /**
      * @return int
      */
