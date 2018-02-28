@@ -136,14 +136,13 @@ file_put_contents($file, $wr); */
      */
     public function removeEntry(Request $request, EntryService $archiveEntryService)
     {
-        $archiveEntries = array();
+        $archiveEntry = null;
         if ($request->request->has('entryId'))
         {
             $archiveEntry = $archiveEntryService->removeEntry($request->get('entryId'), $this->getUser()->getId());
-            array_push($archiveEntries, $archiveEntry);
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entries_list.html.twig', array('archiveEntries' => $archiveEntries));
+        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
     }
 
     /**
@@ -154,14 +153,13 @@ file_put_contents($file, $wr); */
      */
     public function restoreEntry(Request $request, EntryService $archiveEntryService)
     {
-        $archiveEntries = array();
+        $archiveEntry = null;
         if ($request->request->has('entryId'))
         {
             $archiveEntry = $archiveEntryService->restoreEntry($request->get('entryId'), $this->getUser()->getId());
-            array_push($archiveEntries, $archiveEntry);
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entries_list.html.twig', array('archiveEntries' => $archiveEntries));
+        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
     }
 }
 

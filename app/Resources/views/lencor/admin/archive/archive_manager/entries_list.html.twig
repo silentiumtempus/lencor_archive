@@ -1,42 +1,6 @@
 {% if archiveEntries is not empty %}
     {% for entry in archiveEntries %}
-        <tr id="entry_{{ entry.id }}" class="description{% if entry.deleteMark != 0 %} deleted {% endif %}">
-            <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i class="fa fa-angle-down"> </i><i class="fa fa-folder-o"> </i></a></td>
-            <td>
-                {% if entry.deleteMark != 0 %}
-                    <i class="fa fa-remove"> </i>
-                {% endif %}
-                {{ entry.year }}
-            </td>
-            <td>{{ entry.factory.factoryName }}</td>
-            <td>{{ entry.setting.settingName }}</td>
-            <td>{{ entry.archiveNumber }}</td>
-            <td>{{ entry.registerNumber }}</td>
-            <td>{{ entry.contractNumber }}</td>
-            <td>{{ entry.fullConclusionName }}</td>
-            <td class="text-center">
-                {% if entry.deleteMark != 0 %}
-                    <i class="fa fa-ban" id="isRemoved"> </i>
-                {% endif %}
-                {% if entry.sumErrors != 0 %}
-                    <i class="fa fa-exclamation-triangle" id="checkError"> </i>
-                {% else %}
-                    <i class="fa fa-check-circle" id="checkPassed"> </i>
-                {% endif %}
-            </td>
-            <td class="icons text-center" id="{{ entry.id }}">
-                <a href="#" name="openPath" class="open" target="_blank"><i class="fa fa-hdd-o"> </i></a>
-                <a href="#" name="addFiles"><i class="fa fa-upload"> </i></a>&nbsp;
-                <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"> </i><i class="fa fa-folder-o"> </i></a>&nbsp;
-                {% if entry.deleteMark !=0 %}
-                    <a href="#" name="restoreEntry"><i class="fa fa-undo" title="Восстановить ячейку"> </i></a>
-                {% else %}
-                    <a href="#" name="removeEntry" ><i class="fa fa-trash" title="Пометить к удалению"> </i></a>
-                {% endif %}
-                <a href="#"><i class="fa fa-edit" title="Редактировать"> </i></a>
-                <a href="{{ path('logging', {'entryId' : entry.id}) }}" target="_blank"><i class="fa fa-history" title="Открыть записи изменений"> </i></a>
-            </td>
-        </tr>
+        {{ include(':lencor/admin/archive/archive_manager:entry.html.twig', {'entry': entry}) }}
         <tr>
             <td id="entryContent_{{ entry.id }}" class="content" colspan="10" hidden>
             </td>
