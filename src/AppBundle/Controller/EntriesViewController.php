@@ -163,26 +163,5 @@ file_put_contents($file, $wr); */
 
         return $this->render('lencor/admin/archive/archive_manager/entries_list.html.twig', array('archiveEntries' => $archiveEntries));
     }
-
-    /**
-     * @return Response
-     * @Route("entries/flash_messages", name="flash_messages")
-     */
-    public function showFlashMessages()
-    {
-
-        return $this->render('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig');
-    }
-
-    /**
-     * @return Response
-     * @Route("entries/flash_messages_summary", name="flash_messages_summary")
-     */
-    public function showFlashMessagesSummary()
-    {
-
-        return $this->render('lencor/admin/archive/flash_messages/archive_manager/summary.html.twig');
-    }
-
 }
 

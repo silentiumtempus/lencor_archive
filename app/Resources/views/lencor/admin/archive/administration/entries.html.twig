@@ -14,6 +14,9 @@
     <div>
         <h3>{{ 'logs.title.search'|trans }}</h3>
     </div>
+    <div id="flash-messages">
+        {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
+    </div>
     <div>
         {{ form_start(entrySearchByIdForm) }}
         <ul id="log-search" class="form-row">

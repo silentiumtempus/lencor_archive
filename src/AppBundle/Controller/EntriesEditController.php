@@ -29,53 +29,58 @@ class EntriesEditController extends Controller
      *     requirements = { "$entryId" = "\d+" },
      *     defaults = { "entryId" : "0" }))
      */
-    public function entryEditIndex(Request $request, EntryService $entryService, $entryId)
+    public function entryEditIndex(Request $request, EntryService $entryService, int $entryId)
     {
         $updateStatus = false;
         $archiveEntryEntity = null;
         $entrySearchByIdForm = $this->createForm(EntrySearchByIdForm::class);
-        $entrySearchByIdForm->handleRequest($request);
-        if ($entrySearchByIdForm->isSubmitted() && $request->isMethod("POST") && $entrySearchByIdForm->isValid() || ($entryId)) {
+        if ($request->request->has('entry_search_by_id_form')) {
+            $entrySearchByIdForm->handleRequest($request);
             if ($entrySearchByIdForm->isSubmitted() && $request->isMethod("POST")) {
                 if ($entrySearchByIdForm->isValid()) {
                     $archiveEntryEntity = $entryService->getEntryById($entrySearchByIdForm->get('id')->getData());
                 }
-            } elseif ($entryId) {
-                $archiveEntryEntity = $entryService->getEntryById($entryId);
             }
-            if ($archiveEntryEntity) {
-                $entryForm = $this->createForm(
-                    EntryForm::class,
-                    $archiveEntryEntity,
-                    array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit')));
-                $entryForm->handleRequest($request);
-                if ($entryForm->isSubmitted()) {
-                    if ($entryForm->isValid()) {
-                        try {
-                            $entryService->updateEntry();
-                            $updateStatus = true;
-                        } catch (\Exception $exception) {
-                            $this->addFlash('danger', 'Ошбика обновления ячейки: ' . $exception->getMessage());
-                        }
+        }
+        if ($entryId) {
+            $archiveEntryEntity = $entryService->getEntryById($entryId);
+        }
+        if ($archiveEntryEntity) {
+            $entryForm = $this->createForm(
+                EntryForm::class,
+                $archiveEntryEntity,
+                array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit')));
+            $entryForm->handleRequest($request);
+            if ($entryForm->isSubmitted()) {
+                if ($entryForm->isValid()) {
+                    try {
+                        $entryService->updateEntry();
+                        $updateStatus = true;
+                    } catch (\Exception $exception) {
+                        $this->addFlash('danger', 'Ошибка обновления ячейки: ' . $exception->getMessage());
                     }
                 }
-                if (!$entryId || $updateStatus) {
-
-                    return $this->render(':lencor/admin/archive/administration:entry_edit.html.twig', array(
-                            'entryForm' => $entryForm->createView(),
-                            'entryId' => $archiveEntryEntity->getId())
-                    );
-                } else {
-
-                    return $this->render(':lencor/admin/archive/administration:entries.html.twig', array(
-                            'entrySearchByIdForm' => $entrySearchByIdForm->createView(),
-                            'entryForm' => $entryForm->createView(),
-                            'entryId' => $archiveEntryEntity->getId())
-                    );
+            }
+            if (!$entryId || $updateStatus) {
+                if ($updateStatus) {
+                    $this->addFlash('success', 'Изменения сохранены');
                 }
+
+                return $this->render(':lencor/admin/archive/administration:entry_edit.html.twig', array(
+                        'entryForm' => $entryForm->createView(),
+                        'entryId' => $archiveEntryEntity->getId())
+                );
+            } else {
+
+                return $this->render(':lencor/admin/archive/administration:entries.html.twig', array(
+                        'entrySearchByIdForm' => $entrySearchByIdForm->createView(),
+                        'entryForm' => $entryForm->createView(),
+                        'entryId' => $archiveEntryEntity->getId())
+                );
             }
         }
 
         return $this->render(':lencor/admin/archive/administration:entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
+
     }
 }

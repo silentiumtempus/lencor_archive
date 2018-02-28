@@ -5,18 +5,7 @@ $(document).ready(function () {
         let $factoryAddForm = $('#factory_form');
         let $settingAddForm = $('#setting_form');
         let $entryFormDiv = $('#entryForm');
-
-        let $formType = $entryFormDiv.attr('class');
-        let $path = null;
-        if ( $formType === 'new_entry')
-        {
-            $path = Routing.generate('entries-new');
-        } else if ($formType === 'edit_entry')
-        {
-            $path = Routing.generate('admin-entries', {entryId : $entryForm.find('table').attr('id')});
-        } else {
-            $path = Routing.generate('entries-new')
-        }
+        let $path = Routing.generate('entries-new');
 
         /** Archive entries new entry page factory->settings AJAX loader **/
 
@@ -25,7 +14,7 @@ $(document).ready(function () {
             let $data = {};
             $data[$factorySelect.attr('name')] = $factorySelect.val();
             $.ajax({
-                url: Routing.generate('admin-entries', {entryId : $('#archive_entry_form').find('table').attr('id')}),
+                url: Routing.generate('admin-entries', {entryId: $('#archive_entry_form').find('table').attr('id')}),
                 method: "POST",
                 data: $data,
                 success: function (response) {
@@ -110,17 +99,37 @@ $(document).ready(function () {
 
         $entryFormDiv.on("submit", $entryForm, function (event) {
             event.preventDefault();
-            let entrySerialized = $entryForm.serialize();
+            let entrySerialized = $('#archive_entry_form').serialize();
+            let $formType = $entryFormDiv.attr('class');
+            if ($formType === 'new_entry') {
+                $path = Routing.generate('entries-new');
+            } else if ($formType === 'edit_entry') {
+                $path = Routing.generate('admin-entries', {entryId: $(this).find('table').attr('id')});
+            }
             $.ajax({
-                url: Routing.generate('admin-entries', {entryId : $('#archive_entry_form').find('table').attr('id')}),
-                method: $entryForm.attr('method'),
+                url: $path,
+                method: "POST",
                 data: entrySerialized,
                 success: function (response) {
-                    $('#flash-messages').replaceWith(
-                        $(response).find('#flash-messages')
-                    );
+                    /** Flash messages loader **/
+                    $.ajax({
+                        url: Routing.generate('flash_messages'),
+                        method: "POST",
+                        success: function (reloadFlashMessages) {
+                            let $messages = $('#flash-messages');
+                            $messages.replaceWith(
+                                $(reloadFlashMessages));
+                           // if ($('#flash-messages').is(":hidden")) {
+                                $messages.show().css('display', 'contents');
+                           // }
+                        }
+                    });
+
+                    return false;
                 }
             });
+
+            $path = Routing.generate('entries-new');
 
             return false;
         });

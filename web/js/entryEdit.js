@@ -6,6 +6,7 @@ $(document).ready(function () {
             event.preventDefault();
             let $entryId = event.currentTarget[0].value;
             let $searchByIdFormSerialized = $searchByIdForm.serialize();
+            $('#flash-messages').hide();
             $.ajax({
                 url: Routing.generate('admin-entries'),
                 data: $searchByIdFormSerialized,
