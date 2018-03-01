@@ -6,6 +6,7 @@ $(document).ready(function () {
         let $settingAddForm = $('#setting_form');
         let $entryFormDiv = $('#entryForm');
         let $path = Routing.generate('entries-new');
+        let $formType = $entryFormDiv.attr('class');
 
         /** Archive entries new entry page factory->settings AJAX loader **/
 
@@ -13,8 +14,13 @@ $(document).ready(function () {
             $factorySelect = $($entryFormDiv).find('#entry_form_factory');
             let $data = {};
             $data[$factorySelect.attr('name')] = $factorySelect.val();
+            if ($formType === 'new_entry') {
+                $path = Routing.generate('entries-new');
+            } else if ($formType === 'edit_entry') {
+                $path = Routing.generate('admin-entries', {entryId: $(this).find('table').attr('id')});
+            }
             $.ajax({
-                url: Routing.generate('admin-entries', {entryId: $('#archive_entry_form').find('table').attr('id')}),
+                url: $path,
                 method: "POST",
                 data: $data,
                 success: function (response) {
@@ -100,7 +106,6 @@ $(document).ready(function () {
         $entryFormDiv.on("submit", $entryForm, function (event) {
             event.preventDefault();
             let entrySerialized = $('#archive_entry_form').serialize();
-            let $formType = $entryFormDiv.attr('class');
             if ($formType === 'new_entry') {
                 $path = Routing.generate('entries-new');
             } else if ($formType === 'edit_entry') {
