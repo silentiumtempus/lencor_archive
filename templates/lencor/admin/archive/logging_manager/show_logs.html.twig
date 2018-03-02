@@ -1,0 +1,4 @@
+{% extends 'lencor/admin/archive/logging_manager/index.html.twig' %}
+{% block logs %}
+    {{ include('lencor/admin/archive/logging_manager/logs_list.html.twig', { 'logFiles' : logFiles, 'logFolders' : logFolders }) }}
+{% endblock %}

@@ -1,0 +1,57 @@
+# FOSElasticaBundle (search&filter engine) library configuration
+
+fos_elastica:
+    #serializer: ~
+    clients:
+        default:
+            host: "%fos_elastica.host%"
+            port: "%fos_elastica.port%"
+    indexes:
+      lencor_archive:
+        index_name: archive_entries
+        client: default
+        types:
+          archive_factories:
+            properties:
+              id: ~
+              factoryName: ~
+          archive_settings:
+            properties:
+              id: ~
+              factoryId: ~
+              settingsName: ~
+            _parent:
+              type: "archive_factories"
+              identifier: "id"
+              property: "id"
+          archive_entries:
+            properties:
+              factory:
+                type: "object"
+                properties:
+                  id: ~
+                  factoryName: ~
+              setting:
+                type: "object"
+                properties:
+                  id: ~
+                  settingName: ~
+              year:
+                type: integer
+              archiveNumber: ~
+              registerNumber: ~
+              contractNumber: ~
+              fullConclusionName: ~
+              cataloguePath: ~
+              lastModified: ~
+              modifiedByUserId: ~
+              deleteMark: ~
+            persistence:
+              driver: orm
+              model: App\Entity\ArchiveEntryEntity
+              finder: ~
+              provider: ~
+              listener: ~
+              repository: ~ #App\Repository\ArchiveEntrySearchRepository
+              elastica_to_model_transformer:
+                query_builder_method: createEntriesAndErrorsQueryBuilder

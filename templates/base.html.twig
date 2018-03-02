@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{% block title %}{{ 'title'|trans }}{% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('static/css/font-awesome.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('static/css/font-lato.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/css/main.css') }}">
+        <link rel="stylesheet" href="{{ asset('static/css/menu-styles.css') }}">
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
+</head>
+
+<body id="{% block body_id %}{% endblock %}">
+{% block javascripts %}
+    <script src="{{ asset('static/js/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('build/js/menuScript.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+{% endblock %}
+
+{% block header %}
+    <header>
+        {% block header_navigation_menu %}
+            <div class="top-menu left" role="navigation">
+                <div class="container" id="cssmenu">
+                    <ul class="left">
+                        <li class="active has-sub">
+                            <a href="{{ path('index') }}">
+                                <span> <i class="fa fa-home"> </i> {{ 'header.menu.homepage'|trans }} </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('entries') }}">
+                                <span>
+                                    <i class="fa fa-archive"> </i> {{ 'header.menu.manager.menu0'|trans }} <i class="fa fa-angle-down"> </i>
+                                </span>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{{ path('entries') }}">{{ 'header.menu.manager.menu1'|trans }}</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('entries-new') }}">{{ 'header.menu.manager.menu2'|trans }}</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('admin-entries') }}">{{ 'header.menu.manager.menu3'|trans }}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{ path('system') }}">
+                                <span><i class="fa fa-cog"> </i> {{ 'header.menu.system'|trans }} <i class="fa fa-angle-down"> </i> </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('admin') }}">
+                                <span><i class="fa fa-wrench"> </i> {{ 'header.menu.admin.menu0'|trans }} <i class="fa fa-angle-down"> </i></span>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{{ path('admin-factories-and-settings') }}">{{ 'header.menu.admin.menu1'|trans }}</a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('admin-news') }}">{{ 'header.menu.admin.menu2'|trans }}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{ path('logging') }}">
+                                <span><i class="fa fa-history"> </i> {{ 'header.menu.logging.menu0'|trans }} <i class="fa fa-angle-down"> </i></span>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a href="{{ path('logging') }}"> {{ 'header.menu.logging.menu1'|trans }}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{ path('stats') }}">
+                                <span><i class="fa fa-info"> </i> {{ 'header.menu.stats'|trans }} <i class="fa fa-angle-down"> </i></span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="right">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {#    <li>
+                                    <span>
+                                        <a href=""><i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}</a>
+                                    </span>
+                                </li>
+                             #}
+                        {% endif %}
+                        {% if app.user %}
+                            <li>
+                                <a href="{{ path('fos_user_security_logout') }}">
+                                    <span><i class="fa fa-sign-out" aria-hidden="true"> </i> {{ 'header.menu.logout'|trans }}</span>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li>
+                            <span>
+                                <a href="{{ path('fos_user_security_login') }}">
+                                    <i class="fa fa-sign-in" aria-hidden="true"> </i> {{ 'header.menu.login'|trans }}</a>
+                            </span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        {% endblock %}
+        {% block header_info_block %}
+            <div class="info-block left" role="navigation">
+                <div class="container">
+                    <div class="info-title">
+                        <a class="left" href="{{ path('index') }}">
+                            {{ 'header.title'|trans }}
+                        </a>
+                        {% if app.user %}
+                        <div class="greeting">{{ 'header.greeting'|trans }} {{ app.user.username }}!</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    </header>
+{% endblock %}
+{% block body %}
+    <main>
+        <div class="content">
+            {#<div class="container">
+                {% block sidebar %}{% endblock %}
+            </div> #}
+            {% block main %}
+            {% endblock %}
+        </div>
+    </main>
+{% endblock %}
+
+{% block footer %}
+    <footer>
+        <div class="container">
+            <div id="footer-copyright">
+            </div>
+            <div id="footer-resources">
+                <p>
+                </p>
+            </div>
+        </div>
+    </footer>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,5 @@
+framework:
+  router:
+    strict_requirements: ~
+    #resource: "%kernel.root_dir%/config/routing.yaml"
+

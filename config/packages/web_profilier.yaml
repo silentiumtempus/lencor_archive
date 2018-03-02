@@ -1,0 +1,5 @@
+#Web profilier display configuration
+web_profiler:
+    toolbar:              true
+    intercept_redirects:  false
+    #excluded_ajax_paths:  ^/(app(_[\\w]+)?\\.php/)?_wdt

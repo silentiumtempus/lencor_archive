@@ -1,0 +1,9 @@
+twig:
+    #paths: ['%kernel.project_dir%/templates']
+    paths:
+        '%kernel.root_dir%/../vendor/ninsuo/symfony-collection': symfony-collection
+    form_themes:
+            - '@symfony-collection/jquery.collection.html.twig'
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    cache: false

@@ -1,0 +1,13 @@
+{
+  "build/css/entries.css": "/build/css/entries.css",
+  "build/css/fact-set.css": "/build/css/fact-set.css",
+  "build/css/logs.css": "/build/css/logs.css",
+  "build/css/main.css": "/build/css/main.css",
+  "build/js/entryAdd.js": "/build/js/entryAdd.js",
+  "build/js/entryEdit.js": "/build/js/entryEdit.js",
+  "build/js/entrySearch.js": "/build/js/entrySearch.js",
+  "build/js/fact-set.js": "/build/js/fact-set.js",
+  "build/js/logRowsCount.js": "/build/js/logRowsCount.js",
+  "build/js/logSearch.js": "/build/js/logSearch.js",
+  "build/js/menuScript.js": "/build/js/menuScript.js"
+}

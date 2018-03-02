@@ -1,0 +1,5 @@
+# Sensio Framework Extra Bundle configuration
+sensio_framework_extra:
+  request:
+    converters: true
+    auto_convert: false

@@ -1,0 +1,15 @@
+parameters:
+    locale: ru
+    app_locales: ru|en
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: no@e.mail
+    mailer_password: null
+    fos_elastica.host: localhost
+    fos_elastica.port: 9200
+    storage_path: '%kernel.project_dir%/public/storage'
+    lencor_archive.storage_path: '%kernel.project_dir%/public/storage'
+    lencor_archive.storage_permissions: 0777
+    lencor_archive.http_path: 'http://localhost:8872/public/storage'
+    fs_size_conversion.twig.extension.class: App\Twig\FileSystemSizeConverterExtension
+    fs_permissions_conversion.twig.extension.class: App\Twig\FilesystemPermissionsConverterExtension

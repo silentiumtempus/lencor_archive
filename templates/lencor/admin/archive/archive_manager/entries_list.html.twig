@@ -1,0 +1,13 @@
+{% if archiveEntries is not empty %}
+    {% for entry in archiveEntries %}
+        {{ include('lencor/admin/archive/archive_manager/entry.html.twig', {'entry': entry}) }}
+        <tr>
+            <td id="entryContent_{{ entry.id }}" class="content" colspan="10" hidden>
+            </td>
+        </tr>
+    {% endfor %}
+{% else %}
+<tr>
+    <td colspan="9" align="center">{{ 'entries.not_found'|trans }}</td>
+</tr>
+{% endif %}

@@ -1,0 +1,16 @@
+{% if fileContent is not empty %}
+    <div id="logfile-content" hidden>
+    {% block logsRowsCount %}
+        {{ include('lencor/admin/archive/logging_manager/logs_rows_count.html.twig') }}
+    {% endblock %}
+        <div id="logfile-text">
+            {% for line in fileContent %}
+                {{ line }} <br>
+            {% endfor %}
+        </div>
+    </div>
+{% else %}
+    <div id="logfile-content" hidden>
+        В файле не найдено записей
+    </div>
+{% endif %}
