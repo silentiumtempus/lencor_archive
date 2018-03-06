@@ -16,7 +16,6 @@
 
 <body id="{% block body_id %}{% endblock %}">
 {% block javascripts %}
-    <script src="{{ asset('static/js/jquery/jquery.js') }}"></script>
     <script src="{{ asset('build/js/menuScript.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script type="text/javascript" src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>

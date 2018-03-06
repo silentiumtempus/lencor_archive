@@ -184,9 +184,21 @@ h6, .h6 {
   padding-left: 20px;
 }
 
+.form-row {
+  font-size: 14px;
+  li {
+    display: flex;
+    vertical-align: middle;
+  }
+  li > span {
+    padding-left: 10px;
+  }
+}
+
 footer {
   width: 100%;
   background: #ecf0f1;
   padding-top: 2em;
   padding-bottom: 2em;
 }
+

@@ -1,14 +1,4 @@
 body {
-  .form-row {
-    font-size: 14px;
-    li {
-      display: flex;
-      vertical-align: middle;
-    }
-    li > span {
-      padding-left: 10px;
-    }
-  }
 
   thead {
     font-weight: bold;
@@ -52,7 +42,7 @@ body {
         color: #2ca02c;
       }
       .fa-undo {
-        color: #2c3e50 !important;
+        color: #2c3e50;
       }
       .fa-ellipsis-h {
         color: #8aa4be;

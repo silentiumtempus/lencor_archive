@@ -5,18 +5,18 @@
 {% endblock %}
 {% block stylesheets %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('build/css/entryAdd.css') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/css/entry-add.css') }}"></script>
 {% endblock %}
 
 {% block main %}
     <div id="main-div">
         {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
-        <div class="new_entry" id="entryForm">
+        <div class="new-entry" id="entryForm">
             <h1>{{ 'entries.title.new'|trans }}</h1>
             {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ include('lencor/admin/archive/archive_manager/new_entry_form.html.twig') }}
         </div>
-        <div class="new_factory">
+        <div class="new-factory">
             <h1>{{ 'factories.title.new'|trans }}</h1>
             {% form_theme factoryForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(factoryForm) }}
@@ -36,7 +36,7 @@
             </table>
             {{ form_end(factoryForm) }}
         </div>
-        <div class="new_setting">
+        <div class="new-setting">
             <h1>{{ 'settings.title.new'|trans }}</h1>
             {% form_theme settingForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(settingForm) }}
