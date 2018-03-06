@@ -20,9 +20,10 @@ Encore
     .addStyleEntry('css/common', './assets/css/common.scss')
     .addStyleEntry('css/header', './assets/css/header.scss')
     .addStyleEntry('css/entries', './assets/css/entries.scss')
-    .addStyleEntry('caa/entryAdd', './assets/css/entryAdd.scss')
+    .addStyleEntry('css/entry-add', './assets/css/entry-add.scss')
     .addStyleEntry('css/fac-set', './assets/css/fac-set.scss')
     .addStyleEntry('css/logs', './assets/css/logs.scss')
+    .addStyleEntry('css/security', './assets/css/security.scss')
 
     // uncomment if you use Sass/SCSS files
      .enableSassLoader()

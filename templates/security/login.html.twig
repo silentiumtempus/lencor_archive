@@ -1,41 +1,52 @@
-{% extends 'base.html.twig' %}
-
-{% block body_id 'login' %}
-
-{% block main %}
-    {% if error %}
-        <div class="alert alert-danger">
-            {{ error.messageKey|trans(error.messageData, 'security') }}
-        </div>
-    {% endif %}
-
-    <div class="row">
-        <div class="col-sm-5">
-            <div class="well">
-                <form action="{{ path('fos_user_security_check') }}" method="post">
-                    <fieldset>
-                        <legend><i class="fa fa-lock" aria-hidden="true"></i> {{ 'login.title'|trans }}</legend>
-                        <div class="form-group">
-                            <label for="username">{{ 'login.username'|trans }}</label>
-                            <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">{{ 'login.password'|trans }}</label>
-                            <input type="password" id="password" name="_password" class="form-control" />
-                        </div>
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-sign-in" aria-hidden="true"></i> {{ 'login.sign_in'|trans }}
-                        </button>
-                    </fieldset>
-                </form>
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{% block title %}{{ 'title'|trans }}{% endblock %}</title>
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('build/css/common.css') }}">
+        <link rel="stylesheet" href="{{ asset('build/css/security.css') }}">
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
+</head>
+<body>
+<main>
+    {% block main %}
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+        <div class="content">
+            <div class="row">
+                <div class="login-form">
+                    <form action="{{ path('fos_user_security_check') }}" method="post">
+                        <fieldset>
+                            <legend><i class="fa fa-lock" aria-hidden="true"></i> {{ 'login.title'|trans }}</legend>
+                            <div class="form-group">
+                                <label for="username">{{ 'login.username'|trans }}</label>
+                                <input type="text" id="username" name="_username" value="{{ last_username }}"
+                                       class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">{{ 'login.password'|trans }}</label>
+                                <input type="password" id="password" name="_password" class="form-control"/>
+                            </div>
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-sign-in" aria-hidden="true"></i> {{ 'login.sign_in'|trans }}
+                            </button>
+                        </fieldset>
+                    </form>
+                </div>
             </div>
         </div>
+    {% endblock %}
 
-{% endblock %}
 
+    {% block javascripts %}
 
-{% block javascripts %}
-    {{ parent() }}
-
-{% endblock %}
+    {% endblock %}
+</main>
+</body>
