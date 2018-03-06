@@ -1,0 +1,36 @@
+body {
+  .fac-set {
+    .content-list {
+      ul {
+        border: 1px solid silver;
+        li {
+          margin-bottom: 0 !important;
+          padding: 6px;
+          display: flex;
+          &:nth-child(odd) {
+            background-color: #ecf0f1;
+          }
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+        a {
+          text-decoration: none;
+          color: #2c3e50;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+        span {
+          &:first-child {
+            width: 100%;
+          }
+          &:last-child {
+            min-width: 50px;
+            padding-left: 20px;
+          }
+        }
+      }
+    }
+  }
+}

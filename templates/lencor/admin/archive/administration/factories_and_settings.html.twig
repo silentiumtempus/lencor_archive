@@ -2,21 +2,21 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('build/css/fact-set.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/css/fac-set.css') }}">
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
-    <script type="text/javascript" src="{{ asset('build/js/fact-set.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/fac-set.js') }}"></script>
 {% endblock %}
 
 {% block main %}
-    <div>
+    <div class="page-title">
         <h3>{{ 'factset.title'|trans }}</h3>
     </div>
-    <div class="factories-settings">
+    <div class="fac-set">
         <div class="content-list factories left">
             <ul class="fa-ul" id="factories" data-path="{{ path('admin-settings') }}">
                 {% block factories %}

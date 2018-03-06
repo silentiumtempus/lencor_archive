@@ -1,54 +1,53 @@
-body .logs ul li {
-    font-size: 16px;
-}
+body {
+  .logs {
+    .header {
+      background: #2c3e50;
+      color: #ffffff;
+      padding: 5px 2% 5px 2%;
+      border: 1px solid silver;
+      li {
+        display: flex;
+        width: 100%;
+        span {
+          font-size: 15px;
+          font-weight: bold;
+          width: 100%
+        }
+      }
+    }
+    ul li {
+      font-size: 16px;
+      a {
+        color: #2c3e50;
+        /* !important */
+      }
+    }
 
-body .logs ul li a {
-    color: #2c3e50 !important;
-}
+    .logs-path {
+      margin-left: 0 !important;
+      margin-bottom: 0
+    }
 
-body .logs .logs-path {
-    margin-left: 0 !important;
-    margin-bottom: 0
-}
+    .logs-list {
+      margin-left: 15px !important;
+      margin-right: 15px;
+      li {
+        border-bottom: 1px dashed silver;
+        span {
+          width: 100%
+        }
+      }
+    }
 
-body .logs .logs-list {
-    margin-left: 15px !important;
-    margin-right: 15px;
-}
+    .row {
+      display: flex;
+      margin-right: 0;
+      margin-left: 0;
+    }
 
-body .logs .logs-list li {
-    border-bottom: 1px dashed silver;
-}
-
-body .logs .logs-list li span {
-    width: 100%;
-}
-
-body .logs .row {
-    display: flex;
-    margin-right: 0;
-    margin-left: 0;
-}
-
-body .logs .path-row {
-    margin-right: 0;
-    margin-left: 0;
-}
-
-body .logs .header {
-    background: #2c3e50;
-    color: #ffffff;
-    padding: 10px 2% 10px 2%;
-    border: 1px solid silver;
-}
-
-body .logs .header li {
-    display: flex;
-    width:100%;
-}
-
-body .logs .header li span {
-    font-size: 15px;
-    font-weight: bold;
-    width:100%
+    .path-row {
+      margin-right: 0;
+      margin-left: 0;
+    }
+  }
 }
