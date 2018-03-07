@@ -6,7 +6,7 @@ ElasticSearch is required to be installed and configured to run this application
 
 How to install application
 
-You need apache2, php=>7.1.12, mysql-server=>5.5, elasticsearch=5.5, composer=>1.2 installed and configured properly.
+You need Apache2, PHP=>7.1.x, MySQL-server=>5.5, ElasticSearch=5.x, Composer=>1.2, Yarn=>1.5.x, NodeJS=8.9.x installed and configured properly.
 MySQL Database with specific user to access is advisable to have.
 You may also require phpmyadmin to maintain the application if necessary.
 
@@ -17,7 +17,7 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 3. Check project folder permissions, it's implied that apache and composer are able to write in this directory, so perform needful **chmod** and **chown** operations if required.
 
-4. Update the **parameters.yml.dist** file replacing values with your enviroment configuration parameters.
+4. Update the **.env.dist** file replacing values with your enviroment configuration parameters.
 
 5. run "**composer install**" (in case of failure during cache:clear operation you may ignore it).
 
@@ -29,7 +29,7 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 9. run "**composer update**".
 
-10. run "**php bin/console assets:install --symlink web**".
+10. run "**./node_modules/.bin/encore dev**". 
 
 11. run "**php bin/console fos:user:create**" to create an internal application user.
 
