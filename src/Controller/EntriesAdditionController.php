@@ -67,7 +67,7 @@ class EntriesAdditionController extends Controller
                     $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
                 }
             } else {
-                $this->addFlash('danger', 'Завод с указанныс именем уже добавлен');
+                $this->addFlash('danger', 'Завод с указанным именем уже добавлен');
             }
         }
 

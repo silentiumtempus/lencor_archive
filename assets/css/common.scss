@@ -71,13 +71,13 @@ p, ul, ol {
 }
 
 i {
-  margin-right: 0.25em
+  margin-right: 0.25em;
 }
 
 button, input, optgroup, select, textarea {
   color: inherit;
   font: inherit;
-  margin: 0
+  margin: 0;
 }
 
 button {
@@ -85,7 +85,7 @@ button {
 }
 
 button, select {
-  text-transform: none
+  text-transform: none;
 }
 
 input {
@@ -96,31 +96,103 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 400;
   line-height: 1.1;
-  color: inherit
+  color: inherit;
 }
 
 h1, .h1 {
-  font-size: 39px
+  font-size: 39px;
 }
 
 h2, .h2 {
-  font-size: 32px
+  font-size: 32px;
 }
 
 h3, .h3 {
-  font-size: 26px
+  font-size: 26px;
 }
 
 h4, .h4 {
-  font-size: 19px
+  font-size: 19px;
 }
 
 h5, .h5 {
-  font-size: 15px
+  font-size: 15px;
 }
 
 h6, .h6 {
-  font-size: 13px
+  font-size: 13px;
+}
+
+.messages {
+  min-height: 50px;
+  .alert {
+    padding: 15px;
+    margin-bottom: 21px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    h4 {
+      margin-top: 0;
+      color: inherit;
+    }
+  }
+  .alert > p, .alert > ul {
+    margin-bottom: 0
+  }
+
+  .alert > p + p {
+    margin-top: 5px
+  }
+
+  .alert-dismissable, .alert-dismissible {
+    padding-right: 35px;
+  }
+
+  .alert-dismissable .close, .alert-dismissible .close {
+    position: relative;
+    top: -2px;
+    right: -21px;
+    color: inherit;
+  }
+
+  .alert-success {
+    background-color: #18bc9c;
+    border-color: #18bc9c;
+    color: #ffffff;
+    hr {
+      border-top-color: #15a589
+    }
+  }
+
+  .alert-success .alert-link {
+    color: #e6e6e6
+  }
+
+  .alert-info {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: #ffffff;
+    hr {
+      border-top-color: #258cd1
+    }
+  }
+
+  .alert-warning {
+    background-color: #f39c12;
+    border-color: #f39c12;
+    color: #ffffff;
+    hr {
+      border-top-color: #e08e0b
+    }
+  }
+
+  .alert-danger {
+    background-color: #e74c3c;
+    border-color: #e74c3c;
+    color: #ffffff;
+    hr {
+      border-top-color: #e43725
+    }
+  }
 }
 
 .container {

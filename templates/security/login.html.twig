@@ -21,6 +21,7 @@
         <div class="content">
             <div class="row">
                 <div class="login-form">
+                    {#{% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %} #}
                     <form action="{{ path('fos_user_security_check') }}" method="post">
                         <fieldset>
                             <legend><i class="fa fa-lock" aria-hidden="true"></i> {{ 'login.title'|trans }}</legend>

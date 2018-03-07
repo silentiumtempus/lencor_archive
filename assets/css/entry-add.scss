@@ -2,18 +2,22 @@ body {
   main {
     .content {
       .new-entry {
-        width: 49%;
+        width: 48%;
         float: left;
         padding-left: 2%;
       }
       .new-factory {
-        width: 49%;
+        width: 45%;
         float: right;
+        padding: 0 2%;
+        border-left: 1px #2c3e50 solid;
       }
 
       .new-setting {
-        width: 49%;
+        width: 45%;
         float: right;
+        padding: 0 2%;
+        border-left: 1px #2c3e50 solid;
       }
       table {
 
