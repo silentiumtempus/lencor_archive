@@ -17,7 +17,7 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 3. Check project folder permissions, it's implied that apache and composer are able to write in this directory, so perform needful **chmod** and **chown** operations if required.
 
-4. Update the **.env.dist**  and **config/parameters.yml** files replacing values with your enviroment configuration parameters.
+4. Update the **.env.dist**  and **config/packages/parameters.yml** files replacing values with your enviroment configuration parameters.
 
 5. run "**composer install**" (in case of failure during cache:clear operation you may ignore it).
 
