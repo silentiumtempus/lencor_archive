@@ -1,9 +1,14 @@
 title: 'Архив НПО "Ленкор"'
-login:
+auth:
   title: 'Вход в архив'
-  username: 'Имя пользователя'
-  password: 'Пароль'
-  sign_in: 'Войти'
+  username:
+   label: 'Имя пользователя'
+   placeholder: 'Введите имя пользователя'
+  password:
+   label: 'Пароль'
+   placeholder: 'Введите пароль'
+  submit:
+   label: 'Войти'
 header:
   menu:
     homepage: 'Главная'

@@ -113,7 +113,6 @@ $(document).ready(function () {
                 method: "POST",
                 data: entrySerialized,
                 success: function (response) {
-                    alert(response);
                     /** Flash messages loader **/
                     $.ajax({
                         url: Routing.generate('flash_messages'),
