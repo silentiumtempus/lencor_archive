@@ -1,7 +1,8 @@
 {% extends 'base.html.twig' %}
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('build/css/entries.css') }}">
+    {#<link rel="stylesheet" href="{{ asset('build/css/entries.css') }}"> #}
+    <link rel="stylesheet" href="{{ asset('build/css/entry-edit.css') }}">
 {% endblock %}
 
 {% block javascripts %}
@@ -11,24 +12,25 @@
 {% endblock %}
 
 {% block main %}
-    <div>
+    <div class="header">
         <h3>{{ 'logs.title.search'|trans }}</h3>
     </div>
     <div id="flash-messages">
         {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
     </div>
-    <div>
+    <div class="search-div">
         {{ form_start(entrySearchByIdForm) }}
-        <ul id="log-search" class="form-row">
+        <ul id="entry-search" class="entry-search">
             <li>
-                <span>{{ form_row(entrySearchByIdForm.id) }}</span>
-                <span>{{ form_row(entrySearchByIdForm.submitButton) }}</span>
+                <span>{{ form_label(entrySearchByIdForm.id) }}</span>
+                <span>{{ form_widget(entrySearchByIdForm.id) }}</span>
+                <span>{{ form_widget(entrySearchByIdForm.submitButton) }}</span>
             </li>
         </ul>
         {{ form_errors(entrySearchByIdForm) }}
         {{ form_end(entrySearchByIdForm) }}
     </div>
-    <div class="edit_entry" id="entryForm">
+    <div class="edit" id="entryForm">
         {% if entryForm is defined %}
         {{ include('lencor/admin/archive/administration/entry_edit.html.twig', {'entryForm' : entryForm, 'entryId' : entryId}) }}
         {% endif %}

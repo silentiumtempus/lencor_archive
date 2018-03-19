@@ -1,0 +1,34 @@
+body {
+  main {
+    .content {
+      .header {
+        padding: 0 10px;
+      }
+      .search-div {
+        width: 31%
+      }
+      .entry-search {
+        background-color: #f8f8f8;
+        list-style-type: none;
+        display: flex;
+        padding: 10px;
+        li {
+          span {
+            padding: 0 10px;
+          }
+        }
+      }
+      .edit {
+        .entry-edit {
+          tbody {
+            tr {
+              td {
+                padding: 0 10px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

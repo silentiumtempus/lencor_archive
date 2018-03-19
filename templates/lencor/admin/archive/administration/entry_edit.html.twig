@@ -1,7 +1,7 @@
 {% if entryForm is defined %}
 {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
 {{ form_start(entryForm) }}
-<table {% if entryId is defined %} id="{{ entryId }}" {% endif %}>
+<table {% if entryId is defined %} id="{{ entryId }}" {% endif %} class="entry-edit">
     <tr>
         <td><p>{{ form_label(entryForm.year) }}</p></td>
         <td><p>{{ form_widget(entryForm.year) }}</p></td>

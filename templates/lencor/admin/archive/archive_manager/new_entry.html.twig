@@ -12,12 +12,12 @@
     <div id="main-div">
         {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
         <div class="new-entry" id="entryForm">
-            <h1>{{ 'entries.title.new'|trans }}</h1>
+            <h3>{{ 'entries.title.new'|trans }}</h3>
             {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ include('lencor/admin/archive/archive_manager/new_entry_form.html.twig') }}
         </div>
         <div class="new-factory">
-            <h1>{{ 'factories.title.new'|trans }}</h1>
+            <h3>{{ 'factories.title.new'|trans }}</h3>
             {% form_theme factoryForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(factoryForm) }}
             <table id="factoryForm">
@@ -37,7 +37,7 @@
             {{ form_end(factoryForm) }}
         </div>
         <div class="new-setting">
-            <h1>{{ 'settings.title.new'|trans }}</h1>
+            <h3>{{ 'settings.title.new'|trans }}</h3>
             {% form_theme settingForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ form_start(settingForm) }}
             <table id="settingForm">

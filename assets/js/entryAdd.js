@@ -14,7 +14,7 @@ $(document).ready(function () {
             $data[$factorySelect.attr('name')] = $factorySelect.val();
             if ($formType === 'new_entry') {
                 $path = Routing.generate('entries-new');
-            } else if ($formType === 'edit_entry') {
+            } else if ($formType === 'edit') {
                 $path = Routing.generate('admin-entries', {entryId: $(this).find('table').attr('id')});
             }
             $.ajax({
@@ -105,7 +105,7 @@ $(document).ready(function () {
             let entrySerialized = $('#archive_entry_form').serialize();
             if ($formType === 'new_entry') {
                 $path = Routing.generate('entries-new');
-            } else if ($formType === 'edit_entry') {
+            } else if ($formType === 'edit') {
                 $path = Routing.generate('admin-entries', {entryId: $(this).find('table').attr('id')});
             }
             $.ajax({

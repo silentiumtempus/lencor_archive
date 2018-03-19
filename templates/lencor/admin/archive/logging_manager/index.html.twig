@@ -17,12 +17,13 @@
     <div>
         <h3>{{ 'logs.title.search'|trans }}</h3>
     </div>
-    <div>
+    <div class="search-div">
         {{ form_start(logSearchForm) }}
         <ul id="log-search" class="form-row" data-path="{{ path('logging') }}">
             <li>
-                <span>{{ form_row(logSearchForm.id) }}</span>
-                <span>{{ form_row(logSearchForm.submitButton) }}</span>
+                <span>{{ form_label(logSearchForm.id) }}</span>
+                <span>{{ form_widget(logSearchForm.id) }}</span>
+                <span>{{ form_widget(logSearchForm.submitButton) }}</span>
             </li>
         </ul>
         {{ form_errors(logSearchForm) }}

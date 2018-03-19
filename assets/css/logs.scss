@@ -1,4 +1,16 @@
 body {
+  main {
+    .content {
+      padding: 0 10px;
+      .search-div {
+        width: 30%;
+        background-color: #f8f8f8;
+        ul {
+          padding: 10px;
+        }
+      }
+    }
+  }
   .logs {
     .header {
       background: #2c3e50;
@@ -48,6 +60,9 @@ body {
     .path-row {
       margin-right: 0;
       margin-left: 0;
+      a {
+        margin: 0 5px;
+      }
     }
   }
 }
