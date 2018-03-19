@@ -274,6 +274,21 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
+     * @param FileService $fileService
+     * @return Response
+     * @Route("entries/request_file", name="entries_request_file")
+     */
+
+    public function requestFile(Request $request, FileService $fileService)
+    {
+        $userId = $this->getUser()->getId();
+        $requestedFile = $fileService->requestFile($request->get('fileId'), $userId);
+
+        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $requestedFile));
+    }
+
+    /**
+     * @param Request $request
      * @param FolderService $folderService
      * @param FileService $fileService
      * @return Response

@@ -90,8 +90,9 @@ class FileService
     public function createFileEntityFromArray(FileEntity $fileArrayEntity, $file)
     {
         $newFileEntity = clone $fileArrayEntity;
-        $newFileEntity->setFileName($file);
-        $newFileEntity->setFiles(null);
+        $newFileEntity
+            ->setFileName($file)
+            ->setFiles(null);
 
         return $newFileEntity;
     }
@@ -134,8 +135,9 @@ class FileService
         $deletedFile = $this->filesRepository->findById($fileId);
 
         foreach ($deletedFile as $file) {
-            $file->setDeleteMark(true);
-            $file->setDeletedByUserId($userId);
+            $file
+                ->setDeleteMark(true)
+                ->setDeletedByUserId($userId);
         }
         $this->em->flush();
 
@@ -150,12 +152,36 @@ class FileService
     {
         $restoredFile = $this->filesRepository->findById($fileId);
         foreach ($restoredFile as $file) {
-            $file->setDeleteMark(false);
-            $file->setDeletedByUserId(null);
+            $file
+                ->setDeleteMark(false)
+                ->setDeletedByUserId(null);
         }
         $this->em->flush();
 
         return $restoredFile;
+    }
+
+    /**
+     * @param int $fileId
+     * @param int $userId
+     * @return mixed
+     */
+    public function requestFile(int $fileId, int $userId)
+    {
+        $requestedFile = $this->filesRepository->findById($fileId);
+        foreach ($requestedFile as $file) {
+            $users[] = $file->getRequestedByUsers();
+            $userCheck = array_search($userId, $users);
+            if (!$userCheck) {
+                $users[] = $userId;
+                $file
+                    ->setRequestMark(true)
+                    ->setRequestedByUsers($users);
+            }
+        }
+        $this->em->flush();
+
+        return $requestedFile;
     }
 
     /**
@@ -169,8 +195,9 @@ class FileService
         if ($childFiles) {
             foreach ($childFiles as $childFile) {
                 if (!$childFile->getDeleteMark()) {
-                    $childFile->setDeleteMark(true);
-                    $childFile->setDeletedByUserId($userId);
+                    $childFile
+                        ->setDeleteMark(true)
+                        ->setDeletedByUserId($userId);
                 }
             }
         }

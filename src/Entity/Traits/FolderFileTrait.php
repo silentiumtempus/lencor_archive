@@ -84,10 +84,10 @@ trait FolderFileTrait
 
     /**
      * Set addedByUserId
-     * @param string $addedByUserId
+     * @param int $addedByUserId
      * @return $this
      */
-    public function setAddedByUserId($addedByUserId)
+    public function setAddedByUserId(int $addedByUserId)
     {
         $this->addedByUserId = $addedByUserId;
 
@@ -101,6 +101,50 @@ trait FolderFileTrait
     public function getAddedByUserId()
     {
         return $this->addedByUserId;
+    }
+
+    /**
+     * Set requestMark
+     * @param bool $requestMark
+     * @return $this
+     */
+    public function setRequestMark(bool $requestMark)
+    {
+        $this->requestMark = $requestMark;
+
+        return $this;
+    }
+
+    /**
+     * Get requestMark
+     * @return bool
+     */
+    public function getRequestMark()
+    {
+
+        return $this->requestMark;
+    }
+
+    /**
+     * Set requestedByUsers
+     * @param array $users
+     * @return $this
+     */
+    public function setRequestedByUsers(array $users)
+    {
+        $this->requestedByUsers = $users;
+
+        return $this;
+    }
+
+    /**
+     * Get requestedByUsers
+     * @return array
+     */
+    public function getRequestedByUsers()
+    {
+
+        return $this->requestedByUsers;
     }
 }
 
