@@ -157,15 +157,19 @@ body {
       .border-top {
         border-top: 1px dashed silver;
       }
-      .loading-spinner {
-        font-weight: bold;
-        td {
-          background-color: #ffffff;
-          text-align: center;
-          display: block;
+    }
+    #main-table {
+      tfoot {
+        .loading-spinner {
+          font-weight: bold;
+          td {
+            background-color: #ffffff;
+            text-align: center;
+          }
         }
       }
     }
+
   }
   .right {
     .button {
@@ -187,7 +191,7 @@ body {
     border: 2px groove;
     display: none;
     table tr td {
-      padding-top:20px;
+      padding-top: 20px;
     }
   }
 
@@ -211,7 +215,7 @@ body {
     display: none;
     z-index: 2000;
     table tr td {
-      padding-top:20px;
+      padding-top: 20px;
     }
   }
 
