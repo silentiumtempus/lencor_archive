@@ -2,6 +2,11 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\CommonTrait;
+use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\FolderFileTrait;
+use App\Entity\Traits\SlugTrait;
+use App\Entity\Traits\SumErrorsTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -26,13 +31,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class FolderEntity
 {
-    /**
-     * @ORM\Column(type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-
-    protected $id;
+    use CommonTrait;
+    use FolderFileTrait;
+    use SlugTrait;
+    use DeleteStateTrait;
+    use SumErrorsTrait;
 
     /**
      * @ORM\OneToOne(targetEntity="ArchiveEntryEntity", inversedBy="cataloguePath")
@@ -99,46 +102,6 @@ class FolderEntity
     private $childFolders;
 
     /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     * @Gedmo\Timestampable(on="create")
-     * @Gedmo\Versioned()
-     */
-
-    protected $addTimestamp;
-
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\Type("string")
-     * @Gedmo\Versioned()
-     */
-
-    protected $addedByUserId;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\Type("integer")
-     */
-
-    protected $sumErrors;
-
-    /**
-     * @ORM\Column(type="boolean")
-     * @Assert\Type("boolean")
-     * @Gedmo\Versioned()
-     */
-
-    protected $deleteMark;
-
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     * @Assert\Type("smallint")
-     * @Gedmo\Versioned()
-     */
-
-    protected $deletedByUserId;
-
-    /**
      * @Gedmo\Translatable
      * @Gedmo\Slug(fields={"folderName"})
      * @ORM\Column(name="slug", type="string", length=128)
@@ -149,6 +112,7 @@ class FolderEntity
     /**
      * Constructor
      */
+
     public function __construct()
     {
         $this->childFolders = new ArrayCollection();
@@ -157,15 +121,6 @@ class FolderEntity
     public function __toString()
     {
         return $this->folderName;
-    }
-
-    /**
-     * Get id
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
@@ -187,48 +142,6 @@ class FolderEntity
     public function getFolderName()
     {
         return $this->folderName;
-    }
-
-    /**
-     * Set addTimestamp
-     * @param \DateTime $addTimestamp
-     * @return FolderEntity
-     */
-    public function setAddTimestamp($addTimestamp)
-    {
-        $this->addTimestamp = $addTimestamp;
-
-        return $this;
-    }
-
-    /**
-     * Get addTimestamp
-     * @return \DateTime
-     */
-    public function getAddTimestamp()
-    {
-        return $this->addTimestamp;
-    }
-
-    /**
-     * Set addedByUserId
-     * @param string $addedByUserId
-     * @return FolderEntity
-     */
-    public function setAddedByUserId($addedByUserId)
-    {
-        $this->addedByUserId = $addedByUserId;
-
-        return $this;
-    }
-
-    /**
-     * Get addedByUserId
-     * @return string
-     */
-    public function getAddedByUserId()
-    {
-        return $this->addedByUserId;
     }
 
     /**
@@ -280,27 +193,6 @@ class FolderEntity
     public function getChildFolders()
     {
         return $this->childFolders;
-    }
-
-    /**
-     * Set parentFolder
-     * @param FolderEntity $parentFolder
-     * @return FolderEntity
-     */
-    public function setParentFolder(FolderEntity $parentFolder = null)
-    {
-        $this->parentFolder = $parentFolder;
-
-        return $this;
-    }
-
-    /**
-     * Get parentFolder
-     * @return FolderEntity
-     */
-    public function getParentFolder()
-    {
-        return $this->parentFolder;
     }
 
     /**
@@ -387,87 +279,4 @@ class FolderEntity
         return $this->root;
     }
 
-    /**
-     * Set slug
-     * @param string $slug
-     * @return FolderEntity
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
-     * Get slug
-     * @return string
-     */
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
-    /**
-     * Set deleteMark
-     * @param boolean $deleteMark
-     * @return FolderEntity
-     */
-    public function setDeleteMark($deleteMark)
-    {
-        $this->deleteMark = $deleteMark;
-
-        return $this;
-    }
-
-    /**
-     * Get deleteMark
-     * @return boolean
-     */
-    public function getDeleteMark()
-    {
-        return $this->deleteMark;
-    }
-
-    /**
-     * Set deletedByUserId
-     * @param string $deletedByUserId
-     * @return FolderEntity
-     */
-    public function setDeletedByUserId($deletedByUserId)
-    {
-        $this->deletedByUserId = $deletedByUserId;
-
-        return $this;
-    }
-
-    /**
-     * Get deletedByUserId
-     * @return string
-     */
-    public function getDeletedByUserId()
-    {
-        return $this->deletedByUserId;
-    }
-
-    /**
-     * Set sumErrors
-     * @param integer $sumErrors
-     * @return FolderEntity
-     */
-    public function setSumErrors($sumErrors)
-    {
-        $this->sumErrors = $sumErrors;
-
-        return $this;
-    }
-
-    /**
-     * Get sumErrors
-     * @return integer
-     */
-    public function getSumErrors()
-    {
-        return $this->sumErrors;
-    }
 }

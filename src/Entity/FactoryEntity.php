@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\CommonTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -20,13 +21,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class FactoryEntity
 {
-    /**
-     * @ORM\Column(type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
 
-    protected $id;
+    use CommonTrait;
 
     /**
      * @ORM\Column(type="string")
@@ -36,15 +32,6 @@ class FactoryEntity
      */
 
     protected $factoryName;
-
-    /**
-     * Get id
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set factoryName

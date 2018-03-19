@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\CommonTrait;
+use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\FolderFileTrait;
+use App\Entity\Traits\SlugTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,25 +17,22 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity(
- *     fields={"fileName", "parentFolder"},
- *     groups={"file_upload"}),
- * @ORM\Table(name="archive_files", uniqueConstraints={
+ *     fields = {"fileName", "parentFolder"},
+ *     groups = {"file_upload"}),
+ * @ORM\Table(name="archive_files", uniqueConstraints = {
  *     @ORM\UniqueConstraint(
- *      name="unique_file",
- *      columns={"file_name", "parent_folder_id"}
+ *      name = "unique_file",
+ *      columns = {"file_name", "parent_folder_id"}
  *     )
  * }),
- * @Gedmo\Loggable(logEntryClass="App\Entity\LogEntity\FileLog")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\FileLog")
  */
 class FileEntity
 {
-    /**
-     * @ORM\Column(type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-
-    protected $id;
+    use CommonTrait;
+    use FolderFileTrait;
+    use SlugTrait;
+    use DeleteStateTrait;
 
     /**
      * @ORM\Column(type="string")
@@ -50,8 +51,8 @@ class FileEntity
     protected $files;
 
     /**
-     * @ORM\ManyToOne(targetEntity="FolderEntity")
-     * @ORM\JoinColumn(name="parent_folder_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity = "FolderEntity")
+     * @ORM\JoinColumn(name = "parent_folder_id", referencedColumnName = "id")
      * @Assert\NotBlank
      * @Gedmo\Versioned()
      */
@@ -59,24 +60,7 @@ class FileEntity
     protected $parentFolder;
 
     /**
-     * @ORM\Column(type="datetime")
-     * @Assert\DateTime()
-     * @Gedmo\Timestampable(on="create")
-     * @Gedmo\Versioned()
-     */
-
-    protected $addTimestamp;
-
-    /**
-     * @ORM\Column(type="string")
-     * @Assert\Type("string")
-     * @Gedmo\Versioned()
-     */
-
-    protected $addedByUserId;
-
-    /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type = "string")
      * @Assert\NotBlank()
      * @Assert\Type("string")
      * @Gedmo\Versioned()
@@ -85,32 +69,16 @@ class FileEntity
     protected $checksum;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type = "boolean", nullable = true)
      * @Assert\Type("boolean")
      */
 
     protected $sumError;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @Assert\Type("boolean")
-     * @Gedmo\Versioned()
-     */
-
-    protected $deleteMark;
-
-    /**
-     * @ORM\Column(type="smallint", nullable=true)
-     * @Assert\Type("smallint")
-     * @Gedmo\Versioned()
-     */
-
-    protected $deletedByUserId;
-
-    /**
      * @Gedmo\Translatable
-     * @Gedmo\Slug(fields={"fileName"})
-     * @ORM\Column(name="slug", type="string", length=128)
+     * @Gedmo\Slug(fields = {"fileName"})
+     * @ORM\Column(name = "slug", type = "string", length = 128)
      */
 
     private $slug;
@@ -118,15 +86,6 @@ class FileEntity
     public function __toString()
     {
         return $this->fileName;
-    }
-
-    /**
-     * Get id
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
@@ -172,90 +131,6 @@ class FileEntity
     }
 
     /**
-     * Set addTimestamp
-     * @param \DateTime $addTimestamp
-     * @return FileEntity
-     */
-    public function setAddTimestamp($addTimestamp)
-    {
-        $this->addTimestamp = $addTimestamp;
-
-        return $this;
-    }
-
-    /**
-     * Get addTimestamp
-     * @return \DateTime
-     */
-    public function getAddTimestamp()
-    {
-        return $this->addTimestamp;
-    }
-
-    /**
-     * Set addedByUserId
-     * @param string $addedByUserId
-     * @return FileEntity
-     */
-    public function setAddedByUserId($addedByUserId)
-    {
-        $this->addedByUserId = $addedByUserId;
-
-        return $this;
-    }
-
-    /**
-     * Get addedByUserId
-     * @return string
-     */
-    public function getAddedByUserId()
-    {
-        return $this->addedByUserId;
-    }
-
-    /**
-     * Set parentFolder
-     * @param FolderEntity $parentFolder
-     * @return FileEntity
-     */
-    public function setParentFolder(FolderEntity $parentFolder = null)
-    {
-        $this->parentFolder = $parentFolder;
-
-        return $this;
-    }
-
-    /**
-     * Get parentFolder
-     * @return FolderEntity
-     */
-    public function getParentFolder()
-    {
-        return $this->parentFolder;
-    }
-
-    /**
-     * Set slug
-     * @param string $slug
-     * @return FileEntity
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
-     * Get slug
-     * @return string
-     */
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
-    /**
      * Set checksum
      * @param string $checksum
      * @return FileEntity
@@ -274,48 +149,6 @@ class FileEntity
     public function getChecksum()
     {
         return $this->checksum;
-    }
-
-    /**
-     * Set deleteMark
-     * @param boolean $deleteMark
-     * @return FileEntity
-     */
-    public function setDeleteMark($deleteMark)
-    {
-        $this->deleteMark = $deleteMark;
-
-        return $this;
-    }
-
-    /**
-     * Get deleteMark
-     * @return boolean
-     */
-    public function getDeleteMark()
-    {
-        return $this->deleteMark;
-    }
-
-    /**
-     * Set deletedByUserId
-     * @param string $deletedByUserId
-     * @return FileEntity
-     */
-    public function setDeletedByUserId($deletedByUserId)
-    {
-        $this->deletedByUserId = $deletedByUserId;
-
-        return $this;
-    }
-
-    /**
-     * Get deletedByUserId
-     * @return string
-     */
-    public function getDeletedByUserId()
-    {
-        return $this->deletedByUserId;
     }
 
     /**

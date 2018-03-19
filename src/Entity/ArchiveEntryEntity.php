@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\CommonTrait;
+use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\SlugTrait;
+use App\Entity\Traits\SumErrorsTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -26,13 +30,10 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class ArchiveEntryEntity
 {
-    /**
-     * @ORM\Column(type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-
-    protected $id;
+    use CommonTrait;
+    use DeleteStateTrait;
+    use SlugTrait;
+    use SumErrorsTrait;
 
     /**
      * @ORM\Column(type="integer", length=4)
@@ -128,29 +129,6 @@ class ArchiveEntryEntity
     protected $modifiedByUserId;
 
     /**
-     * @ORM\Column(type="smallint", nullable=true)
-     * @Assert\Type("smallint")
-     */
-
-    protected $sumErrors;
-
-    /**
-     * @ORM\Column(type="boolean")
-     * @Assert\Type("boolean")
-     * @Gedmo\Versioned()
-     */
-
-    protected $deleteMark;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\Type("integer")
-     * @Gedmo\Versioned()
-     */
-
-    protected $deletedByUserId;
-
-    /**
      * @Gedmo\Translatable
      * @Gedmo\Slug(fields={"year", "archiveNumber"})
      * @ORM\Column(name="slug", type="string", length=128)
@@ -161,17 +139,6 @@ class ArchiveEntryEntity
     /*
    protected $fileName;
    protected $logFileName; */
-
-
-    /**
-     * Get id
-     * @return integer
-     */
-
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set year
@@ -405,28 +372,6 @@ class ArchiveEntryEntity
     }
 
     /**
-     * Set deleteMark
-     * @param boolean $deleteMark
-     * @return ArchiveEntryEntity
-     */
-
-    public function setDeleteMark($deleteMark)
-    {
-        $this->deleteMark = $deleteMark;
-
-        return $this;
-    }
-
-    /**
-     * Get deleteMark
-     * @return boolean
-     */
-
-    public function getDeleteMark()
-    {
-        return $this->deleteMark;
-    }
-    /**
      * Constructor
      */
     public function __construct()
@@ -455,66 +400,4 @@ class ArchiveEntryEntity
         $this->cataloguePath->removeElement($cataloguePath);
     }
 
-    /**
-     * Set deletedByUserId
-     * @param integer $deletedByUserId
-     * @return ArchiveEntryEntity
-     */
-    public function setDeletedByUserId($deletedByUserId)
-    {
-        $this->deletedByUserId = $deletedByUserId;
-
-        return $this;
-    }
-
-    /**
-     * Get deletedByUserId
-     * @return integer
-     */
-    public function getDeletedByUserId()
-    {
-        return $this->deletedByUserId;
-    }
-
-    /**
-     * Set slug
-     * @param string $slug
-     * @return ArchiveEntryEntity
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
-     * Get slug
-     * @return string
-     */
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
-    /**
-     * Set sumErrors
-     * @param integer $sumErrors
-     * @return ArchiveEntryEntity
-     */
-    public function setSumErrors($sumErrors)
-    {
-        $this->sumErrors = $sumErrors;
-
-        return $this;
-    }
-
-    /**
-     * Get sumErrors
-     * @return integer
-     */
-    public function getSumErrors()
-    {
-        return $this->sumErrors;
-    }
 }

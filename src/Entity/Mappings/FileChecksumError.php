@@ -2,6 +2,7 @@
 
 namespace App\Entity\Mappings;
 
+use App\Entity\Traits\CommonTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -26,12 +27,8 @@ use App\Entity\FileEntity;
  */
 class FileChecksumError
 {
-    /**
-     * @ORM\Column(type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+
+    use CommonTrait;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\FileEntity")
@@ -84,17 +81,6 @@ class FileChecksumError
 
 
     protected $status;
-
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Set firstOccuredOn
