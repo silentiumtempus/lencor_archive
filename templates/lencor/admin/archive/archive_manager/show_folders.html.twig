@@ -18,7 +18,7 @@
                         <i class="fa fa-folder"> </i>{{ folder.folderName }}
                     {% else %}
                         <a href="#" name="openFolder" id="{{ folder.id }}">
-                            <i class="fa fa-chevron-down"> </i><i class="fa fa-folder"> </i>{{ folder.folderName }}
+                            <i id="down" class="fa fa-chevron-down"> </i><i id="up" class="fa fa-chevron-up" hidden> </i><i class="fa fa-folder"> </i>{{ folder.folderName }}
                         </a>
                     {% endif %}
                     </span>

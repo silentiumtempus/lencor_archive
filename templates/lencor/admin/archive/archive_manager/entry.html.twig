@@ -1,5 +1,5 @@
 <tr id="entry_{{ entry.id }}" class="description{% if entry.deleteMark != 0 %} deleted {% endif %}">
-    <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i class="fa fa-angle-down"> </i><i class="fa fa-folder-o"> </i></a></td>
+    <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i id="down" class="fa fa-angle-down"> </i><i id="up" class="fa fa-angle-up"> </i><i class="fa fa-folder-o"> </i></a></td>
     <td>
         {% if entry.deleteMark != 0 %}
             <i class="fa fa-remove"> </i>

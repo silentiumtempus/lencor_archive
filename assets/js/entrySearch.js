@@ -85,6 +85,7 @@ $(document).ready(function () {
 
         function openEntryContents() {
             let entryId = $(this).parent().attr("id");
+            let entryRow = $('#entry_' + entryId);
             let contentPlace = $('#entryContent_' + entryId);
             if ($(contentPlace).is(":hidden")) {
                 $.ajax({
@@ -97,11 +98,15 @@ $(document).ready(function () {
                         let folderId = contentPlace.find('#rootEntry').children('td').attr('id');
                         openFolder(folderId);
                         contentPlace.show().css('display', 'table-cell');
+                        entryRow.find('#up').css('display', 'inline-flex');
+                        entryRow.find('#down').hide();
                     }
                 });
             }
             else {
                 $(contentPlace).hide();
+                entryRow.find('#down').css('display', 'inline-flex');
+                entryRow.find('#up').hide();
             }
 
             return false;
@@ -109,8 +114,7 @@ $(document).ready(function () {
 
         /** Archive entries content navigation **/
 
-        $(document).on("click", "a[name='openFolder']", function ()
-        {
+        $(document).on("click", "a[name='openFolder']", function () {
             let folderId = $(this).attr("id");
             openFolder(folderId);
 
@@ -118,6 +122,7 @@ $(document).ready(function () {
         });
 
         function openFolder(folderId) {
+            let folderRow = $('#folder_' + folderId);
             let folderContent = $('#folderContent_' + folderId);
             let fileContent = $('#fileContent_' + folderId);
             if ($(folderContent).is(":hidden")) {
@@ -140,10 +145,14 @@ $(document).ready(function () {
                 });
                 folderContent.show();
                 fileContent.show();
+                folderRow.find('#up').css('display', 'inline-flex');
+                folderRow.find('#down').hide();
             }
             else {
                 folderContent.hide();
                 fileContent.hide();
+                folderRow.find('#down').css('display', 'inline-flex');
+                folderRow.find('#up').hide();
             }
 
             return false;

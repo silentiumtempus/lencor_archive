@@ -14,6 +14,9 @@ body {
       .fa-chevron-down {
         color: #2ca02c;
       }
+      .fa-chevron-up {
+        color: gold;
+      }
       .fa-remove {
         color: #9a0000;
       }
@@ -46,6 +49,10 @@ body {
       }
       .fa-ellipsis-h {
         color: #8aa4be;
+      }
+
+      #up {
+        display: none;
       }
 
       .container {
