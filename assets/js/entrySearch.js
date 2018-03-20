@@ -382,6 +382,24 @@ $(document).ready(function () {
             return false;
         }
 
+        /** Archive entries file request action **/
+
+        $(document).on("click", 'a[name="requestFile"]', requestFile);
+
+        function requestFile() {
+            let fileId = $(this).parent().attr("id");
+            $.ajax({
+                url: "request_file",
+                method: "POST",
+                data: {fileId: fileId},
+                success: function (fileRequest) {
+                    $('#file_' + fileId).replaceWith(fileRequest);
+                }
+            });
+
+            return false;
+        }
+
         /** Archive entries folder removal action **/
 
         $(document).on("click", 'a[name="removeFolder"]', removeFolder);

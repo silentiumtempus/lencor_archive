@@ -125,6 +125,7 @@ class FileService
     }
 
     //@TODO: Unite two methods below
+
     /**
      * @param int $fileId
      * @param int $userId
@@ -170,14 +171,17 @@ class FileService
     {
         $requestedFile = $this->filesRepository->findById($fileId);
         foreach ($requestedFile as $file) {
-            $users[] = $file->getRequestedByUsers();
-            $userCheck = array_search($userId, $users);
-            if (!$userCheck) {
+            if ($file->getRequestedByUsers() != null) {
+                $users = $file->getRequestedByUsers();
+                if ((array_search($userId, $users, true)) === false) {
+                    $users[] = $userId;
+                }
+            } else {
                 $users[] = $userId;
-                $file
-                    ->setRequestMark(true)
-                    ->setRequestedByUsers($users);
             }
+            $file
+                ->setRequestMark(true)
+                ->setRequestedByUsers($users);
         }
         $this->em->flush();
 
