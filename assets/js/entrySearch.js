@@ -476,6 +476,34 @@ $(document).ready(function () {
             return false;
         }
 
+        /** Showing requesters for deleted items **/
+
+        $(document).on("click", 'a[name="isRequested"]', function () {
+            let type = $(this).parent("span").attr("id");
+            let id = $(this).attr("id");
+            showRequesters(type, id);
+        });
+
+        function showRequesters(type, id)
+        {
+            let func;
+            switch (type) {
+                case 'file' : func = 'file';
+                break;
+                case 'folder' : func = 'folder';
+                break;
+                case 'entry' : func = 'entry';
+                break;
+            }
+            /*$.ajax({
+                url: Routing.generate("show_requesters"),
+                method: "POST",
+                data: {}
+            }); */
+
+            return false;
+        }
+
         /** Popup window close **/
 
         $(document).on("click", "a[name='closeForm']", function closeForm(event) {

@@ -17,7 +17,7 @@ class SystemManagerController extends Controller
     /**
      * @param Request $request
      * @return Response
-     * @Route("/system/", name="system")
+     * @Route("/system/", name = "system")
      */
     public function statsIndex(Request $request)
     {

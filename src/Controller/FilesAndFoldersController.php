@@ -31,7 +31,7 @@ class FilesAndFoldersController extends Controller
      * @param EntryService $archiveEntryService
      * @param LoggingService $loggingService
      * @return Response
-     * @Route("/entries/new_folder", name="entries_new_folder")
+     * @Route("/entries/new_folder", name = "entries_new_folder")
      */
 
     public function createNewFolder(Request $request, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
@@ -134,7 +134,7 @@ class FilesAndFoldersController extends Controller
      * @param EntryService $archiveEntryService
      * @param LoggingService $loggingService
      * @return Response
-     * @Route("/entries/new_file", name="entries_new_file")
+     * @Route("/entries/new_file", name = "entries_new_file")
      */
 
     public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
@@ -247,7 +247,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @return Response
-     * @Route("/entries/remove_file", name="entries_remove_file")
+     * @Route("/entries/remove_file", name = "entries_remove_file")
      */
 
     //@TODO: Unite two methods below
@@ -262,7 +262,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @return Response
-     * @Route("/entries/restore_file", name="entries_restore_file")
+     * @Route("/entries/restore_file", name = "entries_restore_file")
      */
 
     public function restoreFile(Request $request, FileService $fileService)
@@ -276,7 +276,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @return Response
-     * @Route("entries/request_file", name="entries_request_file")
+     * @Route("entries/request_file", name = "entries_request_file")
      */
 
     public function requestFile(Request $request, FileService $fileService)
@@ -292,7 +292,7 @@ class FilesAndFoldersController extends Controller
      * @param FolderService $folderService
      * @param FileService $fileService
      * @return Response
-     * @Route("/entries/remove_folder", name="entries_remove_folder")
+     * @Route("/entries/remove_folder", name = "entries_remove_folder")
      */
 
     public function removeFolder(Request $request, FolderService $folderService, FileService $fileService)
@@ -306,7 +306,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
-     * @Route("/entries/restore_folder", name="entries_restore_folder")
+     * @Route("/entries/restore_folder", name = "entries_restore_folder")
      */
 
     public function restoreFolder(Request $request, FolderService $folderService)
@@ -319,7 +319,7 @@ class FilesAndFoldersController extends Controller
     /**
      * @param String $entryId
      * @param EntryService $archiveEntryService
-     * @Route("/entries/change_last_update_info", name="entries_change_last_update_info")
+     * @Route("/entries/change_last_update_info", name = "entries_change_last_update_info")
      */
 
     public function changeLastUpdateInfo($entryId, EntryService $archiveEntryService)
@@ -335,7 +335,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param EntryService $archiveEntryService
      * @return Response
-     * @Route("/entries/last_update_info", name="entries_last_update_info")
+     * @Route("/entries/last_update_info", name = "entries_last_update_info")
      */
 
     public function loadLastUpdateInfo(Request $request, EntryService $archiveEntryService)
@@ -349,7 +349,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
-     * @Route("/entries/get_folder_entryId", name="entries_get_folder_entryId")
+     * @Route("/entries/get_folder_entryId", name = "entries_get_folder_entryId")
      */
 
     public function getFolderEntryId(Request $request, FolderService $folderService)
@@ -367,7 +367,7 @@ class FilesAndFoldersController extends Controller
      * @param FileService $fileService
      * @param FileChecksumService $fileChecksumService
      * @return Response
-     * @Route("/entries/download_file", name="entries_download_file")
+     * @Route("/entries/download_file", name = "entries_download_file")
      */
 
     public function downloadFile(Request $request, FileService $fileService, FileChecksumService $fileChecksumService)

@@ -13,7 +13,7 @@ class MainController extends Controller
 {
     /**
      * @return \Symfony\Component\HttpFoundation\Response
-     * @Route("/", name="index")
+     * @Route("/", name = "index")
      */
     public function Index()
     {

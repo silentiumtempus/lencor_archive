@@ -16,7 +16,7 @@ class StatisticsController extends Controller
     /**
      * @param Request $request
      * @return Response
-     * @Route("/stats/", name="stats")
+     * @Route("/stats/", name = "stats")
      */
     public function statsIndex(Request $request)
     {

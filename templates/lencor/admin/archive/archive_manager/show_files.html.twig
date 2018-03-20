@@ -12,9 +12,9 @@
             </span>
         <span>ID: {{ file.addedByUserId }}</span>
         <span> {{ file.addTimestamp|date('Y-m-d H:i:s') }} </span>
-        <span class="text-right width-66">
+        <span class="text-right width-66" id="file">
             {% if file.requestMark %}
-                <i class="fa fa-fire" id="isRequested"> </i>({{ file.requestsCount }})
+                <a href="#" name="isRequested" id="{{ file.id }}"><i class="fa fa-fire"> </i>({{ file.requestsCount }})</a>
             {% endif %}
             {% if file.deleteMark != 0 %}
                 <i class="fa fa-ban" id="isRemoved"> </i>

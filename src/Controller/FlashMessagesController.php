@@ -16,7 +16,7 @@ class FlashMessagesController extends Controller
      * @return Response
      * @Route("entries/flash_messages",
      *     options = { "expose" = true },
-     *     name="flash_messages")
+     *     name = "flash_messages")
      */
     public function showFlashMessages()
     {
@@ -28,7 +28,7 @@ class FlashMessagesController extends Controller
      * @return Response
      * @Route("entries/flash_messages_summary",
      *     options = { "expose" = true },
-     *     name="flash_messages_summary")
+     *     name = "flash_messages_summary")
      */
     public function showFlashMessagesSummary()
     {

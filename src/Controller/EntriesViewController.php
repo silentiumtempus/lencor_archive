@@ -64,7 +64,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
-     * @Route("/entries/view_folders", name="entries_view_folders")
+     * @Route("/entries/view_folders", name = "entries_view_folders")
      */
     function showEntryFolders(Request $request, FolderService $folderService)
     {
@@ -80,7 +80,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param FileService $fileService
      * @return Response
-     * @Route("/entries/view_files", name="entries_view_files")
+     * @Route("/entries/view_files", name = "entries_view_files")
      */
     function showEntryFiles(Request $request, FileService $fileService)
     {
@@ -96,7 +96,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param FileService $fileService
      * @return Response
-     * @Route("/entries/reload_file", name="entries_reload_file")
+     * @Route("/entries/reload_file", name = "entries_reload_file")
      */
     public function changeFileStatus(Request $request, FileService $fileService)
     {
@@ -112,7 +112,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
-     * @Route("/entries/view", name="entries_view")
+     * @Route("/entries/view", name = "entries_view")
      */
     function showEntryDetails(Request $request, FolderService $folderService)
     {
@@ -132,7 +132,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param EntryService $archiveEntryService
      * @return Response
-     * @Route("entries/remove_entry", name="entries_remove_entry")
+     * @Route("entries/remove_entry", name = "entries_remove_entry")
      */
     public function removeEntry(Request $request, EntryService $archiveEntryService)
     {
@@ -149,7 +149,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param EntryService $archiveEntryService
      * @return Response
-     * @Route("entries/restore_entry", name="entries_restore_entry")
+     * @Route("entries/restore_entry", name = "entries_restore_entry")
      */
     public function restoreEntry(Request $request, EntryService $archiveEntryService)
     {
@@ -160,6 +160,19 @@ file_put_contents($file, $wr); */
         }
 
         return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
+    }
+
+    /**
+     * @param Request $request
+     * @param FileService $fileService
+     * @param FolderService $folderService
+     * @return Response
+     * @Route("entries/show_requesters", name = "show_requesters")
+     */
+    public function showRequesters(Request $request, FileService $fileService, FolderService $folderService)
+    {
+
+        return $this->render('lencor/admin/archive/archive_manager/show_requesters.html.twig');
     }
 }
 
