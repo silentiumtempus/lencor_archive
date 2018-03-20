@@ -23,6 +23,8 @@ trait FolderFileTrait
 
     protected $requestedByUsers;
 
+    protected $requestsCount;
+
     /**
      * @ORM\Column(type="datetime")
      * @Assert\DateTime()
@@ -130,7 +132,7 @@ trait FolderFileTrait
      * @param array $users
      * @return $this
      */
-    public function setRequestedByUsers(array $users)
+    public function setRequestedByUsers(array $users = null)
     {
         $this->requestedByUsers = $users;
 
@@ -145,6 +147,28 @@ trait FolderFileTrait
     {
 
         return $this->requestedByUsers;
+    }
+
+    /**
+     * Set requestsCount
+     * @param int $count
+     * @return $this
+     */
+    public function setRequestsCount(int $count)
+    {
+        $this->requestsCount = $count;
+
+        return $this;
+    }
+
+    /**
+     * Get requestsCount
+     * @return int
+     */
+    public function getRequestsCount()
+    {
+
+        return $this->requestsCount;
     }
 }
 

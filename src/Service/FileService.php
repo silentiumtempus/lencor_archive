@@ -155,7 +155,9 @@ class FileService
         foreach ($restoredFile as $file) {
             $file
                 ->setDeleteMark(false)
-                ->setDeletedByUserId(null);
+                ->setDeletedByUserId(null)
+                ->setRequestMark(false)
+                ->setRequestedByUsers(null);
         }
         $this->em->flush();
 
@@ -181,7 +183,8 @@ class FileService
             }
             $file
                 ->setRequestMark(true)
-                ->setRequestedByUsers($users);
+                ->setRequestedByUsers($users)
+                ->setRequestsCount(count($file->getRequestedByUsers()));
         }
         $this->em->flush();
 
@@ -215,7 +218,14 @@ class FileService
      */
     public function showEntryFiles(int $folderId)
     {
-        return $this->filesRepository->findByParentFolder($folderId);
+        $files = $this->filesRepository->findByParentFolder($folderId);
+        foreach ($files as $file) {
+            if ($file->getRequestMark()) {
+                $file->setRequestsCount(count($file->getRequestedByUsers()));
+            }
+        }
+
+        return $files;
     }
 
     /**
