@@ -495,11 +495,13 @@ $(document).ready(function () {
                 case 'entry' : func = 'entry';
                 break;
             }
-            /*$.ajax({
+            $.ajax({
                 url: Routing.generate("show_requesters"),
                 method: "POST",
-                data: {}
-            }); */
+                data: {type : type, id : id},
+                success: function (requesters) {
+                }
+            });
 
             return false;
         }

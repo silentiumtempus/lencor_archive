@@ -110,13 +110,14 @@ class LogManagerController extends Controller
     {
         if ($request->get('file')) {
             $fileContent = null;
+            $entryId = $request->get('entryId');
             $file = $request->get('parentFolder') . "/" . $request->get('file');
             $rowsCountForm = $this->createForm(
                 LogRowsCountForm::class,
                 null,
                 array('attr' => array(
                     'file' => $file,
-                    'entryId' => $request->get('entryId'),
+                    'entryId' => $entryId,
                     'id' => 'logs_rows_count_form'
                 )));
             $rowsCountForm->handleRequest($request);
@@ -127,9 +128,8 @@ class LogManagerController extends Controller
                     $rowsCountForm->get('rowsCount')->getData()
                 );
             } else {
-                $fileContent = $loggingService->getFileContent($request->get('entryId'), $file, 100);
+                $fileContent = $loggingService->getFileContent($entryId, $file, 100);
             }
-            $entryId = $request->get('entryId');
             return $this->render('lencor/admin/archive/logging_manager/logfile.html.twig', array(
                 'rowsCountForm' => $rowsCountForm->createView(),
                 'entryId' => $entryId,

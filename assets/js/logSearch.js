@@ -58,7 +58,7 @@ $(document).ready(function () {
             $.ajax({
                 url: Routing.generate('logging-open-sub-dir', {entryId: $entryId}),
                 method: "POST",
-                data: {folder: $folder, entryId: $entryId, parentFolder: $parentFolder},
+                data: {folder: $folder, parentFolder: $parentFolder},
                 success: function (response) {
                     $('#logs').html($(response));
                 }

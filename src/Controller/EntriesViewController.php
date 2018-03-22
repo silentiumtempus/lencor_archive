@@ -6,14 +6,13 @@ use App\Entity\ArchiveEntryEntity;
 use App\Form\EntrySearchForm;
 use App\Service\EntrySearchService;
 use App\Service\EntryService;
-use App\Service\FileService;
-use App\Service\FolderService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Elastica\Query\BoolQuery;
 use Elastica\Query;
+
 
 /**
  * Class ArchiveViewController
@@ -60,73 +59,6 @@ file_put_contents($file, $wr); */
         return $this->render('/lencor/admin/archive/archive_manager/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath));
     }
 
-    /**
-     * @param Request $request
-     * @param FolderService $folderService
-     * @return Response
-     * @Route("/entries/view_folders", name = "entries_view_folders")
-     */
-    function showEntryFolders(Request $request, FolderService $folderService)
-    {
-        $folderTree = null;
-        if ($request->request->has('folderId')) {
-            $folderTree = $folderService->showEntryFolder($request->request->get('folderId'));
-        }
-
-        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $folderTree, 'placeholder' => true));
-    }
-
-    /**
-     * @param Request $request
-     * @param FileService $fileService
-     * @return Response
-     * @Route("/entries/view_files", name = "entries_view_files")
-     */
-    function showEntryFiles(Request $request, FileService $fileService)
-    {
-        $fileList = null;
-        if ($request->request->has('folderId')) {
-            $fileList = $fileService->showEntryFiles($request->request->get('folderId'));
-        }
-
-        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $fileList));
-    }
-
-    /**
-     * @param Request $request
-     * @param FileService $fileService
-     * @return Response
-     * @Route("/entries/reload_file", name = "entries_reload_file")
-     */
-    public function changeFileStatus(Request $request, FileService $fileService)
-    {
-        $fileList = array();
-        if ($request->request->has('fileId')) {
-            $fileList[0] = $fileService->reloadFileDetails($request->request->get('fileId'));
-        }
-
-        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $fileList));
-    }
-
-    /**
-     * @param Request $request
-     * @param FolderService $folderService
-     * @return Response
-     * @Route("/entries/view", name = "entries_view")
-     */
-    function showEntryDetails(Request $request, FolderService $folderService)
-    {
-        $entryId = null;
-        $folderId = null;
-        $addHeaderAndButtons = true;
-
-        if ($request->request->has('entryId')) {
-            $entryId = $request->get('entryId');
-            $folderId = $folderService->getRootFolder($entryId);
-        }
-
-        return $this->render('lencor/admin/archive/archive_manager/entries_head.html.twig', array('folderId' => $folderId, 'entryId' => $entryId, 'addHeaderAndButtons' => $addHeaderAndButtons));
-    }
 
     /**
      * @param Request $request
@@ -160,19 +92,6 @@ file_put_contents($file, $wr); */
         }
 
         return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
-    }
-
-    /**
-     * @param Request $request
-     * @param FileService $fileService
-     * @param FolderService $folderService
-     * @return Response
-     * @Route("entries/show_requesters", name = "show_requesters")
-     */
-    public function showRequesters(Request $request, FileService $fileService, FolderService $folderService)
-    {
-
-        return $this->render('lencor/admin/archive/archive_manager/show_requesters.html.twig');
     }
 }
 
