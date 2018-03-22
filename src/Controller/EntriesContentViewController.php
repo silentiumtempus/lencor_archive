@@ -76,7 +76,10 @@ class EntriesContentViewController extends Controller
             $folderId = $folderService->getRootFolder($entryId);
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entries_head.html.twig', array('folderId' => $folderId, 'entryId' => $entryId, 'addHeaderAndButtons' => $addHeaderAndButtons));
+        return $this->render('lencor/admin/archive/archive_manager/entries_head.html.twig', array(
+            'folderId' => $folderId,
+            'entryId' => $entryId,
+            'addHeaderAndButtons' => $addHeaderAndButtons));
     }
 
     /**
@@ -90,13 +93,26 @@ class EntriesContentViewController extends Controller
      */
     public function showRequesters(Request $request, FileService $fileService, FolderService $folderService)
     {
-        if ($request->get('type') && $request->get('id'))
-        {
+        $requesters = null;
+        if ($request->get('type') && $request->get('id')) {
             $type = $request->get('type');
-            $id = $request->get('id');
+            $fileId = $request->get('id');
+
+            switch ($type) {
+                case 'file' :
+                    $requesters = $fileService->getFileRequesters($fileId);
+                    break;
+                case 'folder' :
+                    $requesters[] = [];
+                    break;
+                case 'entry' :
+                    $requesters[] = [];
+                    break;
+            }
+
         }
 
 
-        return $this->render('lencor/admin/archive/archive_manager/show_requesters.html.twig');
+        return $this->render('lencor/admin/archive/archive_manager/show_requesters.html.twig', array('requesters' => $requesters));
     }
 }

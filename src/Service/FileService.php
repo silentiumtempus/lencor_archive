@@ -19,17 +19,20 @@ class FileService
     protected $folderService;
     protected $filesRepository;
     protected $foldersRepository;
+    protected $userService;
 
     /**
      * FileService constructor.
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      * @param FolderService $folderService
+     * @param UserService $userService
      */
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, FolderService $folderService)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, FolderService $folderService, UserService $userService)
     {
         $this->em = $entityManager;
         $this->container = $container;
+        $this->userService = $userService;
         $this->folderService = $folderService;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
@@ -191,6 +194,19 @@ class FileService
         return $requestedFile;
     }
 
+    /**
+     * @param int $fileId
+     * @return array
+     */
+    public function getFileRequesters(int $fileId)
+    {
+        $file = $this->filesRepository->findOneById($fileId);
+        $requesterIds = $file->getRequestedByUsers();
+        $requesters = $this->userService->getUsers($requesterIds);
+        
+        return $requesters;
+    }
+    
     /**
      * @param int $folderId
      * @param int $userId
