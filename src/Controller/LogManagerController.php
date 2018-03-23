@@ -108,7 +108,7 @@ class LogManagerController extends Controller
      */
     public function openLogFile(Request $request, LoggingService $loggingService)
     {
-        if ($request->get('file')) {
+        if ($request->get('file') || $request->get('log_rows_count_form')) {
             $fileContent = null;
             $entryId = $request->get('entryId');
             $file = $request->get('parentFolder') . "/" . $request->get('file');
@@ -125,7 +125,7 @@ class LogManagerController extends Controller
                 $fileContent = $loggingService->getFileContent(
                     $rowsCountForm->get('entryId')->getViewData(),
                     $rowsCountForm->get('file')->getViewData(),
-                    $rowsCountForm->get('rowsCount')->getData()
+                    $rowsCountForm->get('rowsCount')->getViewData()
                 );
             } else {
                 $fileContent = $loggingService->getFileContent($entryId, $file, 100);
