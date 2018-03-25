@@ -13,10 +13,15 @@ You may also require phpmyadmin to maintain the application if necessary.
 1. Configure webserver to allow rewrite rules following .htaccess file 
 
     <Directory /var/www/project/>
+    
         # enable the .htaccess rewrites
+        
         AllowOverride All
+        
         Order Allow,Deny
+        
         Allow from all
+        
     </Directory>
 
 2. Clone git repository to your apache website folder:
