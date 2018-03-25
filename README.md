@@ -27,9 +27,9 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 8. run "**php bin/console cache:clear**".
 
-9. run "**composer update**".
+9. run "**yarn install**" and then "**./node_modules/.bin/encore dev**". 
 
-10. run "**yarn install**" and then "**./node_modules/.bin/encore dev**". 
+10. run "**./node_modules/.bin/encore dev**"
 
 11. run "**php bin/console fos:user:create**" to create an internal application user.
 
