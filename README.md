@@ -21,8 +21,8 @@ You may also require phpmyadmin to maintain the application if necessary.
         Order Allow,Deny
         
         Allow from all
-        
-    </Directory>
+                
+    </Directory>    
 
 2. Clone git repository to your apache website folder:
 **git clone https://github.com/silentiumtempus/lencor_archive**
