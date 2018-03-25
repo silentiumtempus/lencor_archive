@@ -36,8 +36,8 @@ You may also require phpmyadmin to maintain the application if necessary.
 12. run "**php bin/console fos:user:promote**" and add **ROLE_ADMIN** for previously created user.
 
 13. Check the website index page at:
- - http://website.url/web/app_dev.php/entries for dev environment
- - http://website.url/web/app.php/entries for prod environment 
+ - http://website.url/public for dev environment
+ - http://website.url/public for prod environment 
 
 You need to be authorized to perform operations, for this use the Login button at the right-top of the application screen.
 
