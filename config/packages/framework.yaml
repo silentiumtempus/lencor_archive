@@ -10,7 +10,8 @@ framework:
     #trusted_proxies: ~
 
     # Translator configuration
-    default_locale: '%locale%'
+    #default_locale: '%locale%'
+    default_locale: ru
     translator:
       fallbacks:
         - ru
