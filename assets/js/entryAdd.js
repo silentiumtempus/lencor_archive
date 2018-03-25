@@ -1,7 +1,7 @@
 $(document).ready(function () {
     if (window.jQuery) {
-        let $factorySelect = $('#entry_form_factory');
-        let $entryForm = $('#archive_entry_form');
+        let $factory = $('#entry_form_factory');
+        let $entryForm = $('#entry_form');
         let $factoryAddForm = $('#factory_form');
         let $settingAddForm = $('#setting_form');
         let $entryFormDiv = $('#entryForm');
@@ -9,17 +9,18 @@ $(document).ready(function () {
         let $formType = $entryFormDiv.attr('class');
         /** Archive entries new entry page factory->settings AJAX loader **/
         function settingsLoader() {
-            $factorySelect = $($entryFormDiv).find('#entry_form_factory');
+            $factory = $($entryFormDiv).find('#entry_form_factory');
             let $data = {};
-            $data[$factorySelect.attr('name')] = $factorySelect.val();
+            $data[$factory.attr('name')] = $factory.val();
             if ($formType === 'new_entry') {
                 $path = Routing.generate('entries-new');
             } else if ($formType === 'edit') {
                 $path = Routing.generate('admin-entries', {entryId: $(this).find('table').attr('id')});
             }
+            //cityid: citySelector.val()
             $.ajax({
                 url: $path,
-                method: "POST",
+                method: 'POST',
                 data: $data,
                 success: function (response) {
                     $('#entry_form_setting').replaceWith(
@@ -102,32 +103,37 @@ $(document).ready(function () {
 
         $entryFormDiv.on("submit", $entryForm, function (event) {
             event.preventDefault();
-            let entrySerialized = $('#archive_entry_form').serialize();
+            let entrySerialized = $('#entry_form').serialize();
             if ($formType === 'new_entry') {
                 $path = Routing.generate('entries-new');
             } else if ($formType === 'edit') {
                 $path = Routing.generate('admin-entries', {entryId: $(this).find('table').attr('id')});
             }
+            alert(entrySerialized);
             $.ajax({
                 url: $path,
-                method: "POST",
+                method: 'POST',
                 data: entrySerialized,
                 success: function (response) {
+                    $('#flash-messages').replaceWith(
+                        $(response).find('#flash-messages'));
                     /** Flash messages loader **/
-                    $.ajax({
-                        url: Routing.generate('flash_messages'),
-                        method: "POST",
-                        success: function (reloadFlashMessages) {
-                            let $messages = $('#flash-messages');
-                            $messages.replaceWith(
-                                $(reloadFlashMessages));
+                    //$.ajax({
+                   //     url: Routing.generate('flash_messages'),
+                    //    method: 'POST',
+                     //   success: function (reloadFlashMessages) {
+                     //       alert(reloadFlashMessages);
+                    //        $('#flash-messages').replaceWith(reloadFlashMessages);
+                            // let $messages = $('#flash-messages');
+                           // $messages.replaceWith(
+                           //     $(reloadFlashMessages));
                            // if ($('#flash-messages').is(":hidden")) {
-                                $messages.show().css('display', 'contents');
+                           //     $messages.show().css('display', 'contents');
                            // }
-                        }
-                    });
+                  //      }
+                   // });
 
-                    return false;
+                 //   return false;
                 }
             });
 

@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 trait SumErrorsTrait
 {
     /**
-     * @ORM\Column(type="smallint", nullable=true)
+     * @ORM\Column(type="smallint", nullable = true)
      * @Assert\Type("smallint")
      */
 

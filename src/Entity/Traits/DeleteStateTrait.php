@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 trait DeleteStateTrait
 {
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable = true)
      * @Assert\Type("boolean")
      * @Gedmo\Versioned()
      */
@@ -17,7 +17,7 @@ trait DeleteStateTrait
     protected $deleteMark;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable = true)
      * @Assert\Type("integer")
      * @Gedmo\Versioned()
      */

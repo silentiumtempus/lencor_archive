@@ -51,7 +51,7 @@ class EntriesAdditionController extends Controller
         LoggingService $loggingService)
     {
         $session = $this->container->get('session');
-        $entryForm = $this->createForm(EntryForm::class, new ArchiveEntryEntity(), array('attr' => array('id' => 'archive_entry_form', 'function' => 'add')));
+        $entryForm = $this->createForm(EntryForm::class, new ArchiveEntryEntity(), array('attr' => array('id' => 'entry_form', 'function' => 'add')));
         $factoryForm = $this->createForm(FactoryForm::class, new FactoryEntity(), array('attr' => array('id' => 'factory_form', 'function' => 'add')));
         $settingForm = $this->createForm(SettingForm::class, new SettingEntity(), array('attr' => array('id' => 'setting_form', 'function' => 'add')));
         $pathRoot = $this->getParameter('lencor_archive.storage_path');
@@ -86,8 +86,10 @@ class EntriesAdditionController extends Controller
         }
 
         $entryForm->handleRequest($request);
-        if ($entryForm->isSubmitted() && $fs->exists($pathRoot)) {
+        if ($entryForm->isSubmitted() && $fs->exists($pathRoot) ) {
+            $this->addFlash('warning', 'Сабмит есть');
             if ($entryForm->isValid()) {
+                $this->addFlash('warning', 'Ваоидация пройдена');
                 try {
                     $newEntryEntity = $entryForm->getData();
                     $entryPath = $folderService->checkAndCreateFolders($newEntryEntity);

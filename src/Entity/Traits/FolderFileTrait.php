@@ -26,16 +26,16 @@ trait FolderFileTrait
     protected $requestsCount;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type = "datetime")
      * @Assert\DateTime()
-     * @Gedmo\Timestampable(on="create")
+     * @Gedmo\Timestampable(on = "create")
      * @Gedmo\Versioned()
      */
 
     protected $addTimestamp;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type = "string")
      * @Assert\Type("string")
      * @Gedmo\Versioned()
      */
