@@ -1,5 +1,5 @@
 {% extends 'lencor/admin/archive/administration/index.html.twig' %}
-
+{% trans_default_domain 'facset' %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('build/css/fac-set.css') }}">
@@ -12,7 +12,7 @@
 
 {% block main %}
     <div class="page-title">
-        <h3>{{ 'factset.title'|trans }}</h3>
+        <h3>{{ 'facset.title'|trans }}</h3>
     </div>
     <div class="fac-set">
         <div class="content-list factories left">

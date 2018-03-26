@@ -1,4 +1,5 @@
 {% form_theme factoryForm '@symfony-collection/jquery.collection.html.twig' %}
+{% trans_default_domain 'facset' %}
 {{ form_start(factoryForm) }}
 {{ form_errors(factoryForm) }}
 {{ form_widget(factoryForm.factoryName, { 'attr' : {'placeholder' : 'factories.add.name.placeholder'|trans}}) }}

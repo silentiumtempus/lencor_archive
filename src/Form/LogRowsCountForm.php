@@ -43,7 +43,8 @@ class LogRowsCountForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'attr' => array('id' => 'logs_rows_count_form')
+            'attr' => array('id' => 'logs_rows_count_form'),
+            'translation_domain' => 'logs'
         ));
     }
 }

@@ -1,0 +1,19 @@
+{% trans_default_domain 'facset' %}
+<h3>{{ 'factories.title.new'|trans }}</h3>
+{% form_theme factoryForm '@symfony-collection/jquery.collection.html.twig' %}
+    {{ form_start(factoryForm) }}
+<table id="factoryForm">
+    <tr>
+        <td colspan="2">{{ form_errors(factoryForm) }}</td>
+    </tr>
+    <tr>
+        <td><p>{{ form_label(factoryForm.factoryName) }}</p></td>
+        <td>
+            <p>{{ form_widget(factoryForm.factoryName, { 'attr' : {'placeholder' : 'factories.add.name.placeholder'|trans}}) }}</p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><p>{{ form_widget(factoryForm.submitButton) }}</p></td>
+    </tr>
+</table>
+    {{ form_end(factoryForm) }}

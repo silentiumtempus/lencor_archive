@@ -1,3 +1,4 @@
+{% trans_default_domain 'entries' %}
 {% if entryForm is defined %}
 {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
 {{ form_start(entryForm) }}
@@ -47,7 +48,5 @@
 {{ form_errors(entryForm) }}
 {{ form_end(entryForm) }}
 {% else %}
-
-Запись не найдена
-
+    Запись не найдена
 {% endif %}

@@ -1,0 +1,23 @@
+{% trans_default_domain 'facset' %}
+<h3>{{ 'settings.title.new'|trans }}</h3>
+{% form_theme settingForm '@symfony-collection/jquery.collection.html.twig' %}
+    {{ form_start(settingForm) }}
+<table id="settingForm">
+    <tr>
+        <td colspan="2">{{ form_errors(settingForm) }}</td>
+    </tr>
+    <tr>
+        <td><p>{{ form_label(settingForm.factory) }}</p></td>
+        <td><p>{{ form_widget(settingForm.factory) }}</p></td>
+    </tr>
+    <tr>
+        <td><p>{{ form_label(settingForm.settingName) }}</p></td>
+        <td>
+            <p>{{ form_widget(settingForm.settingName, { 'attr' : {'placeholder' : 'settings.add.name.placeholder'|trans}}) }}</p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><p>{{ form_widget(settingForm.submitButton) }}</p></td>
+    </tr>
+</table>
+    {{ form_end(settingForm) }}

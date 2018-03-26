@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% trans_default_domain 'logs' %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('build/css/logs.css') }}">
@@ -18,16 +18,7 @@
         <h3>{{ 'logs.title.search'|trans }}</h3>
     </div>
     <div class="search-div">
-        {{ form_start(logSearchForm) }}
-        <ul id="log-search" class="form-row" data-path="{{ path('logging') }}">
-            <li>
-                <span>{{ form_label(logSearchForm.id) }}</span>
-                <span>{{ form_widget(logSearchForm.id) }}</span>
-                <span>{{ form_widget(logSearchForm.submitButton) }}</span>
-            </li>
-        </ul>
-        {{ form_errors(logSearchForm) }}
-        {{ form_end(logSearchForm) }}
+        {{ include('lencor/admin/archive/logging_manager/logs_search.html.twig') }}
     </div>
     <div>
         <div><h4>{{ 'logs.title.fileslist'|trans }}</h4>

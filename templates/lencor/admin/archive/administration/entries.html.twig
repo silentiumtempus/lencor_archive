@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
+{% trans_default_domain 'entries' %}
 {% block stylesheets %}
     {{ parent() }}
-    {#<link rel="stylesheet" href="{{ asset('build/css/entries.css') }}"> #}
     <link rel="stylesheet" href="{{ asset('build/css/entry-edit.css') }}">
 {% endblock %}
 
@@ -13,22 +13,13 @@
 
 {% block main %}
     <div class="header">
-        <h3>{{ 'logs.title.search'|trans }}</h3>
+        <h3>{{ 'entries.title.search'|trans }}</h3>
     </div>
     <div id="flash-messages">
         {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
     </div>
     <div class="search-div">
-        {{ form_start(entrySearchByIdForm) }}
-        <ul id="entry-search" class="entry-search">
-            <li>
-                <span>{{ form_label(entrySearchByIdForm.id) }}</span>
-                <span>{{ form_widget(entrySearchByIdForm.id) }}</span>
-                <span>{{ form_widget(entrySearchByIdForm.submitButton) }}</span>
-            </li>
-        </ul>
-        {{ form_errors(entrySearchByIdForm) }}
-        {{ form_end(entrySearchByIdForm) }}
+        {{ include('lencor/admin/archive/administration/entry_search.html.twig') }}
     </div>
     <div class="edit" id="entryForm">
         {% if entryForm is defined %}

@@ -133,7 +133,8 @@ class EntryForm extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => ArchiveEntryEntity::class,
             'validation_groups' => array('entry_addition'),
-            'attr' => array('id' => 'entry_form')
+            'attr' => array('id' => 'entry_form'),
+            'translation_domain' => 'entries'
         ));
     }
 }

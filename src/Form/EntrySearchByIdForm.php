@@ -42,7 +42,8 @@ class EntrySearchByIdForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'attr' => array('id' => 'entry_search_by_id_form')
+            'attr' => array('id' => 'entry_search_by_id_form'),
+            'translation_domain' => 'entries'
         ));
     }
 }

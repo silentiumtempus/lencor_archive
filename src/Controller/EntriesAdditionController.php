@@ -120,7 +120,7 @@ class EntriesAdditionController extends Controller
                 $this->addFlash('danger', 'Форма заполнена неверно. Проверьте правильность заполнения формы');
             }
         } elseif (!$fs->exists($pathRoot)) {
-            $this->addFlash('danger', 'Корневой путь файловой система архива недоступен');
+            $this->addFlash('danger', 'Корневой путь файловой системы архива недоступен');
         }
 
         return $this->render('lencor/admin/archive/archive_manager/new_entry.html.twig', array('entryForm' => $entryForm->createView(), 'factoryForm' => $factoryForm->createView(), 'settingForm' => $settingForm->createView()));

@@ -1,0 +1,31 @@
+logs:
+  title:
+    search: 'Поиск по номеру архивной записи'
+    fileslist: 'Список файлов и каталогов'
+    filescontent: 'Записи событий'
+    rootDir: 'Корневая директория'
+  header:
+    name: 'Наименование'
+    size: 'Размер'
+    timestamp: 'Последнее изменение'
+    permissions: 'Права доступа'
+    writable: 'Запись'
+    readable: 'Чтение'
+  content:
+    loading: 'Загрузка содержимого...'
+    header:
+      timestamp: 'Метка времени'
+      eventtype: 'Тип события'
+      record: 'Запись'
+      details: 'Детализация'
+      info: 'Информация'
+      actions: 'Действия'
+  search:
+    placeholder: 'Введите ИН'
+    submit: 'Показать логи'
+  rowsCount:
+    placeholder: 'Количество строк'
+    submit: 'Изменить'
+  messages:
+    empty: 'В директории логов записи отсутствуют'
+    not_found: 'Архивная запись не найдена'

@@ -38,12 +38,12 @@ class SettingForm extends AbstractType
                         'class' => 'App:FactoryEntity',
                         'choice_label' => 'factoryName',
                     ))
-                    ->add('submitButton', SubmitType::class, array('label' => 'button.setting.create'));
+                    ->add('submitButton', SubmitType::class, array('label' => 'facset.setting.create'));
                 break;
             case 'edit':
                 $builder
-                    ->add('submitButton', SubmitType::class, array('label' => 'button.setting.edit'))
-                    ->add('cancelButton', ResetType::class, array('label' => 'button.setting.cancel'));
+                    ->add('submitButton', SubmitType::class, array('label' => 'facset.setting.edit'))
+                    ->add('cancelButton', ResetType::class, array('label' => 'facset.setting.cancel'));
                 break;
         }
     }
@@ -56,7 +56,8 @@ class SettingForm extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => SettingEntity::class,
             'validation_groups' => array('setting_addition'),
-            'attr' => array('id' => 'setting_form')
+            'attr' => array('id' => 'setting_form'),
+            'translation_domain' => 'facset'
         ));
     }
 }

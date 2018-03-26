@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% trans_default_domain 'entries' %}
 
     {% block sidebar %}
         {{ parent() }}
@@ -17,31 +18,7 @@
 
 {% block main %}
     {{ include('lencor/admin/archive/flash_messages/archive_manager/summary.html.twig') }}
-    <div class="page-title">
-        <h3>{{ 'entries.title.search'|trans }}</h3>
-    </div>
-    <div>
-        {{ form_start(searchForm) }}
-        <ul id="main-table" class="form-row" data-path="{{ path('entries') }}">
-            <li>
-                <span>{{ form_row(searchForm.year) }}</span>
-                <span>{{ form_row(searchForm.factory) }}</span>
-                <span>{{ form_row(searchForm.setting) }}</span>
-            </li>
-            <li>
-                <span>{{ form_row(searchForm.archiveNumber, { 'attr' : {'placeholder' : 'search.placeholder.archive_number'|trans}}) }}</span>
-                <span>{{ form_row(searchForm.registerNumber, { 'attr' : {'placeholder' : 'search.placeholder.register_number'|trans}}) }}</span>
-                <span>{{ form_row(searchForm.contractNumber, { 'attr' : {'placeholder' : 'search.placeholder.contract_number'|trans}}) }}</span>
-                <span>{{ form_row(searchForm.fullConclusionName, { 'attr' : {'placeholder' : 'search.placeholder.сonclusion_fullname'|trans}}) }}</span>
-            </li>
-            <li>
-                <span>{{ form_row(searchForm.resetButton) }}</span>
-                <span>{{ form_row(searchForm.submitButton) }}</span>
-            </li>
-        </ul>
-        {{ form_errors(searchForm) }}
-        {{ form_end(searchForm) }}
-    </div>
+    {{ include('lencor/admin/archive/archive_manager/entries_search.html.twig') }}
     <div>
         <div class="left page-title"><h3>{{ 'entries.title.list'|trans }}</h3></div>
         <div class="right">

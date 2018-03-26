@@ -46,7 +46,8 @@ class AuthForm extends AbstractType
             'attr' => array('id' => 'auth_form'),
             'csrf_protection' => true,
             'csrf_field_name' => '_csrf_token',
-            'csrf_token_id' => 'authenticate'
+            'csrf_token_id' => 'authenticate',
+            'translation_domain' => 'auth'
         ));
     }
 

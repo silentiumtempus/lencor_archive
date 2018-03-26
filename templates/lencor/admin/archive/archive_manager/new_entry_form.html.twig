@@ -1,3 +1,6 @@
+{% trans_default_domain 'entries' %}
+<h3>{{ 'entries.title.new'|trans }}</h3>
+{% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
 {{ form_start(entryForm) }}
 <table>
     <tr>

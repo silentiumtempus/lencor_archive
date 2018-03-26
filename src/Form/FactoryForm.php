@@ -31,12 +31,12 @@ class FactoryForm extends AbstractType
         switch ($function) {
             case 'add':
                 $builder
-                    ->add('submitButton', SubmitType::class, array('label' => 'button.factory.create'));
+                    ->add('submitButton', SubmitType::class, array('label' => 'facset.factory.create'));
                 break;
             case 'edit':
                 $builder
-                    ->add('submitButton', SubmitType::class, array('label' => 'button.factory.edit'))
-                    ->add('cancelButton', ResetType::class, array('label' => 'button.factory.cancel'));
+                    ->add('submitButton', SubmitType::class, array('label' => 'facset.factory.edit'))
+                    ->add('cancelButton', ResetType::class, array('label' => 'facset.factory.cancel'));
                 break;
         }
     }
@@ -49,7 +49,8 @@ class FactoryForm extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => FactoryEntity::class,
             'validation_groups' => array('factory_addition'),
-            'attr' => array('id' => 'factory_form')
+            'attr' => array('id' => 'factory_form'),
+            'translation_domain' => 'facset'
         ));
     }
 }

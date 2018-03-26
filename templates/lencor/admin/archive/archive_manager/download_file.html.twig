@@ -1,11 +1,12 @@
+{% trans_default_domain 'files_folders' %}
 <a href="#" id="closeForm" name="closeForm"> <i class="fa fa-close file-add-close"> </i></a>
 
-<h2>Загрузка документа</h2>
+<h2>{{ 'file.download.title'|trans }}</h2>
 
 <table id="fileRequest" data-path="{{ path('index') }}">
     <tr>
         <td>
-            Вы собираетесь загрузить:
+            {{ 'file.download.title'|trans }}
         </td>
         <td>
             {{ requestedFile.fileName }}
@@ -13,27 +14,27 @@
     </tr>
     <tr>
         <td>
-            Проверка контрольной суммы:
+            {{ 'file.download.action'|trans }}
         </td>
         <td>
             {% if checkPass %}
-                Проверка пройдена
+                {{ 'file.download.check.pass'|trans }}
             {% else %}
-                Ошибка проверки
+                {{ 'file.download.check.error'|trans }}
             {% endif %}
         </td>
     </tr>
     <tr>
     <td colspan="2">
-        Ссылка на скачивание: <br> {{ downloadLink }}
+        {{ 'file.download.link.prefix'|trans }} <br> {{ downloadLink }}
     </td>
     </tr>
     <tr>
         <td colspan="2">
             {% if checkPass %}
-                <a href="{{ downloadLink }}" download>Загрузить документ</a>
+                <a href="{{ downloadLink }}" download>{{ 'file.download.link.text'|trans }}</a>
             {% else %}
-                Файл отсутствует или повреждён. Загрузка недоступна.
+                {{ 'file.download.link.error'|trans }}
             {% endif %}
         </td>
     </tr>

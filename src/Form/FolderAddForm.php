@@ -77,7 +77,8 @@ class FolderAddForm extends AbstractType
             'data_class' => FolderEntity::class,
             'cascade_validation' => true,
             'validation_groups' => array('folder_creation'),
-            'attr' => array('id' => 'folder_add_form')
+            'attr' => array('id' => 'folder_add_form'),
+            'translation_domain' => 'files_folders'
         ));
     }
 }

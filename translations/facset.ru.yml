@@ -1,0 +1,28 @@
+facset:
+  title: 'Управление заводами и установками'
+  factories:
+    placeholder: 'Список заводов пуст'
+  settings:
+    placeholder: 'Выберите завод'
+  factory:
+    create: 'Добавить завод'
+    edit: 'Сохранить'
+    cancel: 'Отмена'
+  setting:
+    create: 'Добавить установку'
+    edit: 'Сохранить'
+    cancel: 'Отмена'
+factories:
+  title:
+    new: 'Добавление завода'
+  add:
+    name:
+      label: 'Наименование завода'
+      placeholder: 'Введите наименование завода'
+settings:
+  title:
+    new: 'Добавление установки'
+  add:
+    name:
+      label: 'Наименование установки'
+      placeholder: 'Введите наименование установки'

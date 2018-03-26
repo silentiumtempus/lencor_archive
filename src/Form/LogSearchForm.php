@@ -41,7 +41,8 @@ class LogSearchForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'attr' => array('id' => 'entry_logs_search_form')
+            'attr' => array('id' => 'entry_logs_search_form'),
+            'translation_domain' => 'logs'
         ));
     }
 }

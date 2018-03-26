@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% trans_default_domain 'entries' %}
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript" src="{{ asset('build/js/entryAdd.js') }}"></script>
@@ -12,51 +13,13 @@
     <div id="main-div">
         {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
         <div class="new-entry" id="entryForm">
-            <h3>{{ 'entries.title.new'|trans }}</h3>
-            {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
             {{ include('lencor/admin/archive/archive_manager/new_entry_form.html.twig') }}
         </div>
         <div class="new-factory">
-            <h3>{{ 'factories.title.new'|trans }}</h3>
-            {% form_theme factoryForm '@symfony-collection/jquery.collection.html.twig' %}
-            {{ form_start(factoryForm) }}
-            <table id="factoryForm">
-                <tr>
-                    <td colspan="2">{{ form_errors(factoryForm) }}</td>
-                </tr>
-                <tr>
-                    <td><p>{{ form_label(factoryForm.factoryName) }}</p></td>
-                    <td>
-                        <p>{{ form_widget(factoryForm.factoryName, { 'attr' : {'placeholder' : 'factories.add.name.placeholder'|trans}}) }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><p>{{ form_widget(factoryForm.submitButton) }}</p></td>
-                </tr>
-            </table>
-            {{ form_end(factoryForm) }}
+            {{ include('lencor/admin/archive/archive_manager/new_factory.html.twig') }}
         </div>
         <div class="new-setting">
-            <h3>{{ 'settings.title.new'|trans }}</h3>
-            {% form_theme settingForm '@symfony-collection/jquery.collection.html.twig' %}
-            {{ form_start(settingForm) }}
-            <table id="settingForm">
-                <tr>
-                    <td><p>{{ form_label(settingForm.factory) }}</p></td>
-                    <td><p>{{ form_widget(settingForm.factory) }}</p></td>
-                </tr>
-                <tr>
-                    <td><p>{{ form_label(settingForm.settingName) }}</p></td>
-                    <td>
-                        <p>{{ form_widget(settingForm.settingName, { 'attr' : {'placeholder' : 'settings.add.name.placeholder'|trans}}) }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><p>{{ form_widget(settingForm.submitButton) }}</p></td>
-                </tr>
-            </table>
-            {{ form_errors(settingForm) }}
-            {{ form_end(settingForm) }}
+            {{ include('lencor/admin/archive/archive_manager/new_setting.html.twig') }}
         </div>
     </div>
 {% endblock %}

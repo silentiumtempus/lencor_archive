@@ -1,0 +1,74 @@
+entries:
+  title:
+    search: 'Поиск по архиву'
+    list: 'Список записей'
+    new: 'Создание записи'
+  loading: 'Ведётся поиск...'
+  not_found: 'Записей не обнаружено'
+  header:
+    year: 'Год'
+    factory: 'Завод'
+    setting: 'Установка'
+    archive_number: 'Архивный номер'
+    register_number: 'Регистрационный номер'
+    contract_number: 'Номер договора'
+    conclusion_fullname: 'Полное название заключения'
+    info: 'Инфо'
+    actions: 'Действия'
+  last_update:
+    start: 'Последние изменения:'
+    by_user: 'пользователем'
+  content:
+    header:
+      name: 'Наименование'
+      added_by: 'Добавлено пользователем'
+      added_date: 'Дата и время добавления'
+      info: 'Информация'
+      actions: 'Действия'
+  add:
+    year:
+      label: 'Год'
+      placeholder: 'Выберите год'
+    factory:
+      label: 'Завод'
+      placeholder: 'Выберите завод'
+    setting:
+      label: 'Установка'
+      placeholder: 'Выберите установку'
+    archive_number:
+      label: 'Архивный номер'
+      placeholder: 'Введите архивный номер'
+    register_number:
+      label: 'Регистрационный номер'
+      placeholder: 'Введите регистрационный номер'
+    contract_number:
+      label: 'Номер договора'
+      placeholder: 'Введите номер договора'
+    conclusion_fullname:
+      label: 'Полное название заключения'
+      placeholder: 'Введите полное название заключения'
+  search:
+    year:
+      placeholder: 'Выберите год'
+    factory:
+      placeholder: 'Выберите завод'
+    setting:
+      placeholder: 'Выберите установку'
+    reset:
+      label: 'Сброс'
+    search:
+      label: 'Поиск'
+  id-search:
+    placeholder: 'Введите ID записи'
+    submit: 'Открыть для редактирования'
+search:
+  placeholder:
+    archive_number: 'Введите архивный номер'
+    register_number: 'Введите регистрационный номер'
+    contract_number: 'Введите номер договора'
+    сonclusion_fullname: 'Введите полное название заключения'
+button:
+  entry:
+    create: 'Добавить запись'
+    edit: 'Сохранить'
+    cancel: 'Отмена'

@@ -1,3 +1,4 @@
+{% trans_default_domain 'facset' %}
 {% block settings %}
     {% if settings is defined %}
         {% if settings is iterable %}
@@ -21,7 +22,7 @@
     {% else %}
         </li>
         <li>
-            <span>{{ 'factset.settings.placeholder'|trans }}</span>
+            <span>{{ 'facset.settings.placeholder'|trans }}</span>
         </li>
     {% endif %}
 {% endblock %}

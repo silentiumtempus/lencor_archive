@@ -77,7 +77,8 @@ class FileAddForm extends AbstractType
             'data_class' => FileEntity::class,
             'cascade_validation' => true,
             'validation_groups' => array('file_upload'),
-            'attr' => array('id' => 'file_add_form')
+            'attr' => array('id' => 'file_add_form'),
+            'translation_domain' => 'files_folders'
         ));
     }
 }

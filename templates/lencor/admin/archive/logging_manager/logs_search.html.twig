@@ -1,0 +1,10 @@
+{{ form_start(logSearchForm) }}
+<ul id="log-search" class="form-row" data-path="{{ path('logging') }}">
+    <li>
+        <span>{{ form_label(logSearchForm.id) }}</span>
+        <span>{{ form_widget(logSearchForm.id) }}</span>
+        <span>{{ form_widget(logSearchForm.submitButton) }}</span>
+    </li>
+</ul>
+{{ form_errors(logSearchForm) }}
+{{ form_end(logSearchForm) }}

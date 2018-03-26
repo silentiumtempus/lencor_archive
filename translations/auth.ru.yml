@@ -1,0 +1,10 @@
+auth:
+  title: 'Вход в архив'
+  username:
+    label: 'Имя пользователя'
+    placeholder: 'Введите имя пользователя'
+  password:
+    label: 'Пароль'
+    placeholder: 'Введите пароль'
+  submit:
+    label: 'Войти'

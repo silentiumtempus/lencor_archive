@@ -1,3 +1,4 @@
+{% trans_default_domain 'entries' %}
 {% if archiveEntries is not empty %}
     {% for entry in archiveEntries %}
         {{ include('lencor/admin/archive/archive_manager/entry.html.twig', {'entry': entry}) }}

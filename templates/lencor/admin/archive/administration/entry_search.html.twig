@@ -1,0 +1,11 @@
+{% trans_default_domain 'entries' %}
+{{ form_start(entrySearchByIdForm) }}
+<ul id="entry-search" class="entry-search">
+    <li>
+        <span>{{ form_label(entrySearchByIdForm.id) }}</span>
+        <span>{{ form_widget(entrySearchByIdForm.id) }}</span>
+        <span>{{ form_widget(entrySearchByIdForm.submitButton) }}</span>
+    </li>
+</ul>
+{{ form_errors(entrySearchByIdForm) }}
+{{ form_end(entrySearchByIdForm) }}
