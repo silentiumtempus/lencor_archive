@@ -13,20 +13,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @package App\Entity
  * @ORM\Entity;
  * @UniqueEntity(
- *     fields={"factoryName"},
- *     groups={"factory_addition"})
- * @ORM\Table(name="archive_factories")
- * @Gedmo\Loggable(logEntryClass="App\Entity\LogEntity\FactoryLog")
+ *     fields = {"factoryName"},
+ *     groups = {"factory_addition"})
+ * @ORM\Table(name = "archive_factories")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\FactoryLog")
  */
 
 class FactoryEntity
 {
-
     use CommonTrait;
 
     /**
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank(groups={"factory_addition"})
+     * @ORM\Column(type = "string")
+     * @Assert\NotBlank(groups = {"factory_addition"})
      * @Assert\Type("string")
      * @Gedmo\Versioned()
      */

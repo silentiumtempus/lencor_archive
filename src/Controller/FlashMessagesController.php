@@ -20,7 +20,6 @@ class FlashMessagesController extends Controller
      */
     public function showFlashMessages()
     {
-
         return $this->render('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig');
     }
 
@@ -32,7 +31,6 @@ class FlashMessagesController extends Controller
      */
     public function showFlashMessagesSummary()
     {
-
         return $this->render('lencor/admin/archive/flash_messages/archive_manager/summary.html.twig');
     }
 }

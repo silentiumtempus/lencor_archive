@@ -62,7 +62,7 @@ class ArchiveEntryRepository extends EntityRepository
             ->select('o')
             ->from('App:ArchiveEntryEntity', 'o')
             ->innerJoin('App:FolderEntity', 'folders', Join::WITH, 'o.id = folders.archiveEntry');
-            //->innerJoin('App:FolderEntity', 'folders', Join::WITH, 'o.id = folders.archiveEntry');
+        //->innerJoin('App:FolderEntity', 'folders', Join::WITH, 'o.id = folders.archiveEntry');
             //->getQuery()
             //->getResult();
     }

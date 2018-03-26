@@ -49,10 +49,8 @@ class LoggingService
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         if ($entryFolder) {
-
             return $this->pathRoot . "/" . $entryFolder->getFolderName() . "/logs";
         } else {
-
             return false;
         }
     }
@@ -65,10 +63,8 @@ class LoggingService
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         if ($entryFolder) {
-
             return $this->pathHTTP . "/" . $entryFolder->getFolderName() . "/logs";
         } else {
-
             return false;
         }
     }
@@ -81,10 +77,8 @@ class LoggingService
     public function getLogsNavigationPath(string $parentFolder, string $folder)
     {
         if ($folder == "/" and $parentFolder == "") {
-
             return null;
         } elseif ($parentFolder == "") {
-
             return ["" => $folder];
         } else {
             $pathsArray = [];
@@ -110,10 +104,8 @@ class LoggingService
     public function getLogsCurrentFolder(string $parentFolder, string $folder)
     {
         if ($folder != "/") {
-
             return (($parentFolder != "") ? $parentFolder . "/" : null) . $folder;
         } else {
-
             return "";
         }
     }
@@ -166,7 +158,7 @@ class LoggingService
     {
         $array = [];
         foreach ($finder as $element) {
-             $array[] = $element;
+            $array[] = $element;
         }
 
         return $array;
@@ -223,7 +215,6 @@ class LoggingService
 
             return $fileContent;
         } else {
-
             return null;
         }
     }

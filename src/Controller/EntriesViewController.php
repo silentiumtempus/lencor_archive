@@ -13,7 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Elastica\Query\BoolQuery;
 use Elastica\Query;
 
-
 /**
  * Class ArchiveViewController
  * @package App\Controller
@@ -69,8 +68,7 @@ file_put_contents($file, $wr); */
     public function removeEntry(Request $request, EntryService $archiveEntryService)
     {
         $archiveEntry = null;
-        if ($request->request->has('entryId'))
-        {
+        if ($request->request->has('entryId')) {
             $archiveEntry = $archiveEntryService->removeEntry($request->get('entryId'), $this->getUser()->getId());
         }
 
@@ -86,12 +84,10 @@ file_put_contents($file, $wr); */
     public function restoreEntry(Request $request, EntryService $archiveEntryService)
     {
         $archiveEntry = null;
-        if ($request->request->has('entryId'))
-        {
+        if ($request->request->has('entryId')) {
             $archiveEntry = $archiveEntryService->restoreEntry($request->get('entryId'), $this->getUser()->getId());
         }
 
         return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
     }
 }
-

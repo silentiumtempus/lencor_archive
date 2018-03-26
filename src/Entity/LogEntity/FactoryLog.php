@@ -14,5 +14,4 @@ use Doctrine\ORM\Mapping as ORM;
 
 class FactoryLog extends AbstractLogEntry
 {
-
 }

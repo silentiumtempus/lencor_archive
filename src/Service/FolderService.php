@@ -44,7 +44,6 @@ class FolderService
      */
     public function constructFolderAbsPath(FolderEntity $parentFolder)
     {
-
         $folderAbsPath = $this->pathRoot;
         $binaryPath = $this->foldersRepository->getPath($parentFolder);
         foreach ($binaryPath as $folderName) {
@@ -243,6 +242,5 @@ class FolderService
 
     public function createFolder()
     {
-
     }
 }

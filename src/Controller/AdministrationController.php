@@ -69,7 +69,6 @@ class AdministrationController extends Controller
      */
     public function loadFactory(Request $request, FactoryEntity $factory)
     {
-
         return $this->render('lencor/admin/archive/administration/factories.html.twig', array('factories' => $factory));
     }
 
@@ -88,10 +87,8 @@ class AdministrationController extends Controller
         $form_id = 'factory_form_' . $factory->getId();
         $factoryEditForm = $this->createForm(FactoryForm::class, $factory, array('attr' => array('id' => $form_id, 'function' => 'edit')));
         $factoryEditForm->handleRequest($request);
-        if ($factoryEditForm->isSubmitted())
-        {
-            if ($factoryEditForm->isValid())
-            {
+        if ($factoryEditForm->isSubmitted()) {
+            if ($factoryEditForm->isValid()) {
                 $factoryService->updateFactory();
 
                 return $this->render('lencor/admin/archive/administration/factories.html.twig', array('factories' => $factory));
@@ -114,7 +111,6 @@ class AdministrationController extends Controller
      */
     public function loadSetting(Request $request, SettingEntity $setting)
     {
-
         return $this->render('lencor/admin/archive/administration/settings.html.twig', array('settings' => $setting));
     }
 
@@ -133,10 +129,8 @@ class AdministrationController extends Controller
         $form_id = 'setting_form_' . $setting->getId();
         $settingEditForm = $this->createForm(SettingForm::class, $setting, array('attr' => array('id' => $form_id, 'function' => 'edit')));
         $settingEditForm->handleRequest($request);
-        if ($settingEditForm->isSubmitted())
-        {
-            if ($settingEditForm->isValid())
-            {
+        if ($settingEditForm->isSubmitted()) {
+            if ($settingEditForm->isValid()) {
                 $settingService->updateSetting();
 
                 return $this->render('lencor/admin/archive/administration/settings.html.twig', array('settings' => $setting));
@@ -155,7 +149,6 @@ class AdministrationController extends Controller
      */
     public function news(Request $request)
     {
-
         return $this->render('lencor/admin/archive/administration/news.html.twig');
     }
 }

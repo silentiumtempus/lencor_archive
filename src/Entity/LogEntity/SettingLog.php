@@ -14,5 +14,4 @@ use Doctrine\ORM\Mapping as ORM;
 
 class SettingLog extends AbstractLogEntry
 {
-
 }

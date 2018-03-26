@@ -42,7 +42,7 @@ class EntrySearchService
                 if ($key == 'factory') {
                     $conditionFactory = (new Term())->setTerm('factory.id', $child->getViewData());
                     $filterQuery->addMust($conditionFactory);
-                } else if ($key == 'setting') {
+                } elseif ($key == 'setting') {
                     $conditionSetting = (new Term())->setTerm('setting.id', $child->getViewData());
                     $filterQuery->addMust($conditionSetting);
                 } else {

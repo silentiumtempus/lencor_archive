@@ -49,7 +49,8 @@ class EntriesEditController extends Controller
             $entryForm = $this->createForm(
                 EntryForm::class,
                 $archiveEntryEntity,
-                array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit')));
+                array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit'))
+            );
             $entryForm->handleRequest($request);
             if ($entryForm->isSubmitted()) {
                 if ($entryForm->isValid()) {
@@ -66,13 +67,16 @@ class EntriesEditController extends Controller
                     $this->addFlash('success', 'Изменения сохранены');
                 }
 
-                return $this->render('lencor/admin/archive/administration/entry_edit.html.twig', array(
+                return $this->render(
+                    'lencor/admin/archive/administration/entry_edit.html.twig',
+                    array(
                         'entryForm' => $entryForm->createView(),
                         'entryId' => $archiveEntryEntity->getId())
                 );
             } else {
-
-                return $this->render('lencor/admin/archive/administration/entries.html.twig', array(
+                return $this->render(
+                    'lencor/admin/archive/administration/entries.html.twig',
+                    array(
                         'entrySearchByIdForm' => $entrySearchByIdForm->createView(),
                         'entryForm' => $entryForm->createView(),
                         'entryId' => $archiveEntryEntity->getId())

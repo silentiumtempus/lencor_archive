@@ -17,7 +17,7 @@ class EntriesContentViewController extends Controller
      * @return Response
      * @Route("/entries/view_folders", name = "entries_view_folders")
      */
-    function showEntryFolders(Request $request, FolderService $folderService)
+    public function showEntryFolders(Request $request, FolderService $folderService)
     {
         $folderTree = null;
         if ($request->request->has('folderId')) {
@@ -33,7 +33,7 @@ class EntriesContentViewController extends Controller
      * @return Response
      * @Route("/entries/view_files", name = "entries_view_files")
      */
-    function showEntryFiles(Request $request, FileService $fileService)
+    public function showEntryFiles(Request $request, FileService $fileService)
     {
         $fileList = null;
         if ($request->request->has('folderId')) {
@@ -65,7 +65,7 @@ class EntriesContentViewController extends Controller
      * @return Response
      * @Route("/entries/view", name = "entries_view")
      */
-    function showEntryDetails(Request $request, FolderService $folderService)
+    public function showEntryDetails(Request $request, FolderService $folderService)
     {
         $entryId = null;
         $folderId = null;
@@ -99,17 +99,16 @@ class EntriesContentViewController extends Controller
             $fileId = $request->get('id');
 
             switch ($type) {
-                case 'file' :
+                case 'file':
                     $requesters = $fileService->getFileRequesters($fileId);
                     break;
-                case 'folder' :
+                case 'folder':
                     $requesters[] = [];
                     break;
-                case 'entry' :
+                case 'entry':
                     $requesters[] = [];
                     break;
             }
-
         }
 
 

@@ -38,8 +38,7 @@ class FileAddForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $parentFolder = $this->folderRepository->findOneById($options['attr']['folderId']);
-        if ($options['attr']['isRoot'])
-        {
+        if ($options['attr']['isRoot']) {
             $builder
                 ->add('parentFolder', TreeType::class, array(
                     'class' => 'App:FolderEntity',
@@ -61,7 +60,7 @@ class FileAddForm extends AbstractType
                 ));
         }
         $builder
-            ->add ('files', FileType::class, array(
+            ->add('files', FileType::class, array(
                 'label' => 'file.upload.name',
                 'attr' => array('size' => 20),
                 'multiple' => true

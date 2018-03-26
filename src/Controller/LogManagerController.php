@@ -78,24 +78,23 @@ class LogManagerController extends Controller
      */
     public function openSubDir(Request $request, int $entryId, LoggingService $loggingService)
     {
-            if ($request->get('folder')) {
-                $logsFolderPath = $loggingService->getLogsNavigationPath($request->get('parentFolder'), $request->get('folder'));
-                $currentFolder = $loggingService->getLogsCurrentFolder($request->get('parentFolder'), $request->get('folder'));
-                $logsPath = $loggingService->getLogsRootPath($entryId) . "/" . $currentFolder;
-                $logFolders = $loggingService->getEntryLogFolders($logsPath);
-                $logFiles = $loggingService->getEntryLogFiles($logsPath);
+        if ($request->get('folder')) {
+            $logsFolderPath = $loggingService->getLogsNavigationPath($request->get('parentFolder'), $request->get('folder'));
+            $currentFolder = $loggingService->getLogsCurrentFolder($request->get('parentFolder'), $request->get('folder'));
+            $logsPath = $loggingService->getLogsRootPath($entryId) . "/" . $currentFolder;
+            $logFolders = $loggingService->getEntryLogFolders($logsPath);
+            $logFiles = $loggingService->getEntryLogFiles($logsPath);
 
-                return $this->render('lencor/admin/archive/logging_manager/logs_list.html.twig', array(
+            return $this->render('lencor/admin/archive/logging_manager/logs_list.html.twig', array(
                     'entryExists' => true,
                     'logsFolderPath' => $logsFolderPath,
                     'currentFolder' => $currentFolder,
                     'entryId' => $entryId,
                     'logFolders' => $logFolders,
                     'logFiles' => $logFiles));
-            } else {
-
-                return $this->redirectToRoute('logging', array('entryId' => $entryId));
-            }
+        } else {
+            return $this->redirectToRoute('logging', array('entryId' => $entryId));
+        }
     }
 
     /**
@@ -119,7 +118,8 @@ class LogManagerController extends Controller
                     'file' => $file,
                     'entryId' => $entryId,
                     'id' => 'logs_rows_count_form'
-                )));
+                ))
+            );
             $rowsCountForm->handleRequest($request);
             if ($rowsCountForm->isSubmitted() && $rowsCountForm->isValid() && $request->isMethod('POST')) {
                 $fileContent = $loggingService->getFileContent(
@@ -135,7 +135,6 @@ class LogManagerController extends Controller
                 'entryId' => $entryId,
                 'fileContent' => $fileContent));
         } else {
-
             return $this->redirectToRoute('logging');
         }
     }

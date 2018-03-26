@@ -48,8 +48,7 @@ class FileChecksumService
         $fs = new Filesystem();
         $absRoot = $this->container->getParameter('lencor_archive.storage_path');
         $absPath = $absRoot . $filePath;
-        if (!$fs->exists($absPath))
-        {
+        if (!$fs->exists($absPath)) {
             $checkStatus = false;
         } else {
             $actualChecksum = md5_file($absPath);
@@ -88,8 +87,7 @@ class FileChecksumService
         $fileError = $this->fileErrorsRepository->findOneByFileId($fileEntity->getId());
         if ($fileEntity->getSumError() == false) {
             $fileEntity->setSumError(true);
-            if ($fileError)
-            {
+            if ($fileError) {
                 $fileError->setFirstOccuredOn(new \DateTime());
                 $this->changeErrorStatus($fileError, true, $userId);
             } else {
@@ -116,8 +114,7 @@ class FileChecksumService
         if ($fileEntity->getSumError() ==  true) {
             $fileEntity->setSumError(false);
             $fileError = $this->fileErrorsRepository->findOneByFileId($fileEntity->getId());
-            if ($fileError)
-            {
+            if ($fileError) {
                 $this->changeErrorStatus($fileError, false, $userId);
             }
             $this->changeErrorsQuantity($fileEntity->getParentFolder(), false);
@@ -147,12 +144,9 @@ class FileChecksumService
     public function changeErrorsQuantity(FolderEntity $parentFolder, bool $errorState)
     {
         $binaryPath = $this->foldersRepository->getPath($parentFolder);
-        foreach ($binaryPath as $folder)
-        {
-            if ($errorState)
-            {
+        foreach ($binaryPath as $folder) {
+            if ($errorState) {
                 $folder->setSumErrors($folder->getSumErrors()+1);
-
             } else {
                 $folder->setSumErrors($folder->getSumErrors()-1);
             }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Service;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 
@@ -10,7 +11,6 @@ use Psr\Container\ContainerInterface;
  */
 class UserService
 {
-
     protected $em;
     protected $container;
     protected $usersRepository;
@@ -20,7 +20,6 @@ class UserService
         $this->em = $entityManager;
         $this->container = $container;
         $this->usersRepository = $this->em->getRepository('App:User');
-
     }
 
     /**
@@ -29,7 +28,6 @@ class UserService
      */
     public function getUsers(array $userIds)
     {
-
         return $this->usersRepository->findById($userIds);
     }
 }

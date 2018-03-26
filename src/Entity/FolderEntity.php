@@ -18,16 +18,16 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @package App\Entity
  * @Gedmo\Tree(type="nested")
  * @UniqueEntity(
- *     fields={"parentFolder", "folderName"},
- *     groups={"folder_creation"}),
- * @ORM\Table(name="archive_folders", uniqueConstraints={
+ *     fields = {"parentFolder", "folderName"},
+ *     groups = {"folder_creation"}),
+ * @ORM\Table(name = "archive_folders", uniqueConstraints = {
  *     @ORM\UniqueConstraint(
- *      name="unique_folder",
- *      columns={"folder_name", "parent_folder_id"}
+ *      name = "unique_folder",
+ *      columns = {"folder_name", "parent_folder_id"}
  *     )
  * }),
- * @ORM\Entity(repositoryClass="App\Repository\FolderRepository")
- * @Gedmo\Loggable(logEntryClass="App\Entity\LogEntity\FolderLog")
+ * @ORM\Entity(repositoryClass = "App\Repository\FolderRepository")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\FolderLog")
  */
 class FolderEntity
 {
@@ -38,14 +38,14 @@ class FolderEntity
     use SumErrorsTrait;
 
     /**
-     * @ORM\OneToOne(targetEntity="ArchiveEntryEntity", inversedBy="cataloguePath")
-     * @ORM\JoinColumn(name="archive_entry_id", referencedColumnName="id")
+     * @ORM\OneToOne(targetEntity = "ArchiveEntryEntity", inversedBy = "cataloguePath")
+     * @ORM\JoinColumn(name = "archive_entry_id", referencedColumnName = "id")
      */
 
     protected $archiveEntry;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type = "string")
      * @Assert\NotBlank()
      * @Assert\Type("string")
      * @Gedmo\Versioned()
@@ -55,7 +55,7 @@ class FolderEntity
 
     /**
      * @Gedmo\TreeLeft
-     * @ORM\Column(name="lft", type="integer")
+     * @ORM\Column(name = "lft", type = "integer")
      * @Gedmo\Versioned()
      */
 
@@ -63,14 +63,14 @@ class FolderEntity
 
     /**
      * @Gedmo\TreeLevel
-     * @ORM\Column(name="lvl", type="integer")
+     * @ORM\Column(name = "lvl", type = "integer")
      * @Gedmo\Versioned()
      */
     private $lvl;
 
     /**
      * @Gedmo\TreeRight
-     * @ORM\Column(name="rgt", type="integer")
+     * @ORM\Column(name = "rgt", type = "integer")
      * @Gedmo\Versioned()
      */
 
@@ -78,8 +78,8 @@ class FolderEntity
 
     /**
      * @Gedmo\TreeRoot
-     * @ORM\ManyToOne(targetEntity="FolderEntity")
-     * @ORM\JoinColumn(referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity = "FolderEntity")
+     * @ORM\JoinColumn(referencedColumnName = "id")
      * @Gedmo\Versioned()
      */
 
@@ -87,15 +87,15 @@ class FolderEntity
 
     /**
      * @Gedmo\TreeParent
-     * @ORM\ManyToOne(targetEntity="FolderEntity", inversedBy="childFolders")
-     * @ORM\JoinColumn(referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity = "FolderEntity", inversedBy = "childFolders")
+     * @ORM\JoinColumn(referencedColumnName = "id")
      * @Gedmo\Versioned()
      */
 
     private $parentFolder;
 
     /**
-     * @ORM\OneToMany(targetEntity="FolderEntity", mappedBy="parentFolder")
+     * @ORM\OneToMany(targetEntity = "FolderEntity", mappedBy = "parentFolder")
      * @ORM\OrderBy({"lft" = "ASC"})
      */
 
@@ -103,8 +103,8 @@ class FolderEntity
 
     /**
      * @Gedmo\Translatable
-     * @Gedmo\Slug(fields={"folderName"})
-     * @ORM\Column(name="slug", type="string", length=128)
+     * @Gedmo\Slug(fields = {"folderName"})
+     * @ORM\Column(name = "slug", type = "string", length = 128)
      */
 
     private $slug;
@@ -278,5 +278,4 @@ class FolderEntity
     {
         return $this->root;
     }
-
 }

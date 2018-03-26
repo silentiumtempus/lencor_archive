@@ -123,7 +123,6 @@ trait FolderFileTrait
      */
     public function getRequestMark()
     {
-
         return $this->requestMark;
     }
 
@@ -145,7 +144,6 @@ trait FolderFileTrait
      */
     public function getRequestedByUsers()
     {
-
         return $this->requestedByUsers;
     }
 
@@ -167,8 +165,6 @@ trait FolderFileTrait
      */
     public function getRequestsCount()
     {
-
         return $this->requestsCount;
     }
 }
-

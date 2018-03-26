@@ -13,27 +13,26 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @package App\Entity
  * @ORM\Entity;
  * @UniqueEntity(
- *     fields={"factory", "settingName"},
- *     groups={"setting_addition"}
+ *     fields = {"factory", "settingName"},
+ *     groups = {"setting_addition"}
  * )
- * @ORM\Table(name="archive_settings")
- * @Gedmo\Loggable(logEntryClass="App\Entity\LogEntity\SettingLog")
+ * @ORM\Table(name = "archive_settings")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\SettingLog")
  */
 class SettingEntity
 {
-
     use CommonTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity="FactoryEntity")
-     * @ORM\JoinColumn(name="factory_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity = "FactoryEntity")
+     * @ORM\JoinColumn(name = "factory_id", referencedColumnName = "id")
      * @Gedmo\Versioned()
      */
 
     protected $factory;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type = "string")
      * @Assert\NotBlank()
      * @Assert\Type("string")
      * @Gedmo\Versioned()

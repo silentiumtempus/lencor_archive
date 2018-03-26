@@ -15,24 +15,23 @@ use App\Entity\FileEntity;
  * @package App\Entity\Mappings
  * @ORM\Entity()
  * @UniqueEntity(
- *     fields={"fileId", "parentFolderId"},
- *     groups={"file_checksum_error"}),
- * @ORM\Table(name="archive_checksum_errors", uniqueConstraints={
+ *     fields = {"fileId", "parentFolderId"},
+ *     groups = {"file_checksum_error"}),
+ * @ORM\Table(name = "archive_checksum_errors", uniqueConstraints = {
  *     @ORM\UniqueConstraint(
- *      name="unique_checksum_entry",
- *      columns={"file_id", "parent_folder_id"}
+ *      name = "unique_checksum_entry",
+ *      columns = {"file_id", "parent_folder_id"}
  *     )
  * }),
- * @Gedmo\Loggable(logEntryClass="App\Entity\Mappings\LogMappings\FileChecksumErrorLog")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\Mappings\LogMappings\FileChecksumErrorLog")
  */
 class FileChecksumError
 {
-
     use CommonTrait;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\FileEntity")
-     * @ORM\JoinColumn(name="file_id", referencedColumnName="id")
+     * @ORM\OneToOne(targetEntity = "App\Entity\FileEntity")
+     * @ORM\JoinColumn(name = "file_id", referencedColumnName = "id")
      * @Assert\NotBlank
      * @Gedmo\Versioned()
      */
@@ -40,8 +39,8 @@ class FileChecksumError
     protected $fileId;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\FolderEntity")
-     * @ORM\JoinColumn(name="parent_folder_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity = "App\Entity\FolderEntity")
+     * @ORM\JoinColumn(name="parent_folder_id", referencedColumnName = "id")
      * @Assert\NotBlank
      * @Gedmo\Versioned()
      */
@@ -49,16 +48,16 @@ class FileChecksumError
     protected $parentFolderId;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type = "datetime")
      * @Assert\DateTime()
-     * @Gedmo\Timestampable(on="create")
+     * @Gedmo\Timestampable(on = "create")
      * @Gedmo\Versioned()
      */
 
     protected $firstOccuredOn;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type = "datetime")
      * @Assert\DateTime()
      * @Gedmo\Timestampable()
      * @Gedmo\Versioned()
@@ -67,7 +66,7 @@ class FileChecksumError
     protected $lastCheckOn;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type = "integer")
      * @Assert\Type("integer")
      * @Gedmo\Versioned()
      */
@@ -75,7 +74,7 @@ class FileChecksumError
     protected $lastCheckByUser;
 
     /**
-    * @ORM\Column(name="status", type="integer")
+    * @ORM\Column(name = "status", type = "integer")
     * @Gedmo\Versioned()
     */
 

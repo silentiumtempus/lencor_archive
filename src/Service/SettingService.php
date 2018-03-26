@@ -40,7 +40,7 @@ class SettingService
      */
     public function findSettingsByFactoryId(int $factory)
     {
-       return $this->settingsRepository->findByFactory($factory, array('id' => 'asc'));
+        return $this->settingsRepository->findByFactory($factory, array('id' => 'asc'));
     }
 
     /**

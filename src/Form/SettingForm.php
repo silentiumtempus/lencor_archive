@@ -30,7 +30,7 @@ class SettingForm extends AbstractType
                 'attr' => array('size' => 30)
             ));
         switch ($function) {
-            case 'add' :
+            case 'add':
                 $builder
                     ->add('factory', EntityType::class, array(
                         'label' => 'factories.add.name.label',
@@ -40,7 +40,7 @@ class SettingForm extends AbstractType
                     ))
                     ->add('submitButton', SubmitType::class, array('label' => 'button.setting.create'));
                 break;
-            case 'edit' :
+            case 'edit':
                 $builder
                     ->add('submitButton', SubmitType::class, array('label' => 'button.setting.edit'))
                     ->add('cancelButton', ResetType::class, array('label' => 'button.setting.cancel'));

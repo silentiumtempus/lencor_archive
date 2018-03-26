@@ -15,7 +15,6 @@ class FilesystemSizeConverterExtension extends AbstractExtension
      */
     public function getFilters()
     {
-
         return array(
             new \Twig_SimpleFilter('bytes_convert', array($this, 'bytesConvert')),
         );
@@ -26,7 +25,6 @@ class FilesystemSizeConverterExtension extends AbstractExtension
      */
     public function getName()
     {
-
         return 'bytes_convert';
     }
 
@@ -35,7 +33,7 @@ class FilesystemSizeConverterExtension extends AbstractExtension
      * @param int $precision
      * @return string
      */
-    function bytesConvert(int $bytes, int $precision = 2)
+    public function bytesConvert(int $bytes, int $precision = 2)
     {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
         $bytes = max($bytes, 0);

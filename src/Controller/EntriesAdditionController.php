@@ -48,8 +48,8 @@ class EntriesAdditionController extends Controller
         FactoryService $factoryService,
         SettingService $settingService,
         FolderService $folderService,
-        LoggingService $loggingService)
-    {
+        LoggingService $loggingService
+    ) {
         $session = $this->container->get('session');
         $entryForm = $this->createForm(EntryForm::class, new ArchiveEntryEntity(), array('attr' => array('id' => 'entry_form', 'function' => 'add')));
         $factoryForm = $this->createForm(FactoryForm::class, new FactoryEntity(), array('attr' => array('id' => 'factory_form', 'function' => 'add')));
@@ -86,10 +86,8 @@ class EntriesAdditionController extends Controller
         }
 
         $entryForm->handleRequest($request);
-        if ($entryForm->isSubmitted() && $fs->exists($pathRoot) ) {
-            $this->addFlash('warning', 'Сабмит есть');
+        if ($entryForm->isSubmitted() && $fs->exists($pathRoot)) {
             if ($entryForm->isValid()) {
-                $this->addFlash('warning', 'Ваоидация пройдена');
                 try {
                     $newEntryEntity = $entryForm->getData();
                     $entryPath = $folderService->checkAndCreateFolders($newEntryEntity);
@@ -121,9 +119,10 @@ class EntriesAdditionController extends Controller
             } else {
                 $this->addFlash('danger', 'Форма заполнена неверно. Проверьте правильность заполнения формы');
             }
+        } elseif (!$fs->exists($pathRoot)) {
+            $this->addFlash('danger', 'Корневой путь файловой система архива недоступен');
         }
 
         return $this->render('lencor/admin/archive/archive_manager/new_entry.html.twig', array('entryForm' => $entryForm->createView(), 'factoryForm' => $factoryForm->createView(), 'settingForm' => $settingForm->createView()));
     }
-
 }

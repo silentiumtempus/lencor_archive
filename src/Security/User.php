@@ -2,7 +2,6 @@
 
 namespace App\Security;
 
-
 use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -26,7 +25,7 @@ class User implements UserInterface, EquatableInterface
      * @param string $salt
      * @param array $roles
      */
-    function __construct(int $id = null, string $username = null, string $password = null, string $salt = null, array $roles = null)
+    public function __construct(int $id = null, string $username = null, string $password = null, string $salt = null, array $roles = null)
     {
         $this->id = $id;
         $this->username = $username;
@@ -89,7 +88,6 @@ class User implements UserInterface, EquatableInterface
      */
     public function eraseCredentials()
     {
-
     }
 
     public function isEqualTo(UserInterface $user)
@@ -109,5 +107,4 @@ class User implements UserInterface, EquatableInterface
 
         return true;
     }
-
 }

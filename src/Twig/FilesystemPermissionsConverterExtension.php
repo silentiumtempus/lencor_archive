@@ -25,7 +25,6 @@ class FilesystemPermissionsConverterExtension extends AbstractExtension
      */
     public function getName()
     {
-
         return 'perms_convert';
     }
 
@@ -33,7 +32,7 @@ class FilesystemPermissionsConverterExtension extends AbstractExtension
      * @param string $perms
      * @return string
      */
-    function permsConvert(string $perms)
+    public function permsConvert(string $perms)
     {
         return substr(sprintf('%o', $perms), -4);
     }

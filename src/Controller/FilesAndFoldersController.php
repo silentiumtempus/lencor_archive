@@ -46,7 +46,8 @@ class FilesAndFoldersController extends Controller
         $folderAddForm = $this->createForm(
             FolderAddForm::class,
             $newFolder,
-            array('action' => $this->generateUrl('entries_new_folder'), 'attr' => array('isRoot' => $isRoot, 'folderId' => $folderId, 'id' => 'folder_add_form')));
+            array('action' => $this->generateUrl('entries_new_folder'), 'attr' => array('isRoot' => $isRoot, 'folderId' => $folderId, 'id' => 'folder_add_form'))
+        );
 
         $folderAddForm->handleRequest($request);
         if ($folderAddForm->isSubmitted() && $request->isMethod('POST')) {
@@ -120,7 +121,7 @@ class FilesAndFoldersController extends Controller
                     $this->addFlash('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
                 }
             } else {
-                $this->addFlash('danger','Директория ' . $folderAddForm->getName() . ' уже существует в каталоге ' . $folderAddForm->getParent() . '. Операция прервана');
+                $this->addFlash('danger', 'Директория ' . $folderAddForm->getName() . ' уже существует в каталоге ' . $folderAddForm->getParent() . '. Операция прервана');
             }
             $loggingService->logEntryContent($entryId, $this->getUser(), $session->getFlashBag()->peekAll());
         }
@@ -149,7 +150,8 @@ class FilesAndFoldersController extends Controller
         $fileAddForm = $this->createForm(
             FileAddForm::class,
             $newFile,
-            array('action' => $this->generateUrl('entries_new_file'), 'method' => 'POST', 'attr' => array('isRoot' => $isRoot, 'folderId' => $folderId, 'id' => 'file_add_form')));
+            array('action' => $this->generateUrl('entries_new_file'), 'method' => 'POST', 'attr' => array('isRoot' => $isRoot, 'folderId' => $folderId, 'id' => 'file_add_form'))
+        );
 
         $fileAddForm->handleRequest($request);
         if ($fileAddForm->isSubmitted() && $request->isMethod('POST')) {
@@ -163,8 +165,7 @@ class FilesAndFoldersController extends Controller
                     try {
                         $parentFolder = $folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
                         $folderAbsPath = $folderService->constructFolderAbsPath($parentFolder);
-                    } catch (\Exception $exception)
-                    {
+                    } catch (\Exception $exception) {
                         $this->addFlash('danger', "Ошибка создания пути: " . $exception->getMessage());
                     }
                     try {
@@ -211,7 +212,6 @@ class FilesAndFoldersController extends Controller
                                         try {
                                             $fileSystem->remove($fileWithAbsPath);
                                             $this->addFlash('danger', 'Новый документ удалён из директории в связи с ошибкой БД.');
-
                                         } catch (IOException $IOException) {
                                             $this->addFlash('danger', 'Ошибка файловой системы при удалении загруженного документа: ' . $IOException->getMessage());
                                         };
@@ -227,9 +227,7 @@ class FilesAndFoldersController extends Controller
                         if ($errors !=0) {
                             $this->addFlash('errors', $errors . ' ошибок при загрузке.');
                         }
-
-                    } catch (\Exception $exception)
-                    {
+                    } catch (\Exception $exception) {
                         $this->addFlash('danger', "Ошибка загрузки файла(ов) : " . $exception->getMessage());
                     }
                 } catch (\Exception $exception) {
@@ -375,8 +373,7 @@ class FilesAndFoldersController extends Controller
         $requestedFile = null;
         $checkStatus = null;
         $httpPath = null;
-        if ($request->request->has('fileId'))
-        {
+        if ($request->request->has('fileId')) {
             $requestedFile = $fileService->getFileById($request->get('fileId'));
             $filePath = $fileService->getFilePath($requestedFile);
             $httpPath = $fileService->getFileHttpUrl($filePath);

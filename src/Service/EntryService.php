@@ -63,7 +63,7 @@ class EntryService
         $lastUpdateInfo = null;
         if ($request->request->has('entryId')) {
             $lastUpdateInfo = $this->entriesRepository->getUpdateInfoByEntry($request->get('entryId'));
-        } else if ($request->request->has('folderId')) {
+        } elseif ($request->request->has('folderId')) {
             $folderNode = $this->foldersRepository->findOneById($request->get('folderId'));
             $lastUpdateInfo = $this->entriesRepository->getUpdateInfoByFolder($folderNode->getRoot()->getArchiveEntry()->getId());
         }

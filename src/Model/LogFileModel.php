@@ -2,10 +2,6 @@
 
 namespace App\Model;
 
-
-
 class LogFileModel
 {
-
-
 }

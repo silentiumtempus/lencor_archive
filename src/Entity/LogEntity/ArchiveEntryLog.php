@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="Gedmo\Loggable\Entity\Repository\LogEntryRepository")
  */
 
-class ArchiveEntryLog  extends AbstractLogEntry
+class ArchiveEntryLog extends AbstractLogEntry
 {
-
 }

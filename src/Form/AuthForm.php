@@ -50,7 +50,8 @@ class AuthForm extends AbstractType
         ));
     }
 
-    public function getBlockPrefix() {
+    public function getBlockPrefix()
+    {
         return null;
     }
 }

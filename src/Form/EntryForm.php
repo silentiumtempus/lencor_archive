@@ -100,19 +100,17 @@ class EntryForm extends AbstractType
             ->add('contractNumber', TextType::class, array('label' => 'entries.add.contract_number.label', 'attr' => array('size' => 30)))
             ->add('fullConclusionName', TextType::class, array('label' => 'entries.add.conclusion_fullname.label', 'attr' => array('size' => 30)));
 
-        switch ($function)
-        {
-            case 'add' :
+        switch ($function) {
+            case 'add':
                 $builder
                     ->add('submitButton', SubmitType::class, array('label' => 'button.entry.create'));;
                 break;
-            case 'edit' :
+            case 'edit':
                 $builder
                     ->add('submitButton', SubmitType::class, array('label' => 'button.entry.edit'))
                     ->add('cancelButton', ResetType::class, array('label' => 'button.entry.cancel'));
                 break;
         }
-
     }
 
     /**

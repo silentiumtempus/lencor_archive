@@ -15,18 +15,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Class ArchiveEntry
  * @package App\Entity
- * @ORM\Entity(repositoryClass="App\Repository\ArchiveEntryRepository");
+ * @ORM\Entity(repositoryClass = "App\Repository\ArchiveEntryRepository");
  * @UniqueEntity(
- *     fields={"archiveNumber"},
- *     groups={"entry_addition"}
+ *     fields = {"archiveNumber"},
+ *     groups = {"entry_addition"}
  * )
  * @UniqueEntity(
- *     fields={"registerNumber"},
- *     groups={"entry_addition"},
+ *     fields = {"registerNumber"},
+ *     groups = {"entry_addition"},
  *     ignoreNull=true
  * )
- * @ORM\Table(name="archive_entries")
- * @Gedmo\Loggable(logEntryClass="App\Entity\LogEntity\ArchiveEntryLog")
+ * @ORM\Table(name = "archive_entries")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\ArchiveEntryLog")
  */
 class ArchiveEntryEntity
 {
@@ -36,8 +36,8 @@ class ArchiveEntryEntity
     use SumErrorsTrait;
 
     /**
-     * @ORM\Column(type="integer", length=4)
-     * @Assert\NotBlank(groups={"entry_addition"})
+     * @ORM\Column(type = "integer", length = 4)
+     * @Assert\NotBlank(groups = {"entry_addition"})
      * @Assert\Type("integer")
      * @Assert\Range(
      *     min = 1990,
@@ -52,8 +52,8 @@ class ArchiveEntryEntity
 
     /**
      * @ORM\ManyToOne(targetEntity="FactoryEntity")
-     * @ORM\JoinColumn(name="factory_id", referencedColumnName="id")
-     * @Assert\NotBlank(groups={"entry_addition"})
+     * @ORM\JoinColumn(name = "factory_id", referencedColumnName="id")
+     * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
      */
 
@@ -61,25 +61,25 @@ class ArchiveEntryEntity
 
     /**
 
-     * @ORM\ManyToOne(targetEntity="SettingEntity")
-     * @ORM\JoinColumn(name="setting_id", referencedColumnName="id")
-     * @Assert\NotBlank(groups={"entry_addition"})
+     * @ORM\ManyToOne(targetEntity = "SettingEntity")
+     * @ORM\JoinColumn(name = "setting_id", referencedColumnName = "id")
+     * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
      */
 
     protected $setting;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type = "string")
      * @Assert\Type("string")
-     * @Assert\NotBlank(groups={"entry_addition"})
+     * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
      */
 
     protected $archiveNumber;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type = "string", nullable=true)
      * @Assert\Type("string")
      * @Gedmo\Versioned()
      */
@@ -87,33 +87,33 @@ class ArchiveEntryEntity
     protected $registerNumber;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type = "string")
      * @Assert\Type("string")
-     * @Assert\NotBlank(groups={"entry_addition"})
+     * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
      */
 
     protected $contractNumber;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type = "string")
      * @Assert\Type("string")
-     * @Assert\NotBlank(groups={"entry_addition"})
+     * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
      */
 
     protected $fullConclusionName;
 
     /**
-     * @ORM\OneToOne(targetEntity="FolderEntity", mappedBy="archiveEntry" )
+     * @ORM\OneToOne(targetEntity = "FolderEntity", mappedBy = "archiveEntry" )
      */
 
     protected $cataloguePath;
 
     /**
      * @var \DateTime $lastModified
-     * @ORM\Column(type="datetime")
-     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type = "datetime")
+     * @Gedmo\Timestampable(on = "update")
      * @Assert\DateTime()
      * @Gedmo\Versioned()
      */
@@ -121,7 +121,7 @@ class ArchiveEntryEntity
     protected $lastModified;
 
     /**
-     * @ORM\Column(type="smallint")
+     * @ORM\Column(type = "smallint")
      * @Assert\Type("smallint")
      * @Gedmo\Versioned()
      */
@@ -130,8 +130,8 @@ class ArchiveEntryEntity
 
     /**
      * @Gedmo\Translatable
-     * @Gedmo\Slug(fields={"year", "archiveNumber"})
-     * @ORM\Column(name="slug", type="string", length=128)
+     * @Gedmo\Slug(fields = {"year", "archiveNumber"})
+     * @ORM\Column(name = "slug", type = "string", length = 128)
      */
 
     private $slug;
@@ -182,7 +182,6 @@ class ArchiveEntryEntity
 
     public function getFactory()
     {
-
         return $this->factory;
     }
 
@@ -309,7 +308,6 @@ class ArchiveEntryEntity
 
     public function setCataloguePath($cataloguePath)
     {
-
         $this->cataloguePath = $cataloguePath;
 
         return $this;
@@ -399,5 +397,4 @@ class ArchiveEntryEntity
     {
         $this->cataloguePath->removeElement($cataloguePath);
     }
-
 }
