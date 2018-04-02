@@ -5,6 +5,7 @@ namespace App\Security;
 use App\Entity\User;
 use App\Service\LDAPService;
 use App\Service\UserService;
+use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;

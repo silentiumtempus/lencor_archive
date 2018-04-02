@@ -91,7 +91,7 @@ class UserService
             ->setLastLogin(new \DateTime())
             ->setRoles(array('ROLE_USER'))
             ->setIsADUser(true)
-            ->setADUserId($kerberosUser->getAttribute('employeeID'));
+            ->setADUserId($kerberosUser->getAttribute('objectSID'));
 
         return $user;
     }
