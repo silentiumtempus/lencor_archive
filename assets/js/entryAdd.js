@@ -17,7 +17,6 @@ $(document).ready(function () {
             } else if ($formType === 'edit') {
                 $path = Routing.generate('admin-entries', {entryId: $(this).find('table').attr('id')});
             }
-            //cityid: citySelector.val()
             $.ajax({
                 url: $path,
                 method: 'POST',
@@ -109,31 +108,14 @@ $(document).ready(function () {
             } else if ($formType === 'edit') {
                 $path = Routing.generate('admin-entries', {entryId: $(this).find('table').attr('id')});
             }
-            alert(entrySerialized);
             $.ajax({
                 url: $path,
                 method: 'POST',
                 data: entrySerialized,
                 success: function (response) {
+                    /** Flash messages loader **/
                     $('#flash-messages').replaceWith(
                         $(response).find('#flash-messages'));
-                    /** Flash messages loader **/
-                    //$.ajax({
-                   //     url: Routing.generate('flash_messages'),
-                    //    method: 'POST',
-                     //   success: function (reloadFlashMessages) {
-                     //       alert(reloadFlashMessages);
-                    //        $('#flash-messages').replaceWith(reloadFlashMessages);
-                            // let $messages = $('#flash-messages');
-                           // $messages.replaceWith(
-                           //     $(reloadFlashMessages));
-                           // if ($('#flash-messages').is(":hidden")) {
-                           //     $messages.show().css('display', 'contents');
-                           // }
-                  //      }
-                   // });
-
-                 //   return false;
                 }
             });
 

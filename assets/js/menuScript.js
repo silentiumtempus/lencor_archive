@@ -1,7 +1,7 @@
 ( function( $ ) {
 $( document ).ready(function() {
 $('#cssmenu').prepend('<div id="indicatorContainer"><div id="pIndicator"><div id="cIndicator"></div></div></div>');
-    var activeElement = $('#cssmenu>ul>li:first');
+    let activeElement = $('#cssmenu>ul>li:first');
 
     $('#cssmenu>ul>li').each(function() {
         if ($(this).hasClass('active')) {
@@ -10,19 +10,19 @@ $('#cssmenu').prepend('<div id="indicatorContainer"><div id="pIndicator"><div id
     });
 
 
-	var posLeft = activeElement.position().left;
-	var elementWidth = activeElement.width();
+	let posLeft = activeElement.position().left;
+	let elementWidth = activeElement.width();
 	posLeft = posLeft + elementWidth/2 -6;
 	if (activeElement.hasClass('has-sub')) {
 		posLeft -= 6;
 	}
 
 	$('#cssmenu #pIndicator').css('left', posLeft);
-	var element, leftPos, indicator = $('#cssmenu pIndicator');
+	let element, leftPos, indicator = $('#cssmenu pIndicator');
 	
 	$("#cssmenu>ul>li").hover(function() {
         element = $(this);
-        var w = element.width();
+        let w = element.width();
         if ($(this).hasClass('has-sub'))
         {
         	leftPos = element.position().left + w/2 - 12;
