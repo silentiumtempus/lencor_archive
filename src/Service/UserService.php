@@ -3,9 +3,9 @@
 namespace App\Service;
 
 use App\Entity\User;
-use App\Security\KerberosUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
 /**
@@ -45,15 +45,14 @@ class UserService
     public function getUserByCanonicalName($username)
     {
 
-        return $this->usersRepository->findOneByCanonicalName($username);
+        return $this->usersRepository->findOneByUsernameCanonical($username);
     }
 
-
     /**
-     * @param array $remoteUser
+     * @param Entry $remoteUser
      * @return User
      */
-    public function createKerberosUser(array $remoteUser)
+    public function createKerberosUser(Entry $remoteUser)
     {
         $user = $this->prepareKerberosUser($remoteUser);
         $hashedDefaultPassword = $this->setDefaultPassword($user);
@@ -76,17 +75,18 @@ class UserService
 
 
     /**
-     * @param array $kerberosUser
+     * @param Entry $kerberosUser
      * @return User
      */
-    private function prepareKerberosUser(array $kerberosUser)
+    private function prepareKerberosUser(Entry $kerberosUser)
     {
         $user = new User();
+        $email = $kerberosUser->getAttribute('mail') ?? 'no@e.mail';
         $user
             ->setUsername($kerberosUser->getAttribute('uid')[0])
             ->setUsernameCanonical(($kerberosUser->getAttribute('uid')[0]))
-            ->setEmail($kerberosUser->getAttribute('mail'))
-            ->setEmailCanonical($kerberosUser->getAttribute('mail'))
+            ->setEmail($email)
+            ->setEmailCanonical($email)
             ->setEnabled(true)
             ->setLastLogin(new \DateTime())
             ->setRoles(array('ROLE_USER'))

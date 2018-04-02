@@ -45,7 +45,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      */
     public function getUsername()
     {
-        return $this->user->getUsernameCanonical()
+        return $this->user->getUsernameCanonical();
     }
 
     /**
