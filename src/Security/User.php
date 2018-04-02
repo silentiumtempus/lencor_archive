@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, EquatableInterface
 {
     private $id;
+    private $adUserId;
     private $username;
     private $password;
     private $salt;
@@ -20,12 +21,13 @@ class User implements UserInterface, EquatableInterface
     /**
      * User constructor.
      * @param int $id
+     * @param int $adUserId
      * @param string $username
      * @param string $password
      * @param string $salt
      * @param array $roles
      */
-    public function __construct(int $id = null, string $username = null, string $password = null, string $salt = null, array $roles = null)
+    public function __construct(int $id = null, int $adUserId = null, string $username = null, string $password = null, string $salt = null, array $roles = null)
     {
         $this->id = $id;
         $this->username = $username;
