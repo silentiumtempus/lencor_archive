@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security;
+namespace App\Model;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
