@@ -34,7 +34,7 @@ class ArchiveEntryRepository extends EntityRepository
         return $this->queryBuilder
             ->select('en.lastModified', 'us.usernameCanonical')
             ->from('App:ArchiveEntryEntity', 'en')
-            ->leftJoin('App:User', 'us', Join::WITH, 'en.modifiedByUserId = us.id')
+            ->leftJoin('App:KerberosUser', 'us', Join::WITH, 'en.modifiedByUserId = us.id')
             ->where('en.id = ' . $entryId)
             ->getQuery()
             ->getResult();
@@ -49,7 +49,7 @@ class ArchiveEntryRepository extends EntityRepository
         return $this->queryBuilder
             ->select('en.lastModified', 'us.usernameCanonical')
             ->from('App:ArchiveEntryEntity', 'en')
-            ->leftJoin('App:User', 'us', Join::WITH, 'en.modifiedByUserId = us.id')
+            ->leftJoin('App:KerberosUser', 'us', Join::WITH, 'en.modifiedByUserId = us.id')
             ->where('en.id IN (:archiveEntryId)')
             ->setParameter('archiveEntryId', $entryId)
             ->getQuery()

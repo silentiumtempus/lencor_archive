@@ -26,7 +26,7 @@ class LDAPService
     /**
      * @return LDAPConnectionModel
      */
-    public function createLDAPConnectionModel() {
+    private function createLDAPConnectionModel() {
 
         return new LDAPConnectionModel($this->container);
     }
@@ -35,7 +35,7 @@ class LDAPService
      * @param LDAPConnectionModel $LDAPConnectionModel
      * @return Ldap
      */
-    public function createLDAPConnection(LDAPConnectionModel $LDAPConnectionModel)
+    private function createLDAPConnection(LDAPConnectionModel $LDAPConnectionModel)
     {
 
         return Ldap::create('ext_ldap', array(
@@ -62,7 +62,7 @@ class LDAPService
      * @param $username
      * @return array
      */
-    public function findLDAPUserByUserName($username) {
+    public function authorizeLDAPUserByUserName($username) {
 
         $LDAPConnectionModel = $this->createLDAPConnectionModel();
         $ldap = $this->prepareConnection($LDAPConnectionModel);
@@ -76,7 +76,7 @@ class LDAPService
      * @param string $username
      * @return mixed|Entry
      */
-    public function findUser(Ldap $ldap, string $dc, string $username)
+    private function findUser(Ldap $ldap, string $dc, string $username)
     {
         $query = $ldap->query($dc, '(&(uid='.$username.'))');
         $resultList = $query->execute();
