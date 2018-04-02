@@ -13,12 +13,14 @@ trait FolderFileTrait
     /**
      * @ORM\Column(type = "boolean", nullable = true)
      * @Assert\Type("boolean")
+     * @Gedmo\Versioned()
      */
 
     protected $requestMark;
 
     /**
      * @ORM\Column(type = "json", nullable = true)
+     * @Gedmo\Versioned()
      */
 
     protected $requestedByUsers;

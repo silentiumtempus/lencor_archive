@@ -2,6 +2,8 @@
 
 namespace App\Security;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Ldap\Ldap;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -12,13 +14,36 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  */
 class UserProvider implements UserProviderInterface
 {
+    public $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     /**
      * @param string $username
      * @return User
      */
     public function loadUserByUsername($username)
     {
-        return new User(null, $username, null, null, array('ROLE_ADMIN'));
+        $ldapConnection = new LDAPConnection($this->container);
+        $ldap = Ldap::create('ext_ldap', array(
+            'host' => $ldapConnection->getLDAPHost(),
+            'port' => $ldapConnection->getLDAPPort(),
+            'version' => $ldapConnection->getLDAPVersion(),
+            'encryption' => $ldapConnection->getLDAPEncryption()
+        ));
+
+        $ldap->bind($ldapConnection->getLDAPUser(), $ldapConnection->getLDAPPassword());
+        $query = $ldap->query($ldapConnection->getLDAPDC(), '(&(userPrincipalName='.$username.'))');
+        $resultList = $query->execute();
+        $user = $resultList[0];
+
+
+
+
+        return new User(null, $user->getAttribute('userPrincipalName'), null, null, array('ROLE_ADMIN'));
     }
 
     /**

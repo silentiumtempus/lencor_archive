@@ -3,6 +3,7 @@
 namespace App\Entity\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait SumErrorsTrait
@@ -10,6 +11,7 @@ trait SumErrorsTrait
     /**
      * @ORM\Column(type = "smallint", nullable = true)
      * @Assert\Type("smallint")
+     * @Gedmo\Versioned()
      */
 
     protected $sumErrors;
