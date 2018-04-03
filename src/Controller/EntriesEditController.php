@@ -8,6 +8,7 @@ use App\Form\EntrySearchByIdForm;
 use App\Service\EntryService;
 use App\Service\FactoryService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,7 @@ class EntriesEditController extends Controller
      * @param EntryService $entryService
      * @param $entryId
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/entries/{entryId}",
      *     options = { "expose" = true },
      *     name = "admin-entries",

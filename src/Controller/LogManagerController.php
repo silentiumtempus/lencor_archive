@@ -6,6 +6,7 @@ use App\Form\LogRowsCountForm;
 use App\Form\LogSearchForm;
 use App\Service\EntryService;
 use App\Service\LoggingService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,11 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class LogManagerController extends Controller
 {
     /**
-     * @param int $entryId
+     * @param integer $entryId
      * @param Request $request
      * @param LoggingService $loggingService
      * @param EntryService $archiveEntryService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/logging/{entryId}",
      *     name = "logging",
      *     requirements = { "entryId" = "\d+" },
@@ -69,6 +71,7 @@ class LogManagerController extends Controller
      * @param int $entryId
      * @param LoggingService $loggingService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/logging/{entryId}/open-sub-dir",
      *     requirements = { "entryId" = "\d+" },
      *     defaults = { "entryId" : "0" },
@@ -101,6 +104,7 @@ class LogManagerController extends Controller
      * @param Request $request
      * @param LoggingService $loggingService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/logging/open-file",
      *     options = { "expose" = true },
      *     name = "logging-open-file")

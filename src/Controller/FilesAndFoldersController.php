@@ -13,6 +13,7 @@ use App\Service\FolderService;
 use App\Service\LoggingService;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,6 +32,7 @@ class FilesAndFoldersController extends Controller
      * @param EntryService $archiveEntryService
      * @param LoggingService $loggingService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/new_folder", name = "entries_new_folder")
      */
 
@@ -135,6 +137,7 @@ class FilesAndFoldersController extends Controller
      * @param EntryService $archiveEntryService
      * @param LoggingService $loggingService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/new_file", name = "entries_new_file")
      */
 
@@ -224,7 +227,7 @@ class FilesAndFoldersController extends Controller
                         if ($passed != 0) {
                             $this->addFlash('passed', $passed . ' файлов успешно загружено.');
                         }
-                        if ($errors !=0) {
+                        if ($errors != 0) {
                             $this->addFlash('errors', $errors . ' ошибок при загрузке.');
                         }
                     } catch (\Exception $exception) {
@@ -245,6 +248,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/remove_file", name = "entries_remove_file")
      */
 
@@ -260,6 +264,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/entries/restore_file", name = "entries_restore_file")
      */
 
@@ -274,6 +279,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("entries/request_file", name = "entries_request_file")
      */
 
@@ -290,6 +296,7 @@ class FilesAndFoldersController extends Controller
      * @param FolderService $folderService
      * @param FileService $fileService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/remove_folder", name = "entries_remove_folder")
      */
 
@@ -304,6 +311,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/entries/restore_folder", name = "entries_restore_folder")
      */
 
@@ -317,22 +325,29 @@ class FilesAndFoldersController extends Controller
     /**
      * @param String $entryId
      * @param EntryService $archiveEntryService
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/change_last_update_info", name = "entries_change_last_update_info")
      */
 
-    public function changeLastUpdateInfo($entryId, EntryService $archiveEntryService)
+    public function changeLastUpdateInfo($entryId = null, EntryService $archiveEntryService)
     {
-        try {
-            $archiveEntryService->changeLastUpdateInfo($entryId, $this->getUser()->getId());
-        } catch (\Exception $exception) {
-            $this->addFlash('error', 'Информация об изменениях не записана в ячейку. Ошибка: ' . $exception->getMessage());
+        if ($entryId) {
+            try {
+                $archiveEntryService->changeLastUpdateInfo($entryId, $this->getUser()->getId());
+            } catch (\Exception $exception) {
+                $this->addFlash('error', 'Информация об изменениях не записана в ячейку. Ошибка: ' . $exception->getMessage());
+            }
         }
+        // @TODO: create proper return
+        return new Response();
     }
 
     /**
      * @param Request $request
      * @param EntryService $archiveEntryService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/last_update_info", name = "entries_last_update_info")
      */
 
@@ -347,6 +362,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/get_folder_entryId", name = "entries_get_folder_entryId")
      */
 
@@ -365,6 +381,7 @@ class FilesAndFoldersController extends Controller
      * @param FileService $fileService
      * @param FileChecksumService $fileChecksumService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/download_file", name = "entries_download_file")
      */
 

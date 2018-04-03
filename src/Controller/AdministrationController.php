@@ -9,6 +9,7 @@ use App\Form\SettingForm;
 use App\Service\FactoryService;
 use App\Service\SettingService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,7 @@ class AdministrationController extends Controller
     /**
      * @param Request $request
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/admin", name="admin")
      */
     public function adminIndex(Request $request)
@@ -34,6 +36,7 @@ class AdministrationController extends Controller
      * @param Request $request
      * @param FactoryService $factoryService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/admin/factories-and-settings", name = "admin-factories-and-settings")
      */
     public function factoriesAndSettings(Request $request, FactoryService $factoryService)
@@ -47,6 +50,7 @@ class AdministrationController extends Controller
      * @param Request $request
      * @param SettingService $settingService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/settings",
      *     options = { "expose" = true },
      *     name = "admin-settings")
@@ -62,6 +66,7 @@ class AdministrationController extends Controller
      * @param Request $request
      * @param FactoryEntity $factory
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/factory/{factory}/load",
      *     options = { "expose" = true },
      *     name = "admin-factory-load")
@@ -77,6 +82,7 @@ class AdministrationController extends Controller
      * @param FactoryEntity $factory
      * @param FactoryService $factoryService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/factory/{factory}/edit",
      *     options = { "expose" = true },
      *     name = "admin-factory-edit")
@@ -104,6 +110,7 @@ class AdministrationController extends Controller
      * @param Request $request
      * @param SettingEntity $setting
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/setting/{setting}/load",
      *     options = { "expose" = true },
      *     name = "admin-setting-load")
@@ -119,6 +126,7 @@ class AdministrationController extends Controller
      * @param SettingEntity $setting
      * @param SettingService $settingService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/setting/{setting}/edit",
      *     options = { "expose" = true },
      *     name = "admin-setting-edit")
@@ -145,6 +153,7 @@ class AdministrationController extends Controller
     /**
      * @param Request $request
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/news", name="admin-news")
      */
     public function news(Request $request)

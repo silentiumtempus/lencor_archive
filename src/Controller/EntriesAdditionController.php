@@ -15,6 +15,7 @@ use App\Service\FolderService;
 use App\Service\LoggingService;
 use App\Service\SettingService;
 use Doctrine\ORM\ORMException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -38,6 +39,7 @@ class EntriesAdditionController extends Controller
      * @return Response
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/new",
      *     options = { "expose" = true },
      *     name = "entries-new")

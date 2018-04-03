@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\FileService;
 use App\Service\FolderService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,6 +16,7 @@ class EntriesContentViewController extends Controller
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/view_folders", name = "entries_view_folders")
      */
     public function showEntryFolders(Request $request, FolderService $folderService)
@@ -31,6 +33,7 @@ class EntriesContentViewController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/view_files", name = "entries_view_files")
      */
     public function showEntryFiles(Request $request, FileService $fileService)
@@ -47,6 +50,7 @@ class EntriesContentViewController extends Controller
      * @param Request $request
      * @param FileService $fileService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/reload_file", name = "entries_reload_file")
      */
     public function changeFileStatus(Request $request, FileService $fileService)
@@ -63,6 +67,7 @@ class EntriesContentViewController extends Controller
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("/entries/view", name = "entries_view")
      */
     public function showEntryDetails(Request $request, FolderService $folderService)
@@ -87,6 +92,7 @@ class EntriesContentViewController extends Controller
      * @param FileService $fileService
      * @param FolderService $folderService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("entries/show_requesters",
      *     options = { "expose" = true },
      *     name = "show_requesters")
