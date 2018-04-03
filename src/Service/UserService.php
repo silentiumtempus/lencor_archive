@@ -18,6 +18,7 @@ class UserService
     protected $container;
     protected $encoderFactory;
     protected $defaultPassword;
+    protected $userIDAttribute;
     protected $usersRepository;
 
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EncoderFactoryInterface $encoderFactory)
@@ -26,6 +27,7 @@ class UserService
         $this->container = $container;
         $this->encoderFactory = $encoderFactory;
         $this->defaultPassword = $this->container->getParameter('default.password');
+        $this->userIDAttribute = $this->container->getParameter('ldap.userid.attribute');
         $this->usersRepository = $this->em->getRepository('App:User');
     }
 
@@ -89,9 +91,8 @@ class UserService
             ->setEmailCanonical($email)
             ->setEnabled(true)
             ->setLastLogin(new \DateTime())
-            ->setRoles(array('ROLE_USER'))
             ->setIsADUser(true)
-            ->setADUserId($kerberosUser->getAttribute('objectSID'));
+            ->setADUserId($kerberosUser->getAttribute($this->userIDAttribute)[0]);
 
         return $user;
     }
@@ -102,6 +103,15 @@ class UserService
     private function persistNewKerberosUser(User $user)
     {
         $this->em->persist($user);
+        $this->em->flush();
+    }
+
+    /**
+     * @param User $user
+     */
+    public function updateLastLogin(User $user)
+    {
+        $user->setLastLogin(new \DateTime());
         $this->em->flush();
     }
 }

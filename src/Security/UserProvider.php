@@ -35,6 +35,8 @@ class UserProvider implements UserProviderInterface
         $localUser = $this->userService->getUserByCanonicalName($username);
         if (!$localUser) {
             $localUser = $this->userService->createKerberosUser($remoteUser);
+        } else {
+            $this->userService->updateLastLogin($localUser);
         }
 
         return $localUser;
