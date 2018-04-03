@@ -23,7 +23,6 @@ class KerberosUser implements UserInterface, EquatableInterface
         $this->user = $user;
     }
 
-
     /**
      * @return string
      */
@@ -33,6 +32,7 @@ class KerberosUser implements UserInterface, EquatableInterface
     }
 
     /**
+     * Get id
      * @return int
      */
     public function getId()
@@ -41,6 +41,7 @@ class KerberosUser implements UserInterface, EquatableInterface
     }
 
     /**
+     * Get username
      * @return string
      */
     public function getUsername()
@@ -49,6 +50,16 @@ class KerberosUser implements UserInterface, EquatableInterface
     }
 
     /**
+     * Get email
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->user->getEmailCanonical();
+    }
+
+    /**
+     * Get salt
      * @return string
      */
     public function getSalt()
@@ -57,6 +68,16 @@ class KerberosUser implements UserInterface, EquatableInterface
     }
 
     /**
+     * Get lastLogin
+     * @return \DateTime|null
+     */
+    public function getLastLogin()
+    {
+        return $this->user->getLastLogin();
+    }
+
+    /**
+     * Get roles
      * @return array
      */
     public function getRoles()
@@ -65,6 +86,7 @@ class KerberosUser implements UserInterface, EquatableInterface
     }
 
     /**
+     * Get password (null)
      * @return string|void
      */
     public function getPassword()
@@ -73,26 +95,28 @@ class KerberosUser implements UserInterface, EquatableInterface
     }
 
     /**
-     *
+     * Emtpy password in User object
+     * @return $this
      */
     public function eraseCredentials()
     {
+        $this->user->setPassword(null);
+
+        return $this;
     }
 
+    /**
+     * @param UserInterface $user
+     * @return bool
+     */
     public function isEqualTo(UserInterface $user)
     {
         if (!$user instanceof KerberosUser) {
             return false;
         }
-        if ($this->user->getId() !== $user->getId()) {
-            return false;
-        }
         if ($this->user->getUsername() !== $user->getUsername()) {
             return false;
         }
-        /*if ($this->password !== $user->getPassword()) {
-            return false;
-        } */
 
         return true;
     }

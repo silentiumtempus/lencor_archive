@@ -5,7 +5,6 @@ namespace App\Security;
 use App\Entity\User;
 use App\Service\LDAPService;
 use App\Service\UserService;
-use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -26,24 +25,20 @@ class UserProvider implements UserProviderInterface
         $this->userService = $userService;
     }
 
-
     /**
      * @param string $username
      * @return User|User[]|null|UserInterface
      */
     public function loadUserByUsername($username)
     {
-
         $remoteUser = $this->LDAPService->authorizeLDAPUserByUserName($username);
         $localUser = $this->userService->getUserByCanonicalName($username);
-
         if (!$localUser) {
             $localUser = $this->userService->createKerberosUser($remoteUser);
         }
 
         return $localUser;
     }
-
 
     /**
      * @param UserInterface $user
@@ -53,7 +48,7 @@ class UserProvider implements UserProviderInterface
     {
         if (!$user instanceof KerberosUser) {
             throw new UnsupportedUserException(
-                sprintf('Непредвиденная ошибка : Instances of "%s" are not supported.', get_class($user))
+                sprintf('Unexpected error: Instances of "%s" are not supported.', get_class($user))
             );
         }
 

@@ -3,8 +3,8 @@
 namespace App\Service;
 use App\Model\LDAPConnectionModel;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Ldap\Entry;
 use Symfony\Component\Ldap\Ldap;
-use Symfony\Component\Ldap\Entry as Entry;
 
 /**
  * Class LDAPService
@@ -60,7 +60,7 @@ class LDAPService
 
     /**
      * @param $username
-     * @return array
+     * @return Entry
      */
     public function authorizeLDAPUserByUserName($username) {
 

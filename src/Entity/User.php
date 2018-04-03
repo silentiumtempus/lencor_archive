@@ -73,7 +73,6 @@ class User extends DefaultUSer
      */
     public function getADUserId()
     {
-
         return $this->ADUserId;
     }
 
