@@ -21,6 +21,12 @@ class UserService
     protected $userIDAttribute;
     protected $usersRepository;
 
+    /**
+     * UserService constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param ContainerInterface $container
+     * @param EncoderFactoryInterface $encoderFactory
+     */
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EncoderFactoryInterface $encoderFactory)
     {
         $this->em = $entityManager;
@@ -83,7 +89,7 @@ class UserService
     private function prepareKerberosUser(Entry $kerberosUser)
     {
         $user = new User();
-        $email = $kerberosUser->getAttribute('mail') ?? 'no@e.mail';
+        $email = ($kerberosUser->getAttribute('mail')[0]) ?? null;
         $user
             ->setUsername($kerberosUser->getAttribute('uid')[0])
             ->setUsernameCanonical(($kerberosUser->getAttribute('uid')[0]))
