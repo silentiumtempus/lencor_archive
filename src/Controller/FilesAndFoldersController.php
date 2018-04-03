@@ -278,15 +278,15 @@ class FilesAndFoldersController extends Controller
     /**
      * @param Request $request
      * @param FileService $fileService
+     * @param FolderService $folderService
      * @return Response
      * @Security("has_role('ROLE_USER')")
      * @Route("entries/request_file", name = "entries_request_file")
      */
 
-    public function requestFile(Request $request, FileService $fileService)
+    public function requestFile(Request $request, FileService $fileService, FolderService $folderService)
     {
-        $userId = $this->getUser()->getId();
-        $requestedFile = $fileService->requestFile($request->get('fileId'), $userId);
+        $requestedFile = $fileService->requestFile($request->get('fileId'), $this->getUser()->getId(), $folderService);
 
         return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $requestedFile));
     }
@@ -320,6 +320,20 @@ class FilesAndFoldersController extends Controller
         $restoredFolder = $folderService->restoreFolder($request->get('folderId'));
 
         return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $restoredFolder));
+    }
+
+    /**
+     * @param Request $request
+     * @param FolderService $folderService
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
+     * @Route("/entries/request_folder", name = "entries_request_folder")
+     */
+    public function requestFolder(Request $request, FolderService $folderService)
+    {
+        $requestedFolder = $folderService->requestFolder($request->get('folderId'), $this->getUser()->getId());
+
+        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $requestedFolder));
     }
 
     /**

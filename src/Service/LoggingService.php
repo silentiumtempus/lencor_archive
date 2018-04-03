@@ -72,7 +72,7 @@ class LoggingService
     /**
      * @param string $parentFolder
      * @param string $folder
-     * @return array|string
+     * @return array|null
      */
     public function getLogsNavigationPath(string $parentFolder, string $folder)
     {

@@ -76,7 +76,7 @@ class FolderService
     }
 
     /**
-     * @param int $folderId
+     * @param integer $folderId
      * @return bool
      */
     public function isRoot(int $folderId)
@@ -189,6 +189,12 @@ class FolderService
         return $restoredFolder;
     }
 
+    public function requestFolder(int $folderId, int $userId, bool $recursive)
+    {
+
+        return null;
+    }
+
     /**
      * @param $folderId
      * @return mixed
@@ -240,7 +246,4 @@ class FolderService
         return $pathEntry;
     }
 
-    public function createFolder()
-    {
-    }
 }

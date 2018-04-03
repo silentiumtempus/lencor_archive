@@ -50,7 +50,7 @@ class FactoryService
     }
 
     /**
-     * @param int $factoryId
+     * @param integer $factoryId
      * @return FactoryEntity|null|object
      */
     public function findFactory(int $factoryId)

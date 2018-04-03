@@ -137,7 +137,6 @@ class FileService
     public function removeFile(int $fileId, int $userId)
     {
         $deletedFile = $this->filesRepository->findById($fileId);
-
         foreach ($deletedFile as $file) {
             $file
                 ->setDeleteMark(true)
@@ -170,11 +169,13 @@ class FileService
     /**
      * @param int $fileId
      * @param int $userId
+     * @param FolderService $folderService
      * @return mixed
      */
-    public function requestFile(int $fileId, int $userId)
+    public function requestFile(int $fileId, int $userId, FolderService $folderService)
     {
         $requestedFile = $this->filesRepository->findById($fileId);
+        $parentFolder = null;
         foreach ($requestedFile as $file) {
             if ($file->getRequestedByUsers() != null) {
                 $users = $file->getRequestedByUsers();
@@ -188,6 +189,15 @@ class FileService
                 ->setRequestMark(true)
                 ->setRequestedByUsers($users)
                 ->setRequestsCount(count($file->getRequestedByUsers()));
+
+            if ($file->getParentFolder() != $parentFolder) {
+
+                $folderService->requestFolder($file->getParentFolder(), $userId, false);
+                $parentFolder = $file->getParentFolder();
+            }
+
+
+
         }
         $this->em->flush();
 

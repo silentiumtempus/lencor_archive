@@ -35,7 +35,7 @@ class SettingService
     }
 
     /**
-     * @param int $factory
+     * @param integer $factory
      * @return mixed
      */
     public function findSettingsByFactoryId(int $factory)

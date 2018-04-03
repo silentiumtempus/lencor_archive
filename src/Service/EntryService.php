@@ -35,7 +35,7 @@ class EntryService
     }
 
     /**
-     * @param int $entryId
+     * @param integer $entryId
      * @return ArchiveEntryEntity|null
      */
     public function getEntryById(int $entryId)
