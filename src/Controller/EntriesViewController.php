@@ -65,6 +65,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param EntryService $archiveEntryService
      * @return Response
+     * @Security("has_role('ROLE_USER')")
      * @Route("entries/remove_entry", name = "entries_remove_entry")
      */
     public function removeEntry(Request $request, EntryService $archiveEntryService)
@@ -81,6 +82,7 @@ file_put_contents($file, $wr); */
      * @param Request $request
      * @param EntryService $archiveEntryService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("entries/restore_entry", name = "entries_restore_entry")
      */
     public function restoreEntry(Request $request, EntryService $archiveEntryService)
