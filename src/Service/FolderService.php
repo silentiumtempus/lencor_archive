@@ -39,21 +39,6 @@ class FolderService
     }
 
     /**
-     * @param FolderEntity $parentFolder
-     * @return string
-     */
-    public function constructFolderAbsPath(FolderEntity $parentFolder)
-    {
-        $folderAbsPath = $this->pathRoot;
-        $binaryPath = $this->foldersRepository->getPath($parentFolder);
-        foreach ($binaryPath as $folderName) {
-            $folderAbsPath .= "/" . $folderName;
-        }
-
-        return $folderAbsPath;
-    }
-
-    /**
      * @param $folderId
      * @return mixed
      */
@@ -96,12 +81,12 @@ class FolderService
     }
 
     /**
-     * @param FolderEntity $parentFolder
+     * @param FolderEntity $folder
      * @return array
      */
-    public function getPath(FolderEntity $parentFolder)
+    public function getPath(FolderEntity $folder)
     {
-        return $this->foldersRepository->getPath($parentFolder);
+        return $this->foldersRepository->getPath($folder);
     }
 
     /**
@@ -189,17 +174,57 @@ class FolderService
         return $restoredFolder;
     }
 
-    public function requestFolder(FolderEntity $folderId, int $userId, bool $recursive)
+    /**
+     * @param integer $folderId
+     * @param integer $userId
+     * @return FolderEntity
+     */
+    public function requestFolder(int $folderId, int $userId)
     {
+        $folder = $this->getParentFolder($folderId);
+        $binaryPath = $this->getPath($folder);
+        foreach ($binaryPath as $folder) {
+            if ($folder->getDeleteMark()) {
+                if ($folder->getRequestMark() ?? $folder->getRequestMark() != false) {
+                    $users = $folder->getRequestedByUsers();
+                    if (!$users || (array_search($userId, $users, true)) === false) {
+                        $users[] = $userId;
+                        $folder->setRequestedByUsers($users);
+                    }
+                }
+            } else {
+                $folder
+                    ->setRequestMark(true)
+                    ->setRequestedByUsers([$userId]);
+            }
+        }
+        $this->em->flush();
 
-        return null;
+        return $folder;
+    }
+
+    /**
+     * @param FolderEntity $parentFolder
+     * @return string
+     */
+    public
+    function constructFolderAbsPath(FolderEntity $parentFolder)
+    {
+        $folderAbsPath = $this->pathRoot;
+        $binaryPath = $this->getPath($parentFolder);
+        foreach ($binaryPath as $folder) {
+            $folderAbsPath .= "/" . $folder;
+        }
+
+        return $folderAbsPath;
     }
 
     /**
      * @param $folderId
      * @return mixed
      */
-    public function showEntryFolder(int $folderId)
+    public
+    function showEntryFolder(int $folderId)
     {
         $options = array();
         $folderNode = $this->foldersRepository->findOneById($folderId);
@@ -214,7 +239,8 @@ class FolderService
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity)
+    public
+    function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity)
     {
         $fs = new Filesystem();
         $pathYear = $this->pathRoot . "/" . $archiveEntryEntity->getYear();

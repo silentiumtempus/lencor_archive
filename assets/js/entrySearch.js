@@ -439,6 +439,24 @@ $(document).ready(function () {
             return false;
         }
 
+        /** Archive entries folder request action **/
+
+        $(document).on("click", 'a[name="requestFolder"]', requestFolder);
+
+        function requestFolder() {
+            let folderId = $(this).parent().attr("id");
+            $.ajax({
+                url: "request_folder",
+                method: "POST",
+                data: {folderId: folderId},
+                success: function (folderRequest) {
+                    $('#file_' + folderId).replaceWith(folderRequest);
+                }
+            });
+
+            return false;
+        }
+
         /** Archive entry removal action **/
 
         $(document).on("click", 'a[name="removeEntry"]', removeEntry);
@@ -545,6 +563,8 @@ $(document).ready(function () {
 
             return false;
         }
+
+        /** Flash messages clear for batch file upload to prevent them from overflowing the page **/
 
         function clearFlashMessages() {
             $.ajax({

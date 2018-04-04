@@ -18,7 +18,6 @@ class FileService
     protected $container;
     protected $folderService;
     protected $filesRepository;
-    protected $foldersRepository;
     protected $userService;
 
     /**
@@ -35,7 +34,6 @@ class FileService
         $this->userService = $userService;
         $this->folderService = $folderService;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
-        $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
     }
 
     /**
@@ -59,14 +57,14 @@ class FileService
 
     /**
      * @param FileEntity $requestedFile
-     * @param string $slashdirection
+     * @param string $slashDirection
      * @return null|string
      */
     public function getFilePath(FileEntity $requestedFile, string $slashDirection)
     {
         $path = null;
         $slash = ($slashDirection) ? '/' : '\\';
-        $binaryPath = $this->foldersRepository->getPath($requestedFile->getParentFolder());
+        $binaryPath = $this->folderService->getPath($requestedFile->getParentFolder());
         foreach ($binaryPath as $folderName) {
             $path .= $folderName . $slash;
         }
@@ -189,9 +187,8 @@ class FileService
     public function requestFile(int $fileId, int $userId, FolderService $folderService)
     {
         $requestedFile = $this->filesRepository->findById($fileId);
-        $parentFolder = null;
         foreach ($requestedFile as $file) {
-            if ($file->getRequestedByUsers() != null) {
+            if ($file->getRequestMark() != null && $file->getRequestMark() != false) {
                 $users = $file->getRequestedByUsers();
                 if ((array_search($userId, $users, true)) === false) {
                     $users[] = $userId;
@@ -204,14 +201,7 @@ class FileService
                 ->setRequestedByUsers($users)
                 ->setRequestsCount(count($file->getRequestedByUsers()));
 
-            if ($file->getParentFolder() != $parentFolder) {
-
-                $folderService->requestFolder($file->getParentFolder(), $userId, false);
-                $parentFolder = $file->getParentFolder();
-            }
-
-
-
+                $folderService->requestFolder($file->getParentFolder(), $userId);
         }
         $this->em->flush();
 
