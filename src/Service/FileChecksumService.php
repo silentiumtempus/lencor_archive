@@ -47,7 +47,7 @@ class FileChecksumService
     {
         $fs = new Filesystem();
         $absRoot = $this->container->getParameter('lencor_archive.storage_path');
-        $absPath = $absRoot . $filePath;
+        $absPath = $absRoot . '/' . $filePath;
         if (!$fs->exists($absPath)) {
             $checkStatus = false;
         } else {

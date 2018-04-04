@@ -28,7 +28,7 @@
                     {% if folder.deleteMark != 0 %}
                         <i class="fa fa-ban" id="isRemoved"> </i>
                     {% else %}
-                        {% if folder.sumErrors is not null %}
+                        {% if (folder.sumErrors is not null) and (folder.sumErrors != 0) %}
                             <i class="fa fa-exclamation" id="checkError"> </i>({{ folder.sumErrors }})
                         {% else %}
                             <i class="fa fa-check-circle-o" id="checkPassed"> </i>

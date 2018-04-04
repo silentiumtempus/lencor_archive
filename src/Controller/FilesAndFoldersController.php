@@ -404,11 +404,13 @@ class FilesAndFoldersController extends Controller
     {
         $requestedFile = null;
         $checkStatus = null;
+        $sharePath = null;
         $httpPath = null;
         if ($request->request->has('fileId')) {
             $requestedFile = $fileService->getFileById($request->get('fileId'));
-            $filePath = $fileService->getFilePath($requestedFile);
-            $httpPath = $fileService->getFileHttpUrl($filePath);
+            $filePath = $fileService->getFilePath($requestedFile, true);
+            $httpPath = $fileService->getFileHTTPUrl($filePath);
+            $sharePath = $fileService->getFileSharePath($requestedFile);
             $checkStatus = $fileChecksumService->checkFile($requestedFile, $filePath);
             if (!$checkStatus) {
                 $fileChecksumService->reportChecksumError($requestedFile, $this->getUser()->getId());
@@ -416,6 +418,6 @@ class FilesAndFoldersController extends Controller
                 $fileChecksumService->validateChecksumValue($requestedFile, $this->getUser()->getId());
             }
         }
-        return $this->render('lencor/admin/archive/archive_manager/download_file.html.twig', array('requestedFile' => $requestedFile, 'downloadLink' => $httpPath, 'checkPass' => $checkStatus));
+        return $this->render('lencor/admin/archive/archive_manager/download_file.html.twig', array('requestedFile' => $requestedFile, 'downloadLink' => $httpPath, 'sharePath' => $sharePath, 'checkPass' => $checkStatus));
     }
 }

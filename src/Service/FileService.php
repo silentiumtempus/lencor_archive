@@ -59,28 +59,42 @@ class FileService
 
     /**
      * @param FileEntity $requestedFile
+     * @param string $slashdirection
      * @return null|string
      */
-    public function getFilePath(FileEntity $requestedFile)
+    public function getFilePath(FileEntity $requestedFile, string $slashDirection)
     {
         $path = null;
+        $slash = ($slashDirection) ? '/' : '\\';
         $binaryPath = $this->foldersRepository->getPath($requestedFile->getParentFolder());
         foreach ($binaryPath as $folderName) {
-            $path .= "/" . $folderName;
+            $path .= $folderName . $slash;
         }
-        $path .= "/" . $requestedFile->getFileName();
+        $path .= $requestedFile->getFileName();
 
         return $path;
+    }
+
+    /**
+     * @param FileEntity $requestedFile
+     * @return string
+     */
+    public function getFileSharePath(FileEntity $requestedFile) {
+        $share_root = $this->container->getParameter('lencor_archive.share_path');
+        $fileAbsPath = $this->getFilePath($requestedFile, false);
+
+        return $share_root . '\\' . $fileAbsPath;
+
     }
 
     /**
      * @param string $filePath
      * @return string
      */
-    public function getFileHttpUrl(string $filePath)
+    public function getFileHTTPUrl(string $filePath)
     {
         $httpRoot = $this->container->getParameter('lencor_archive.http_path');
-        $httpPath = $httpRoot . $filePath;
+        $httpPath = $httpRoot . '/' . $filePath;
 
         return $httpPath;
     }

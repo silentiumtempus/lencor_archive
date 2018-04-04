@@ -6,7 +6,7 @@
 <table id="fileRequest" data-path="{{ path('index') }}">
     <tr>
         <td>
-            {{ 'file.download.title'|trans }}
+            {{ 'file.download.action'|trans }}
         </td>
         <td>
             {{ requestedFile.fileName }}
@@ -14,7 +14,7 @@
     </tr>
     <tr>
         <td>
-            {{ 'file.download.action'|trans }}
+            {{ 'file.download.checksum'|trans }}
         </td>
         <td>
             {% if checkPass %}
@@ -26,7 +26,7 @@
     </tr>
     <tr>
     <td colspan="2">
-        {{ 'file.download.link.prefix'|trans }} <br> {{ downloadLink }}
+        {{ 'file.download.link.prefix'|trans }} <br> {{ sharePath }}
     </td>
     </tr>
     <tr>

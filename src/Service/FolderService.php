@@ -189,7 +189,7 @@ class FolderService
         return $restoredFolder;
     }
 
-    public function requestFolder(int $folderId, int $userId, bool $recursive)
+    public function requestFolder(FolderEntity $folderId, int $userId, bool $recursive)
     {
 
         return null;

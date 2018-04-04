@@ -11,7 +11,7 @@ parameters:
     lencor_archive.storage_path: '%kernel.project_dir%/public/storage'
     lencor_archive.storage_permissions: 0777
     lencor_archive.http_path: 'http://localhost/public/storage'
-	lencor_archive.share_path: '\\localhost'
+	lencor_archive.share_path: '\\path\to\share'
     ldap.host:
     ldap.dc:
     ldap.port:
