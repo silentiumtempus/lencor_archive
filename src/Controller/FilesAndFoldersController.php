@@ -241,6 +241,7 @@ class FilesAndFoldersController extends Controller
             }
             $loggingService->logEntryContent($entryId, $this->getUser(), $session->getFlashBag()->peekAll());
         }
+
         return $this->render('lencor/admin/archive/archive_manager/new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'entryId' => $entryId));
     }
 

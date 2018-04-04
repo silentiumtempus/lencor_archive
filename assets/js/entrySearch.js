@@ -269,7 +269,7 @@ $(document).ready(function () {
                                 }
                                 loadLastUpdateInfo(null, folderId);
                                 /** Load flash messages **/
-                                loadFlashMessagesSummary();
+                                loadFlashMessagesSummary(true);
                             }
                         });
                     });
@@ -530,14 +530,26 @@ $(document).ready(function () {
 
         /** Flash messages summary loader **/
 
-        function loadFlashMessagesSummary() {
+        function loadFlashMessagesSummary(clear) {
             $.ajax({
                 url: "flash_messages_summary",
                 method: "POST",
                 success: function (reloadFlashMessages) {
                     $('#flash-messages').replaceWith(
                         $(reloadFlashMessages));
+                    if (clear) {
+                        clearFlashMessages();
+                    }
                 }
+            });
+
+            return false;
+        }
+
+        function clearFlashMessages() {
+            $.ajax({
+                url: "flash_messages_clear",
+                method: "POST"
             });
 
             return false;
