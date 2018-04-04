@@ -39,7 +39,7 @@ You may also require phpmyadmin to maintain the application if necessary.
 
 8. run "**php bin/console fos:elastica:populate**" to populate application search cache.
 
-9. run "**yarn install**" and then "**./node_modules/.bin/encore dev**". 
+9. run "**yarn install**". 
 
 10. run "**./node_modules/.bin/encore dev**"
 
