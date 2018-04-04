@@ -11,13 +11,15 @@ parameters:
     lencor_archive.storage_path: '%kernel.project_dir%/public/storage'
     lencor_archive.storage_permissions: 0777
     lencor_archive.http_path: 'http://localhost/public/storage'
-    ldap:
-      host:
-      dc:
-      port:
-      version:
-      encryption:
-      user:
-      password:    
+	lencor_archive.share_path: '\\localhost'
+    ldap.host:
+    ldap.dc:
+    ldap.port:
+    ldap.version:
+    ldap.encryption:
+    ldap.user:
+    ldap.password:
+    ldap.userid.attribute: uidNumber
+    default.password:  
     fs_size_conversion.twig.extension.class: App\Twig\FileSystemSizeConverterExtension
     fs_permissions_conversion.twig.extension.class: App\Twig\FilesystemPermissionsConverterExtension
