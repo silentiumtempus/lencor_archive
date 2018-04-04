@@ -65,7 +65,7 @@ class FolderAddForm extends AbstractType
                 'label' => 'folder.create.name',
                 'attr' => array('size' => 20)
             ))
-            ->add('submitButton', SubmitType::class, array('label' => 'button.folder.create'));
+            ->add('submitButton', SubmitType::class, array('label' => 'folder.create.button'));
     }
 
     /**

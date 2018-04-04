@@ -65,7 +65,7 @@ class FileAddForm extends AbstractType
                 'attr' => array('size' => 20),
                 'multiple' => true
             ))
-            ->add('submitButton', SubmitType::class, array('label' => 'button.files.upload'));
+            ->add('submitButton', SubmitType::class, array('label' => 'file.upload.button'));
     }
 
     /**
