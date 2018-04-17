@@ -201,7 +201,7 @@ class FileService
                 ->setRequestedByUsers($users)
                 ->setRequestsCount(count($file->getRequestedByUsers()));
 
-                $folderService->requestFolder($file->getParentFolder(), $userId);
+                $folderService->requestFolder($file->getParentFolder()->getId(), $userId);
         }
         $this->em->flush();
 
