@@ -6,7 +6,7 @@ ElasticSearch is required to be installed and configured to run this application
 
 How to install application
 
-You need Apache2, PHP=>7.1.x, MySQL-server=>5.5, ElasticSearch=5.x, Composer=>1.2, Yarn=>1.5.x, NodeJS=8.9.x installed and configured properly.
+You need Apache2, PHP=>7.1.3, MySQL-server=>5.5, ElasticSearch=5.x, Composer=>1.2, Yarn=>1.5.x, NodeJS=8.9.x installed and configured properly.
 MySQL Database with specific user to access is advisable to have.
 You may also require phpmyadmin to maintain the application if necessary.
 
