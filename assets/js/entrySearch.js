@@ -498,11 +498,14 @@ $(document).ready(function () {
 
         $(document).on("click", 'a[name="isRequested"]', function () {
             let type = $(this).parent("span").attr("id");
-            let id = $(this).attr("id");
-            showRequesters(type, id);
+            let element = $(this);
+            showRequesters(type, element);
+
+            return false;
         });
 
-        function showRequesters(type, id)
+
+        function showRequesters(type, element)
         {
             let func;
             switch (type) {
@@ -513,11 +516,38 @@ $(document).ready(function () {
                 case 'entry' : func = 'entry';
                 break;
             }
+
+            let w = element.width();
+            let leftPos = null;
+            if ($(this).hasClass('has-sub'))
+            {
+                leftPos = element.position().left + w/2 - 12;
+            }
+            else {
+                leftPos = element.position().left + w/2 - 6;
+            }
+
+            let requestersBlock = $.parseHTML('<div class="non-opaque">123<br>123<br>123<br>123<br>123<br>123<br></div>');
+            $(requestersBlock).addClass('requesters-block');
+            //$(requestersBlock).css('position', 'relative');
+            //$(requestersBlock).css('left', element.position().left);
+            //$(requestersBlock).css('top', element.position().top);
+
+            $(requestersBlock).prependTo(element.parent());
+
+            $(document).on('mouseleave', 'a[name="isRequested"]', function () {
+                $(requestersBlock).remove();
+
+                return false;
+            });
+
             $.ajax({
                 url: Routing.generate("show_requesters"),
                 method: "POST",
-                data: {type : type, id : id},
+                data: {type : type, id : element.attr('id')},
                 success: function (requesters) {
+
+                    return false;
                 }
             });
 

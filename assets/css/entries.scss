@@ -239,4 +239,14 @@ body {
     border: 2px groove;
     display: none;
   }
+
+  .requesters-block {
+    position: absolute;
+    display: inline-grid;
+    background: rgb(44, 62, 80);
+    width: 145px;
+    top: 0;
+    z-index: 1;
+    margin: 0 0 0 -155px;
+  }
 }

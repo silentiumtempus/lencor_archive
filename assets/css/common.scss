@@ -248,8 +248,8 @@ h6, .h6 {
   background-color: #ffffff;
 }
 
-.deleted {
-  opacity: 0.5;
+.deleted span :not(.non-opaque) {
+    opacity: 0.5;
 }
 
 .disabled {
