@@ -27,7 +27,7 @@ class EntriesContentViewController extends Controller
     {
         $folderTree = null;
         if ($request->request->has('folderId')) {
-            $folderTree = $folderService->showEntryFolder($request->request->get('folderId'));
+            $folderTree = $folderService->getEntryFolders($request->request->get('folderId'));
         }
 
         return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $folderTree, 'placeholder' => true));

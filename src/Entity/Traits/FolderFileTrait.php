@@ -9,7 +9,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 trait FolderFileTrait
 {
-
     /**
      * @ORM\Column(type = "boolean", nullable = true)
      * @Assert\Type("boolean")
@@ -37,12 +36,14 @@ trait FolderFileTrait
     protected $addTimestamp;
 
     /**
-     * @ORM\Column(type = "string")
+     * @ORM\ManyToOne(targetEntity = "User")
+     * @ORM\JoinColumn(name = "added_by_user", referencedColumnName = "id")
+     * @Assert\NotBlank
      * @Assert\Type("string")
      * @Gedmo\Versioned()
      */
 
-    protected $addedByUserId;
+    protected $addedByUser;
 
     /**
      * Set parentFolder
@@ -88,12 +89,12 @@ trait FolderFileTrait
 
     /**
      * Set addedByUserId
-     * @param int $addedByUserId
+     * @param int $addedByUser
      * @return $this
      */
-    public function setAddedByUserId(int $addedByUserId)
+    public function setAddedByUser(int $addedByUser)
     {
-        $this->addedByUserId = $addedByUserId;
+        $this->addedByUser = $addedByUser;
 
         return $this;
     }
@@ -102,9 +103,9 @@ trait FolderFileTrait
      * Get addedByUserId
      * @return string
      */
-    public function getAddedByUserId()
+    public function getAddedByUser()
     {
-        return $this->addedByUserId;
+        return $this->addedByUser;
     }
 
     /**

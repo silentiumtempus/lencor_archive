@@ -10,7 +10,7 @@
                 </a>
         {% endif %}
             </span>
-        <span>ID: {{ file.addedByUserId }}</span>
+        <span>{{ file.addedByUser.username }}</span>
         <span> {{ file.addTimestamp|date('Y-m-d H:i:s') }} </span>
         <span class="text-right width-66" id="file">
             {% if file.requestMark %}

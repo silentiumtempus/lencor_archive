@@ -222,7 +222,7 @@ class FolderService
      * @param $folderId
      * @return mixed
      */
-    public function showEntryFolder(int $folderId)
+    public function getEntryFolders(int $folderId)
     {
         /** First code version to retrieve folders as nested tree */
         //$options = array();

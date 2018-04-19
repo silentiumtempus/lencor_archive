@@ -20,7 +20,7 @@
                             <i id="down" class="fa fa-chevron-down"> </i><i id="up" class="fa fa-chevron-up" hidden> </i><i class="fa fa-folder"> </i>{{ folder.folderName }}
                         </a>
                     </span>
-                    <span>ID: {{ folder.addedByUserId }}</span>
+                    <span>{{ folder.addedByUser}}</span>
                     <span>{{ folder.addTimestamp|date('Y-m-d H:i:s') }}</span>
                     <span class="text-right width-66" id="folder">
                         {% if folder.requestMark %}
