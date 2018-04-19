@@ -445,13 +445,11 @@ $(document).ready(function () {
 
         function requestFolder() {
             let folderId = $(this).parent().attr("id");
-            //alert(folderId);
             $.ajax({
                 url: "request_folder",
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRequest) {
-                    alert(folderRequest);
                     $('#folder_' + folderId).replaceWith(folderRequest);
                 }
             });
