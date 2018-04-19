@@ -191,15 +191,15 @@ class FolderService
                         $users[] = $userId;
                         $folder->setRequestedByUsers($users);
                     }
+                } else {
+                    $folder
+                        ->setRequestMark(true)
+                        ->setRequestedByUsers([$userId])
+                        ->setRequestsCount(count($folder->getRequestedByUsers()));
                 }
-            } else {
-                $folder
-                    ->setRequestMark(true)
-                    ->setRequestedByUsers([$userId]);
             }
         }
         $this->em->flush();
-
         return $folder;
     }
 
@@ -207,8 +207,7 @@ class FolderService
      * @param FolderEntity $parentFolder
      * @return string
      */
-    public
-    function constructFolderAbsPath(FolderEntity $parentFolder)
+    public function constructFolderAbsPath(FolderEntity $parentFolder)
     {
         $folderAbsPath = $this->pathRoot;
         $binaryPath = $this->getPath($parentFolder);
@@ -223,14 +222,17 @@ class FolderService
      * @param $folderId
      * @return mixed
      */
-    public
-    function showEntryFolder(int $folderId)
+    public function showEntryFolder(int $folderId)
     {
-        $options = array();
-        $folderNode = $this->foldersRepository->findOneById($folderId);
-        $folderTree = $this->foldersRepository->childrenHierarchy($folderNode, true, $options, false);
+        /** First code version to retrieve folders as nested tree */
+        //$options = array();
+        //$folderNode = $this->foldersRepository->findOneById($folderId);
+        //$folderTree = $this->foldersRepository->childrenHierarchy($folderNode, true, $options, false);
+        /**  */
 
-        return $folderTree;
+        $folderList = $this->foldersRepository->findByParentFolder($folderId);
+
+        return $folderList;
     }
 
     /**
@@ -239,8 +241,7 @@ class FolderService
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public
-    function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity)
+    public function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity)
     {
         $fs = new Filesystem();
         $pathYear = $this->pathRoot . "/" . $archiveEntryEntity->getYear();

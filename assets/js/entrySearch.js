@@ -445,12 +445,14 @@ $(document).ready(function () {
 
         function requestFolder() {
             let folderId = $(this).parent().attr("id");
+            //alert(folderId);
             $.ajax({
                 url: "request_folder",
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRequest) {
-                    $('#file_' + folderId).replaceWith(folderRequest);
+                    alert(folderRequest);
+                    $('#folder_' + folderId).replaceWith(folderRequest);
                 }
             });
 
@@ -517,38 +519,27 @@ $(document).ready(function () {
                 break;
             }
 
-            let w = element.width();
-            let leftPos = null;
-            if ($(this).hasClass('has-sub'))
-            {
-                leftPos = element.position().left + w/2 - 12;
-            }
-            else {
-                leftPos = element.position().left + w/2 - 6;
-            }
-
-            let requestersBlock = $.parseHTML('<div class="non-opaque">123<br>123<br>123<br>123<br>123<br>123<br></div>');
-            $(requestersBlock).addClass('requesters-block');
-            //$(requestersBlock).css('position', 'relative');
-            //$(requestersBlock).css('left', element.position().left);
-            //$(requestersBlock).css('top', element.position().top);
-
+            let requestersBlock = $.parseHTML('<div></div>');
+            $(requestersBlock).addClass('requesters-block text-left non-opaque');
+            let spinner = $.parseHTML('<i> </i>');
+            $(spinner).addClass('fa fa-spinner fa-pulse fa-2x fa-fw non-opaque margin-auto');
+            $(spinner).appendTo(requestersBlock);
             $(requestersBlock).prependTo(element.parent());
-
-            $(document).on('mouseleave', 'a[name="isRequested"]', function () {
-                $(requestersBlock).remove();
-
-                return false;
-            });
-
             $.ajax({
                 url: Routing.generate("show_requesters"),
                 method: "POST",
                 data: {type : type, id : element.attr('id')},
                 success: function (requesters) {
-
+                    $(requestersBlock).empty();
+                    $(requesters).appendTo(requestersBlock);
                     return false;
                 }
+            });
+
+            $(document).on('mouseleave', 'a[name="isRequested"]', function () {
+                $(requestersBlock).remove();
+
+                return false;
             });
 
             return false;

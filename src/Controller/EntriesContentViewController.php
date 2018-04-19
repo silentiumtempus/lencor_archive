@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\CommonArchiveService;
 use App\Service\FileService;
 use App\Service\FolderService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -9,6 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class EntriesContentViewController extends Controller
 {
@@ -89,27 +93,32 @@ class EntriesContentViewController extends Controller
 
     /**
      * @param Request $request
-     * @param FileService $fileService
-     * @param FolderService $folderService
+     * @param CommonArchiveService $commonArchiveService
+     * @param TranslatorInterface $translator
      * @return Response
      * @Security("has_role('ROLE_USER')")
      * @Route("entries/show_requesters",
      *     options = { "expose" = true },
      *     name = "show_requesters")
      */
-    public function showRequesters(Request $request, FileService $fileService, FolderService $folderService)
+    public function showRequesters(Request $request, CommonArchiveService $commonArchiveService, TranslatorInterface $translator)
     {
         $requesters = null;
+        $headerText = null;
+        $translator->addLoader('yml', new YamlFileLoader());
+        $translator->addResource('yml', 'files_folders.ru.yml', 'ru_RU', 'files_folders');
+
         if ($request->get('type') && $request->get('id')) {
             $type = $request->get('type');
-            $fileId = $request->get('id');
-
+            $id = $request->get('id');
+            $requesters = $commonArchiveService->getRequesters($id, $type);
             switch ($type) {
                 case 'file':
-                    $requesters = $fileService->getFileRequesters($fileId);
+
+                    $headerText = $translator->trans('file.self', array(), 'files_folders') . " " . $translator->trans('requested', array(), 'files_folders');
                     break;
                 case 'folder':
-                    $requesters[] = [];
+                    $headerText = $translator->trans('folder.self', array(), 'files_folders') . " " . $translator->trans('requested', array(), 'files_folders');
                     break;
                 case 'entry':
                     $requesters[] = [];
@@ -118,6 +127,6 @@ class EntriesContentViewController extends Controller
         }
 
 
-        return $this->render('lencor/admin/archive/archive_manager/show_requesters.html.twig', array('requesters' => $requesters));
+        return $this->render('lencor/admin/archive/archive_manager/show_requesters.html.twig', array('requesters' => $requesters, 'headerText' => $headerText));
     }
 }

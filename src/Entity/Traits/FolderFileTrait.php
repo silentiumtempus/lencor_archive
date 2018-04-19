@@ -167,6 +167,6 @@ trait FolderFileTrait
      */
     public function getRequestsCount()
     {
-        return $this->requestsCount;
+        return count($this->getRequestedByUsers());
     }
 }

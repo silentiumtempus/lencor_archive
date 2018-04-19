@@ -198,8 +198,7 @@ class FileService
             }
             $file
                 ->setRequestMark(true)
-                ->setRequestedByUsers($users)
-                ->setRequestsCount(count($file->getRequestedByUsers()));
+                ->setRequestedByUsers($users);
 
                 $folderService->requestFolder($file->getParentFolder()->getId(), $userId);
         }
@@ -208,19 +207,7 @@ class FileService
         return $requestedFile;
     }
 
-    /**
-     * @param int $fileId
-     * @return array
-     */
-    public function getFileRequesters(int $fileId)
-    {
-        $file = $this->filesRepository->findOneById($fileId);
-        $requesterIds = $file->getRequestedByUsers();
-        $requesters = $this->userService->getUsers($requesterIds);
-        
-        return $requesters;
-    }
-    
+
     /**
      * @param int $folderId
      * @param int $userId

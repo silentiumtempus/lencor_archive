@@ -221,6 +221,10 @@ h6, .h6 {
   text-align: right;
 }
 
+.text-left {
+  text-align: left;
+}
+
 .width-66 {
   width: 60% !important;
 }
@@ -269,6 +273,10 @@ h6, .h6 {
   li > span {
     padding-left: 10px;
   }
+}
+
+.margin-auto {
+  margin: 0 auto;
 }
 
 footer {

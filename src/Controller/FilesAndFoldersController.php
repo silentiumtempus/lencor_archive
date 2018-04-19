@@ -332,7 +332,7 @@ class FilesAndFoldersController extends Controller
      */
     public function requestFolder(Request $request, FolderService $folderService)
     {
-        $requestedFolder = $folderService->requestFolder($request->get('folderId'), $this->getUser()->getId());
+        $requestedFolder[] = $folderService->requestFolder($request->get('folderId'), $this->getUser()->getId());
 
         return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $requestedFolder));
     }

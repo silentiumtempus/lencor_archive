@@ -243,10 +243,17 @@ body {
   .requesters-block {
     position: absolute;
     display: inline-grid;
-    background: rgb(44, 62, 80);
+    border: #2c3e50 1px solid;
+    border-radius: 3px;
+    background: #ecf0f1;
     width: 145px;
     top: 0;
     z-index: 1;
     margin: 0 0 0 -155px;
+
+    .requesters-content {
+      text-align: left;
+      padding: 5px;
+    }
   }
 }

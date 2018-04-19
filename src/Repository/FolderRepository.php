@@ -16,7 +16,7 @@ class FolderRepository extends NestedTreeRepository
     public function getEntryFoldersQuery(EntityRepository $entityRepository, int $folderId)
     {
         return $entityRepository->createQueryBuilder('parent')
-            ->where('parent.root = :folderId')
+            ->where('parent.root = :folderId', 'parent.deleteMark = 0')
             ->setParameter(':folderId', $folderId)
             ->orderBy('parent.lft', 'ASC');
     }
