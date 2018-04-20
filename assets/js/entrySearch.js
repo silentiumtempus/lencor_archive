@@ -356,8 +356,6 @@ $(document).ready(function () {
 
         function removeFile() {
             let fileId = $(this).parent().attr("id");
-            let $folderId = $(this).parents('li').parent('li').attr('id');
-            alert($folderId);
             $.ajax({
                 url: "remove_file",
                 method: "POST",
