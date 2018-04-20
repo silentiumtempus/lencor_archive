@@ -130,8 +130,8 @@ body {
         }
         .row {
           display: flex;
-          margin-left: 0 !important;
-          margin-right: 0 !important;
+          margin-left: 0;
+          margin-right: 0;
         }
         .add-buttons td {
           padding: 0;
@@ -139,7 +139,7 @@ body {
         }
         .deleted {
           span {
-            color: rgba(#2c3e50, 0.5) !important;
+            color: rgba(#2c3e50, 0.5);
             & :not(.non-opaque) {
               opacity: 0.5;
             }
@@ -148,7 +148,7 @@ body {
       }
       .add-buttons {
         margin: 5px 0 0 0;
-        background-color: #ffffff !important;
+        background-color: #ffffff;
         td {
           min-width: 9%;
           font-size: 14px;
@@ -159,7 +159,7 @@ body {
         padding-left: 15px;
       }
       .placeholder {
-        border-left: 0 !important;
+        border-left: 0;
       }
       .border-left {
         border-left: 1px dashed silver;
@@ -169,7 +169,7 @@ body {
       }
       .deleted {
         td {
-          color: rgba(#2c3e50, 0.5) !important;
+          color: rgba(#2c3e50, 0.5);
           & :not(.non-opaque) {
             opacity: 0.5;
           }
