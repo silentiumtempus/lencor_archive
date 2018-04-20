@@ -106,7 +106,6 @@ class EntriesContentViewController extends Controller
         $headerText = null;
         $translator->addLoader('yml', new YamlFileLoader());
         $translator->addResource('yml', 'files_folders.ru.yml', 'ru_RU', 'files_folders');
-
         if ($request->get('type') && $request->get('id')) {
             $type = $request->get('type');
             $id = $request->get('id');
@@ -120,7 +119,8 @@ class EntriesContentViewController extends Controller
                     $headerText = $translator->trans('folder.self', array(), 'files_folders') . " " . $translator->trans('requested', array(), 'files_folders');
                     break;
                 case 'entry':
-                    $requesters[] = [];
+                    $translator->addResource('yml', 'entries.ru.yml', 'ru_RU', 'entries');
+                    $headerText = $translator->trans('entries.self', array(), 'entries') . " " . $translator->trans('entries.requested', array(), 'entries');
                     break;
             }
         }

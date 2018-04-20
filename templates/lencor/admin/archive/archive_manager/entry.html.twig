@@ -12,7 +12,7 @@
     <td>{{ entry.registerNumber }}</td>
     <td>{{ entry.contractNumber }}</td>
     <td>{{ entry.fullConclusionName }}</td>
-    <td class="text-center">
+    <td class="text-center" id="entry">
         {% if entry.requestMark %}
             <a href="#" name="isRequested" id="{{ entry.id }}" class="non-opaque"><i class="fa fa-fire non-opaque"> </i>({{ entry.requestsCount }})</a>
         {% endif %}

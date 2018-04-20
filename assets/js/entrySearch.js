@@ -5,7 +5,6 @@ $(document).ready(function () {
         let $path = Routing.generate('entries');
         let $factory = $('#entry_search_form_factory');
         let searchForm = $("#entry_search_form");
-        let resetButton = $("#entry_search_form_resetButton");
         let createFolderBlock = $("#addFolder");
         let uploadFileBlock = $("#addFiles");
         let downloadFileBlock = $("#downloadFile");
@@ -14,7 +13,9 @@ $(document).ready(function () {
 
         /** Archive entries main table factory->settings AJAX loader **/
 
-        $factory.on("change", function settingsLoadAction() {
+        $(document).on("change", "#entry_search_form_factory", settingsLoadAction);
+
+        function settingsLoadAction() {
             let data = {};
             data[$factory.attr('name')] = $factory.val();
             $.ajax({
@@ -29,12 +30,13 @@ $(document).ready(function () {
             });
 
             return false;
-        });
+        }
 
         /** Archive entries main table content AJAX loader **/
 
-        searchForm.on("submit", function searchAction(event) {
-            event.preventDefault();
+        $(document).on("submit", "#entry_search_form", searchAction);
+
+        function searchAction() {
             $('#main-tbody').hide();
             $('#loading-spinner').show().css('display', 'contents');
             let fields = searchForm.serializeArray();
@@ -55,11 +57,13 @@ $(document).ready(function () {
             });
 
             return false;
-        });
+        }
 
         /** Archive entries main table search form reset to default stdout AJAX loader **/
 
-        resetButton.on("click", function resetAction() {
+        $(document).on("click", "#entry_search_form_resetButton", resetAction);
+
+        function resetAction() {
             searchForm.trigger('reset');
             $('#main-tbody').hide();
             $('#loading-spinner').show().css('display', 'contents');
@@ -77,7 +81,7 @@ $(document).ready(function () {
             });
 
             return false;
-        });
+        }
 
         /** Archive entries content loader **/
 
@@ -514,29 +518,36 @@ $(document).ready(function () {
 
         /** Showing requesters for deleted items **/
 
-        $(document).on("click", 'a[name="isRequested"]', function () {
-            let type = $(this).parent("span").attr("id");
+        $(document).on("click", 'a[name="isRequested"]', function (event) {
+            let type = $(this).parent().attr("id");
             let element = $(this);
-            showRequesters(type, element);
+            showRequesters(type, element, event);
 
             return false;
         });
 
-
-        function showRequesters(type, element)
+        function showRequesters(type, element, event)
         {
             let func;
+            let $blockDuplicate = $('.requesters-block');
+            if ($blockDuplicate.length) {
+                $blockDuplicate.remove();
+            }
+            let requestersBlock = $.parseHTML('<span></span>');
+            $(requestersBlock).addClass('requesters-block text-left non-opaque');
             switch (type) {
                 case 'file' : func = 'file';
                 break;
                 case 'folder' : func = 'folder';
                 break;
-                case 'entry' : func = 'entry';
+                case 'entry' :
+                    func = 'entry';
+                    let x = event.pageX - 20;
+                    let y = event.pageY - 10;
+                    $(requestersBlock).css('left', x);
+                    $(requestersBlock).css('top', y);
                 break;
             }
-
-            let requestersBlock = $.parseHTML('<div></div>');
-            $(requestersBlock).addClass('requesters-block text-left non-opaque');
             let spinner = $.parseHTML('<i> </i>');
             $(spinner).addClass('fa fa-spinner fa-pulse fa-2x fa-fw non-opaque margin-auto');
             $(spinner).appendTo(requestersBlock);
