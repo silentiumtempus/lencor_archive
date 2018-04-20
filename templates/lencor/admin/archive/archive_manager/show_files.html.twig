@@ -28,9 +28,9 @@
         <span id="{{ file.id }}" class="text-right width-66">
         {% if file.deleteMark != 0 %}
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="#" name="restoreFile"><i class="fa fa-undo"> </i></a>
+                <a href="#" name="restoreFile" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
             {% else %}
-                <a href="#" name="requestFile"><i class="fa fa-undo"> </i></a>
+                <a href="#" name="requestFile" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
             {% endif %}
         {% else %}
             <a href="#" name="downloadFile"><i class="fa fa-download"> </i></a>

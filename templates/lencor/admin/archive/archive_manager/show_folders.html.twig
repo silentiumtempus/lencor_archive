@@ -40,9 +40,9 @@
                     <span id="{{ folder.id }}" class="text-right width-66">
                     {% if folder.deleteMark != 0 %}
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a href="#" name="restoreFolder"><i class="fa fa-undo"> </i></a>
+                            <a href="#" name="restoreFolder" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
                         {% else %}
-                            <a href="#" name="requestFolder"><i class="fa fa-undo"> </i></a>
+                            <a href="#" name="requestFolder" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
                         {% endif %}
                     {% else %}
                         <a href="#" name="addFiles"><i class="fa fa-upload" id=addFiles"> </i></a>
