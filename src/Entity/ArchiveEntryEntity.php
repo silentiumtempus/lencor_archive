@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
 use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\RestorationRequestsTrait;
 use App\Entity\Traits\SlugTrait;
 use App\Entity\Traits\SumErrorsTrait;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,6 +35,7 @@ class ArchiveEntryEntity
     use DeleteStateTrait;
     use SlugTrait;
     use SumErrorsTrait;
+    use RestorationRequestsTrait;
 
     /**
      * @ORM\Column(type = "integer", length = 4)

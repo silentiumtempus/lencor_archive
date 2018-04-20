@@ -166,8 +166,11 @@ class FolderService
     {
         $restoredFolder = $this->foldersRepository->findById($folderId);
         foreach ($restoredFolder as $folder) {
-            $folder->setDeleteMark(false);
-            $folder->setDeletedByUserId(null);
+            $folder
+                ->setDeleteMark(false)
+                ->setDeletedByUserId(null)
+                ->setRequestMark(false)
+                ->setRequestedByUsers(null);
         }
         $this->em->flush();
 

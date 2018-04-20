@@ -36,9 +36,9 @@ file_put_contents($file, $wr); */
      * @param EntrySearchService $entrySearchService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/", name="entries",
-     *     options = { "expose" = true }
-     *     )
+     * @Route("/entries/",
+     *     options = { "expose" = true },
+     *     name="entries")
      */
     public function loadEntries(Request $request, EntrySearchService $entrySearchService)
     {
@@ -63,16 +63,18 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
-     * @param EntryService $archiveEntryService
+     * @param EntryService $entryService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("entries/remove_entry", name = "entries_remove_entry")
+     * @Route("entries/remove_entry",
+     *     options = { "expose" = true },
+     *     name = "remove_entry")
      */
-    public function removeEntry(Request $request, EntryService $archiveEntryService)
+    public function removeEntry(Request $request, EntryService $entryService)
     {
         $archiveEntry = null;
         if ($request->request->has('entryId')) {
-            $archiveEntry = $archiveEntryService->removeEntry($request->get('entryId'), $this->getUser()->getId());
+            $archiveEntry = $entryService->removeEntry($request->get('entryId'), $this->getUser()->getId());
         }
 
         return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
@@ -80,16 +82,37 @@ file_put_contents($file, $wr); */
 
     /**
      * @param Request $request
-     * @param EntryService $archiveEntryService
+     * @param EntryService $entryService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("entries/restore_entry", name = "entries_restore_entry")
+     * @Route("entries/restore_entry",
+     *     options = { "expose" = true },
+     *     name = "restore_entry")
      */
-    public function restoreEntry(Request $request, EntryService $archiveEntryService)
+    public function restoreEntry(Request $request, EntryService $entryService)
     {
         $archiveEntry = null;
         if ($request->request->has('entryId')) {
-            $archiveEntry = $archiveEntryService->restoreEntry($request->get('entryId'), $this->getUser()->getId());
+            $archiveEntry = $entryService->restoreEntry($request->get('entryId'), $this->getUser()->getId());
+        }
+
+        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
+    }
+
+    /**
+     * @param Request $request
+     * @param EntryService $entryService
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
+     * @Route("entries/request_entry",
+     *     options = { "expose" = true },
+     *     name = "request_entry")
+     */
+    public function requestEntry(Request $request, EntryService $entryService)
+    {
+        $archiveEntry = null;
+        if ($request->request->has('entryId')) {
+            $archiveEntry = $entryService->requestEntry($request->get('entryId'), $this->getUser()->getId());
         }
 
         return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));

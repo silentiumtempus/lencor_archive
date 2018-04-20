@@ -464,7 +464,7 @@ $(document).ready(function () {
         function removeEntry() {
             let entryId = $(this).parent().attr("id");
             $.ajax({
-                url: "remove_entry",
+                url: Routing.generate('remove_entry'),
                 method: "POST",
                 data: {entryId: entryId},
                 success: function (entryRemoval) {
@@ -482,12 +482,30 @@ $(document).ready(function () {
         function restoreEntry() {
             let entryId = $(this).parent().attr("id");
             $.ajax({
-                url: "restore_entry",
+                url: Routing.generate('restore_entry'),
                 method: "POST",
                 data: {entryId: entryId},
                 success: function (entryRestoration) {
                     $('#entry_' + entryId).replaceWith(entryRestoration);
 
+                }
+            });
+
+            return false;
+        }
+
+        /** Archive entry request action **/
+
+        $(document).on("click", 'a[name="requestEntry"]', requestEntry);
+
+        function requestEntry() {
+            let entryId = $(this).parent().attr("id");
+            $.ajax({
+                url: Routing.generate('request_entry'),
+                method: "POST",
+                data: {entryId: entryId},
+                success: function (entryRequest) {
+                    $('#entry_' + entryId).replaceWith(entryRequest);
                 }
             });
 

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Traits\CommonTrait;
 use App\Entity\Traits\DeleteStateTrait;
 use App\Entity\Traits\FolderFileTrait;
+use App\Entity\Traits\RestorationRequestsTrait;
 use App\Entity\Traits\SlugTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -33,6 +34,7 @@ class FileEntity
     use FolderFileTrait;
     use SlugTrait;
     use DeleteStateTrait;
+    use RestorationRequestsTrait;
 
     /**
      * @ORM\Column(type="string")

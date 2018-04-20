@@ -138,6 +138,9 @@ body {
           padding: 0;
           vertical-align: middle;
         }
+        .deleted span :not(.non-opaque) {
+          opacity: 0.5;
+        }
       }
       .add-buttons {
         margin: 5px 0 0 0;
@@ -160,6 +163,13 @@ body {
       .border-top {
         border-top: 1px dashed silver;
       }
+      .deleted {
+        td {
+          & :not(.non-opaque) {
+            opacity: 0.5;
+          }
+        }
+      }
     }
     #main-table {
       tfoot {
@@ -174,11 +184,13 @@ body {
     }
 
   }
+
   .right {
     .button {
       margin-right: 44px;
     }
   }
+
   .folder-add {
     position: fixed;
     background-color: #ffffff;
@@ -256,4 +268,5 @@ body {
       padding: 5px;
     }
   }
+
 }

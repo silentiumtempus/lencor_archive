@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Traits\CommonTrait;
 use App\Entity\Traits\DeleteStateTrait;
 use App\Entity\Traits\FolderFileTrait;
+use App\Entity\Traits\RestorationRequestsTrait;
 use App\Entity\Traits\SlugTrait;
 use App\Entity\Traits\SumErrorsTrait;
 use Doctrine\ORM\Mapping as ORM;
@@ -36,7 +37,7 @@ class FolderEntity
     use SlugTrait;
     use DeleteStateTrait;
     use SumErrorsTrait;
-
+    use RestorationRequestsTrait;
     /**
      * @ORM\OneToOne(targetEntity = "ArchiveEntryEntity", inversedBy = "cataloguePath")
      * @ORM\JoinColumn(name = "archive_entry_id", referencedColumnName = "id")

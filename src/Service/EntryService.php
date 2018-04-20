@@ -163,8 +163,37 @@ class EntryService
         $archiveEntry
             ->setDeleteMark(false)
             ->setModifiedByUserId($userId)
-            ->setDeletedByUserId(null);
+            ->setDeletedByUserId(null)
+            ->setRequestMark(false)
+            ->setRequestedByUsers(null);
         $this->em->flush();
+
+        return $archiveEntry;
+    }
+
+    /**
+     * @param int $entryId
+     * @param int $userId
+     * @return ArchiveEntryEntity
+     */
+    public function requestEntry(int $entryId, int $userId)
+    {
+        $archiveEntry = $this->entriesRepository->findOneById($entryId);
+        if ($archiveEntry->getDeleteMark()) {
+            if ($archiveEntry->getRequestMark() ?? $archiveEntry->getRequestMark() != false) {
+                $users = $archiveEntry->getRequestedByUsers();
+                if (!$users || (array_search($userId, $users, true)) === false) {
+                    $users[] = $userId;
+                    $archiveEntry->setRequestedByUsers($users);
+                }
+            } else {
+                $archiveEntry
+                    ->setRequestMark(true)
+                    ->setRequestedByUsers([$userId])
+                    ->setRequestsCount(count($archiveEntry->getRequestedByUsers()));
+            }
+            $this->em->flush();
+        }
 
         return $archiveEntry;
     }

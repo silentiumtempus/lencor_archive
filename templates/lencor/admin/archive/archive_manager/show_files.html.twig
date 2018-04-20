@@ -3,12 +3,10 @@
             <span id="{{ file.id }}">
         {% if file.deleteMark != 0 %}
             <i class="fa fa-remove"> </i>
-            <i class="fa fa-file-text"> </i>{{ file.fileName }}
-        {% else %}
-            <a href="#" name="downloadFile">
+        {% endif %}
+                <a href="#" name="downloadFile">
                     <i class="fa fa-file-text"> </i>{{ file.fileName }}
                 </a>
-        {% endif %}
             </span>
         <span>{{ file.addedByUser.username }}</span>
         <span> {{ file.addTimestamp|date('Y-m-d H:i:s') }} </span>
