@@ -436,7 +436,7 @@ $(document).ready(function () {
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRestoration) {
-                    $('#folder_' + folderId).replaceWith(folderRestoration);
+                    $($('#folder_' + folderId).children('ul').first()).replaceWith($(folderRestoration).children('ul').first());
                 }
             });
 
@@ -454,7 +454,7 @@ $(document).ready(function () {
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRequest) {
-                    $('#folder_' + folderId).replaceWith(folderRequest);
+                    $($('#folder_' + folderId).children('ul').first()).replaceWith($(folderRequest).children('ul').first());
                 }
             });
 
