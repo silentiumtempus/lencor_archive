@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\ArchiveEntryEntity;
 use App\Entity\FolderEntity;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,23 +35,26 @@ class EntryService
         $this->container = $container;
     }
 
+    //@TODO: why string?
     /**
-     * @param integer $entryId
+     * @param string $entryId
      * @return ArchiveEntryEntity|null
      */
-    public function getEntryById(int $entryId)
+    public function getEntryById(string $entryId)
     {
         return $this->entriesRepository->findOneById($entryId);
     }
 
     /**
-     * @param string $entryId
-     * @param string $userId
+     * @param int $entryId
+     * @param User $user
      */
-    public function changeLastUpdateInfo(string $entryId, string $userId)
+    public function changeLastUpdateInfo(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
-        $archiveEntry->setModifiedbyUserId($userId);
+        $archiveEntry
+            ->setModifiedByUserId($user)
+            ->setLastModified(new \DateTime());
         $this->em->flush();
     }
 
@@ -105,15 +109,15 @@ class EntryService
     /**
      * @param ArchiveEntryEntity $newEntry
      * @param FolderEntity $newFolder
-     * @param $userId
+     * @param User $user
      */
-    public function prepareEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder, int $userId)
+    public function prepareEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder, User $user)
     {
         $newEntry
             ->setCataloguePath($newFolder->getId())
-            ->setModifiedByUserId($userId)
+            ->setModifiedByUserId($user)
             ->setDeleteMark(false)
-            ->setDeletedByUserId(null);
+            ->setDeletedByUser(null);
     }
 
     public function writeDataToEntryFile(ArchiveEntryEntity $newEntry, string $filename)
@@ -138,15 +142,15 @@ class EntryService
 
     /**
      * @param int $entryId
-     * @param int $userId
+     * @param User $user
      * @return ArchiveEntryEntity
      */
-    public function removeEntry(int $entryId, int $userId)
+    public function removeEntry(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
         $archiveEntry
             ->setDeleteMark(true)
-            ->setDeletedByUserId($userId);
+            ->setDeletedByUser($user);
         $this->em->flush();
 
         return $archiveEntry;
@@ -154,16 +158,16 @@ class EntryService
 
     /**
      * @param int $entryId
-     * @param int $userId
+     * @param User $user
      * @return ArchiveEntryEntity
      */
-    public function restoreEntry(int $entryId, int $userId)
+    public function restoreEntry(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
         $archiveEntry
             ->setDeleteMark(false)
-            ->setModifiedByUserId($userId)
-            ->setDeletedByUserId(null)
+            ->setModifiedByUserId($user)
+            ->setDeletedByUser(null)
             ->setRequestMark(false)
             ->setRequestedByUsers(null);
         $this->em->flush();
@@ -173,27 +177,28 @@ class EntryService
 
     /**
      * @param int $entryId
-     * @param int $userId
+     * @param User $user
      * @return ArchiveEntryEntity
      */
-    public function requestEntry(int $entryId, int $userId)
+    public function requestEntry(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
         if ($archiveEntry->getDeleteMark()) {
             if ($archiveEntry->getRequestMark() ?? $archiveEntry->getRequestMark() != false) {
                 $users = $archiveEntry->getRequestedByUsers();
-                if (!$users || (array_search($userId, $users, true)) === false) {
-                    $users[] = $userId;
+                if (!$users || (array_search($user->getId(), $users, true)) === false) {
+                    $users[] = $user->getId();
                     $archiveEntry->setRequestedByUsers($users);
                 }
             } else {
                 $archiveEntry
                     ->setRequestMark(true)
-                    ->setRequestedByUsers([$userId])
+                    ->setRequestedByUsers([$user->getId()])
                     ->setRequestsCount(count($archiveEntry->getRequestedByUsers()));
             }
             $this->em->flush();
         }
+        $this->changeLastUpdateInfo($entryId, $user);
 
         return $archiveEntry;
     }

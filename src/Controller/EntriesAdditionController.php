@@ -31,7 +31,7 @@ class EntriesAdditionController extends Controller
 {
     /**
      * @param Request $request
-     * @param EntryService $archiveEntryService
+     * @param EntryService $entryService
      * @param FactoryService $factoryService
      * @param SettingService $settingService
      * @param FolderService $folderService
@@ -46,7 +46,7 @@ class EntriesAdditionController extends Controller
      */
     public function archiveEntryAdd(
         Request $request,
-        EntryService $archiveEntryService,
+        EntryService $entryService,
         FactoryService $factoryService,
         SettingService $settingService,
         FolderService $folderService,
@@ -103,10 +103,10 @@ class EntriesAdditionController extends Controller
                     } else {
                         try {
                             $newFolderEntity = new FolderEntity();
-                            $archiveEntryService->prepareEntry($newEntryEntity, $newFolderEntity, $this->getUser()->getId());
-                            $folderService->prepareNewRootFolder($newFolderEntity, $newEntryEntity, $this->getUser()->getId());
-                            $archiveEntryService->writeDataToEntryFile($newEntryEntity, $filename);
-                            $archiveEntryService->persistEntry($newEntryEntity, $newFolderEntity);
+                            $entryService->prepareEntry($newEntryEntity, $newFolderEntity, $this->getUser());
+                            $folderService->prepareNewRootFolder($newFolderEntity, $newEntryEntity, $this->getUser());
+                            $entryService->writeDataToEntryFile($newEntryEntity, $filename);
+                            $entryService->persistEntry($newEntryEntity, $newFolderEntity);
                             $this->addFlash('success', 'Запись успешно создана.');
                         } catch (IOException $IOException) {
                             $this->addFlash('danger', 'Ошибка записи файла ячейки: ' . $IOException->getMessage());

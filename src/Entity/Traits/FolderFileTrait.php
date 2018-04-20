@@ -3,6 +3,7 @@
 namespace App\Entity\Traits;
 
 use App\Entity\FolderEntity;
+use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -71,11 +72,11 @@ trait FolderFileTrait
     }
 
     /**
-     * Set addedByUserId
-     * @param int $addedByUser
+     * Set addedByUser
+     * @param User $addedByUser
      * @return $this
      */
-    public function setAddedByUser(int $addedByUser)
+    public function setAddedByUser(User $addedByUser)
     {
         $this->addedByUser = $addedByUser;
 
@@ -83,7 +84,7 @@ trait FolderFileTrait
     }
 
     /**
-     * Get addedByUserId
+     * Get addedByUser
      * @return string
      */
     public function getAddedByUser()

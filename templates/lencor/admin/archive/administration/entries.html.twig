@@ -23,7 +23,9 @@
     </div>
     <div class="edit" id="entryForm">
         {% if entryForm is defined %}
-        {{ include('lencor/admin/archive/administration/entry_edit.html.twig', {'entryForm' : entryForm, 'entryId' : entryId}) }}
+            {{ include('lencor/admin/archive/administration/entry_edit.html.twig', {'entryForm' : entryForm, 'entryId' : entryId}) }}
+        {% else %}
+            Запись не найдена
         {% endif %}
     </div>
 {% endblock %}

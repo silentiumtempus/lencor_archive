@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\ArchiveEntryEntity;
 use App\Entity\FolderEntity;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -22,16 +23,19 @@ class FolderService
     protected $filesRepository;
     protected $pathRoot;
     protected $pathPermissions;
+    protected $entryService;
 
     /**
      * FolderService constructor.
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
+     * @param EntryService $entryService
      */
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EntryService $entryService)
     {
         $this->em = $entityManager;
         $this->container = $container;
+        $this->entryService = $entryService;
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
@@ -92,32 +96,33 @@ class FolderService
     /**
      * @param FolderEntity $newFolderEntity
      * @param ArchiveEntryEntity $newEntry
-     * @param $userId
+     * @param User $user
      */
-    public function prepareNewRootFolder(FolderEntity $newFolderEntity, ArchiveEntryEntity $newEntry, int $userId)
+    public function prepareNewRootFolder(FolderEntity $newFolderEntity, ArchiveEntryEntity $newEntry, User $user)
     {
         $newFolderEntity
             ->setArchiveEntry($newEntry)
             ->setFolderName($newEntry->getYear() . "/" . $newEntry->getFactory()->getId() . "/" . $newEntry->getArchiveNumber())
-            ->setAddedByUserId($userId)
+            ->setAddedByUser($user)
             ->setDeleteMark(false)
-            ->setDeletedByUserId(null)
+            ->setDeletedByUser(null)
             ->setSlug(null);
     }
 
     /**
      * @param FormInterface $folderAddForm
-     * @param int $userId
+     * @param User $user
      * @return FolderEntity
      */
-    public function prepareNewFolder(FormInterface $folderAddForm, int $userId)
+    public function prepareNewFolder(FormInterface $folderAddForm, User $user)
     {
         $newFolderEntity = $folderAddForm->getData();
         $parentFolder = $this->foldersRepository->findOneById($folderAddForm->get('parentFolder')->getViewData());
-        $newFolderEntity->setParentFolder($parentFolder)
-            ->setAddedByUserId($userId)
+        $newFolderEntity
+            ->setParentFolder($parentFolder)
+            ->setAddedByUser($user)
             ->setDeleteMark(false)
-            ->setDeletedByUserId(null)
+            ->setDeletedByUser(null)
             ->setSlug(null);
 
         return $newFolderEntity;
@@ -134,11 +139,11 @@ class FolderService
 
     /**
      * @param $folderId
-     * @param $userId
+     * @param User $user
      * @param FileService $fileService
      * @return mixed
      */
-    public function removeFolder(int $folderId, int $userId, FileService $fileService)
+    public function removeFolder(int $folderId, User $user, FileService $fileService)
     {
         $deletedFolder = $this->foldersRepository->findById($folderId);
         foreach ($deletedFolder as $folder) {
@@ -147,42 +152,57 @@ class FolderService
                 foreach ($folderChildren as $childFolder) {
                     if (!$childFolder->getDeleteMark()) {
                         $childFolder->setDeleteMark(true);
-                        $childFolder->setDeletedByUserId($userId);
-                        $fileService->removeFilesByParentFolder($folderId, $userId);
+                        $childFolder->setDeletedByUser($user);
+                        $fileService->removeFilesByParentFolder($folderId, $user);
                     }
                 }
             }
         }
         $this->em->flush();
+        $this->entryService->changeLastUpdateInfo($deletedFolder[0]->getRoot()->getArchiveEntry()->getId(), $user);
 
         return $deletedFolder;
     }
 
     /**
      * @param $folderId
+     * @param User $user
      * @return mixed
      */
-    public function restoreFolder(int $folderId)
+    public function restoreFolder(int $folderId, User $user)
     {
-        $restoredFolder = $this->foldersRepository->findById($folderId);
-        foreach ($restoredFolder as $folder) {
-            $folder
-                ->setDeleteMark(false)
-                ->setDeletedByUserId(null)
-                ->setRequestMark(false)
-                ->setRequestedByUsers(null);
+        $restoredFolder = $this->foldersRepository->findOneById($folderId);
+        $this->unsetFolderDeleteMark($restoredFolder);
+        $binaryPath = $this->getPath($restoredFolder);
+        foreach ($binaryPath as $folder) {
+            if ($folder->getDeleteMark()) {
+                $this->unsetFolderDeleteMark($folder);
+            }
         }
         $this->em->flush();
+        $this->entryService->changeLastUpdateInfo($restoredFolder->getRoot()->getArchiveEntry()->getId(), $user);
 
         return $restoredFolder;
     }
 
     /**
-     * @param integer $folderId
-     * @param integer $userId
+     * @param FolderEntity $folderEntity
+     */
+    public function unsetFolderDeleteMark(FolderEntity $folderEntity)
+    {
+        $folderEntity
+            ->setDeleteMark(false)
+            ->setDeletedByUser(null)
+            ->setRequestMark(false)
+            ->setRequestedByUsers(null);
+    }
+
+    /**
+     * @param int $folderId
+     * @param User $user
      * @return FolderEntity
      */
-    public function requestFolder(int $folderId, int $userId)
+    public function requestFolder(int $folderId, User $user)
     {
         $folder = $this->getParentFolder($folderId);
         $binaryPath = $this->getPath($folder);
@@ -190,19 +210,21 @@ class FolderService
             if ($folder->getDeleteMark()) {
                 if ($folder->getRequestMark() ?? $folder->getRequestMark() != false) {
                     $users = $folder->getRequestedByUsers();
-                    if (!$users || (array_search($userId, $users, true)) === false) {
-                        $users[] = $userId;
+                    if (!$users || (array_search($user->getId(), $users, true)) === false) {
+                        $users[] = $user->getId();
                         $folder->setRequestedByUsers($users);
                     }
                 } else {
                     $folder
                         ->setRequestMark(true)
-                        ->setRequestedByUsers([$userId])
+                        ->setRequestedByUsers([$user])
                         ->setRequestsCount(count($folder->getRequestedByUsers()));
                 }
             }
         }
         $this->em->flush();
+        $this->entryService->changeLastUpdateInfo($folder->getRoot()->getArchiveEntry()->getId(), $user);
+
         return $folder;
     }
 

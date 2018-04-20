@@ -55,7 +55,7 @@ class FilesAndFoldersController extends Controller
         if ($folderAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($folderAddForm->isValid()) {
                 try {
-                    $newFolderEntity = $folderService->prepareNewFolder($folderAddForm, $user->getId());
+                    $newFolderEntity = $folderService->prepareNewFolder($folderAddForm, $user);
                     $fileSystem = new Filesystem();
                     $newFolderAbsPath = $this->getParameter('lencor_archive.storage_path');
                     $pathPermissions = $this->getParameter('lencor_archive.storage_permissions');
@@ -101,7 +101,7 @@ class FilesAndFoldersController extends Controller
                     if ($creationNotFailed) {
                         try {
                             $folderService->persistFolder($newFolderEntity);
-                            $archiveEntryService->changeLastUpdateInfo($entryId, $user->getId());
+                            $archiveEntryService->changeLastUpdateInfo($entryId, $user);
                             $this->addFlash('success', 'Новая директория успешно добавлена в БД');
                         } catch (\Exception $exception) {
                             if ($exception instanceof ConstraintViolationException) {
@@ -201,8 +201,7 @@ class FilesAndFoldersController extends Controller
                             if ($uploadNotFailed) {
                                 try {
                                     $fileService->persistFile($newFileEntity);
-                                    $this->changeLastUpdateInfo($entryId, $archiveEntryService);
-
+                                    $archiveEntryService->changeLastUpdateInfo($entryId, $user);
                                     $this->addFlash('success', 'Новый документ добавлен в БД');
                                     $passed++;
                                 } catch (\Exception $exception) {
@@ -256,7 +255,7 @@ class FilesAndFoldersController extends Controller
     //@TODO: Unite two methods below
     public function removeFile(Request $request, FileService $fileService)
     {
-        $deletedFile = $fileService->removeFile($request->get('fileId'), $this->getUser()->getid());
+        $deletedFile = $fileService->removeFile($request->get('fileId'), $this->getUser());
 
         return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $deletedFile));
     }
@@ -271,7 +270,7 @@ class FilesAndFoldersController extends Controller
 
     public function restoreFile(Request $request, FileService $fileService)
     {
-        $restoredFile = $fileService->restoreFile($request->get('fileId'));
+        $restoredFile = $fileService->restoreFile($request->get('fileId'), $this->getUser());
 
         return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $restoredFile));
     }
@@ -287,7 +286,7 @@ class FilesAndFoldersController extends Controller
 
     public function requestFile(Request $request, FileService $fileService, FolderService $folderService)
     {
-        $requestedFile = $fileService->requestFile($request->get('fileId'), $this->getUser()->getId(), $folderService);
+        $requestedFile = $fileService->requestFile($request->get('fileId'), $this->getUser(), $folderService);
 
         return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $requestedFile));
     }
@@ -303,7 +302,7 @@ class FilesAndFoldersController extends Controller
 
     public function removeFolder(Request $request, FolderService $folderService, FileService $fileService)
     {
-        $deletedFolder = $folderService->removeFolder($request->get('folderId'), $this->getUser()->getId(), $fileService);
+        $deletedFolder = $folderService->removeFolder($request->get('folderId'), $this->getUser(), $fileService);
 
         return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $deletedFolder));
     }
@@ -318,7 +317,7 @@ class FilesAndFoldersController extends Controller
 
     public function restoreFolder(Request $request, FolderService $folderService)
     {
-        $restoredFolder = $folderService->restoreFolder($request->get('folderId'));
+        $restoredFolder[] = $folderService->restoreFolder($request->get('folderId'), $this->getUser());
 
         return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $restoredFolder));
     }
@@ -332,7 +331,7 @@ class FilesAndFoldersController extends Controller
      */
     public function requestFolder(Request $request, FolderService $folderService)
     {
-        $requestedFolder[] = $folderService->requestFolder($request->get('folderId'), $this->getUser()->getId());
+        $requestedFolder[] = $folderService->requestFolder($request->get('folderId'), $this->getUser());
 
         return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $requestedFolder));
     }
@@ -349,7 +348,7 @@ class FilesAndFoldersController extends Controller
     {
         if ($entryId) {
             try {
-                $archiveEntryService->changeLastUpdateInfo($entryId, $this->getUser()->getId());
+                $archiveEntryService->changeLastUpdateInfo($entryId, $this->getUser());
             } catch (\Exception $exception) {
                 $this->addFlash('error', 'Информация об изменениях не записана в ячейку. Ошибка: ' . $exception->getMessage());
             }
@@ -413,9 +412,9 @@ class FilesAndFoldersController extends Controller
             $sharePath = $fileService->getFileSharePath($requestedFile);
             $checkStatus = $fileChecksumService->checkFile($requestedFile, $filePath);
             if (!$checkStatus) {
-                $fileChecksumService->reportChecksumError($requestedFile, $this->getUser()->getId());
+                $fileChecksumService->reportChecksumError($requestedFile, $this->getUser());
             } else {
-                $fileChecksumService->validateChecksumValue($requestedFile, $this->getUser()->getId());
+                $fileChecksumService->validateChecksumValue($requestedFile, $this->getUser());
             }
         }
         return $this->render('lencor/admin/archive/archive_manager/download_file.html.twig', array('requestedFile' => $requestedFile, 'downloadLink' => $httpPath, 'sharePath' => $sharePath, 'checkPass' => $checkStatus));

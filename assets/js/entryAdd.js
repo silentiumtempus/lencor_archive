@@ -114,8 +114,7 @@ $(document).ready(function () {
                 data: entrySerialized,
                 success: function (response) {
                     /** Flash messages loader **/
-                    $('#flash-messages').replaceWith(
-                        $(response).find('#flash-messages'));
+                    loadFlashMessages();
                 }
             });
 
@@ -123,5 +122,20 @@ $(document).ready(function () {
 
             return false;
         });
+
+        /** Flash messages loader **/
+
+        function loadFlashMessages() {
+            $.ajax({
+                url: Routing.generate("flash_messages"),
+                method: "POST",
+                success: function (reloadFlashMessages) {
+                    $('#flash-messages').replaceWith(
+                        $(reloadFlashMessages));
+                }
+            });
+
+            return false;
+        }
     }
 });

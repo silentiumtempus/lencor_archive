@@ -1,52 +1,52 @@
 {% trans_default_domain 'entries' %}
 {% if entryForm is defined %}
-{% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
-{{ form_start(entryForm) }}
-<table {% if entryId is defined %} id="{{ entryId }}" {% endif %} class="entry-edit">
-    <tr>
-        <td><p>{{ form_label(entryForm.year) }}</p></td>
-        <td><p>{{ form_widget(entryForm.year) }}</p></td>
-    </tr>
-    <tr>
-        <td><p>{{ form_label(entryForm.factory) }}</p></td>
-        <td><p>{{ form_widget(entryForm.factory) }}</p></td>
-    </tr>
-    <tr>
-        <td><p>{{ form_label(entryForm.setting) }}</p></td>
-        <td><p>{{ form_widget(entryForm.setting) }}</p></td>
-    </tr>
-    <tr>
-        <td><p>{{ form_label(entryForm.archiveNumber) }}</p></td>
-        <td>
-            <p>{{ form_widget(entryForm.archiveNumber, { 'attr' : {'placeholder' : 'entries.add.archive_number.placeholder'|trans}}) }}</p>
-        </td>
-    </tr>
-    <tr>
-        <td><p>{{ form_label(entryForm.registerNumber) }}</p></td>
-        <td>
-            <p>{{ form_widget(entryForm.registerNumber, { 'attr' : {'placeholder' : 'entries.add.register_number.placeholder'|trans}}) }}</p>
-        </td>
-    </tr>
-    <tr>
-        <td><p>{{ form_label(entryForm.contractNumber) }}</p></td>
-        <td>
-            <p>{{ form_widget(entryForm.contractNumber, { 'attr' : {'placeholder' : 'entries.add.contract_number.placeholder'|trans}}) }}</p>
-        </td>
-    </tr>
-    <tr>
-        <td><p>{{ form_label(entryForm.fullConclusionName) }}</p></td>
-        <td>
-            <p>{{ form_widget(entryForm.fullConclusionName, { 'attr' : {'placeholder' : 'entries.add.conclusion_fullname.placeholder'|trans}}) }}</p>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="">
-            <p>{{ form_widget(entryForm.submitButton) }} {{ form_widget(entryForm.cancelButton) }}</p>
-        </td>
-    </tr>
-</table>
-{{ form_errors(entryForm) }}
-{{ form_end(entryForm) }}
+    {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
+    {{ form_start(entryForm) }}
+    <table {% if entryId is defined %} id="{{ entryId }}" {% endif %} class="entry-edit">
+        <tr>
+            <td><p>{{ form_label(entryForm.year) }}</p></td>
+            <td><p>{{ form_widget(entryForm.year) }}</p></td>
+        </tr>
+        <tr>
+            <td><p>{{ form_label(entryForm.factory) }}</p></td>
+            <td><p>{{ form_widget(entryForm.factory) }}</p></td>
+        </tr>
+        <tr>
+            <td><p>{{ form_label(entryForm.setting) }}</p></td>
+            <td><p>{{ form_widget(entryForm.setting) }}</p></td>
+        </tr>
+        <tr>
+            <td><p>{{ form_label(entryForm.archiveNumber) }}</p></td>
+            <td>
+                <p>{{ form_widget(entryForm.archiveNumber, { 'attr' : {'placeholder' : 'entries.add.archive_number.placeholder'|trans}}) }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p>{{ form_label(entryForm.registerNumber) }}</p></td>
+            <td>
+                <p>{{ form_widget(entryForm.registerNumber, { 'attr' : {'placeholder' : 'entries.add.register_number.placeholder'|trans}}) }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p>{{ form_label(entryForm.contractNumber) }}</p></td>
+            <td>
+                <p>{{ form_widget(entryForm.contractNumber, { 'attr' : {'placeholder' : 'entries.add.contract_number.placeholder'|trans}}) }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td><p>{{ form_label(entryForm.fullConclusionName) }}</p></td>
+            <td>
+                <p>{{ form_widget(entryForm.fullConclusionName, { 'attr' : {'placeholder' : 'entries.add.conclusion_fullname.placeholder'|trans}}) }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="">
+                <p>{{ form_widget(entryForm.submitButton) }} {{ form_widget(entryForm.cancelButton) }}</p>
+            </td>
+        </tr>
+    </table>
+    {{ form_errors(entryForm) }}
+    {{ form_end(entryForm) }}
 {% else %}
     Запись не найдена
 {% endif %}

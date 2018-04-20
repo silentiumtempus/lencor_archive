@@ -19,6 +19,7 @@ class FileService
     protected $folderService;
     protected $filesRepository;
     protected $userService;
+    protected $entryService;
 
     /**
      * FileService constructor.
@@ -26,13 +27,15 @@ class FileService
      * @param ContainerInterface $container
      * @param FolderService $folderService
      * @param UserService $userService
+     * @param EntryService $entryService
      */
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, FolderService $folderService, UserService $userService)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, FolderService $folderService, UserService $userService, EntryService $entryService)
     {
         $this->em = $entityManager;
         $this->container = $container;
         $this->userService = $userService;
         $this->folderService = $folderService;
+        $this->entryService = $entryService;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
     }
 
@@ -124,10 +127,10 @@ class FileService
         $newFileEntity
             ->setParentFolder($parentFolder)
             ->setFileName($originalName)
-            ->setAddedByUserId($user->getId())
+            ->setAddedByUser($user)
             ->setDeleteMark(false)
             ->setSlug(null)
-            ->setDeletedByUserId(null);
+            ->setDeletedByUser(null);
     }
 
     /**
@@ -143,64 +146,66 @@ class FileService
 
     /**
      * @param int $fileId
-     * @param int $userId
+     * @param User $user
      * @return mixed
      */
-    public function removeFile(int $fileId, int $userId)
+    public function removeFile(int $fileId, User $user)
     {
         $deletedFile = $this->filesRepository->findById($fileId);
         foreach ($deletedFile as $file) {
             $file
                 ->setDeleteMark(true)
-                ->setDeletedByUserId($userId);
+                ->setDeletedByUser($user);
         }
         $this->em->flush();
-
+        $this->entryService->changeLastUpdateInfo($deletedFile[0]->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $user);
         return $deletedFile;
     }
 
     /**
      * @param int $fileId
+     * @param User $user
      * @return mixed
      */
-    public function restoreFile(int $fileId)
+    public function restoreFile(int $fileId, User $user)
     {
         $restoredFile = $this->filesRepository->findById($fileId);
         foreach ($restoredFile as $file) {
             $file
                 ->setDeleteMark(false)
-                ->setDeletedByUserId(null)
+                ->setDeletedByUser(null)
                 ->setRequestMark(false)
                 ->setRequestedByUsers(null);
         }
         $this->em->flush();
+        $this->entryService->changeLastUpdateInfo($restoredFile[0]->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $user);
 
         return $restoredFile;
     }
 
     /**
      * @param int $fileId
-     * @param int $userId
+     * @param User $user
      * @param FolderService $folderService
      * @return mixed
      */
-    public function requestFile(int $fileId, int $userId, FolderService $folderService)
+    public function requestFile(int $fileId, User $user, FolderService $folderService)
     {
         $requestedFile = $this->filesRepository->findById($fileId);
         foreach ($requestedFile as $file) {
             if ($file->getRequestMark() != null && $file->getRequestMark() != false) {
                 $users = $file->getRequestedByUsers();
-                if ((array_search($userId, $users, true)) === false) {
-                    $users[] = $userId;
+                if ((array_search($user->getId(), $users, true)) === false) {
+                    $users[] = $user;
                 }
             } else {
-                $users[] = $userId;
+                $users[] = $user;
             }
             $file
                 ->setRequestMark(true)
                 ->setRequestedByUsers($users);
 
-                $folderService->requestFolder($file->getParentFolder()->getId(), $userId);
+                $folderService->requestFolder($file->getParentFolder()->getId(), $user);
         }
         $this->em->flush();
 
@@ -210,10 +215,10 @@ class FileService
 
     /**
      * @param int $folderId
-     * @param int $userId
+     * @param User $user
      * @return bool
      */
-    public function removeFilesByParentFolder(int $folderId, int $userId)
+    public function removeFilesByParentFolder(int $folderId, User $user)
     {
         $childFiles = $this->filesRepository->findByParentFolder($folderId);
         if ($childFiles) {
@@ -221,7 +226,7 @@ class FileService
                 if (!$childFile->getDeleteMark()) {
                     $childFile
                         ->setDeleteMark(true)
-                        ->setDeletedByUserId($userId);
+                        ->setDeletedByUser($user);
                 }
             }
         }

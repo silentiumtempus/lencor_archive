@@ -356,6 +356,8 @@ $(document).ready(function () {
 
         function removeFile() {
             let fileId = $(this).parent().attr("id");
+            let $folderId = $(this).parents('li').parent('li').attr('id');
+            alert($folderId);
             $.ajax({
                 url: "remove_file",
                 method: "POST",
@@ -419,6 +421,7 @@ $(document).ready(function () {
                     $('#folder_' + folderId).replaceWith(folderRemoval);
                     folderContent.html('');
                     folderContent.hide();
+                    loadLastUpdateInfo(null, folderId);
                 }
             });
 
@@ -431,12 +434,15 @@ $(document).ready(function () {
 
         function restoreFolder() {
             let folderId = $(this).parent().attr("id");
+            let $folderEntry = $('#folder_' + folderId);
             $.ajax({
                 url: "restore_folder",
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRestoration) {
-                    $($('#folder_' + folderId).children('ul').first()).replaceWith($(folderRestoration).children('ul').first());
+                    $folderEntry.children('ul').first().replaceWith($(folderRestoration).children('ul').first());
+                    $folderEntry.removeClass('deleted');
+                    loadLastUpdateInfo(null, folderId);
                 }
             });
 
@@ -455,6 +461,7 @@ $(document).ready(function () {
                 data: {folderId: folderId},
                 success: function (folderRequest) {
                     $($('#folder_' + folderId).children('ul').first()).replaceWith($(folderRequest).children('ul').first());
+                    loadLastUpdateInfo(null, folderId);
                 }
             });
 
@@ -473,8 +480,12 @@ $(document).ready(function () {
                 data: {entryId: entryId},
                 success: function (entryRemoval) {
                     $('#entry_' + entryId).replaceWith(entryRemoval);
+                    if ($('#entryContent_' + entryId).is(':visible')) {
+                        loadLastUpdateInfo(entryId, null);
+                    }
                 }
             });
+
 
             return false;
         }
@@ -491,7 +502,9 @@ $(document).ready(function () {
                 data: {entryId: entryId},
                 success: function (entryRestoration) {
                     $('#entry_' + entryId).replaceWith(entryRestoration);
-
+                    if ($('#entryContent_' + entryId).is(':visible')) {
+                        loadLastUpdateInfo(entryId, null);
+                    }
                 }
             });
 
@@ -510,6 +523,9 @@ $(document).ready(function () {
                 data: {entryId: entryId},
                 success: function (entryRequest) {
                     $('#entry_' + entryId).replaceWith(entryRequest);
+                    if ($('#entryContent_' + entryId).is(':visible')) {
+                        loadLastUpdateInfo(entryId, null);
+                    }
                 }
             });
 

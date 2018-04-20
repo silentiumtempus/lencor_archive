@@ -31,6 +31,7 @@ class EntriesEditController extends Controller
      *     requirements = { "$entryId" = "\d+" },
      *     defaults = { "entryId" : "0" }))
      */
+    //@TODO: entryId is passing from GET as string
     public function entryEditIndex(Request $request, EntryService $entryService, $entryId)
     {
         $updateStatus = false;
@@ -51,7 +52,7 @@ class EntriesEditController extends Controller
             $entryForm = $this->createForm(
                 EntryForm::class,
                 $archiveEntryEntity,
-                array('attr' => array('id' => 'archive_entry_form', 'function' => 'edit'))
+                array('attr' => array('id' => 'entry_form', 'function' => 'edit'))
             );
             $entryForm->handleRequest($request);
             if ($entryForm->isSubmitted()) {
@@ -84,8 +85,15 @@ class EntriesEditController extends Controller
                         'entryId' => $archiveEntryEntity->getId())
                 );
             }
+        } else {
+            if ($entrySearchByIdForm->isSubmitted()){
+                return $this->render('lencor/admin/archive/administration/entry_edit.html.twig');
+            } else {
+                return $this->render('lencor/admin/archive/administration/entries.html.twig',
+                    array(
+                        'entrySearchByIdForm' => $entrySearchByIdForm->createView()
+                    ));
+            }
         }
-
-        return $this->render('lencor/admin/archive/administration/entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
     }
 }

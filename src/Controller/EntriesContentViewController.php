@@ -112,7 +112,6 @@ class EntriesContentViewController extends Controller
             $requesters = $commonArchiveService->getRequesters($id, $type);
             switch ($type) {
                 case 'file':
-
                     $headerText = $translator->trans('file.self', array(), 'files_folders') . " " . $translator->trans('requested', array(), 'files_folders');
                     break;
                 case 'folder':

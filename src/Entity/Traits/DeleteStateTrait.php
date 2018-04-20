@@ -17,12 +17,13 @@ trait DeleteStateTrait
     protected $deleteMark;
 
     /**
-     * @ORM\Column(type = "integer", nullable = true)
+     * @ORM\ManyToOne(targetEntity = "User")
+     * @ORM\JoinColumn(name = "deleted_by_user", referencedColumnName = "id")
      * @Assert\Type("integer")
      * @Gedmo\Versioned()
      */
 
-    protected $deletedByUserId;
+    protected $deletedByUser;
 
     /**
      * Set deleteMark
@@ -46,23 +47,23 @@ trait DeleteStateTrait
     }
 
     /**
-     * Set deletedByUserId
-     * @param string $deletedByUserId
+     * Set deletedByUser
+     * @param string $deletedByUser
      * @return $this
      */
-    public function setDeletedByUserId($deletedByUserId)
+    public function setDeletedByUser($deletedByUser)
     {
-        $this->deletedByUserId = $deletedByUserId;
+        $this->deletedByUser = $deletedByUser;
 
         return $this;
     }
 
     /**
-     * Get deletedByUserId
+     * Get deletedByUser
      * @return string
      */
-    public function getDeletedByUserId()
+    public function getDeletedByUser()
     {
-        return $this->deletedByUserId;
+        return $this->deletedByUser;
     }
 }

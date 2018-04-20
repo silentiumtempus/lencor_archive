@@ -123,12 +123,12 @@ class ArchiveEntryEntity
     protected $lastModified;
 
     /**
-     * @ORM\Column(type = "smallint")
-     * @Assert\Type("smallint")
+     * @ORM\ManyToOne(targetEntity = "User")
+     * @ORM\JoinColumn(name = "modified_by_user", referencedColumnName = "id")
      * @Gedmo\Versioned()
      */
 
-    protected $modifiedByUserId;
+    protected $modifiedByUser;
 
     /**
      * @Gedmo\Translatable
@@ -349,26 +349,26 @@ class ArchiveEntryEntity
     }
 
     /**
-     * Set modifiedByUserId
-     * @param integer $modifiedByUserId
+     * Set modifiedByUser
+     * @param User $modifiedByUser
      * @return ArchiveEntryEntity
      */
 
-    public function setModifiedByUserId($modifiedByUserId)
+    public function setModifiedByUserId(User $modifiedByUser)
     {
-        $this->modifiedByUserId = $modifiedByUserId;
+        $this->modifiedByUser = $modifiedByUser;
 
         return $this;
     }
 
     /**
-     * Get modifiedByUserId
-     * @return integer
+     * Get modifiedByUser
+     * @return User
      */
 
     public function getModifiedByUserId()
     {
-        return $this->modifiedByUserId;
+        return $this->modifiedByUser;
     }
 
     /**
