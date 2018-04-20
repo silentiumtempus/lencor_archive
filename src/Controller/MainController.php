@@ -15,7 +15,9 @@ class MainController extends Controller
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/", name = "index")
+     * @Route("/",
+     *     options = { "expose" = true },
+     *     name = "index")
      */
     public function Index()
     {

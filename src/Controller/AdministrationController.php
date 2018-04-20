@@ -25,7 +25,9 @@ class AdministrationController extends Controller
      * @param Request $request
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/admin", name="admin")
+     * @Route("/admin",
+     *     options = { "expose" = true },
+     *     name="admin")
      */
     public function adminIndex(Request $request)
     {
@@ -37,7 +39,9 @@ class AdministrationController extends Controller
      * @param FactoryService $factoryService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/admin/factories-and-settings", name = "admin-factories-and-settings")
+     * @Route("/admin/factories-and-settings",
+     *     options = { "expose" = true },
+     *     name = "admin-factories-and-settings")
      */
     public function factoriesAndSettings(Request $request, FactoryService $factoryService)
     {
@@ -154,7 +158,9 @@ class AdministrationController extends Controller
      * @param Request $request
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("admin/news", name="admin-news")
+     * @Route("admin/news",
+     *     options = { "expose" = true },
+     *     name="admin-news")
      */
     public function news(Request $request)
     {

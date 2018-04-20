@@ -18,7 +18,9 @@ class StatisticsController extends Controller
      * @param Request $request
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/stats/", name = "stats")
+     * @Route("/stats/",
+     *     options = { "expose" = true },
+     *     name = "stats")
      */
     public function statsIndex(Request $request)
     {

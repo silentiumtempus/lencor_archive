@@ -20,7 +20,9 @@ class EntriesContentViewController extends Controller
      * @param FolderService $folderService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/view_folders", name = "entries_view_folders")
+     * @Route("/entries/view_folders",
+     *     options = { "expose" = true },
+     *     name = "entries_view_folders")
      */
     public function showEntryFolders(Request $request, FolderService $folderService)
     {
@@ -37,7 +39,9 @@ class EntriesContentViewController extends Controller
      * @param FileService $fileService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/view_files", name = "entries_view_files")
+     * @Route("/entries/view_files",
+     *     options = { "expose" = true },
+     *     name = "entries_view_files")
      */
     public function showEntryFiles(Request $request, FileService $fileService)
     {
@@ -54,7 +58,9 @@ class EntriesContentViewController extends Controller
      * @param FileService $fileService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/reload_file", name = "entries_reload_file")
+     * @Route("/entries/reload_file",
+     *     options = { "expose" = true },
+     *     name = "entries_reload_file")
      */
     public function changeFileStatus(Request $request, FileService $fileService)
     {
@@ -71,7 +77,9 @@ class EntriesContentViewController extends Controller
      * @param FolderService $folderService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/view", name = "entries_view")
+     * @Route("/entries/view",
+     *     options = { "expose" = true },
+     *     name = "entries_view")
      */
     public function showEntryDetails(Request $request, FolderService $folderService)
     {

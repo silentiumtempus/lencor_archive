@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
 use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\ModificationFieldsTrait;
 use App\Entity\Traits\RestorationRequestsTrait;
 use App\Entity\Traits\SlugTrait;
 use App\Entity\Traits\SumErrorsTrait;
@@ -35,6 +36,7 @@ class ArchiveEntryEntity
     use DeleteStateTrait;
     use SlugTrait;
     use SumErrorsTrait;
+    use ModificationFieldsTrait;
     use RestorationRequestsTrait;
 
     /**
@@ -112,23 +114,7 @@ class ArchiveEntryEntity
 
     protected $cataloguePath;
 
-    /**
-     * @var \DateTime $lastModified
-     * @ORM\Column(type = "datetime")
-     * @Gedmo\Timestampable(on = "update")
-     * @Assert\DateTime()
-     * @Gedmo\Versioned()
-     */
 
-    protected $lastModified;
-
-    /**
-     * @ORM\ManyToOne(targetEntity = "User")
-     * @ORM\JoinColumn(name = "modified_by_user", referencedColumnName = "id")
-     * @Gedmo\Versioned()
-     */
-
-    protected $modifiedByUser;
 
     /**
      * @Gedmo\Translatable
@@ -323,52 +309,6 @@ class ArchiveEntryEntity
     public function getCataloguePath()
     {
         return $this->cataloguePath;
-    }
-
-    /**
-     * Set lastModified
-     * @param \DateTime $lastModified
-     * @return ArchiveEntryEntity
-     */
-
-    public function setLastModified($lastModified)
-    {
-        $this->lastModified = $lastModified;
-
-        return $this;
-    }
-
-    /**
-     * Get lastModified
-     * @return \DateTime
-     */
-
-    public function getLastModified()
-    {
-        return $this->lastModified;
-    }
-
-    /**
-     * Set modifiedByUser
-     * @param User $modifiedByUser
-     * @return ArchiveEntryEntity
-     */
-
-    public function setModifiedByUserId(User $modifiedByUser)
-    {
-        $this->modifiedByUser = $modifiedByUser;
-
-        return $this;
-    }
-
-    /**
-     * Get modifiedByUser
-     * @return User
-     */
-
-    public function getModifiedByUserId()
-    {
-        return $this->modifiedByUser;
     }
 
     /**

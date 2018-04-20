@@ -25,7 +25,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class SecurityController extends Controller
 {
     /**
-     * @Route("/login", name="security_login")
+     * @Route("/login",
+     *     options = { "expose" = true },
+     *     name="security_login")
      */
     public function loginAction()
     {
@@ -47,7 +49,9 @@ class SecurityController extends Controller
      * But, this will never be executed. Symfony will intercept this first
      * and handle the logout automatically. See logout in app/config/security.yml
      *
-     * @Route("/logout", name="security_logout")
+     * @Route("/logout",
+     *     options = { "expose" = true },
+     *     name="security_logout")
      */
     public function logoutAction()
     {

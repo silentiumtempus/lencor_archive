@@ -94,6 +94,15 @@ class FolderService
     }
 
     /**
+     * @param array $foldersArray
+     * @return FolderEntity||array
+     */
+    public function getFoldersList(array $foldersArray)
+    {
+        return $this->foldersRepository->findById($foldersArray);
+    }
+
+    /**
      * @param FolderEntity $newFolderEntity
      * @param ArchiveEntryEntity $newEntry
      * @param User $user
@@ -171,18 +180,24 @@ class FolderService
      */
     public function restoreFolder(int $folderId, User $user)
     {
+        $foldersArray = [];
         $restoredFolder = $this->foldersRepository->findOneById($folderId);
-        $this->unsetFolderDeleteMark($restoredFolder);
-        $binaryPath = $this->getPath($restoredFolder);
-        foreach ($binaryPath as $folder) {
-            if ($folder->getDeleteMark()) {
-                $this->unsetFolderDeleteMark($folder);
+        if ($restoredFolder) {
+            $foldersArray[] = $restoredFolder->getId();
+            $this->unsetFolderDeleteMark($restoredFolder);
+            $binaryPath = $this->getPath($restoredFolder);
+            foreach ($binaryPath as $folder) {
+                if ($folder->getDeleteMark()) {
+                    $this->unsetFolderDeleteMark($folder);
+                    $foldersArray[] = $folder->getId();
+                }
             }
+            $this->em->flush();
+            $this->entryService->changeLastUpdateInfo($restoredFolder->getRoot()->getArchiveEntry()->getId(), $user);
         }
-        $this->em->flush();
-        $this->entryService->changeLastUpdateInfo($restoredFolder->getRoot()->getArchiveEntry()->getId(), $user);
 
-        return $restoredFolder;
+        //return $restoredFolder;
+        return $foldersArray;
     }
 
     /**

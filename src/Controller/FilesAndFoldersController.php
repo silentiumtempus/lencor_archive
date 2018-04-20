@@ -15,6 +15,7 @@ use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Filesystem\Filesystem;
@@ -33,7 +34,9 @@ class FilesAndFoldersController extends Controller
      * @param LoggingService $loggingService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/new_folder", name = "entries_new_folder")
+     * @Route("/entries/new_folder",
+     *     options = { "expose" = true },
+     *     name = "entries_new_folder")
      */
 
     public function createNewFolder(Request $request, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
@@ -138,7 +141,9 @@ class FilesAndFoldersController extends Controller
      * @param LoggingService $loggingService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/new_file", name = "entries_new_file")
+     * @Route("/entries/new_file",
+     *     options = { "expose" = true },
+     *     name = "entries_new_file")
      */
 
     public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
@@ -249,7 +254,9 @@ class FilesAndFoldersController extends Controller
      * @param FileService $fileService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/remove_file", name = "entries_remove_file")
+     * @Route("/entries/remove_file",
+     *     options = { "expose" = true },
+     *     name = "entries_remove_file")
      */
 
     //@TODO: Unite two methods below
@@ -265,7 +272,9 @@ class FilesAndFoldersController extends Controller
      * @param FileService $fileService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/entries/restore_file", name = "entries_restore_file")
+     * @Route("/entries/restore_file",
+     *     options = { "expose" = true },
+     *     name = "entries_restore_file")
      */
 
     public function restoreFile(Request $request, FileService $fileService)
@@ -281,7 +290,9 @@ class FilesAndFoldersController extends Controller
      * @param FolderService $folderService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("entries/request_file", name = "entries_request_file")
+     * @Route("entries/request_file",
+     *     options = { "expose" = true },
+     *     name = "entries_request_file")
      */
 
     public function requestFile(Request $request, FileService $fileService, FolderService $folderService)
@@ -297,7 +308,9 @@ class FilesAndFoldersController extends Controller
      * @param FileService $fileService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/remove_folder", name = "entries_remove_folder")
+     * @Route("/entries/remove_folder",
+     *     options = { "expose" = true },
+     *     name = "entries_remove_folder")
      */
 
     public function removeFolder(Request $request, FolderService $folderService, FileService $fileService)
@@ -310,16 +323,18 @@ class FilesAndFoldersController extends Controller
     /**
      * @param Request $request
      * @param FolderService $folderService
-     * @return Response
+     * @return JsonResponse
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/entries/restore_folder", name = "entries_restore_folder")
+     * @Route("/entries/restore_folder",
+     *     options = { "expose" = true },
+     *     name = "entries_restore_folder")
      */
 
     public function restoreFolder(Request $request, FolderService $folderService)
     {
-        $restoredFolder[] = $folderService->restoreFolder($request->get('folderId'), $this->getUser());
+        $restoredFolders = $folderService->restoreFolder($request->get('folderId'), $this->getUser());
 
-        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $restoredFolder));
+        return new JsonResponse($restoredFolders);
     }
 
     /**
@@ -327,7 +342,9 @@ class FilesAndFoldersController extends Controller
      * @param FolderService $folderService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/request_folder", name = "entries_request_folder")
+     * @Route("/entries/request_folder",
+     *     options = { "expose" = true },
+     *     name = "entries_request_folder")
      */
     public function requestFolder(Request $request, FolderService $folderService)
     {
@@ -337,11 +354,32 @@ class FilesAndFoldersController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @param FolderService $folderService
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
+     * @Route("/entries/reload_folders",
+     *     options = { "expose" = true },
+     *     name = "entries_reload_folders")
+     */
+    public function reloadFolders(Request $request, FolderService $folderService)
+    {
+        $foldersList = null;
+        if ($request->request->has('foldersArray')) {
+            $foldersList = $folderService->getFoldersList($request->get('foldersArray'));
+        }
+
+        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $foldersList));
+    }
+
+    /**
      * @param String $entryId
      * @param EntryService $archiveEntryService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/change_last_update_info", name = "entries_change_last_update_info")
+     * @Route("/entries/change_last_update_info",
+     *     options = { "expose" = true },
+     *     name = "entries_change_last_update_info")
      */
 
     public function changeLastUpdateInfo($entryId = null, EntryService $archiveEntryService)
@@ -362,7 +400,9 @@ class FilesAndFoldersController extends Controller
      * @param EntryService $archiveEntryService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/last_update_info", name = "entries_last_update_info")
+     * @Route("/entries/last_update_info",
+     *     options = { "expose" = true },
+     *     name = "entries_last_update_info")
      */
 
     public function loadLastUpdateInfo(Request $request, EntryService $archiveEntryService)
@@ -377,7 +417,9 @@ class FilesAndFoldersController extends Controller
      * @param FolderService $folderService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/get_folder_entryId", name = "entries_get_folder_entryId")
+     * @Route("/entries/get_folder_entryId",
+     *     options = { "expose" = true },
+     *     name = "entries_get_folder_entryId")
      */
 
     public function getFolderEntryId(Request $request, FolderService $folderService)
@@ -396,7 +438,9 @@ class FilesAndFoldersController extends Controller
      * @param FileChecksumService $fileChecksumService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/download_file", name = "entries_download_file")
+     * @Route("/entries/download_file",
+     *     options = { "expose" = true },
+     *     name = "entries_download_file")
      */
 
     public function downloadFile(Request $request, FileService $fileService, FileChecksumService $fileChecksumService)

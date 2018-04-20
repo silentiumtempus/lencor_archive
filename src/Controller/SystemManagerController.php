@@ -18,7 +18,9 @@ class SystemManagerController extends Controller
      * @param Request $request
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/system/", name = "system")
+     * @Route("/system/",
+     *     options = { "expose" = true },
+     *     name = "system")
      */
     public function statsIndex(Request $request)
     {

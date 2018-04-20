@@ -434,14 +434,25 @@ $(document).ready(function () {
 
         function restoreFolder() {
             let folderId = $(this).parent().attr("id");
-            let $folderEntry = $('#folder_' + folderId);
+            let $folderEntry = null;
             $.ajax({
                 url: "restore_folder",
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRestoration) {
-                    $folderEntry.children('ul').first().replaceWith($(folderRestoration).children('ul').first());
-                    $folderEntry.removeClass('deleted');
+                    $.ajax({
+                        url: Routing.generate('entries_reload_folders'),
+                        method: "POST",
+                        data: {foldersArray: folderRestoration},
+                        success: function (folderReload) {
+                            jQuery.each(folderRestoration, function (index, value) {
+                                $folderEntry = $('#folder_'+value);
+                                let $temp = $(folderReload).filter('#folder_'+value);
+                                $($folderEntry.children('ul').first()).replaceWith($temp.children('ul').first());
+                                $folderEntry.removeClass('deleted');
+                            });
+                        }
+                    });
                     loadLastUpdateInfo(null, folderId);
                 }
             });
@@ -542,8 +553,7 @@ $(document).ready(function () {
             return false;
         });
 
-        function showRequesters(type, element, event)
-        {
+        function showRequesters(type, element, event) {
             let func;
             let $blockDuplicate = $('.requesters-block');
             if ($blockDuplicate.length) {
@@ -552,17 +562,19 @@ $(document).ready(function () {
             let requestersBlock = $.parseHTML('<span></span>');
             $(requestersBlock).addClass('requesters-block text-left non-opaque');
             switch (type) {
-                case 'file' : func = 'file';
-                break;
-                case 'folder' : func = 'folder';
-                break;
+                case 'file' :
+                    func = 'file';
+                    break;
+                case 'folder' :
+                    func = 'folder';
+                    break;
                 case 'entry' :
                     func = 'entry';
                     let x = event.pageX - 20;
                     let y = event.pageY - 10;
                     $(requestersBlock).css('left', x);
                     $(requestersBlock).css('top', y);
-                break;
+                    break;
             }
             let spinner = $.parseHTML('<i> </i>');
             $(spinner).addClass('fa fa-spinner fa-pulse fa-2x fa-fw non-opaque margin-auto');
@@ -571,7 +583,7 @@ $(document).ready(function () {
             $.ajax({
                 url: Routing.generate("show_requesters"),
                 method: "POST",
-                data: {type : type, id : element.attr('id')},
+                data: {type: type, id: element.attr('id')},
                 success: function (requesters) {
                     $(requestersBlock).empty();
                     $(requesters).appendTo(requestersBlock);
