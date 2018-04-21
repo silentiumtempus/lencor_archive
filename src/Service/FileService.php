@@ -223,24 +223,39 @@ class FileService
         return $requestedFile;
     }
 
-
     /**
      * @param FileEntity $newFile
+     * @param array $originalFile
      * @return bool
      */
-    public function moveFile(FileEntity $newFile)
+    public function moveFile(FileEntity $newFile, array $originalFile)
     {
         try {
-            $targetFile = $this->em->getUnitOfWork()->getOriginalEntityData($newFile);
             $absPath = $this->folderService->constructFolderAbsPath($newFile->getParentFolder());
-            $fs = new Filesystem();
-            $fs->rename($absPath . "/" . $targetFile['fileName'], $absPath . "/" . $newFile->getFileName());
-
-            return true;
         } catch (\Exception $exception) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка при получении информации о файле из базы данных :' . $exception->getMessage());
 
             return false;
         }
+        try {
+            $fs = new Filesystem();
+            $fs->rename($absPath . "/" . $originalFile['fileName'], $absPath . "/" . $newFile->getFileName());
+
+            return true;
+        } catch (\Exception $exception) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка файловой системы при переименовании файла :' . $exception->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * @param FileEntity $file
+     * @return array
+     */
+    public function getOriginalData(FileEntity $file)
+    {
+        return $this->em->getUnitOfWork()->getOriginalEntityData($file);
     }
 
     /**

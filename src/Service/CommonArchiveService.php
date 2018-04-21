@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 
 /**
  * Class CommonArchiveService
@@ -47,5 +48,4 @@ class CommonArchiveService
 
         return $requesters;
     }
-
 }

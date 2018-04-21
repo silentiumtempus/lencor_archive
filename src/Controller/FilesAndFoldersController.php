@@ -8,6 +8,7 @@ use App\Form\FileAddForm;
 use App\Form\FileRenameForm;
 use App\Form\FolderAddForm;
 use App\Form\FolderRenameForm;
+use App\Service\CommonArchiveService;
 use App\Service\EntryService;
 use App\Service\FileChecksumService;
 use App\Service\FileService;
@@ -304,6 +305,7 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FileEntity $file
      * @param FileService $fileService
+     * @param LoggingService $loggingService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/rename_file/{file}",
@@ -311,25 +313,32 @@ class FilesAndFoldersController extends Controller
      *     name = "entries_rename_file")
      * @ParamConverter("file", class = "App:FileEntity", options = { "id" = "file" })
      */
-    public function renameFile(Request $request, FileEntity $file, FileService $fileService)
+    public function renameFile(Request $request, FileEntity $file, FileService $fileService, LoggingService $loggingService)
     {
+        $session = $this->container->get('session');
         $form_id = 'file_rename_form_' . $file->getId();
         $fileRenameForm = $this->createForm(FileRenameForm::class, $file, array('attr' => array('id' => $form_id)));
         $fileRenameForm->handleRequest($request);
         if ($fileRenameForm->isSubmitted()) {
             if ($fileRenameForm->isValid()) {
-                if ($fileService->moveFile($file)) {
-                    $fileService->renameFile();
+                $originalFile = $fileService->getOriginalData($file);
+                if ($originalFile['fileName'] != $file->getFileName()) {
+                    if ($fileService->moveFile($file, $originalFile)) {
+                        $fileService->renameFile();
+                        $this->addFlash('success', 'Переименование ' . $originalFile['fileName'] . ' > ' . $file->getFileName() . ' успешно произведено.');
+                    } else {
+                        $this->addFlash('danger', 'Переименование отменено из за внутренней ошибки.');
+                    }
                 } else {
-                    $this->addFlash('danger', 'Ошибка при переименовании');
+                    $this->addFlash('warning', 'Новое имя файла ' . $file->getFileName() . ' совпадает с текущим. Операция отклонена.');
                 }
+                $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
 
                 return $this->render('lencor/admin/archive/archive_manager/file.html.twig', array('file' => $file));
             } else {
-                $this->addFlash('danger', 'Форма не валидна');
-
-                return $this->render('lencor/admin/archive/administration/file_rename.html.twig', array('fileRenameForm' => $fileRenameForm->createView()));
+                $this->addFlash('danger', 'Форма заполнена неверно, недопустимое или уже существующее имя файла ' . $file->getFileName() . '.');
             }
+            $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
         }
 
         return $this->render('lencor/admin/archive/administration/file_rename.html.twig', array('fileRenameForm' => $fileRenameForm->createView()));
@@ -414,6 +423,8 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FolderEntity $folder
      * @param FolderService $folderService
+     * @param CommonArchiveService $archiveService
+     * @param LoggingService $loggingService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/rename_folder/{folder}",
@@ -421,24 +432,33 @@ class FilesAndFoldersController extends Controller
      *     name = "entries_rename_folder")
      * @ParamConverter("folder", class = "App:FolderEntity", options = { "id" = "folder" })
      */
-    public function renameFolder(Request $request, FolderEntity $folder, FolderService $folderService)
+    public function renameFolder(Request $request, FolderEntity $folder, FolderService $folderService, CommonArchiveService $archiveService, LoggingService $loggingService)
     {
+        $session = $this->container->get('session');
         $form_id = 'folder_rename_form_' . $folder->getId();
-
         $folderRenameForm = $this->createForm(FolderRenameForm::class, $folder, array('attr' => array('id' => $form_id)));
         $folderRenameForm->handleRequest($request);
         if ($folderRenameForm->isSubmitted()) {
             if ($folderRenameForm->isValid()) {
-                if ($folderService->moveFolder($folder)) {
-                    $folderService->renameFolder();
+                $originalFolder = $folderService->getOriginalData($folder);
+                if ($originalFolder['folderName'] != $folder->getFolderName()) {
+                    if ($folderService->moveFolder($folder, $originalFolder)) {
+                        $folderService->renameFolder();
+                        $this->addFlash('success', 'Переименование ' . $originalFolder['folderName'] . ' > ' . $folder->getFolderName() . ' успешно произведено.');
+                    } else {
+                        $this->addFlash('danger', 'Переименование отменено из за внутренней ошибки.');
+                    }
                 } else {
-                    $this->addFlash('danger', 'Ошибка при переименовании');
+                    $this->addFlash('warning', 'Новое имя каталога ' . $folder->getFolderName() . ' совпадает с текущим. Операция отклонена.');
                 }
+                $loggingService->logEntryContent($folder->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
 
                 return $this->render('lencor/admin/archive/archive_manager/folder.html.twig', array('folder' => $folder));
             } else {
-                $this->addFlash('danger', 'Форма не валидна');
+                $this->addFlash('danger', 'Форма заполнена неверно, недопустимое или уже существующее имя каталога ' . $folder->getFolderName() . '.');
             }
+
+            $loggingService->logEntryContent($folder->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
         }
 
         return $this->render('lencor/admin/archive/administration/folder_rename.html.twig', array('folderRenameForm' => $folderRenameForm->createView()));

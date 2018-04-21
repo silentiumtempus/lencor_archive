@@ -245,21 +245,37 @@ class FolderService
 
     /**
      * @param FolderEntity $newFolder
+     * @param array $originalFolder
      * @return bool
      */
-    public function moveFolder(FolderEntity $newFolder)
+    public function moveFolder(FolderEntity $newFolder, array $originalFolder)
     {
         try {
-            $targetFolder = $this->em->getUnitOfWork()->getOriginalEntityData($newFolder);
             $absPath = $this->constructFolderAbsPath($newFolder->getParentFolder());
-            $fs = new Filesystem();
-            $fs->rename($absPath . "/" . $targetFolder['folderName'], $absPath . "/" . $newFolder->getFolderName());
-
-            return true;
         } catch (\Exception $exception) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка при получении информации о каталоге из базы данных :' . $exception->getMessage());
 
             return false;
         }
+        try {
+            $fs = new Filesystem();
+            $fs->rename($absPath . "/" . $originalFolder['folderName'], $absPath . "/" . $newFolder->getFolderName());
+
+            return true;
+        } catch (\Exception $exception) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка файловой системы при переименовании каталога :' . $exception->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * @param FolderEntity $folder
+     * @return array
+     */
+    public function getOriginalData(FolderEntity $folder)
+    {
+        return $this->em->getUnitOfWork()->getOriginalEntityData($folder);
     }
 
     /**

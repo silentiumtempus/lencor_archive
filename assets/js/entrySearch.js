@@ -562,7 +562,7 @@ $(document).ready(function () {
             $(this).off('submit');
             let folderId = $(this).parent().attr('id');
             updateFolder(folderId, $(this));
-            loadFlashMessages()
+            loadFlashMessages();
 
             return false;
         });
@@ -729,12 +729,14 @@ $(document).ready(function () {
         /** Flash messages loader **/
 
         function loadFlashMessages() {
+            let $flashMessages = $('#flash-messages');
             $.ajax({
                 url: Routing.generate('flash_messages'),
                 method: "POST",
                 success: function (reloadFlashMessages) {
-                    $('#flash-messages').replaceWith(
-                        $(reloadFlashMessages));
+                    $flashMessages.html($(reloadFlashMessages).filter('#flash-messages').children());
+                    $flashMessages.show().css('display', 'block');
+
                 }
             });
 
@@ -744,12 +746,13 @@ $(document).ready(function () {
         /** Flash messages summary loader **/
 
         function loadFlashMessagesSummary(clear) {
+            let $flashMessages = $('#flash-messages');
             $.ajax({
                 url: Routing.generate('flash_messages_summary'),
                 method: "POST",
                 success: function (reloadFlashMessages) {
-                    $('#flash-messages').replaceWith(
-                        $(reloadFlashMessages));
+                    $flashMessages.html($(reloadFlashMessages).filter('#flash-messages').children());
+                    $flashMessages.show().css('display', 'block');
                     if (clear) {
                         clearFlashMessages();
                     }
