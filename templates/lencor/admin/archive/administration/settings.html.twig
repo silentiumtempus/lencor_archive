@@ -4,7 +4,9 @@
         {% if settings is iterable %}
             {% for setting in settings %}
                 <li id="setting_{{ setting.id }}">
-                    <span>{{ setting }}</span>
+                    <span id="{{ setting.id }}">
+                        {{ setting }}
+                    </span>
                     <span>
                     <a href="#" id="{{ setting.id }}" name="editSetting"><i class="fa fa-edit"> </i></a>
                     <i class="fa fa-trash red disabled"> </i>
@@ -13,7 +15,9 @@
             {% endfor %}
         {% else %}
             <li id="setting_{{ settings.id }}">
-            <span>{{ settings }}</span>
+            <span id="{{ settings.id }}">
+                {{ settings }}
+            </span>
             <span>
                 <a href="#" id="{{ settings.id }}" name="editSetting"><i class="fa fa-edit"> </i></a>
                 <i class="fa fa-trash red disabled"> </i>

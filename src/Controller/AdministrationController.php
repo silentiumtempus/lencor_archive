@@ -39,7 +39,7 @@ class AdministrationController extends Controller
      * @param FactoryService $factoryService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/admin/factories-and-settings",
+     * @Route("/admin/factories",
      *     options = { "expose" = true },
      *     name = "admin-factories-and-settings")
      */
@@ -52,16 +52,20 @@ class AdministrationController extends Controller
 
     /**
      * @param Request $request
+     * @param FactoryEntity $factory
      * @param SettingService $settingService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("admin/settings",
+     * @Route("admin/factories/{factory}/settings",
+     *     requirements = { "factory" = "\d+" },
+     *     defaults = { "factory" : "" },
      *     options = { "expose" = true },
      *     name = "admin-settings")
+     * @ParamConverter("factory", class="App:FactoryEntity", options = { "id" = "factory" })
      */
-    public function loadSettings(Request $request, SettingService $settingService)
+    public function loadSettings(Request $request, FactoryEntity $factory, SettingService $settingService)
     {
-        $settings = $settingService->findSettingsByFactoryId($request->get('factoryId'));
+        $settings = $settingService->findSettingsByFactoryId($factory->getId());
 
         return $this->render('lencor/admin/archive/administration/settings.html.twig', array('settings' => $settings));
     }
@@ -71,7 +75,9 @@ class AdministrationController extends Controller
      * @param FactoryEntity $factory
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("admin/factory/{factory}/load",
+     * @Route("admin/factories/{factory}/load",
+     *     requirements = { "factory" = "\d+" },
+     *     defaults = { "factory" : "" },
      *     options = { "expose" = true },
      *     name = "admin-factory-load")
      * @ParamConverter("factory", class="App:FactoryEntity", options = { "id" = "factory" })
@@ -87,7 +93,9 @@ class AdministrationController extends Controller
      * @param FactoryService $factoryService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("admin/factory/{factory}/edit",
+     * @Route("admin/factories/{factory}/edit",
+     *     requirements = { "factory" = "\d+" },
+     *     defaults = { "factory" : "" },
      *     options = { "expose" = true },
      *     name = "admin-factory-edit")
      * @ParamConverter("factory", class = "App:FactoryEntity", options = { "id" = "factory" })
@@ -115,7 +123,9 @@ class AdministrationController extends Controller
      * @param SettingEntity $setting
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("admin/setting/{setting}/load",
+     * @Route("admin/settings/{setting}/load",
+     *     requirements = { "setting" = "\d+" },
+     *     defaults = { "setting" : "" },
      *     options = { "expose" = true },
      *     name = "admin-setting-load")
      * @ParamConverter("setting", class="App:SettingEntity", options = { "id" = "setting" })
@@ -131,7 +141,9 @@ class AdministrationController extends Controller
      * @param SettingService $settingService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("admin/setting/{setting}/edit",
+     * @Route("admin/settings/{setting}/edit",
+     *     requirements = { "setting" = "\d+" },
+     *     defaults = { "setting" : "" },
      *     options = { "expose" = true },
      *     name = "admin-setting-edit")
      * @ParamConverter("setting", class = "App:SettingEntity", options = { "id" = "setting" })

@@ -4,7 +4,7 @@
         {% if factories is iterable %}
             {% for factory in factories %}
                 <li id="factory_{{ factory.id }}">
-                <span>
+                <span id="{{ factory.id }}">
                     <a href="#" id="{{ factory.id }}" name="openFactory">{{ factory }}</a>
                 </span>
                     <span>
@@ -15,7 +15,7 @@
             {% endfor %}
         {% else %}
             <li id="factory_{{ factories.id }}">
-            <span>
+            <span id="{{ factories.id }}">
                 <a href="#" id="{{ factories.id }}" name="openFactory">{{ factories.factoryName }}</a>
             </span>
                 <span>

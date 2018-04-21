@@ -291,9 +291,9 @@ $(document).ready(function () {
             let fileId = $(this).parent().attr("id");
             /** Load file download block **/
             $.ajax({
-                url: Routing.generate('entries_download_file'),
+                url: Routing.generate('entries_download_file', {file: fileId}),
                 method: "POST",
-                data: {fileId: fileId},
+                data: null,
                 success: function (downloadBlockResponse) {
                     downloadFileBlock.html($(downloadBlockResponse));
                     downloadFileBlock.show();
@@ -301,9 +301,9 @@ $(document).ready(function () {
             });
             let fileInfo = $('#file_' + fileId);
             $.ajax({
-                url: Routing.generate('entries_reload_file'),
+                url: Routing.generate('entries_reload_file', {file: fileId}),
                 method: "POST",
-                data: {fileId: fileId},
+                data: null,
                 success: function (reloadFileInfo) {
                     fileInfo.replaceWith(reloadFileInfo);
                 }
@@ -735,8 +735,8 @@ $(document).ready(function () {
                 method: "POST",
                 success: function (reloadFlashMessages) {
                     $flashMessages.html($(reloadFlashMessages).filter('#flash-messages').children());
-                    $flashMessages.show().css('display', 'block');
-
+                    $flashMessages.fadeIn("slow");
+                    setTimeout(hideFlashMessages, 7000);
                 }
             });
 
@@ -752,14 +752,23 @@ $(document).ready(function () {
                 method: "POST",
                 success: function (reloadFlashMessages) {
                     $flashMessages.html($(reloadFlashMessages).filter('#flash-messages').children());
-                    $flashMessages.show().css('display', 'block');
+                    $flashMessages.fadeIn("slow");
                     if (clear) {
                         clearFlashMessages();
                     }
+                    setTimeout(hideFlashMessages, 7000);
                 }
             });
 
             return false;
+        }
+
+        /** Flash messages hiding **/
+
+        function hideFlashMessages() {
+            let $flashMessages = $('#flash-messages');
+            $flashMessages.fadeOut("slow");
+
         }
 
         /** Flash messages clear for batch file upload to prevent them from overflowing the page **/

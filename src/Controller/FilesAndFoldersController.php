@@ -8,7 +8,6 @@ use App\Form\FileAddForm;
 use App\Form\FileRenameForm;
 use App\Form\FolderAddForm;
 use App\Form\FolderRenameForm;
-use App\Service\CommonArchiveService;
 use App\Service\EntryService;
 use App\Service\FileChecksumService;
 use App\Service\FileService;
@@ -309,6 +308,8 @@ class FilesAndFoldersController extends Controller
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/rename_file/{file}",
+     *     requirements = { "file" = "\d+" },
+     *     defaults = { "file" : "" },
      *     options = { "expose" = true },
      *     name = "entries_rename_file")
      * @ParamConverter("file", class = "App:FileEntity", options = { "id" = "file" })
@@ -351,9 +352,11 @@ class FilesAndFoldersController extends Controller
      * @return Response
      * @Security("has_role('ROLE_USER')")
      * @Route("/entries/reload_files/{file}",
+     *     requirements = { "file" = "\d+" },
+     *     defaults = { "file" : "" },
      *     options = { "expose" = true },
      *     name = "entries_reload_files")
-     * @ParamConverter("file", class = "App:FileEntity", options = { "id" = "file" })
+     * @ParamConverter("file", class = "App:FileEntity", isOptional = true, options = { "id" = "file" })
      */
     public function reloadFiles(Request $request, FileEntity $file, FileService $fileService)
     {
@@ -423,7 +426,6 @@ class FilesAndFoldersController extends Controller
      * @param Request $request
      * @param FolderEntity $folder
      * @param FolderService $folderService
-     * @param CommonArchiveService $archiveService
      * @param LoggingService $loggingService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
@@ -432,7 +434,7 @@ class FilesAndFoldersController extends Controller
      *     name = "entries_rename_folder")
      * @ParamConverter("folder", class = "App:FolderEntity", options = { "id" = "folder" })
      */
-    public function renameFolder(Request $request, FolderEntity $folder, FolderService $folderService, CommonArchiveService $archiveService, LoggingService $loggingService)
+    public function renameFolder(Request $request, FolderEntity $folder, FolderService $folderService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
         $form_id = 'folder_rename_form_' . $folder->getId();
@@ -471,11 +473,13 @@ class FilesAndFoldersController extends Controller
      * @return Response
      * @Security("has_role('ROLE_USER')")
      * @Route("/entries/reload_folders/{folder}",
+     *     requirements = { "folder" = "\d+" },
+     *     defaults = { "folder" : "" },
      *     options = { "expose" = true },
      *     name = "entries_reload_folders")
-     * @ParamConverter("folder", class = "App:FolderEntity", options = { "id" = "folder" })
+     * @ParamConverter("folder", class = "App:FolderEntity", isOptional = true, options = { "id" = "folder" })
      */
-    public function reloadFolders(Request $request, FolderEntity $folder, FolderService $folderService)
+    public function reloadFolders(Request $request, FolderEntity $folder = null, FolderService $folderService)
     {
         if ($request->request->has('foldersArray')) {
             $foldersArray = $folderService->getFoldersList($request->get('foldersArray'));
@@ -549,32 +553,33 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
+     * @param FileEntity $requestedFile
      * @param FileService $fileService
      * @param FileChecksumService $fileChecksumService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/download_file",
+     * @Route("/entries/download_file/{file}",
+     *     requirements = { "file" = "\d+" },
+     *     defaults = { "file" : "" },
      *     options = { "expose" = true },
      *     name = "entries_download_file")
+     * @ParamConverter("file", class = "App:FileEntity", options = { "id" = "file" })
      */
-    public function downloadFile(Request $request, FileService $fileService, FileChecksumService $fileChecksumService)
+    public function downloadFile(Request $request, FileEntity $requestedFile, FileService $fileService, FileChecksumService $fileChecksumService)
     {
-        $requestedFile = null;
         $checkStatus = null;
         $sharePath = null;
         $httpPath = null;
-        if ($request->request->has('fileId')) {
-            $requestedFile = $fileService->getFileById($request->get('fileId'));
-            $filePath = $fileService->getFilePath($requestedFile, true);
-            $httpPath = $fileService->getFileHTTPUrl($filePath);
-            $sharePath = $fileService->getFileSharePath($requestedFile);
-            $checkStatus = $fileChecksumService->checkFile($requestedFile, $filePath);
-            if (!$checkStatus) {
-                $fileChecksumService->reportChecksumError($requestedFile, $this->getUser());
-            } else {
-                $fileChecksumService->validateChecksumValue($requestedFile, $this->getUser());
-            }
+        $filePath = $fileService->getFilePath($requestedFile, true);
+        $httpPath = $fileService->getFileHTTPUrl($filePath);
+        $sharePath = $fileService->getFileSharePath($requestedFile);
+        $checkStatus = $fileChecksumService->checkFile($requestedFile, $filePath);
+        if (!$checkStatus) {
+            $fileChecksumService->reportChecksumError($requestedFile, $this->getUser());
+        } else {
+            $fileChecksumService->validateChecksumValue($requestedFile, $this->getUser());
         }
+
         return $this->render('lencor/admin/archive/archive_manager/download_file.html.twig', array('requestedFile' => $requestedFile, 'downloadLink' => $httpPath, 'sharePath' => $sharePath, 'checkPass' => $checkStatus));
     }
 }

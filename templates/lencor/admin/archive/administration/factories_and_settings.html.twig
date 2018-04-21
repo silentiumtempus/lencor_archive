@@ -16,7 +16,7 @@
     </div>
     <div class="fac-set">
         <div class="content-list factories left">
-            <ul class="fa-ul" id="factories" data-path="{{ path('admin-settings') }}">
+            <ul class="fa-ul" id="factories">
                 {% block factories %}
                     {{ include('lencor/admin/archive/administration/factories.html.twig', { 'factories': factories }) }}
                 {% endblock %}
