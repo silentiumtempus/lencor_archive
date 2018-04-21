@@ -68,7 +68,7 @@ file_put_contents($file, $wr); */
      * @Security("has_role('ROLE_USER')")
      * @Route("entries/remove_entry",
      *     options = { "expose" = true },
-     *     name = "remove_entry")
+     *     name = "entries_remove_entry")
      */
     public function removeEntry(Request $request, EntryService $entryService)
     {
@@ -87,7 +87,7 @@ file_put_contents($file, $wr); */
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("entries/restore_entry",
      *     options = { "expose" = true },
-     *     name = "restore_entry")
+     *     name = "entries_restore_entry")
      */
     public function restoreEntry(Request $request, EntryService $entryService)
     {
@@ -106,7 +106,7 @@ file_put_contents($file, $wr); */
      * @Security("has_role('ROLE_USER')")
      * @Route("entries/request_entry",
      *     options = { "expose" = true },
-     *     name = "request_entry")
+     *     name = "entries_request_entry")
      */
     public function requestEntry(Request $request, EntryService $entryService)
     {

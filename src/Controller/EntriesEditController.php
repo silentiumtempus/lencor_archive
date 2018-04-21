@@ -7,7 +7,7 @@ use App\Form\EntryForm;
 use App\Form\EntrySearchByIdForm;
 use App\Service\EntryService;
 use App\Service\FactoryService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;

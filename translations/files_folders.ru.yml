@@ -15,6 +15,11 @@ file:
       prefix: 'Ссылка на скачивание:'
       text: 'Загрузить документ'
       error: 'Файл отсутствует или повреждён. Загрузка недоступна.'
+  rename:
+    label: 'Новое имя'
+    placeholder: 'Введите новое имя'
+    submit: 'Переименовать'
+    cancel: 'Отмена'
 folder:
   self: 'Каталог'
   create:
@@ -24,4 +29,9 @@ folder:
     parent:
       label: 'Родительский каталог'
       placeholder: 'Выберите родителя'
+  rename:
+    label: 'Новое имя'
+    placeholder: 'Введите новое имя'
+    submit: 'Переименовать'
+    cancel: 'Отмена'
 requested: 'требуется'

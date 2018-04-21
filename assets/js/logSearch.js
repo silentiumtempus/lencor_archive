@@ -1,21 +1,20 @@
 $(document).ready(function () {
     if (!window.jQuery) {
     } else {
-        let $path = $("#log-search").attr("data-path");
         let $logSearchForm = $('#entry_logs_search_form');
+        let $logFileContent = $('#logfile-content');
 
-        $logSearchForm.on("submit", function (event) {
-            event.preventDefault();
-            $('#logfile-content').hide();
-            logsLoader();
-
-        });
         /** Load log files and folders **/
 
+        $logSearchForm.on("submit", logsLoader);
+
         function logsLoader() {
+            if ($logFileContent.is(':visible')) {
+                $logFileContent.hide();
+            }
             let $logSearchFormSerialized = $logSearchForm.serialize();
             $.ajax({
-                url: $path,
+                url: Routing.generate('logging'),
                 method: $logSearchForm.attr('method'),
                 data: $logSearchFormSerialized,
                 success: function (response) {
@@ -27,8 +26,9 @@ $(document).ready(function () {
         }
         /** Load log file contents **/
 
-        $(document).on("click", 'a[name="openLog"]', function(event) {
-            event.preventDefault();
+        $(document).on("click", 'a[name="openLog"]', openLog);
+
+        function openLog() {
             $('#logfile-content').hide();
             $('#loading-spinner').show().css('display', 'block');
             let entryId = $(this).attr('id');
@@ -44,13 +44,16 @@ $(document).ready(function () {
                     $('#logfile-content').show();
 
                 }
-            })
-        });
+            });
+
+            return false;
+        }
 
         /** Load contents of subdirectory in logs **/
 
-        $(document).on("click", 'a[name="openSubDir"]', function (event) {
-            event.preventDefault();
+        $(document).on("click", 'a[name="openSubDir"]', openLogSubDir);
+
+        function openLogSubDir() {
             $('#logfile-content').hide();
             let $folder = $(this).attr('id');
             let $entryId = $(this).parents('ul').attr('id');
@@ -62,7 +65,9 @@ $(document).ready(function () {
                 success: function (response) {
                     $('#logs').html($(response));
                 }
-            })
-        })
+            });
+
+            return false;
+        }
     }
 });

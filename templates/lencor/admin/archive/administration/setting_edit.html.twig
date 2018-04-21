@@ -1,9 +1,10 @@
-{% form_theme settingForm '@symfony-collection/jquery.collection.html.twig' %}
-{% trans_default_domain 'facset' %}
-{{ form_start(settingForm) }}
-{{ form_errors(settingForm) }}
-{#{{ form_widget(settingForm.factory) }}#}
-{{ form_widget(settingForm.settingName, { 'attr' : {'placeholder' : 'factories.add.name.placeholder'|trans}}) }}
-{{ form_widget(settingForm.submitButton) }}
-{{ form_widget(settingForm.cancelButton) }}
-{{ form_end(settingForm) }}
+{% if settingForm is defined %}
+    {% form_theme settingForm '@symfony-collection/jquery.collection.html.twig' %}
+    {% trans_default_domain 'facset' %}
+    {{ form_start(settingForm) }}
+    {{ form_errors(settingForm) }}
+    {{ form_widget(settingForm.settingName, { 'attr' : {'placeholder' : 'factories.add.name.placeholder'|trans}}) }}
+    {{ form_widget(settingForm.submitButton) }}
+    {{ form_widget(settingForm.cancelButton) }}
+    {{ form_end(settingForm) }}
+{% endif %}

@@ -9,54 +9,7 @@
 {% endif %}
 {% if (folderTree is not empty) %}
     {% for folder in folderTree %}
-        <li id="folder_{{ folder.id }}" class="dashed {% if folder.deleteMark !=0 %} deleted {% endif %}">
-            <ul>
-                <li class="row">
-                    <span>
-                    {% if folder.deleteMark != 0 %}
-                        <i class="fa fa-remove"> </i>
-                    {% endif %}
-                        <a href="#" name="openFolder" id="{{ folder.id }}">
-                            <i id="down" class="fa fa-chevron-down"> </i><i id="up" class="fa fa-chevron-up" hidden> </i><i class="fa fa-folder"> </i>{{ folder.folderName }}
-                        </a>
-                    </span>
-                    <span>{{ folder.addedByUser.username}}</span>
-                    <span>{{ folder.addTimestamp|date('Y-m-d H:i:s') }}</span>
-                    <span class="text-right width-66" id="folder">
-                        {% if folder.requestMark %}
-                            <a href="#" name="isRequested" id="{{ folder.id }}" class="non-opaque"><i class="fa fa-fire non-opaque"> </i>({{ folder.requestsCount }})</a>
-                        {% endif %}
-                        {% if folder.deleteMark != 0 %}
-                            <i class="fa fa-ban" id="isRemoved"> </i>
-                    {% else %}
-                            {% if (folder.sumErrors is not null) and (folder.sumErrors != 0) %}
-                                <i class="fa fa-exclamation" id="checkError"> </i>({{ folder.sumErrors }})
-                        {% else %}
-                                <i class="fa fa-check-circle-o" id="checkPassed"> </i>
-                            {% endif %}
-                        {% endif %}
-                        &nbsp;<i class="fa fa-user" id="lastChangeInfo"> </i>
-                    </span>
-                    <span id="{{ folder.id }}" class="text-right width-66">
-                    {% if folder.deleteMark != 0 %}
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <a href="#" name="restoreFolder" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
-                        {% else %}
-                            <a href="#" name="requestFolder" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
-                        {% endif %}
-                    {% else %}
-                        <a href="#" name="addFiles"><i class="fa fa-upload" id=addFiles"> </i></a>
-                        <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"> </i><i class="fa fa-folder-o"> </i></a>
-                        <a href="#" name="removeFolder"><i class="fa fa-trash-o" id="removeFolder"> </i></a>
-                    {% endif %}
-                    </span>
-                </li>
-            </ul>
-            <ul class="border-left">
-                <li hidden id="folderContent_{{ folder.id }}" class="fa-ul"></li>
-                <li hidden id="fileContent_{{ folder.id }}" class="fa-ul"></li>
-            </ul>
-        </li>
+        {{ include('lencor/admin/archive/archive_manager/folder.html.twig', { 'folder': folder }) }}
     {% endfor %}
 {% else %}
 {% endif %}

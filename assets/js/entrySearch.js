@@ -93,7 +93,7 @@ $(document).ready(function () {
             let contentPlace = $('#entryContent_' + entryId);
             if ($(contentPlace).is(":hidden")) {
                 $.ajax({
-                    url: "view",
+                    url: Routing.generate('entries_view'),
                     method: searchForm.attr('method'),
                     data: {entryId: entryId},
                     success: function (response) {
@@ -131,7 +131,7 @@ $(document).ready(function () {
             let fileContent = $('#fileContent_' + folderId);
             if ($(folderContent).is(":hidden")) {
                 $.ajax({
-                    url: "view_folders",
+                    url: Routing.generate('entries_view_folders'),
                     method: "POST",
                     data: {folderId: folderId},
                     success: function (response) {
@@ -140,7 +140,7 @@ $(document).ready(function () {
                     }
                 });
                 $.ajax({
-                    url: "view_files",
+                    url: Routing.generate('entries_view_files'),
                     method: "POST",
                     data: {folderId: folderId},
                     success: function (response) {
@@ -170,7 +170,7 @@ $(document).ready(function () {
             let folderId = $(this).parent().attr("id");
             /** Load folder creation form **/
             $.ajax({
-                url: "new_folder",
+                url: Routing.generate('entries_new_folder'),
                 method: searchForm.attr('method'),
                 data: {folderId: folderId},
                 success: function (loadFormResponse) {
@@ -182,7 +182,7 @@ $(document).ready(function () {
                         let folderSerialized = $folderAddForm.serialize();
                         /** Submit new folder **/
                         $.ajax({
-                            url: "new_folder",
+                            url: Routing.generate('entries_new_folder'),
                             method: $folderAddForm.attr('method'),
                             data: folderSerialized,
                             success: function () {
@@ -198,7 +198,7 @@ $(document).ready(function () {
                                     openFolder(folderId);
                                 } else {
                                     $.ajax({
-                                        url: "view_folders",
+                                        url: Routing.generate('entries_view_folders'),
                                         method: searchForm.attr('method'),
                                         data: {folderId: folderId},
                                         success: function (reloadResponse) {
@@ -230,7 +230,7 @@ $(document).ready(function () {
             let folderId = $(this).parent().attr("id");
             /** Load file upload form **/
             $.ajax({
-                url: "new_file",
+                url: Routing.generate('entries_new_file'),
                 method: searchForm.attr('method'),
                 data: {folderId: folderId},
                 success: function (loadFormResponse) {
@@ -242,7 +242,7 @@ $(document).ready(function () {
                         let fileSerialized = new FormData($(this)[0]);
                         /** Submit new file **/
                         $.ajax({
-                            url: "new_file",
+                            url: Routing.generate('entries_new_file'),
                             method: $fileAddForm.attr('method'),
                             data: fileSerialized,
                             processData: false,
@@ -261,7 +261,7 @@ $(document).ready(function () {
                                 } else {
                                     /** Reload folder view order **/
                                     $.ajax({
-                                        url: "view_files",
+                                        url: Routing.generate('entries_view_files'),
                                         method: searchForm.attr('method'),
                                         data: {folderId: folderId},
                                         success: function (reloadResponse) {
@@ -291,7 +291,7 @@ $(document).ready(function () {
             let fileId = $(this).parent().attr("id");
             /** Load file download block **/
             $.ajax({
-                url: "download_file",
+                url: Routing.generate('entries_download_file'),
                 method: "POST",
                 data: {fileId: fileId},
                 success: function (downloadBlockResponse) {
@@ -301,7 +301,7 @@ $(document).ready(function () {
             });
             let fileInfo = $('#file_' + fileId);
             $.ajax({
-                url: "reload_file",
+                url: Routing.generate('entries_reload_file'),
                 method: "POST",
                 data: {fileId: fileId},
                 success: function (reloadFileInfo) {
@@ -317,7 +317,7 @@ $(document).ready(function () {
             if (entryId !== null) {
                 $('#update-info-spinner').show().css('display', 'contents');
                 $.ajax({
-                    url: "last_update_info",
+                    url: Routing.generate('entries_last_update_info'),
                     method: "POST",
                     data: {entryId: entryId},
                     success: function (reloadLastUpdateInfo) {
@@ -329,12 +329,12 @@ $(document).ready(function () {
             else if (folderId !== null) {
                 $('#update-info-spinner').show().css('display', 'contents');
                 $.ajax({
-                        url: "get_folder_entryId",
+                        url: Routing.generate('entries_get_folder_entryId'),
                         method: "POST",
                         data: {folderId: folderId},
                         success: function (entryId) {
                             $.ajax({
-                                url: "last_update_info",
+                                url: Routing.generate('entries_last_update_info'),
                                 method: "POST",
                                 data: {folderId: folderId},
                                 success: function (reloadLastUpdateInfo) {
@@ -357,7 +357,7 @@ $(document).ready(function () {
         function removeFile() {
             let fileId = $(this).parent().attr("id");
             $.ajax({
-                url: "remove_file",
+                url: Routing.generate('entries_remove_file'),
                 method: "POST",
                 data: {fileId: fileId},
                 success: function (fileRemoval) {
@@ -375,7 +375,7 @@ $(document).ready(function () {
         function restoreFile() {
             let fileId = $(this).parent().attr("id");
             $.ajax({
-                url: "restore_file",
+                url: Routing.generate('entries_restore_file'),
                 method: "POST",
                 data: {fileId: fileId},
                 success: function (fileRestoration) {
@@ -393,11 +393,29 @@ $(document).ready(function () {
         function requestFile() {
             let fileId = $(this).parent().attr("id");
             $.ajax({
-                url: "request_file",
+                url: Routing.generate('entries_request_file'),
                 method: "POST",
                 data: {fileId: fileId},
                 success: function (fileRequest) {
                     $('#file_' + fileId).replaceWith(fileRequest);
+                }
+            });
+
+            return false;
+        }
+
+        /** Archive entries file rename action **/
+
+        $(document).on("click", 'a[name="renameFile"]', renameFile);
+
+        function renameFile() {
+            let fileId = $(this).parent().attr("id");
+            $.ajax({
+                url: Routing.generate('entries_rename_file', {file: fileId}),
+                method: "POST",
+                data: null,
+                success: function (renamedFile) {
+
                 }
             });
 
@@ -412,7 +430,7 @@ $(document).ready(function () {
             let folderId = $(this).parent().attr("id");
             let folderContent = $('#folderContent_' + folderId);
             $.ajax({
-                url: "remove_folder",
+                url: Routing.generate('entries_remove_folder'),
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRemoval) {
@@ -434,7 +452,7 @@ $(document).ready(function () {
             let folderId = $(this).parent().attr("id");
             let $folderEntry = null;
             $.ajax({
-                url: "restore_folder",
+                url: Routing.generate('entries_restore_folder'),
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRestoration) {
@@ -465,7 +483,7 @@ $(document).ready(function () {
         function requestFolder() {
             let folderId = $(this).parent().attr("id");
             $.ajax({
-                url: "request_folder",
+                url: Routing.generate('entries_request_folder'),
                 method: "POST",
                 data: {folderId: folderId},
                 success: function (folderRequest) {
@@ -477,6 +495,59 @@ $(document).ready(function () {
             return false;
         }
 
+        /** Archive entries folder rename action **/
+
+        $(document).on("click", 'a[name="renameFolder"]', renameFolder);
+
+        function renameFolder() {
+            let folderId = $(this).parent().attr("id");
+            let $formPlace = $('#folder_'+folderId).find('#'+folderId).parent();
+            $.ajax({
+                url: Routing.generate('entries_rename_folder', {folder: folderId}),
+                method: "POST",
+                success: function (renameForm) {
+                    $formPlace.html(renameForm);
+                    let $folderRenameForm = $formPlace.find('#folder_rename_form_' + folderId);
+                    /** Update folder **/
+                    $folderRenameForm.on("submit", function () {
+                        $(this).off('submit');
+                        updateFolder(folderId, $folderRenameForm);
+
+                        return false;
+                    });
+                    /**Folder editing cancellation **/
+                    $folderRenameForm.on('click', '#folder_rename_form_cancelButton', function () {
+                        $.ajax({
+                            url: Routing.generate('entries_reload_folders', {folder: folderId}),
+                            method: "POST",
+                            data: null,
+                            success: function (folder) {
+                                $($('#folder_'+folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
+                            }
+                        });
+                    });
+                }
+            });
+
+            return false;
+        }
+
+        /** Perform entry folder update and show result **/
+
+        function updateFolder(folderId, $folderRenameForm) {
+            let $folderRenameFormSerialized = $folderRenameForm.serialize();
+            $.ajax({
+                url: Routing.generate('entries_rename_folder', {folder: folderId}),
+                method: "POST",
+                data: $folderRenameFormSerialized,
+                success: function (folder) {
+                    $($('#folder_'+folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
+                }
+            });
+
+            return false
+        }
+
         /** Archive entry removal action **/
 
         $(document).on("click", 'a[name="removeEntry"]', removeEntry);
@@ -484,7 +555,7 @@ $(document).ready(function () {
         function removeEntry() {
             let entryId = $(this).parent().attr("id");
             $.ajax({
-                url: Routing.generate('remove_entry'),
+                url: Routing.generate('entries_remove_entry'),
                 method: "POST",
                 data: {entryId: entryId},
                 success: function (entryRemoval) {
@@ -494,7 +565,6 @@ $(document).ready(function () {
                     }
                 }
             });
-
 
             return false;
         }
@@ -506,7 +576,7 @@ $(document).ready(function () {
         function restoreEntry() {
             let entryId = $(this).parent().attr("id");
             $.ajax({
-                url: Routing.generate('restore_entry'),
+                url: Routing.generate('entries_restore_entry'),
                 method: "POST",
                 data: {entryId: entryId},
                 success: function (entryRestoration) {
@@ -527,7 +597,7 @@ $(document).ready(function () {
         function requestEntry() {
             let entryId = $(this).parent().attr("id");
             $.ajax({
-                url: Routing.generate('request_entry'),
+                url: Routing.generate('entries_request_entry'),
                 method: "POST",
                 data: {entryId: entryId},
                 success: function (entryRequest) {
@@ -579,7 +649,7 @@ $(document).ready(function () {
             $(spinner).appendTo(requestersBlock);
             $(requestersBlock).prependTo(element.parent());
             $.ajax({
-                url: Routing.generate("show_requesters"),
+                url: Routing.generate('show_requesters'),
                 method: "POST",
                 data: {type: type, id: element.attr('id')},
                 success: function (requesters) {
@@ -609,7 +679,7 @@ $(document).ready(function () {
 
         function loadFlashMessages() {
             $.ajax({
-                url: "flash_messages",
+                url: Routing.generate('flash_messages'),
                 method: "POST",
                 success: function (reloadFlashMessages) {
                     $('#flash-messages').replaceWith(
@@ -624,7 +694,7 @@ $(document).ready(function () {
 
         function loadFlashMessagesSummary(clear) {
             $.ajax({
-                url: "flash_messages_summary",
+                url: Routing.generate('flash_messages_summary'),
                 method: "POST",
                 success: function (reloadFlashMessages) {
                     $('#flash-messages').replaceWith(
@@ -642,7 +712,7 @@ $(document).ready(function () {
 
         function clearFlashMessages() {
             $.ajax({
-                url: "flash_messages_clear",
+                url: Routing.generate('flash_messages_clear'),
                 method: "POST"
             });
 

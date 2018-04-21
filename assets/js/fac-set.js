@@ -17,14 +17,14 @@ $(document).ready(function () {
 
         /** Perform factory name update and show result **/
 
-        function updateFactory($factory, $factoryEditForm) {
+        function updateFactory($factoryId, $factoryEditForm) {
             let $factoryEditFormSerialized = $factoryEditForm.serialize();
             $.ajax({
-                url: Routing.generate('admin-factory-edit', {factory: $factory}),
+                url: Routing.generate('admin-factory-edit', {factory: $factoryId}),
                 method: "POST",
                 data: $factoryEditFormSerialized,
                 success: function (response) {
-                    $('#factory_' + $factory).replaceWith(response);
+                    $('#factory_' + $factoryId).replaceWith(response);
                 }
             });
 
@@ -34,28 +34,28 @@ $(document).ready(function () {
         /** Load factory edit form **/
 
         $(document).on('click', 'a[name="editFactory"]', function loadFactoryEditForm() {
-            let $factory = $(this).attr('id');
+            let factoryId = $(this).attr('id');
             $.ajax({
-                url: Routing.generate('admin-factory-edit', {factory: $factory}),
+                url: Routing.generate('admin-factory-edit', {factory: factoryId}),
                 method: "POST",
                 success: function (response) {
-                    let $factoryBlock = $('#factory_' + $factory);
+                    let $factoryBlock = $('#factory_' + factoryId);
                     $factoryBlock.html(response);
-                    let $factoryEditForm = $factoryBlock.find('#factory_form_' + $factory);
+                    let $factoryEditForm = $factoryBlock.find('#factory_form_' + factoryId);
                     /** Update factory **/
                     $factoryEditForm.on('submit', function (event) {
                         event.preventDefault();
                         $(this).off('submit');
-                        updateFactory($factory, $factoryEditForm);
+                        updateFactory(factoryId, $factoryEditForm);
                     });
                     /** Factory editing cancellation **/
                     $factoryEditForm.on('click', '#factory_form_cancelButton', function () {
                         $.ajax({
-                            url: Routing.generate('admin-factory-load', {factory: $factory}),
+                            url: Routing.generate('admin-factory-load', {factory: factoryId}),
                             method: "POST",
                             data: null,
                             success: function (response) {
-                                $('#factory_' + $factory).replaceWith(response);
+                                $('#factory_' + factoryId).replaceWith(response);
                             }
                         });
                     });
@@ -91,10 +91,11 @@ $(document).ready(function () {
                     $settingBlock.html(response);
                     let $settingEditForm = $settingBlock.find('#setting_form_' + $setting);
                     /** Update setting **/
-                    $settingEditForm.on('submit', function (event) {
-                        event.preventDefault();
+                    $settingEditForm.on('submit', function () {
                         $(this).off('submit');
                         updateSetting($setting, $settingEditForm);
+
+                        return false;
                     });
                     /** Setting editing cancellation **/
                     $settingEditForm.on('click', '#setting_form_cancelButton', function () {

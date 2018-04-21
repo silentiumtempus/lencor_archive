@@ -26,9 +26,10 @@ class LogManagerController extends Controller
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/logging/{entryId}",
-     *     name = "logging",
      *     requirements = { "entryId" = "\d+" },
-     *     defaults = { "entryId" : "0" })
+     *     defaults = { "entryId" : "0" },
+     *     options = { "expose" = true},
+     *     name = "logging")
      */
     public function logManagerIndex(int $entryId, Request $request, LoggingService $loggingService, EntryService $archiveEntryService)
     {

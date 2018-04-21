@@ -244,6 +244,14 @@ class FolderService
     }
 
     /**
+     * This is for folder name update
+     */
+    public function renameFolder()
+    {
+        $this->em->flush();
+    }
+
+    /**
      * @param FolderEntity $parentFolder
      * @return string
      */

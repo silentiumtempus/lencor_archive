@@ -5,14 +5,17 @@ namespace App\Controller;
 use App\Entity\FileEntity;
 use App\Entity\FolderEntity;
 use App\Form\FileAddForm;
+use App\Form\FileRenameForm;
 use App\Form\FolderAddForm;
+use App\Form\FolderRenameForm;
 use App\Service\EntryService;
 use App\Service\FileChecksumService;
 use App\Service\FileService;
 use App\Service\FolderService;
 use App\Service\LoggingService;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,7 +41,6 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_new_folder")
      */
-
     public function createNewFolder(Request $request, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
@@ -145,7 +147,6 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_new_file")
      */
-
     public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
@@ -258,7 +259,6 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_remove_file")
      */
-
     //@TODO: Unite two methods below
     public function removeFile(Request $request, FileService $fileService)
     {
@@ -276,7 +276,6 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_restore_file")
      */
-
     public function restoreFile(Request $request, FileService $fileService)
     {
         $restoredFile = $fileService->restoreFile($request->get('fileId'), $this->getUser());
@@ -294,12 +293,37 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_request_file")
      */
-
     public function requestFile(Request $request, FileService $fileService, FolderService $folderService)
     {
         $requestedFile = $fileService->requestFile($request->get('fileId'), $this->getUser(), $folderService);
 
         return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $requestedFile));
+    }
+
+    /**
+     * @param Request $request
+     * @param FileEntity $file
+     * @param FileService $fileService
+     * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("admin/rename_file/{file}",
+     *     options = { "expose" = true },
+     *     name = "entries_rename_file")
+     * @ParamConverter("file", class="App:FileEntity", options = { "id" = "file" })
+     */
+    public function renameFile(Request $request, FileEntity $file, FileService $fileService)
+    {
+        $form_id = 'folder_rename_form_' . $file->getId();
+        $fileRenameForm = $this->createForm(FileRenameForm::class, $file, array('attr' => array('id' => $form_id)));
+        $fileRenameForm->handleRequest($request);
+        if ($fileRenameForm->isSubmitted()) {
+            if ($fileRenameForm->isValid()) {
+
+            }
+        }
+
+
+        return $this->render('lencor/admin/archive/administration/file_rename.html.twig', array('fileRenameForm' => $fileRenameForm->createView()));
     }
 
     /**
@@ -312,7 +336,6 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_remove_folder")
      */
-
     public function removeFolder(Request $request, FolderService $folderService, FileService $fileService)
     {
         $deletedFolder = $folderService->removeFolder($request->get('folderId'), $this->getUser(), $fileService);
@@ -329,7 +352,6 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_restore_folder")
      */
-
     public function restoreFolder(Request $request, FolderService $folderService)
     {
         $restoredFolders = $folderService->restoreFolder($request->get('folderId'), $this->getUser());
@@ -355,21 +377,56 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
+     * @param FolderEntity $folder
+     * @param FolderService $folderService
+     * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("admin/rename_folder/{folder}",
+     *     options = { "expose" = true },
+     *     name = "entries_rename_folder")
+     * @ParamConverter("folder", class="App:FolderEntity", options = { "id" = "folder" })
+     */
+    public function renameFolder(Request $request, FolderEntity $folder, FolderService $folderService)
+    {
+        $form_id = 'folder_rename_form_' . $folder->getId();
+        $folderRenameForm = $this->createForm(FolderRenameForm::class, $folder, array('attr' => array('id' => $form_id)));
+        $folderRenameForm->handleRequest($request);
+        if ($folderRenameForm->isSubmitted()) {
+            if ($folderRenameForm->isValid()) {
+                $folderService->renameFolder();
+                return $this->render('lencor/admin/archive/archive_manager/folder.html.twig', array('folder' => $folder));
+            } else {
+                $this->addFlash('danger', 'Форма не валидна');
+            }
+        }
+
+        return $this->render('lencor/admin/archive/administration/folder_rename.html.twig', array('folderRenameForm' => $folderRenameForm->createView()));
+    }
+
+    /**
+     * @param Request $request
+     * @param FolderEntity $folder
      * @param FolderService $folderService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/reload_folders",
+     * @Route("/entries/reload_folders/{folder}",
      *     options = { "expose" = true },
      *     name = "entries_reload_folders")
+     * @ParamConverter("folder", class="App:FolderEntity", options = { "id" = "folder" })
      */
-    public function reloadFolders(Request $request, FolderService $folderService)
+    public function reloadFolders(Request $request, FolderEntity $folder, FolderService $folderService)
     {
-        $foldersList = null;
         if ($request->request->has('foldersArray')) {
-            $foldersList = $folderService->getFoldersList($request->get('foldersArray'));
-        }
+            $foldersArray = $folderService->getFoldersList($request->get('foldersArray'));
 
-        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $foldersList));
+            return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $foldersArray));
+        } elseif ($folder) {
+
+            return $this->render('lencor/admin/archive/archive_manager/folder.html.twig', array('folder' => $folder));
+        } else {
+
+            return $this->redirectToRoute('entries');
+        }
     }
 
     /**
@@ -381,7 +438,6 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_change_last_update_info")
      */
-
     public function changeLastUpdateInfo($entryId = null, EntryService $archiveEntryService)
     {
         if ($entryId) {
@@ -404,7 +460,6 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_last_update_info")
      */
-
     public function loadLastUpdateInfo(Request $request, EntryService $archiveEntryService)
     {
         $lastUpdateInfo = $archiveEntryService->loadLastUpdateInfo($request);
@@ -421,7 +476,6 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_get_folder_entryId")
      */
-
     public function getFolderEntryId(Request $request, FolderService $folderService)
     {
         $entryId = null;
@@ -442,7 +496,6 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_download_file")
      */
-
     public function downloadFile(Request $request, FileService $fileService, FileChecksumService $fileChecksumService)
     {
         $requestedFile = null;
