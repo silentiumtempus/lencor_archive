@@ -1,14 +1,14 @@
 <li id="folder_{{ folder.id }}" class="dashed {% if folder.deleteMark !=0 %} deleted {% endif %}">
     <ul>
         <li class="row">
-                    <span>
-                    {% if folder.deleteMark != 0 %}
-                        <i class="fa fa-remove"> </i>
-                    {% endif %}
-                        <a href="#" name="openFolder" id="{{ folder.id }}">
-                            <i id="down" class="fa fa-chevron-down"> </i><i id="up" class="fa fa-chevron-up" hidden> </i><i class="fa fa-folder"> </i>{{ folder.folderName }}
-                        </a>
-                    </span>
+            <span>
+                {% if folder.deleteMark != 0 %}
+                    <i class="fa fa-remove"> </i>
+                {% endif %}
+                <a href="#" name="openFolder" id="{{ folder.id }}">
+                    <i id="down" class="fa fa-chevron-down"> </i><i id="up" class="fa fa-chevron-up" hidden> </i><i class="fa fa-folder"> </i>{{ folder.folderName }}
+                </a>
+            </span>
             <span>{{ folder.addedByUser.username}}</span>
             <span>{{ folder.addTimestamp|date('Y-m-d H:i:s') }}</span>
             <span class="text-right width-66" id="folder">
@@ -41,7 +41,7 @@
                         {% endif %}
                         <a href="#" name="removeFolder"><i class="fa fa-trash-o" id="removeFolder"> </i></a>
                     {% endif %}
-                    </span>
+            </span>
         </li>
     </ul>
     <ul class="border-left">

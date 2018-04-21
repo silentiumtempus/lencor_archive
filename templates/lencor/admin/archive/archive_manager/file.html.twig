@@ -1,12 +1,10 @@
 <li id="file_{{ file.id }}" class="dashed row {% if file.deleteMark != 0 %} deleted {% endif %}">
-        <span id="{{ file.id }}">
-            {% if file.deleteMark != 0 %}
-                <i class="fa fa-remove"> </i>
-            {% endif %}
-            <a href="#" name="downloadFile">
-                 <i class="fa fa-file-text"> </i>{{ file.fileName }}
-            </a>
-        </span>
+    <span id="{{ file.id }}">
+        {% if file.deleteMark != 0 %}
+            <i class="fa fa-remove"> </i>
+        {% endif %}
+        <a href="#" name="downloadFile"> <i class="fa fa-file-text"> </i>{{ file.fileName }} </a>
+    </span>
     <span>{{ file.addedByUser.username }}</span>
     <span> {{ file.addTimestamp|date('Y-m-d H:i:s') }} </span>
     <span class="text-right width-66" id="file">

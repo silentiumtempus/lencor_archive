@@ -410,17 +410,54 @@ $(document).ready(function () {
 
         function renameFile() {
             let fileId = $(this).parent().attr("id");
+            let $formPlace = $('#file_' + fileId).children('span').first();
             $.ajax({
                 url: Routing.generate('entries_rename_file', {file: fileId}),
                 method: "POST",
                 data: null,
-                success: function (renamedFile) {
+                success: function (renameForm) {
+                    $formPlace.html(renameForm);
+                    let $fileRenameForm = $formPlace.find('#file_rename_form_' + fileId);
+                    /** Update folder **/
+                    $fileRenameForm.on("submit", function() {
+                        $(this).off('submit');
+                        updateFile(fileId, $fileRenameForm);
 
+                        return false;
+                    });
+                    /**File editing cancellation **/
+                    $fileRenameForm.on('click', '#file_rename_form_cancelButton', function () {
+                        $.ajax({
+                            url: Routing.generate('entries_reload_files', {file: fileId}),
+                            method: "POST",
+                            data: null,
+                            success: function (file) {
+                                $($('#file_' + fileId).children('span').first()).replaceWith($(file).children('span').first());
+                            }
+                        });
+                    });
                 }
             });
 
             return false;
         }
+
+        /** Perform entry folder update and show result **/
+
+        function updateFile(fileId, $fileRenameForm) {
+            let $fileRenameFormSerialized = $fileRenameForm.serialize();
+            $.ajax({
+                url: Routing.generate('entries_rename_file', {file: fileId}),
+                method: "POST",
+                data: $fileRenameFormSerialized,
+                success: function (file) {
+                    $($('#file_' + fileId).children('span').first()).replaceWith($(file).children('span').first());
+                }
+            });
+
+            return false;
+        }
+
 
         /** Archive entries folder removal action **/
 
@@ -462,8 +499,8 @@ $(document).ready(function () {
                         data: {foldersArray: folderRestoration},
                         success: function (folderReload) {
                             jQuery.each(folderRestoration, function (index, value) {
-                                $folderEntry = $('#folder_'+value);
-                                let $temp = $(folderReload).filter('#folder_'+value);
+                                $folderEntry = $('#folder_' + value);
+                                let $temp = $(folderReload).filter('#folder_' + value);
                                 $($folderEntry.children('ul').first()).replaceWith($temp.children('ul').first());
                                 $folderEntry.removeClass('deleted');
                             });
@@ -501,7 +538,7 @@ $(document).ready(function () {
 
         function renameFolder() {
             let folderId = $(this).parent().attr("id");
-            let $formPlace = $('#folder_'+folderId).find('#'+folderId).parent();
+            let $formPlace = $('#folder_' + folderId).find('#' + folderId).parent();
             $.ajax({
                 url: Routing.generate('entries_rename_folder', {folder: folderId}),
                 method: "POST",
@@ -522,7 +559,7 @@ $(document).ready(function () {
                             method: "POST",
                             data: null,
                             success: function (folder) {
-                                $($('#folder_'+folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
+                                $($('#folder_' + folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
                             }
                         });
                     });
@@ -541,7 +578,7 @@ $(document).ready(function () {
                 method: "POST",
                 data: $folderRenameFormSerialized,
                 success: function (folder) {
-                    $($('#folder_'+folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
+                    $($('#folder_' + folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
                 }
             });
 

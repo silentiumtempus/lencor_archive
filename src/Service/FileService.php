@@ -7,6 +7,7 @@ use App\Entity\FolderEntity;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class FileService
@@ -80,12 +81,22 @@ class FileService
      * @param FileEntity $requestedFile
      * @return string
      */
-    public function getFileSharePath(FileEntity $requestedFile) {
+    public function getFileSharePath(FileEntity $requestedFile)
+    {
         $share_root = $this->container->getParameter('lencor_archive.share_path');
         $fileAbsPath = $this->getFilePath($requestedFile, false);
 
         return $share_root . '\\' . $fileAbsPath;
 
+    }
+
+    /**
+     * @param array $filesArray
+     * @return FolderEntity||array
+     */
+    public function getFilesList(array $filesArray)
+    {
+        return $this->filesRepository->findById($filesArray);
     }
 
     /**
@@ -159,6 +170,7 @@ class FileService
         }
         $this->em->flush();
         $this->entryService->changeLastUpdateInfo($deletedFile[0]->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $user);
+
         return $deletedFile;
     }
 
@@ -204,14 +216,40 @@ class FileService
             $file
                 ->setRequestMark(true)
                 ->setRequestedByUsers($users);
-
-                $folderService->requestFolder($file->getParentFolder()->getId(), $user);
+            $folderService->requestFolder($file->getParentFolder()->getId(), $user);
         }
         $this->em->flush();
 
         return $requestedFile;
     }
 
+
+    /**
+     * @param FileEntity $newFile
+     * @return bool
+     */
+    public function moveFile(FileEntity $newFile)
+    {
+        try {
+            $targetFile = $this->em->getUnitOfWork()->getOriginalEntityData($newFile);
+            $absPath = $this->folderService->constructFolderAbsPath($newFile->getParentFolder());
+            $fs = new Filesystem();
+            $fs->rename($absPath . "/" . $targetFile['fileName'], $absPath . "/" . $newFile->getFileName());
+
+            return true;
+        } catch (\Exception $exception) {
+
+            return false;
+        }
+    }
+
+    /**
+     * This is fir file name update
+     */
+    public function renameFile()
+    {
+        $this->em->flush();
+    }
 
     /**
      * @param int $folderId

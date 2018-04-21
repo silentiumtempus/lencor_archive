@@ -244,6 +244,25 @@ class FolderService
     }
 
     /**
+     * @param FolderEntity $newFolder
+     * @return bool
+     */
+    public function moveFolder(FolderEntity $newFolder)
+    {
+        try {
+            $targetFolder = $this->em->getUnitOfWork()->getOriginalEntityData($newFolder);
+            $absPath = $this->constructFolderAbsPath($newFolder->getParentFolder());
+            $fs = new Filesystem();
+            $fs->rename($absPath . "/" . $targetFolder['folderName'], $absPath . "/" . $newFolder->getFolderName());
+
+            return true;
+        } catch (\Exception $exception) {
+
+            return false;
+        }
+    }
+
+    /**
      * This is for folder name update
      */
     public function renameFolder()
@@ -252,15 +271,15 @@ class FolderService
     }
 
     /**
-     * @param FolderEntity $parentFolder
+     * @param FolderEntity $folder
      * @return string
      */
-    public function constructFolderAbsPath(FolderEntity $parentFolder)
+    public function constructFolderAbsPath(FolderEntity $folder)
     {
         $folderAbsPath = $this->pathRoot;
-        $binaryPath = $this->getPath($parentFolder);
-        foreach ($binaryPath as $folder) {
-            $folderAbsPath .= "/" . $folder;
+        $binaryPath = $this->getPath($folder);
+        foreach ($binaryPath as $pathElement) {
+            $folderAbsPath .= "/" . $pathElement;
         }
 
         return $folderAbsPath;

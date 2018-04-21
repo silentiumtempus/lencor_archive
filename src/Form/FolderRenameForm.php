@@ -25,7 +25,7 @@ class FolderRenameForm extends AbstractType
         $builder
             ->add('folderName', TextType::class, array(
                 'label' => 'file.rename.label',
-                'attr' => array('size' => 30)
+                'attr' => array('size' => 20)
             ))
             ->add('submitButton', SubmitType::class, array('label' => 'file.rename.submit'))
             ->add('cancelButton', ResetType::class, array('label' => 'file.rename.cancel'));

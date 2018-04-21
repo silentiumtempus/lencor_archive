@@ -309,21 +309,54 @@ class FilesAndFoldersController extends Controller
      * @Route("admin/rename_file/{file}",
      *     options = { "expose" = true },
      *     name = "entries_rename_file")
-     * @ParamConverter("file", class="App:FileEntity", options = { "id" = "file" })
+     * @ParamConverter("file", class = "App:FileEntity", options = { "id" = "file" })
      */
     public function renameFile(Request $request, FileEntity $file, FileService $fileService)
     {
-        $form_id = 'folder_rename_form_' . $file->getId();
+        $form_id = 'file_rename_form_' . $file->getId();
         $fileRenameForm = $this->createForm(FileRenameForm::class, $file, array('attr' => array('id' => $form_id)));
         $fileRenameForm->handleRequest($request);
         if ($fileRenameForm->isSubmitted()) {
             if ($fileRenameForm->isValid()) {
+                if ($fileService->moveFile($file)) {
+                    $fileService->renameFile();
+                } else {
+                    $this->addFlash('danger', 'Ошибка при переименовании');
+                }
 
+                return $this->render('lencor/admin/archive/archive_manager/file.html.twig', array('file' => $file));
+            } else {
+                $this->addFlash('danger', 'Форма не валидна');
             }
         }
 
-
         return $this->render('lencor/admin/archive/administration/file_rename.html.twig', array('fileRenameForm' => $fileRenameForm->createView()));
+    }
+
+    /**
+     * @param Request $request
+     * @param FileEntity $file
+     * @param FileService $fileService
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
+     * @Route("/entries/reload_files/{file}",
+     *     options = { "expose" = true },
+     *     name = "entries_reload_files")
+     * @ParamConverter("file", class = "App:FileEntity", options = { "id" = "file" })
+     */
+    public function reloadFiles(Request $request, FileEntity $file, FileService $fileService)
+    {
+        if ($request->request->has('filesArray')) {
+            $filesArray = $fileService->getFilesList($request->get('filesArray'));
+
+            return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $filesArray));
+        } elseif ($file) {
+
+            return $this->render('lencor/admin/archive/archive_manager/file.html.twig', array('file' => $file));
+        } else {
+
+            return $this->redirectToRoute('entries');
+        }
     }
 
     /**
@@ -384,16 +417,22 @@ class FilesAndFoldersController extends Controller
      * @Route("admin/rename_folder/{folder}",
      *     options = { "expose" = true },
      *     name = "entries_rename_folder")
-     * @ParamConverter("folder", class="App:FolderEntity", options = { "id" = "folder" })
+     * @ParamConverter("folder", class = "App:FolderEntity", options = { "id" = "folder" })
      */
     public function renameFolder(Request $request, FolderEntity $folder, FolderService $folderService)
     {
         $form_id = 'folder_rename_form_' . $folder->getId();
+
         $folderRenameForm = $this->createForm(FolderRenameForm::class, $folder, array('attr' => array('id' => $form_id)));
         $folderRenameForm->handleRequest($request);
         if ($folderRenameForm->isSubmitted()) {
             if ($folderRenameForm->isValid()) {
-                $folderService->renameFolder();
+                if ($folderService->moveFolder($folder)) {
+                    $folderService->renameFolder();
+                } else {
+                    $this->addFlash('danger', 'Ошибка при переименовании');
+                }
+
                 return $this->render('lencor/admin/archive/archive_manager/folder.html.twig', array('folder' => $folder));
             } else {
                 $this->addFlash('danger', 'Форма не валидна');
@@ -412,7 +451,7 @@ class FilesAndFoldersController extends Controller
      * @Route("/entries/reload_folders/{folder}",
      *     options = { "expose" = true },
      *     name = "entries_reload_folders")
-     * @ParamConverter("folder", class="App:FolderEntity", options = { "id" = "folder" })
+     * @ParamConverter("folder", class = "App:FolderEntity", options = { "id" = "folder" })
      */
     public function reloadFolders(Request $request, FolderEntity $folder, FolderService $folderService)
     {
