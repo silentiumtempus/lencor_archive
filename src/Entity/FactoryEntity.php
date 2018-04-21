@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -33,6 +34,21 @@ class FactoryEntity
     protected $factoryName;
 
     /**
+     * @ORM\OneToMany(targetEntity="SettingEntity", mappedBy = "factory")
+     */
+
+    private $settings;
+
+    /**
+     * FactoryEntity constructor.
+     */
+
+    public function __construct()
+    {
+        $this->settings = new ArrayCollection();
+    }
+
+    /**
      * Set factoryName
      * @param string $factoryName
      * @return FactoryEntity
@@ -53,8 +69,43 @@ class FactoryEntity
         return $this->factoryName;
     }
 
+    /**
+     * Add settings
+     * @param SettingEntity $settings
+     * @return $this
+     */
+    public function addSettings(SettingEntity $settings)
+    {
+        $this->settings[] = $settings;
+
+        return $this;
+    }
+
+    /**
+     * Remove settings
+     * @param SettingEntity $settings
+     */
+    public function removeSettings(SettingEntity $settings)
+    {
+        $this->settings->removeElement($settings);
+    }
+
+    /**
+     * Get settings
+     * @return ArrayCollection
+     */
+    public function getSettings()
+    {
+        return $this->settings;
+    }
+
+    /**
+     * @return mixed
+     */
     public function __toString()
     {
         return $this->factoryName;
     }
+
+
 }

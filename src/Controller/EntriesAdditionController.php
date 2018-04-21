@@ -105,7 +105,7 @@ class EntriesAdditionController extends Controller
                             $newFolderEntity = new FolderEntity();
                             $entryService->prepareEntry($newEntryEntity, $newFolderEntity, $this->getUser());
                             $folderService->prepareNewRootFolder($newFolderEntity, $newEntryEntity, $this->getUser());
-                            $entryService->writeDataToEntryFile($newEntryEntity, $filename);
+                            $fileStatus = $entryService->writeDataToEntryFile($newEntryEntity, $filename);
                             $entryService->persistEntry($newEntryEntity, $newFolderEntity);
                             $this->addFlash('success', 'Запись успешно создана.');
                         } catch (IOException $IOException) {

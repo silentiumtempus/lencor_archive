@@ -55,7 +55,7 @@ class ArchiveEntryEntity
     protected $year;
 
     /**
-     * @ORM\ManyToOne(targetEntity="FactoryEntity")
+     * @ORM\OneToOne(targetEntity = "FactoryEntity")
      * @ORM\JoinColumn(name = "factory_id", referencedColumnName="id")
      * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
@@ -65,7 +65,7 @@ class ArchiveEntryEntity
 
     /**
 
-     * @ORM\ManyToOne(targetEntity = "SettingEntity")
+     * @ORM\OneToOne(targetEntity = "SettingEntity")
      * @ORM\JoinColumn(name = "setting_id", referencedColumnName = "id")
      * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
@@ -113,8 +113,6 @@ class ArchiveEntryEntity
      */
 
     protected $cataloguePath;
-
-
 
     /**
      * @Gedmo\Translatable
@@ -188,7 +186,7 @@ class ArchiveEntryEntity
 
     /**
      * Get setting
-     * @return \App\Entity\SettingEntity
+     * @return SettingEntity
      */
 
     public function getSetting()

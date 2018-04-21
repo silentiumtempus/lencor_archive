@@ -86,6 +86,8 @@ trait RestorationRequestsTrait
     public function getRequestsCount()
     {
         return count($this->getRequestedByUsers());
+        //$arr[] = $this->getRequestedByUsers();
+        //return count($arr);
     }
 
 }

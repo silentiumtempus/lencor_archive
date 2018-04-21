@@ -53,7 +53,7 @@ class FileEntity
     protected $files;
 
     /**
-     * @ORM\ManyToOne(targetEntity = "FolderEntity")
+     * @ORM\ManyToOne(targetEntity = "FolderEntity", inversedBy = "files")
      * @ORM\JoinColumn(name = "parent_folder_id", referencedColumnName = "id")
      * @Assert\NotBlank
      * @Gedmo\Versioned()

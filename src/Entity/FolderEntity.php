@@ -103,6 +103,12 @@ class FolderEntity
     private $childFolders;
 
     /**
+     * @ORM\OneToMany(targetEntity="FileEntity", mappedBy="parentFolder")
+     */
+
+    private $files;
+
+    /**
      * @Gedmo\Translatable
      * @Gedmo\Slug(fields = {"folderName"})
      * @ORM\Column(name = "slug", type = "string", length = 128)
@@ -117,6 +123,7 @@ class FolderEntity
     public function __construct()
     {
         $this->childFolders = new ArrayCollection();
+        $this->files = new ArrayCollection();
     }
 
     public function __toString()
@@ -194,6 +201,36 @@ class FolderEntity
     public function getChildFolders()
     {
         return $this->childFolders;
+    }
+
+    /**
+     * Add files
+     * @param FileEntity $files
+     * @return $this
+     */
+    public function addFiles(FileEntity $files)
+    {
+        $this->files[] = $files;
+
+        return $this;
+    }
+
+    /**
+     * Remove files
+     * @param FileEntity $files
+     */
+    public function removeFiles(FileEntity $files)
+    {
+        $this->files->removeElement($files);
+    }
+
+    /**
+     * Get files
+     * @return ArrayCollection
+     */
+    public function getFiles()
+    {
+        return $this->files;
     }
 
     /**

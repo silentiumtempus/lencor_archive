@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\ArchiveEntryEntity;
 use App\Form\EntryForm;
 use App\Form\EntrySearchByIdForm;
 use App\Service\EntryService;
-use App\Service\FactoryService;
+use App\Service\FolderService;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -22,6 +21,7 @@ class EntriesEditController extends Controller
     /**
      * @param Request $request
      * @param EntryService $entryService
+     * @param FolderService $folderService
      * @param $entryId
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
@@ -32,7 +32,7 @@ class EntriesEditController extends Controller
      *     defaults = { "entryId" : "0" }))
      */
     //@TODO: entryId is passing from GET as string
-    public function entryEditIndex(Request $request, EntryService $entryService, $entryId)
+    public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, $entryId)
     {
         $updateStatus = false;
         $archiveEntryEntity = null;
@@ -57,12 +57,32 @@ class EntriesEditController extends Controller
             $entryForm->handleRequest($request);
             if ($entryForm->isSubmitted()) {
                 if ($entryForm->isValid()) {
-                    try {
+                    //try {
+                    $originalEntry = $entryService->getOriginalData($archiveEntryEntity);
+                    $matches = $entryService->checkPathChanges($originalEntry, $archiveEntryEntity);
+                    if ($matches > 0) {
+                        $this->addFlash('warning', 'Обнаружено изменение параметров расположения ячейки. Перестраивается структура каталога');
+                        $pathIsFree = $entryService->checkNewPath($archiveEntryEntity);
+                        if ($pathIsFree) {
+                            $newEntryPath = $folderService->checkAndCreateFolders($archiveEntryEntity);
+                            $entryService->moveEntry($originalEntry, $newEntryPath);
+                        } else {
+                            $this->container->get('session')->getFlashBag()->add('danger', 'Указанный каталог уже существует. Операция прервана.');
+
+                        }
+
+                    }
+                    $entryPath = $folderService->checkAndCreateFolders($archiveEntryEntity);
+                    $filename = $entryPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".txt";
+                    if ($entryService->writeDataToEntryFile($archiveEntryEntity, $filename)) {
+
                         $entryService->updateEntry();
                         $updateStatus = true;
-                    } catch (\Exception $exception) {
-                        $this->addFlash('danger', 'Ошибка обновления ячейки: ' . $exception->getMessage());
                     }
+
+                    // } catch (\Exception $exception) {
+                    //      $this->addFlash('danger', 'Ошибка обновления ячейки: ' . $exception->getMessage());
+                    //  }
                 }
             }
             if (!$entryId || $updateStatus) {

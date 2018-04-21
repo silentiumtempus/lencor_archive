@@ -313,6 +313,7 @@ $(document).ready(function () {
         }
 
         /** Last entry update information load & refresh **/
+
         function loadLastUpdateInfo(entryId, folderId) {
             if (entryId !== null) {
                 $('#update-info-spinner').show().css('display', 'contents');

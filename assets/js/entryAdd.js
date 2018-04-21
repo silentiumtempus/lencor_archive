@@ -126,16 +126,26 @@ $(document).ready(function () {
         /** Flash messages loader **/
 
         function loadFlashMessages() {
+            let $flashMessages = $('#flash-messages');
             $.ajax({
-                url: Routing.generate("flash_messages"),
+                url: Routing.generate('flash_messages'),
                 method: "POST",
                 success: function (reloadFlashMessages) {
-                    $('#flash-messages').replaceWith(
-                        $(reloadFlashMessages));
+                    $flashMessages.html($(reloadFlashMessages).filter('#flash-messages').children());
+                    $flashMessages.fadeIn("slow");
+                    //setTimeout(hideFlashMessages, 7000);
                 }
             });
 
             return false;
+        }
+
+        /** Flash messages hiding **/
+
+        function hideFlashMessages() {
+            let $flashMessages = $('#flash-messages');
+            $flashMessages.fadeOut("slow");
+
         }
     }
 });

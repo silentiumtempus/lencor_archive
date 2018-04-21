@@ -65,7 +65,6 @@ $(document).ready(function () {
             return false;
         }
 
-
         /** Perform factory name update and show result **/
 
         function updateFactory(factoryId, $factoryEditForm) {
@@ -84,7 +83,6 @@ $(document).ready(function () {
 
             return false;
         }
-
 
         /** Load setting edit form **/
 
@@ -131,7 +129,6 @@ $(document).ready(function () {
 
             return false;
         });
-
 
         /** Perform setting update and show result **/
 

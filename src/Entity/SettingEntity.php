@@ -24,7 +24,7 @@ class SettingEntity
     use CommonTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity = "FactoryEntity")
+     * @ORM\ManyToOne(targetEntity = "FactoryEntity", inversedBy = "settings")
      * @ORM\JoinColumn(name = "factory_id", referencedColumnName = "id")
      * @Gedmo\Versioned()
      */
@@ -37,6 +37,7 @@ class SettingEntity
      * @Assert\Type("string")
      * @Gedmo\Versioned()
      */
+
     protected $settingName;
 
     /**
@@ -44,6 +45,7 @@ class SettingEntity
      * @param string $settingName
      * @return SettingEntity
      */
+
     public function setName($settingName)
     {
         $this->settingName = $settingName;
@@ -55,6 +57,7 @@ class SettingEntity
      * Get name
      * @return string
      */
+
     public function getName()
     {
         return $this->settingName;
@@ -66,6 +69,7 @@ class SettingEntity
      * @return SettingEntity
      * @internal param FactoryEntity $factory
      */
+
     public function setFactory(FactoryEntity $factory = null)
     {
         $this->factory = $factory;
@@ -75,8 +79,9 @@ class SettingEntity
 
     /**
      * Get factory
-     * @return \App\Entity\FactoryEntity
+     * @return FactoryEntity
      */
+
     public function getFactory()
     {
         return $this->factory;
@@ -87,6 +92,7 @@ class SettingEntity
      * @param string $settingName
      * @return SettingEntity
      */
+
     public function setSettingName($settingName)
     {
         $this->settingName = $settingName;
@@ -98,6 +104,7 @@ class SettingEntity
      * Get settingName
      * @return string
      */
+
     public function getSettingName()
     {
         return $this->settingName;
@@ -106,6 +113,7 @@ class SettingEntity
     /**
      * @return mixed
      */
+
     public function __toString()
     {
         return $this->settingName;

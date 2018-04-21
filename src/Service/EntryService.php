@@ -19,6 +19,8 @@ class EntryService
 {
     protected $em;
     protected $container;
+    protected $pathRoot;
+    protected $pathKeys;
     protected $entriesRepository;
     protected $foldersRepository;
 
@@ -32,10 +34,13 @@ class EntryService
         $this->em = $entityManager;
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
+        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
         $this->container = $container;
+        $this->pathKeys = ['year', 'factory', 'archiveNumber'];
     }
 
     //@TODO: why string?
+
     /**
      * @param string $entryId
      * @return ArchiveEntryEntity|null
@@ -120,13 +125,25 @@ class EntryService
             ->setDeletedByUser(null);
     }
 
+    /**
+     * @param ArchiveEntryEntity $newEntry
+     * @param string $filename
+     * @return bool
+     */
     public function writeDataToEntryFile(ArchiveEntryEntity $newEntry, string $filename)
     {
+        // try {
         $fs = new Filesystem();
         $fs->touch($filename);
         $serializer = SerializerBuilder::create()->build();
-        $entryJSONFile = $serializer->serialize($newEntry, 'yml');
+        $entryJSONFile = $serializer->serialize($newEntry, 'xml');
         file_put_contents($filename, $entryJSONFile);
+
+        return true;
+        // } catch (\Exception $exception) {
+
+        //     return false;
+        //  }
     }
 
     /**
@@ -201,6 +218,92 @@ class EntryService
         $this->changeLastUpdateInfo($entryId, $user);
 
         return $archiveEntry;
+    }
+
+    /**
+     * @param ArchiveEntryEntity $archiveEntry
+     * @return array
+     */
+    public function getOriginalData(ArchiveEntryEntity $archiveEntry)
+    {
+        return $this->em->getUnitOfWork()->getOriginalEntityData($archiveEntry);
+    }
+
+    /**
+     * @param array $originalEntry
+     * @param ArchiveEntryEntity $archiveEntry
+     * @return array
+     */
+    public function checkEntryUpdates(array $originalEntry, ArchiveEntryEntity $archiveEntry)
+    {
+        $newEntry = get_object_vars($archiveEntry);
+
+        return array_diff_assoc($originalEntry, $newEntry);
+    }
+
+    /**
+     * @param array $entryUpdates
+     * @return  array
+     */
+    public function findPathParameters(array $entryUpdates)
+    {
+        $pathParameters = array_flip($this->pathKeys);
+        return array_intersect_key($pathParameters, $entryUpdates);
+
+    }
+
+    /**
+     * @param ArchiveEntryEntity $archiveEntry
+     * @return string
+     */
+    public function constructEntryPath(ArchiveEntryEntity $archiveEntry)
+    {
+        return $this->pathRoot . "/" . $archiveEntry->getYear() . "/" . $archiveEntry->getFactory()->getId() . "/" . $archiveEntry->getArchiveNumber();
+    }
+
+    /**
+     * @param array $originalEntry
+     * @return string
+     */
+    public function constructExistingPath(array $originalEntry)
+    {
+        return $this->pathRoot . "/" . $originalEntry['year'] . "/" . $originalEntry['factory'] . "/" . $originalEntry['archiveNumber'];
+    }
+
+    /**
+     * @param array $originalEntry
+     * @param string $newEntryPath
+     */
+    public function moveEntry(array $originalEntry, string $newEntryPath)
+    {
+        $oldPath = $this->constructExistingPath($originalEntry);
+        $fs = new Filesystem();
+        $fs->rename($oldPath, $newEntryPath);
+    }
+
+    /**
+     * @param array $originalEntry
+     * @param ArchiveEntryEntity $archiveEntry
+     * @return array
+     */
+    public function checkPathChanges(array $originalEntry, ArchiveEntryEntity $archiveEntry)
+    {
+        $entryUpdates = $this->checkEntryUpdates($originalEntry, $archiveEntry);
+
+        return $this->findPathParameters($entryUpdates);
+    }
+
+    public function checkNewPath(ArchiveEntryEntity $archiveEntry)
+    {
+        $newPath = $this->constructEntryPath($archiveEntry);
+        $fs = new Filesystem();
+        if ($fs->exists($newPath)) {
+
+            return false;
+        } else {
+
+            return true;
+        }
     }
 
     /**
