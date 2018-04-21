@@ -20,7 +20,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @Gedmo\Tree(type="nested")
  * @UniqueEntity(
  *     fields = {"parentFolder", "folderName"},
- *     groups = {"folder_creation"}),
+ *     groups = {"folder_common"}),
  * @ORM\Table(name = "archive_folders", uniqueConstraints = {
  *     @ORM\UniqueConstraint(
  *      name = "unique_folder",

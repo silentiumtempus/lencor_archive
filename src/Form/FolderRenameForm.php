@@ -38,7 +38,7 @@ class FolderRenameForm extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => FolderEntity::class,
-            'validation_groups' => array('folder_rename'),
+            'validation_groups' => array('folder_common'),
             'attr' => array('id' => 'folder_rename_form'),
             'translation_domain' => 'files_folders'
         ));

@@ -129,6 +129,11 @@ h6, .h6 {
 
 .messages {
   min-height: 50px;
+  position: fixed;
+  top: 1%;
+  width: 80%;
+  left: 10%;
+  z-index: 1000;
   .alert {
     padding: 15px;
     margin-bottom: 21px;

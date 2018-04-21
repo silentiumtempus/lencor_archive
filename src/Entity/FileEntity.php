@@ -19,7 +19,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity(
  *     fields = {"fileName", "parentFolder"},
- *     groups = {"file_upload"}),
+ *     groups = {"file_common"}),
  * @ORM\Table(name="archive_files", uniqueConstraints = {
  *     @ORM\UniqueConstraint(
  *      name = "unique_file",

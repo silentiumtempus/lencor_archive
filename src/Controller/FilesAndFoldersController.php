@@ -327,6 +327,8 @@ class FilesAndFoldersController extends Controller
                 return $this->render('lencor/admin/archive/archive_manager/file.html.twig', array('file' => $file));
             } else {
                 $this->addFlash('danger', 'Форма не валидна');
+
+                return $this->render('lencor/admin/archive/administration/file_rename.html.twig', array('fileRenameForm' => $fileRenameForm->createView()));
             }
         }
 

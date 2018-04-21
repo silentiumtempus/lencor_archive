@@ -417,32 +417,36 @@ $(document).ready(function () {
                 data: null,
                 success: function (renameForm) {
                     $formPlace.html(renameForm);
-                    let $fileRenameForm = $formPlace.find('#file_rename_form_' + fileId);
-                    /** Update folder **/
-                    $fileRenameForm.on("submit", function() {
-                        $(this).off('submit');
-                        updateFile(fileId, $fileRenameForm);
-
-                        return false;
-                    });
-                    /**File editing cancellation **/
-                    $fileRenameForm.on('click', '#file_rename_form_cancelButton', function () {
-                        $.ajax({
-                            url: Routing.generate('entries_reload_files', {file: fileId}),
-                            method: "POST",
-                            data: null,
-                            success: function (file) {
-                                $($('#file_' + fileId).children('span').first()).replaceWith($(file).children('span').first());
-                            }
-                        });
-                    });
                 }
             });
 
             return false;
         }
 
-        /** Perform entry folder update and show result **/
+        /** Update folder **/
+        $(document).on("submit", 'form[name="file_rename_form"]', function () {
+            $(this).off('submit');
+            let fileId = $(this).parent().attr('id');
+            updateFile(fileId, $(this));
+            loadFlashMessages();
+
+            return false;
+        });
+
+        /** File editing cancellation **/
+        $(document).on('click', '#file_rename_form_cancelButton', function () {
+            let fileId = $(this).parents('span').attr('id');
+            $.ajax({
+                url: Routing.generate('entries_reload_files', {file: fileId}),
+                method: "POST",
+                data: null,
+                success: function (file) {
+                    $($('#file_' + fileId).children('span').first()).replaceWith($(file).children('span').first());
+                }
+            });
+        });
+
+        /** Perform entry file update and show result **/
 
         function updateFile(fileId, $fileRenameForm) {
             let $fileRenameFormSerialized = $fileRenameForm.serialize();
@@ -451,13 +455,14 @@ $(document).ready(function () {
                 method: "POST",
                 data: $fileRenameFormSerialized,
                 success: function (file) {
-                    $($('#file_' + fileId).children('span').first()).replaceWith($(file).children('span').first());
+                    if ($(file).filter('#file_' + fileId).length) {
+                        $($('#file_' + fileId).children('span').first()).replaceWith($(file).children('span').first());
+                    }
                 }
             });
 
             return false;
         }
-
 
         /** Archive entries folder removal action **/
 
@@ -537,37 +542,44 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="renameFolder"]', renameFolder);
 
         function renameFolder() {
-            let folderId = $(this).parent().attr("id");
-            let $formPlace = $('#folder_' + folderId).find('#' + folderId).parent();
+            let folderId = $(this).parent().attr('id');
+            let formPlace = $('#folder_' + folderId).find('span').first();
             $.ajax({
                 url: Routing.generate('entries_rename_folder', {folder: folderId}),
                 method: "POST",
+                data: null,
                 success: function (renameForm) {
-                    $formPlace.html(renameForm);
-                    let $folderRenameForm = $formPlace.find('#folder_rename_form_' + folderId);
-                    /** Update folder **/
-                    $folderRenameForm.on("submit", function () {
-                        $(this).off('submit');
-                        updateFolder(folderId, $folderRenameForm);
-
-                        return false;
-                    });
-                    /**Folder editing cancellation **/
-                    $folderRenameForm.on('click', '#folder_rename_form_cancelButton', function () {
-                        $.ajax({
-                            url: Routing.generate('entries_reload_folders', {folder: folderId}),
-                            method: "POST",
-                            data: null,
-                            success: function (folder) {
-                                $($('#folder_' + folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
-                            }
-                        });
-                    });
+                    formPlace.html($(renameForm));
                 }
             });
 
             return false;
         }
+
+        /** Update folder **/
+
+        $(document).on("submit", 'form[name="folder_rename_form"]', function () {
+            $(this).off('submit');
+            let folderId = $(this).parent().attr('id');
+            updateFolder(folderId, $(this));
+            loadFlashMessages()
+
+            return false;
+        });
+
+        /** Folder editing cancellation **/
+
+        $(document).on('click', '#folder_rename_form_cancelButton', function () {
+            let folderId = $(this).parents('span').attr('id');
+            $.ajax({
+                url: Routing.generate('entries_reload_folders', {folder: folderId}),
+                method: "POST",
+                data: null,
+                success: function (folder) {
+                    $($('#folder_' + folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
+                }
+            });
+        });
 
         /** Perform entry folder update and show result **/
 
@@ -578,11 +590,13 @@ $(document).ready(function () {
                 method: "POST",
                 data: $folderRenameFormSerialized,
                 success: function (folder) {
-                    $($('#folder_' + folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
+                    if ($(folder).filter('#folder_' + folderId).length) {
+                        $($('#folder_' + folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
+                    }
                 }
             });
 
-            return false
+            return false;
         }
 
         /** Archive entry removal action **/

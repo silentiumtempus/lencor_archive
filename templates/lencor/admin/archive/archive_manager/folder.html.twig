@@ -1,7 +1,7 @@
 <li id="folder_{{ folder.id }}" class="dashed {% if folder.deleteMark !=0 %} deleted {% endif %}">
     <ul>
         <li class="row">
-            <span>
+            <span id="{{ folder.id }}">
                 {% if folder.deleteMark != 0 %}
                     <i class="fa fa-remove"> </i>
                 {% endif %}

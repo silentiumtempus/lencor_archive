@@ -244,7 +244,7 @@ class FileService
     }
 
     /**
-     * This is fir file name update
+     * This is for file name update
      */
     public function renameFile()
     {

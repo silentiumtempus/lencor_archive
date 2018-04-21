@@ -86,7 +86,7 @@ class EntriesEditController extends Controller
                 );
             }
         } else {
-            if ($entrySearchByIdForm->isSubmitted()){
+            if ($entrySearchByIdForm->isSubmitted()) {
                 return $this->render('lencor/admin/archive/administration/entry_edit.html.twig');
             } else {
                 return $this->render('lencor/admin/archive/administration/entries.html.twig',

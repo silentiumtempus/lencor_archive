@@ -2,9 +2,9 @@
     {% form_theme folderRenameForm '@symfony-collection/jquery.collection.html.twig' %}
     {% trans_default_domain 'files_folders' %}
     {{ form_start(folderRenameForm) }}
-    {{ form_errors(folderRenameForm) }}
     {{ form_widget(folderRenameForm.folderName, { 'attr' : {'placeholder' : 'folder.rename.placeholder'|trans}}) }}
     {{ form_widget(folderRenameForm.submitButton) }}
     {{ form_widget(folderRenameForm.cancelButton) }}
+{#{{ form_errors(folderRenameForm) }}#}
     {{ form_end(folderRenameForm) }}
 {% endif %}

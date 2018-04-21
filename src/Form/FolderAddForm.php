@@ -76,7 +76,7 @@ class FolderAddForm extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => FolderEntity::class,
             'cascade_validation' => true,
-            'validation_groups' => array('folder_creation'),
+            'validation_groups' => array('folder_common'),
             'attr' => array('id' => 'folder_add_form'),
             'translation_domain' => 'files_folders'
         ));
