@@ -248,20 +248,7 @@ class EntryService
      */
     public function checkEntryUpdates(array $originalEntry, ArchiveEntryEntity $archiveEntry)
     {
-        $json_string = json_encode($archiveEntry);
-        $updatedEntry = json_decode($json_string, true);
-
-
-        set_include_path('/var/www/archive/public_html/public');
-$file = 'test.txt';
-
-$wr = file_get_contents($file);
-
-//$wr = $wr . $originalEntry['archiveNumber'] . "\n\n";
-//$wr = $wr . $newFolder>get('parentFolder')->getViewData() . "!!!!!!!!!!!!!!" . "\n\n";
-
-file_put_contents($file, $wr);
-
+        $updatedEntry = json_decode(json_encode($archiveEntry), true);
 
         return array_diff_assoc($originalEntry, $updatedEntry);
     }
@@ -273,6 +260,7 @@ file_put_contents($file, $wr);
     public function findPathParameters(array $entryUpdates)
     {
         $pathParameters = array_flip($this->pathKeys);
+
         return array_intersect_key($entryUpdates, $pathParameters);
 
     }
@@ -306,6 +294,10 @@ file_put_contents($file, $wr);
         $fs->rename($oldPath, $newEntryPath);
     }
 
+    /**
+     * @param ArchiveEntryEntity $archiveEntry
+     * @return bool
+     */
     public function checkNewPath(ArchiveEntryEntity $archiveEntry)
     {
         $newPath = $this->constructEntryPath($archiveEntry);

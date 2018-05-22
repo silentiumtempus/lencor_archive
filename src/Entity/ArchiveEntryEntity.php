@@ -338,6 +338,10 @@ class ArchiveEntryEntity implements \JsonSerializable
         $this->cataloguePath->removeElement($cataloguePath);
     }
 
+    /**
+     * Serializing object for update comparison
+     * @return array|mixed
+     */
     public function jsonSerialize()
     {
         return [
