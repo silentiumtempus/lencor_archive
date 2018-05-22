@@ -32,10 +32,10 @@ class EntryService
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
+        $this->container = $container;
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
-        $this->container = $container;
         $this->pathKeys = ['year', 'factory', 'archiveNumber'];
     }
 
@@ -234,11 +234,36 @@ class EntryService
      * @param ArchiveEntryEntity $archiveEntry
      * @return array
      */
+    public function checkPathChanges(array $originalEntry, ArchiveEntryEntity $archiveEntry)
+    {
+        $entryUpdates = $this->checkEntryUpdates($originalEntry, $archiveEntry);
+
+        return $this->findPathParameters($entryUpdates);
+    }
+
+    /**
+     * @param array $originalEntry
+     * @param ArchiveEntryEntity $archiveEntry
+     * @return array
+     */
     public function checkEntryUpdates(array $originalEntry, ArchiveEntryEntity $archiveEntry)
     {
-        $newEntry = get_object_vars($archiveEntry);
+        $json_string = json_encode($archiveEntry);
+        $updatedEntry = json_decode($json_string, true);
 
-        return array_diff_assoc($originalEntry, $newEntry);
+
+        set_include_path('/var/www/archive/public_html/public');
+$file = 'test.txt';
+
+$wr = file_get_contents($file);
+
+//$wr = $wr . $originalEntry['archiveNumber'] . "\n\n";
+//$wr = $wr . $newFolder>get('parentFolder')->getViewData() . "!!!!!!!!!!!!!!" . "\n\n";
+
+file_put_contents($file, $wr);
+
+
+        return array_diff_assoc($originalEntry, $updatedEntry);
     }
 
     /**
@@ -248,7 +273,7 @@ class EntryService
     public function findPathParameters(array $entryUpdates)
     {
         $pathParameters = array_flip($this->pathKeys);
-        return array_intersect_key($pathParameters, $entryUpdates);
+        return array_intersect_key($entryUpdates, $pathParameters);
 
     }
 
@@ -279,18 +304,6 @@ class EntryService
         $oldPath = $this->constructExistingPath($originalEntry);
         $fs = new Filesystem();
         $fs->rename($oldPath, $newEntryPath);
-    }
-
-    /**
-     * @param array $originalEntry
-     * @param ArchiveEntryEntity $archiveEntry
-     * @return array
-     */
-    public function checkPathChanges(array $originalEntry, ArchiveEntryEntity $archiveEntry)
-    {
-        $entryUpdates = $this->checkEntryUpdates($originalEntry, $archiveEntry);
-
-        return $this->findPathParameters($entryUpdates);
     }
 
     public function checkNewPath(ArchiveEntryEntity $archiveEntry)

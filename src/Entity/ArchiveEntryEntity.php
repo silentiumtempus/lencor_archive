@@ -30,7 +30,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Table(name = "archive_entries")
  * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\ArchiveEntryLog")
  */
-class ArchiveEntryEntity
+class ArchiveEntryEntity implements \JsonSerializable
 {
     use CommonTrait;
     use DeleteStateTrait;
@@ -336,5 +336,19 @@ class ArchiveEntryEntity
     public function removeCataloguePath(FolderEntity $cataloguePath)
     {
         $this->cataloguePath->removeElement($cataloguePath);
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'year' => $this->getYear(),
+            'factory' => $this->getFactory()->getId(),
+            'setting' => $this->getSetting()->getId(),
+            'archiveNumber' => $this->getArchiveNumber(),
+            'registerNumber' => $this->getRegisterNumber(),
+            'contractNumber' => $this->getContractNumber(),
+            'fullConclusionName' => $this->getFullConclusionName(),
+        ];
     }
 }
