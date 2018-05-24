@@ -21,15 +21,6 @@ use Elastica\Query;
 class EntriesViewController extends Controller
 {
 
-    /*set_include_path('/var/www/lencor/public_html/new/web/');
-$file = 'test.txt';
-
-$wr = file_get_contents($file);
-
-$wr = $wr . $request->get('entryId') . "!!!!!!!!!!!!!!" . "\n\n";
-//$wr = $wr . $newFolder>get('parentFolder')->getViewData() . "!!!!!!!!!!!!!!" . "\n\n";
-
-file_put_contents($file, $wr); */
 
     /**
      * @param Request $request

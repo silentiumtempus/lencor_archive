@@ -15,7 +15,7 @@ $(document).ready(function () {
             if ($formType === 'new_entry') {
                 $path = Routing.generate('entries-new');
             } else if ($formType === 'edit') {
-                $path = Routing.generate('admin-entries', {entryId: $(this).find('table').attr('id')});
+                $path = Routing.generate('admin-entries', {entryId: $entryFormDiv.find('table').attr('id')});
             }
             $.ajax({
                 url: $path,
@@ -106,7 +106,7 @@ $(document).ready(function () {
             if ($formType === 'new_entry') {
                 $path = Routing.generate('entries-new');
             } else if ($formType === 'edit') {
-                $path = Routing.generate('admin-entries', {entryId: $(this).find('table').attr('id')});
+                $path = Routing.generate('admin-entries', {entryId: $entryFormDiv.find('table').attr('id')});
             }
             $.ajax({
                 url: $path,

@@ -320,11 +320,12 @@ class FolderService
 
     /**
      * @param ArchiveEntryEntity $archiveEntryEntity
+     * @param boolean $isNew
      * @return string
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity)
+    public function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity, bool $isNew)
     {
         $fs = new Filesystem();
         $pathYear = $this->pathRoot . "/" . $archiveEntryEntity->getYear();
@@ -339,16 +340,28 @@ class FolderService
             if (!$fs->exists($pathFactory)) {
                 $fs->mkdir($pathFactory, $this->pathPermissions);
             }
-            if (!$fs->exists($pathEntry)) {
-                $fs->mkdir($pathEntry, $this->pathPermissions);
+            if ($isNew) {
+                if (!$fs->exists($pathEntry)) {
+                    $fs->mkdir($pathEntry, $this->pathPermissions);
+                } else {
+                    $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! Директория для новой ячейки: ' . $pathEntry . ' уже существует');
+                }
+                if (!$fs->exists($pathLogs)) {
+                    $fs->mkdir($pathLogs, $this->pathPermissions);
+                } else {
+                    $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! директория логов: ' . $pathEntry . ' уже существует');
+                }
             } else {
-                $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! директория для новой ячейки: ' . $pathEntry . ' уже существует');
+                if ($fs->exists($pathEntry)) {
+                    $this->container->get('session')->getFlashBag()->add('danger', 'Внимание! Директория назначения: ' . $pathEntry . ' уже существует. Операция прервана.');
+
+                } else {
+                    if ($fs->exists($pathLogs)) {
+                        $this->container->get('session')->getFlashBag()->add('danger', 'Внимание! Директория логов: ' . $pathLogs . 'уже существует. Операция прервана.');
+                    }
+                }
             }
-            if (!$fs->exists($pathLogs)) {
-                $fs->mkdir($pathLogs, $this->pathPermissions);
-            } else {
-                $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! директория логов: ' . $pathEntry . ' уже существует');
-            }
+
         } catch (IOException $IOException) {
             $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка создания директории: ' . $IOException->getMessage());
         }

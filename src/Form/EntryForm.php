@@ -81,7 +81,7 @@ class EntryForm extends AbstractType
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) use ($settingLoader) {
                 $data = $event->getData();
-                $factory = $data->getSetting()->getFactory();
+                $factory = $data->getFactory();
                 $settingLoader($event->getForm(), $factory);
             }
         );

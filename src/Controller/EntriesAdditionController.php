@@ -92,7 +92,7 @@ class EntriesAdditionController extends Controller
             if ($entryForm->isValid()) {
                 try {
                     $newEntryEntity = $entryForm->getData();
-                    $entryPath = $folderService->checkAndCreateFolders($newEntryEntity);
+                    $entryPath = $folderService->checkAndCreateFolders($newEntryEntity, true);
                     $filename = $entryPath . "/" . $newEntryEntity->getArchiveNumber() . ".txt";
                     $logsDir = $entryPath . "/logs";
 

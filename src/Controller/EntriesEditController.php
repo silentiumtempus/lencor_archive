@@ -60,25 +60,23 @@ class EntriesEditController extends Controller
                     //try {
                     $originalEntry = $entryService->getOriginalData($archiveEntryEntity);
                     $matches = $entryService->checkPathChanges($originalEntry, $archiveEntryEntity);
-                    $this->addFlash('danger', 'Matches : ' . count($matches));
+                    //$this->addFlash('danger', 'Matches : ' . count($matches));
                     if (count($matches) > 0) {
-                        $this->addFlash('warning', implode($matches) . ' Обнаружено изменение параметров расположения ячейки. Перестраивается структура каталога');
+                        $this->addFlash('warning', ' Обнаружено изменение параметров расположения ячейки. Перестраивается структура каталога');
                         $pathIsFree = $entryService->checkNewPath($archiveEntryEntity);
                         if ($pathIsFree) {
-                            $newEntryPath = $folderService->checkAndCreateFolders($archiveEntryEntity);
+                            $newEntryPath = $folderService->checkAndCreateFolders($archiveEntryEntity, false);
                             $entryService->moveEntry($originalEntry, $newEntryPath);
+                            $filename = $newEntryPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".txt";
+                            if ($entryService->writeDataToEntryFile($archiveEntryEntity, $filename)) {
+                                $entryService->updateEntry();
+                                $updateStatus = true;
+                            }
                         } else {
-                            $this->container->get('session')->getFlashBag()->add('danger', 'Указанный каталог уже существует. Операция прервана.');
+                            $this->addFlash('danger', 'Указанный каталог уже существует. Операция прервана.');
 
                         }
 
-                    }
-                    $entryPath = $folderService->checkAndCreateFolders($archiveEntryEntity);
-                    $filename = $entryPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".txt";
-                    if ($entryService->writeDataToEntryFile($archiveEntryEntity, $filename)) {
-
-                        $entryService->updateEntry();
-                        $updateStatus = true;
                     }
 
                     // } catch (\Exception $exception) {

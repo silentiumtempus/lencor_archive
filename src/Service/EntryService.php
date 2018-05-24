@@ -249,6 +249,8 @@ class EntryService
     public function checkEntryUpdates(array $originalEntry, ArchiveEntryEntity $archiveEntry)
     {
         $updatedEntry = json_decode(json_encode($archiveEntry), true);
+        //$updatedEntry['factory'] = $archiveEntry->getFactory()->getId();
+        $originalEntry['factory'] = $originalEntry['factory']->getId();
 
         return array_diff_assoc($originalEntry, $updatedEntry);
     }
@@ -280,7 +282,7 @@ class EntryService
      */
     public function constructExistingPath(array $originalEntry)
     {
-        return $this->pathRoot . "/" . $originalEntry['year'] . "/" . $originalEntry['factory'] . "/" . $originalEntry['archiveNumber'];
+        return $this->pathRoot . "/" . $originalEntry['year'] . "/" . $originalEntry['factory']->getId() . "/" . $originalEntry['archiveNumber'];
     }
 
     /**
