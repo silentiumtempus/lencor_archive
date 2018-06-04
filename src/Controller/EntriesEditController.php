@@ -60,25 +60,26 @@ class EntriesEditController extends Controller
                     //try {
                     $originalEntry = $entryService->getOriginalData($archiveEntryEntity);
                     $matches = $entryService->checkPathChanges($originalEntry, $archiveEntryEntity);
-                    //$this->addFlash('danger', 'Matches : ' . count($matches));
                     if (count($matches) > 0) {
                         $this->addFlash('warning', ' Обнаружено изменение параметров расположения ячейки. Перестраивается структура каталога');
                         $pathIsFree = $entryService->checkNewPath($archiveEntryEntity);
                         if ($pathIsFree) {
-                            $newEntryPath = $folderService->checkAndCreateFolders($archiveEntryEntity, false);
-                            $entryService->moveEntry($originalEntry, $newEntryPath);
-                            $filename = $newEntryPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".txt";
-                            if ($entryService->writeDataToEntryFile($archiveEntryEntity, $filename)) {
-                                $entryService->updateEntry();
-                                $updateStatus = true;
-                            }
+                            $newEntryFile = $folderService->moveEntryFolder($originalEntry, $archiveEntryEntity);
                         } else {
-                            $this->addFlash('danger', 'Указанный каталог уже существует. Операция прервана.');
-
+                            $this->addFlash('danger', 'Директория назначения уже существует. Операция прервана.');
                         }
+                    } else {
+                        $newEntryFile = $entryService->constructEntryPath($archiveEntryEntity) . "/" . $archiveEntryEntity->getArchiveNumber() . ".txt";
+                    }
+                    if (isset($newEntryFile)) {
+                        if ($entryService->writeDataToEntryFile($archiveEntryEntity, $newEntryFile)) {
+                            $entryService->updateEntry();
+                            $updateStatus = true;
+                        }
+                    } else {
+                        $this->addFlash('danger', 'Указанный каталог уже существует. Операция прервана.');
 
                     }
-
                     // } catch (\Exception $exception) {
                     //      $this->addFlash('danger', 'Ошибка обновления ячейки: ' . $exception->getMessage());
                     //  }

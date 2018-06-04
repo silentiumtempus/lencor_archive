@@ -369,4 +369,24 @@ class FolderService
         return $pathEntry;
     }
 
+    /**
+     * @param array $originalEntry
+     * @param ArchiveEntryEntity $archiveEntryEntity
+     * @return string
+     */
+    public function moveEntryFolder(array $originalEntry, ArchiveEntryEntity $archiveEntryEntity)
+    {
+        $oldPath = $this->entryService->constructExistingPath($originalEntry);
+        $newPath = $this->checkAndCreateFolders($archiveEntryEntity, false);
+        $fs = new Filesystem();
+        $fs->rename($oldPath, $newPath);
+        $newEntryFile = $newPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".txt";
+        if ($originalEntry['archiveNumber'] != $archiveEntryEntity->getArchiveNumber())
+        {
+            $oldEntryFile = $newPath . "/" . $originalEntry["archiveNumber"] . ".txt";
+            $fs->rename($oldEntryFile, $newEntryFile);
+        }
+
+        return $newEntryFile;
+    }
 }

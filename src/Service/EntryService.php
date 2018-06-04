@@ -286,17 +286,6 @@ class EntryService
     }
 
     /**
-     * @param array $originalEntry
-     * @param string $newEntryPath
-     */
-    public function moveEntry(array $originalEntry, string $newEntryPath)
-    {
-        $oldPath = $this->constructExistingPath($originalEntry);
-        $fs = new Filesystem();
-        $fs->rename($oldPath, $newEntryPath);
-    }
-
-    /**
      * @param ArchiveEntryEntity $archiveEntry
      * @return bool
      */
