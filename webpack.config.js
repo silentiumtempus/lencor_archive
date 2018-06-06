@@ -17,6 +17,7 @@ Encore
     .addEntry('js/logRowsCount', './assets/js/logRowsCount.js')
     .addEntry('js/logSearch', './assets/js/logSearch.js')
     .addEntry('js/menuScript', './assets/js/menuScript.js')
+    .addEntry('js/recovery', './assets/js/recovery.js')
     .addStyleEntry('css/common', './assets/css/common.scss')
     .addStyleEntry('css/header', './assets/css/header.scss')
     .addStyleEntry('css/entries', './assets/css/entries.scss')
@@ -25,6 +26,7 @@ Encore
     .addStyleEntry('css/fac-set', './assets/css/fac-set.scss')
     .addStyleEntry('css/logs', './assets/css/logs.scss')
     .addStyleEntry('css/security', './assets/css/security.scss')
+    .addStyleEntry('css/recovery', './assets/css/recovery.scss')
 
     // uncomment if you use Sass/SCSS files
     .enableSassLoader()

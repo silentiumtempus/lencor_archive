@@ -8,6 +8,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Class FileService
@@ -21,6 +22,7 @@ class FileService
     protected $filesRepository;
     protected $userService;
     protected $entryService;
+    protected $pathRoot;
 
     /**
      * FileService constructor.
@@ -38,6 +40,7 @@ class FileService
         $this->folderService = $folderService;
         $this->entryService = $entryService;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
+        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
     }
 
     /**
@@ -310,5 +313,20 @@ class FileService
     public function reloadFileDetails(int $fileId)
     {
         return $this->filesRepository->findOneById($fileId);
+    }
+
+    /**
+     * @return array
+     */
+    public function locateFiles()
+    {
+        $finder = new Finder();
+        $finder
+            ->files()->name('*.entry')
+            ->in($this->pathRoot)
+            ->exclude('logs');
+        $entryFiles = iterator_to_array($finder);
+
+        return $entryFiles;
     }
 }

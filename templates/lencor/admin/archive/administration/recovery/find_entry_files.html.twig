@@ -1,0 +1,8 @@
+{% if files is defined %}
+    {% if files is iterable %}
+        {% for file in files %}
+            {{ file.relativePathName }}
+            <br>
+        {% endfor %}
+    {% endif %}
+{% endif %}

@@ -93,7 +93,7 @@ class EntriesAdditionController extends Controller
                 try {
                     $newEntryEntity = $entryForm->getData();
                     $entryPath = $folderService->checkAndCreateFolders($newEntryEntity, true);
-                    $filename = $entryPath . "/" . $newEntryEntity->getArchiveNumber() . ".txt";
+                    $filename = $entryPath . "/" . $newEntryEntity->getArchiveNumber() . ".entry";
                     $logsDir = $entryPath . "/logs";
 
                     //TODO: mb change the below design ?

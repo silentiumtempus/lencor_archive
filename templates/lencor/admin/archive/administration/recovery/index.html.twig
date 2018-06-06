@@ -1,0 +1,20 @@
+{% extends 'lencor/admin/archive/administration/index.html.twig' %}
+{% trans_default_domain 'admin' %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/js/recovery.js') }}"></script>
+{% endblock %}
+{% block main %}
+    <div>
+        <ul class="fa-ul">
+            <li class="row">
+            <span>
+                <a class="button" id="findEntryFiles" name="findEntryFiles" href="">Найти все файлы ячеек</a>
+            </span>
+            </li>
+        </ul>
+    </div>
+    <div id="container">
+
+    </div>
+{% endblock %}

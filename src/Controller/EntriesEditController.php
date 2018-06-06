@@ -69,7 +69,7 @@ class EntriesEditController extends Controller
                             $this->addFlash('danger', 'Директория назначения уже существует. Операция прервана.');
                         }
                     } else {
-                        $newEntryFile = $entryService->constructEntryPath($archiveEntryEntity) . "/" . $archiveEntryEntity->getArchiveNumber() . ".txt";
+                        $newEntryFile = $entryService->constructEntryPath($archiveEntryEntity) . "/" . $archiveEntryEntity->getArchiveNumber() . ".entry";
                     }
                     if (isset($newEntryFile)) {
                         if ($entryService->writeDataToEntryFile($archiveEntryEntity, $newEntryFile)) {
