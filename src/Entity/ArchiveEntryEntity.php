@@ -25,7 +25,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @UniqueEntity(
  *     fields = {"registerNumber"},
  *     groups = {"entry_addition"},
- *     ignoreNull=true
+ *     ignoreNull = true
  * )
  * @ORM\Table(name = "archive_entries")
  * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\ArchiveEntryLog")

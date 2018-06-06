@@ -1,6 +1,7 @@
 $(document).ready(function () {
     if (!window.jQuery) {
     } else {
+        require("jquery-ui/ui/widgets/autocomplete");
         /** Do not touch this **/
         let $path = Routing.generate('entries');
         let $factory = $('#entry_search_form_factory');
@@ -40,14 +41,18 @@ $(document).ready(function () {
             $('#main-tbody').hide();
             $('#loading-spinner').show().css('display', 'contents');
             let fields = searchForm.serializeArray();
+            /** @TODO: To be removed if not affecting anything **/
+            /*
             let values = {};
             jQuery.each(fields, function (i, field) {
                 values[field.name] = field.value;
-            });
+            }); */
+
+            /** **/
             $.ajax({
                 url: $path,
                 method: searchForm.attr('method'),
-                data: values,
+                data: fields,
                 success: function (response) {
                     $('#loading-spinner').hide();
                     $('#main-tbody').replaceWith(
@@ -770,6 +775,7 @@ $(document).ready(function () {
             let $flashMessages = $('#flash-messages');
             $flashMessages.fadeOut("slow");
 
+            return false;
         }
 
         /** Flash messages clear for batch file upload to prevent them from overflowing the page **/
@@ -782,5 +788,34 @@ $(document).ready(function () {
 
             return false;
         }
+
+        /** Search form auto completion hints loader **/
+
+        $('#entry_search_form_archiveNumber,' +
+            '#entry_search_form_registerNumber, ' +
+            '#entry_search_form_contractNumber, ' +
+            '#entry_search_form_fullConclusionName'
+        ).each(function (i, input) {
+            input = $(input);
+            input.autocomplete({
+                minLength: 1,
+                showNoSuggestionNotice: true,
+                noSuggestionNotice: 'No result',
+                source: function (request, response) {
+                    let $fields = searchForm.serializeArray();
+                    // @TODO: refactor this regex
+                    let $field = /\[(.+)/.exec(input.attr('name'))[0].replace(/[^\w\s]/gi, '');
+                    $.ajax({
+                        url: Routing.generate('entries_search_hints', {field: $field}),
+                        method: "POST",
+                        data: $fields,
+                        success: function (hints) {
+                            response(hints);
+
+                        }
+                    });
+                },
+            });
+        });
     }
 });

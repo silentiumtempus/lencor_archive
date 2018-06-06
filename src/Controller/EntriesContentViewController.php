@@ -132,7 +132,6 @@ class EntriesContentViewController extends Controller
             }
         }
 
-
         return $this->render('lencor/admin/archive/archive_manager/show_requesters.html.twig', array('requesters' => $requesters, 'headerText' => $headerText));
     }
 }

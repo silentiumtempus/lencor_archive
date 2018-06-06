@@ -27,16 +27,24 @@ Encore
     .addStyleEntry('css/security', './assets/css/security.scss')
 
     // uncomment if you use Sass/SCSS files
-     .enableSassLoader()
+    .enableSassLoader()
 
     // uncomment for legacy applications that require $/jQuery as a global variable
     .autoProvidejQuery()
 
-     // empty the outputPath dir before each build
+    .autoProvideVariables({
+        $: 'jquery',
+        jQuery: 'jquery',
+        'window.jQuery': 'jquery',
+        jquery: 'jquery'
+    })
+
+    // empty the outputPath dir before each build
     .cleanupOutputBeforeBuild()
 
     // show OS notifications when builds finish/fail
     .enableBuildNotifications()
+
 ;
 
 module.exports = Encore.getWebpackConfig();

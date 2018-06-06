@@ -40,6 +40,17 @@ body {
     .table tfoot {
       background-color: #f8f8f8;
     }
+    .search-hints {
+      //position: absolute;
+      border: 1px solid #2c3e50;
+      border-bottom: none;
+      border-top: none;
+      z-index: 99;
+      /*position the autocomplete items to be the same width as the container:*/
+      top: 100%;
+      left: 0;
+      right: 0;
+    }
   }
 }
 
@@ -229,6 +240,10 @@ h6, .h6 {
 
 .text-left {
   text-align: left;
+}
+
+.width-100 {
+  width: 100%;
 }
 
 .width-66 {

@@ -8,6 +8,7 @@ use App\Service\EntrySearchService;
 use App\Service\EntryService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,8 +21,6 @@ use Elastica\Query;
  */
 class EntriesViewController extends Controller
 {
-
-
     /**
      * @param Request $request
      * @param EntrySearchService $entrySearchService
@@ -29,7 +28,7 @@ class EntriesViewController extends Controller
      * @Security("has_role('ROLE_USER')")
      * @Route("/entries/",
      *     options = { "expose" = true },
-     *     name="entries")
+     *     name = "entries")
      */
     public function loadEntries(Request $request, EntrySearchService $entrySearchService)
     {
@@ -45,12 +44,11 @@ class EntriesViewController extends Controller
                 $this->addFlash('error', $exception->getMessage());
             }
         }
-        $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery);
+        $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, 5000);
         $rootPath = $this->getParameter('lencor_archive.storage_path');
 
         return $this->render('/lencor/admin/archive/archive_manager/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath));
     }
-
 
     /**
      * @param Request $request
@@ -107,5 +105,53 @@ class EntriesViewController extends Controller
         }
 
         return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
+    }
+
+    /**
+     * @param Request $request
+     * @param EntrySearchService $entrySearchService
+     * @param string $field
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
+     * @Route("entries/search_hints/{field}",
+     *     name = "entries_search_hints",
+     *     options = { "expose" = true },
+     *     defaults = { "field" : "0" }
+     *     )
+     */
+    public function loadSearchHints(Request $request, EntrySearchService $entrySearchService, string $field)
+    {
+        $limit= $this->getParameter('lencor_archive.search_hints_limit');
+        $data = [];
+        $finalQuery = new Query();
+        $filterQuery = new BoolQuery();
+        $entrySearchEntity = new ArchiveEntryEntity();
+        /** $searchForm, It doesn't work without form creation */
+        $searchForm = $this->createForm(EntrySearchForm::class, $entrySearchEntity);
+        $searchForm->handleRequest($request);
+        if ($searchForm->isSubmitted() && $searchForm->isValid() && $request->isMethod('POST')) {
+
+            $filterQuery = $entrySearchService->performSearch($searchForm, $filterQuery);
+            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $limit);
+            if ($field !== 0) {
+                foreach ($archiveEntries as $entry) {
+                    switch ($field) {
+                        case 'archiveNumber' :
+                            $data[] = $entry->getArchiveNumber();
+                            break;
+                        case 'registerNumber' :
+                            $data[] = $entry->getRegisterNumber();
+                            break;
+                        case 'contractNumber' :
+                            $data[] = $entry->getContractNumber();
+                            break;
+                        case 'fullConclusionName' :
+                            $data[] = $entry->getFullConclusionName();
+                    }
+                }
+            }
+        }
+
+        return $this->json($data);
     }
 }

@@ -13,6 +13,7 @@
 		"doctrine/orm": "^2.6",
 		"friendsofsymfony/elastica-bundle": "^5.0",
 		"friendsofsymfony/jsrouting-bundle": "^2.2",
+		"friendsofsymfony/rest-bundle": "^2.3",
 		"friendsofsymfony/user-bundle": "^2.1",
 		"glifery/entity-hidden-type-bundle": "^2.1",
 		"incenteev/composer-parameter-handler": "^2.1",

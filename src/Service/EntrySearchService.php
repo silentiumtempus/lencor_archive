@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\Match;
@@ -15,18 +16,23 @@ use Symfony\Component\Form\Form;
  */
 class EntrySearchService
 {
+    protected $em;
     protected $container;
     protected $elasticManager;
+    protected $entriesRepository;
 
     /**
-     * EntrySearchService constructor.
+     * EntrySearchService constructor
+     * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
+        $this->em = $entityManager;
         $this->container = $container;
+        $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->elasticManager = $this->container->get('fos_elastica.finder.lencor_archive.archive_entries');
     }
 
@@ -39,15 +45,20 @@ class EntrySearchService
     {
         foreach ($searchForm->getIterator() as $key => $child) {
             if ($child->getData()) {
-                if ($key == 'factory') {
+                if ($key == 'year') {
+                    $conditionFactory = (new Match())->setFieldQuery($child->getName(), $child->getViewData());
+                    $filterQuery->addMust($conditionFactory);
+                } elseif ($key == 'factory') {
                     $conditionFactory = (new Term())->setTerm('factory.id', $child->getViewData());
                     $filterQuery->addMust($conditionFactory);
                 } elseif ($key == 'setting') {
                     $conditionSetting = (new Term())->setTerm('setting.id', $child->getViewData());
                     $filterQuery->addMust($conditionSetting);
                 } else {
-                    $filterMatchField = (new Match())->setFieldQuery($child->getName(), $child->getViewData());
-                    $filterQuery->addMust($filterMatchField);
+                    $conditionString = new Query\QueryString();
+                    $conditionString->setQuery('*' . $child->getViewData() . '*');
+                    $conditionString->setParam('fields', array($key));
+                    $filterQuery->addMust($conditionString);
                 }
             }
         }
@@ -58,13 +69,15 @@ class EntrySearchService
     /**
      * @param Query $finalQuery
      * @param BoolQuery $filterQuery
+     * @param integer $limit
      * @return mixed
      */
-    public function getQueryResult(Query $finalQuery, BoolQuery $filterQuery)
+    public function getQueryResult(Query $finalQuery, BoolQuery $filterQuery, int $limit)
     {
         $finalQuery->setQuery($filterQuery);
         $finalQuery->addSort(array('year' => array('order' => 'ASC')));
 
-        return $this->elasticManager->find($finalQuery, 5000);
+        return $this->elasticManager->find($finalQuery, $limit);
     }
+
 }
