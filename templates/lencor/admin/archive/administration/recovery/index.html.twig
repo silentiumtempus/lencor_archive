@@ -5,11 +5,15 @@
     <script type="text/javascript" src="{{ asset('build/js/recovery.js') }}"></script>
 {% endblock %}
 {% block main %}
+    <div id="#flash_messages"></div>
     <div>
         <ul class="fa-ul">
             <li class="row">
             <span>
                 <a class="button" id="findEntryFiles" name="findEntryFiles" href="">Найти все файлы ячеек</a>
+            </span>
+            <span id="">
+                <a class="button" id="recoverDatabase" name="recoverDatabase" href="">Восстановить базу данных по файлам</a>
             </span>
             </li>
         </ul>

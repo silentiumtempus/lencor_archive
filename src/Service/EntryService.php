@@ -309,4 +309,19 @@ class EntryService
     {
         $this->em->flush();
     }
+
+    public function restoreEntriesFromFiles(array $files)
+    {
+        $serializer = SerializerBuilder::create()->build();
+        foreach ($files as $file)
+        {
+            //try {
+                $entry = $serializer->deserialize($file, 'ArchiveEntryEntity', 'xml');
+                $this->em->persist($entry);
+            //} catch (\Exception $exception) {
+           //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
+           // }
+        }
+        $this->em->flush();
+    }
 }
