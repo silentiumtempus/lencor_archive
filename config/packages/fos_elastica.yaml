@@ -38,7 +38,7 @@ fos_elastica:
                   settingName: ~
               year:
                 type: integer
-              archiveNumber: { analyzer: custom_search_analyzer, analyzer: custom_index_analyzer, filter: custom_filter, type: string }
+              archiveNumber: ~
               registerNumber: ~
               contractNumber: ~
               fullConclusionName: ~

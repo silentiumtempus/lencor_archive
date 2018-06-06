@@ -66,15 +66,4 @@ class ArchiveEntryRepository extends EntityRepository
             //->getQuery()
             //->getResult();
     }
-
-    public function getSearchHintsByFormData(array $data)
-    {
-        $result = 'bla';
-        foreach ($data as $key => $value) {
-            if ($key == 'year') {
-                $result = $value;
-            }
-        }
-        return $result;
-    }
 }
