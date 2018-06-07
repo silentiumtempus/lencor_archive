@@ -61,10 +61,18 @@ class RecoveryController extends Controller
         $serializer = SerializerBuilder::create()->build();
         foreach ($files as $file)
         {
-
+            //try {
+            $xml = file_get_contents($file);
+            $result = $serializer->deserialize($xml, 'ArchiveEntryEntity', 'xml');
+           //$this->em->persist($entry);
+            //} catch (\Exception $exception) {
+            //     $this->addFlash('danger', $exception->getMessage());
+           // }
         }
 
             //$entryService->restoreEntriesFromFiles($files);
+
+        //return $this->json($xml);
         return $this->render('lencor/admin/archive/administration/recovery/recovery_result.html.twig', array('result' => $result));
     }
 }

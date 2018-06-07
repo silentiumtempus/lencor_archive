@@ -10,6 +10,9 @@ use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Class EntryService
@@ -135,6 +138,9 @@ class EntryService
         // try {
         $fs = new Filesystem();
         $fs->touch($filename);
+        //$encoders = array(new XmlEncoder());
+        //$normalizers = array(new ObjectNormalizer());
+        //$serializer = new Serializer($normalizers, $encoders);
         $serializer = SerializerBuilder::create()->build();
         $entryJSONFile = $serializer->serialize($newEntry, 'xml');
         file_put_contents($filename, $entryJSONFile);
@@ -312,9 +318,10 @@ class EntryService
 
     public function restoreEntriesFromFiles(array $files)
     {
-        $serializer = SerializerBuilder::create()->build();
+
         foreach ($files as $file)
         {
+            $serializer = SerializerBuilder::create()->build();
             //try {
                 $entry = $serializer->deserialize($file, 'ArchiveEntryEntity', 'xml');
                 $this->em->persist($entry);

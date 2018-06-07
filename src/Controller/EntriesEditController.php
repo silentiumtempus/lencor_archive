@@ -75,6 +75,8 @@ class EntriesEditController extends Controller
                         if ($entryService->writeDataToEntryFile($archiveEntryEntity, $newEntryFile)) {
                             $entryService->updateEntry();
                             $updateStatus = true;
+                        } else {
+                            $this->addFlash('danger', 'Запись не случилась');
                         }
                     } else {
                         $this->addFlash('danger', 'Указанный каталог уже существует. Операция прервана.');

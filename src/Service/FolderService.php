@@ -380,10 +380,10 @@ class FolderService
         $newPath = $this->checkAndCreateFolders($archiveEntryEntity, false);
         $fs = new Filesystem();
         $fs->rename($oldPath, $newPath);
-        $newEntryFile = $newPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".txt";
+        $newEntryFile = $newPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".entry";
         if ($originalEntry['archiveNumber'] != $archiveEntryEntity->getArchiveNumber())
         {
-            $oldEntryFile = $newPath . "/" . $originalEntry["archiveNumber"] . ".txt";
+            $oldEntryFile = $newPath . "/" . $originalEntry["archiveNumber"] . ".entry";
             $fs->rename($oldEntryFile, $newEntryFile);
         }
 
