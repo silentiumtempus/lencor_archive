@@ -6,6 +6,7 @@ use App\Entity\FolderEntity;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait FolderFileTrait
@@ -15,16 +16,18 @@ trait FolderFileTrait
      * @Assert\DateTime()
      * @Gedmo\Timestampable(on = "create")
      * @Gedmo\Versioned()
+     * @Serializer\Type("DateTime")
      */
 
     protected $addTimestamp;
 
     /**
-     * @ORM\ManyToOne(targetEntity = "User")
+     * @ORM\ManyToOne(targetEntity = "User", cascade = {"persist"})
      * @ORM\JoinColumn(name = "added_by_user", referencedColumnName = "id")
      * @Assert\NotBlank
      * @Assert\Type("string")
      * @Gedmo\Versioned()
+     * @Serializer\Type("App\Entity\User")
      */
 
     protected $addedByUser;
@@ -34,6 +37,7 @@ trait FolderFileTrait
      * @param FolderEntity $parentFolder
      * @return $this
      */
+
     public function setParentFolder(FolderEntity $parentFolder = null)
     {
         $this->parentFolder = $parentFolder;
@@ -45,6 +49,7 @@ trait FolderFileTrait
      * Get parentFolder
      * @return FolderEntity
      */
+
     public function getParentFolder()
     {
         return $this->parentFolder;
@@ -55,6 +60,7 @@ trait FolderFileTrait
      * @param \DateTime $addTimestamp
      * @return $this
      */
+
     public function setAddTimestamp($addTimestamp)
     {
         $this->addTimestamp = $addTimestamp;
@@ -66,6 +72,7 @@ trait FolderFileTrait
      * Get addTimestamp
      * @return \DateTime
      */
+
     public function getAddTimestamp()
     {
         return $this->addTimestamp;
@@ -76,6 +83,7 @@ trait FolderFileTrait
      * @param User $addedByUser
      * @return $this
      */
+
     public function setAddedByUser(User $addedByUser)
     {
         $this->addedByUser = $addedByUser;
@@ -87,6 +95,7 @@ trait FolderFileTrait
      * Get addedByUser
      * @return string
      */
+
     public function getAddedByUser()
     {
         return $this->addedByUser;

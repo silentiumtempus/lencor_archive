@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\ArchiveEntryEntity;
 use App\Entity\FolderEntity;
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -183,13 +184,13 @@ class FolderService
         $foldersArray = [];
         $restoredFolder = $this->foldersRepository->findOneById($folderId);
         if ($restoredFolder) {
-            $foldersArray[] = $restoredFolder->getId();
+            $foldersArray[] = $restoredFolder;
             $this->unsetFolderDeleteMark($restoredFolder);
             $binaryPath = $this->getPath($restoredFolder);
             foreach ($binaryPath as $folder) {
                 if ($folder->getDeleteMark()) {
                     $this->unsetFolderDeleteMark($folder);
-                    $foldersArray[] = $folder->getId();
+                    $foldersArray[] = $folder;
                 }
             }
             $this->em->flush();
@@ -226,13 +227,13 @@ class FolderService
                 if ($folder->getRequestMark() ?? $folder->getRequestMark() != false) {
                     $users = $folder->getRequestedByUsers();
                     if (!$users || (array_search($user->getId(), $users, true)) === false) {
-                        $users[] = $user->getId();
+                        $users->add($user);
                         $folder->setRequestedByUsers($users);
                     }
                 } else {
                     $folder
                         ->setRequestMark(true)
-                        ->setRequestedByUsers([$user])
+                        ->setRequestedByUsers(new ArrayCollection($user))
                         ->setRequestsCount(count($folder->getRequestedByUsers()));
                 }
             }

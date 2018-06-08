@@ -305,6 +305,7 @@ $(document).ready(function () {
                 }
             });
             let fileInfo = $('#file_' + fileId);
+            console.log(fileId);
             $.ajax({
                 url: Routing.generate('entries_reload_file', {file: fileId}),
                 method: "POST",

@@ -6,6 +6,7 @@ use App\Entity\Traits\CommonTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -29,12 +30,14 @@ class FactoryEntity
      * @Assert\NotBlank(groups = {"factory_addition"})
      * @Assert\Type("string")
      * @Gedmo\Versioned()
+     * @Serializer\Type("string")
      */
 
     protected $factoryName;
 
     /**
-     * @ORM\OneToMany(targetEntity="SettingEntity", mappedBy = "factory")
+     * @ORM\OneToMany(targetEntity="SettingEntity", mappedBy = "factory", cascade = {"persist"})
+     * @Serializer\Type("ArrayCollection<App\Entity\SettingEntity>")
      */
 
     private $settings;

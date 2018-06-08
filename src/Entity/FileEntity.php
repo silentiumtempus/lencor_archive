@@ -7,8 +7,10 @@ use App\Entity\Traits\DeleteStateTrait;
 use App\Entity\Traits\FolderFileTrait;
 use App\Entity\Traits\RestorationRequestsTrait;
 use App\Entity\Traits\SlugTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -40,6 +42,7 @@ class FileEntity
      * @ORM\Column(type="string")
      * @Assert\NotBlank
      * @Gedmo\Versioned()
+     * @Serializer\Type("string")
      */
 
     protected $fileName;
@@ -48,6 +51,7 @@ class FileEntity
      * @Assert\NotBlank
      * @Assert\File
      * @Gedmo\Versioned()
+     * @Serializer\Type("Symfony\Component\HttpFoundation\File\File")
      */
 
     protected $files;
@@ -57,6 +61,7 @@ class FileEntity
      * @ORM\JoinColumn(name = "parent_folder_id", referencedColumnName = "id")
      * @Assert\NotBlank
      * @Gedmo\Versioned()
+     * @Serializer\Type("App\Entity\FolderEntity")
      */
 
     protected $parentFolder;
@@ -66,6 +71,7 @@ class FileEntity
      * @Assert\NotBlank()
      * @Assert\Type("string")
      * @Gedmo\Versioned()
+     * @Serializer\Type("string")
      */
 
     protected $checksum;
@@ -73,6 +79,7 @@ class FileEntity
     /**
      * @ORM\Column(type = "boolean", nullable = true)
      * @Assert\Type("boolean")
+     * @Serializer\Type("boolean")
      */
 
     protected $sumError;
@@ -81,10 +88,24 @@ class FileEntity
      * @Gedmo\Translatable
      * @Gedmo\Slug(fields = {"fileName"})
      * @ORM\Column(name = "slug", type = "string", length = 128)
+     * @Serializer\Type("string")
      */
 
     private $slug;
 
+    /**
+     * Constructor
+     */
+
+    public function __construct()
+    {
+        $this->requestedByUsers = new ArrayCollection();
+    }
+
+    /**
+     * Convert to string
+     * @return mixed
+     */
     public function __toString()
     {
         return $this->fileName;

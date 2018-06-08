@@ -4,6 +4,7 @@ namespace App\Entity\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait DeleteStateTrait
@@ -12,15 +13,17 @@ trait DeleteStateTrait
      * @ORM\Column(type = "boolean", nullable = true)
      * @Assert\Type("boolean")
      * @Gedmo\Versioned()
+     * @Serializer\Type("boolean")
      */
 
     protected $deleteMark;
 
     /**
-     * @ORM\ManyToOne(targetEntity = "User")
+     * @ORM\ManyToOne(targetEntity = "User", cascade = {"persist"})
      * @ORM\JoinColumn(name = "deleted_by_user", referencedColumnName = "id")
      * @Assert\Type("integer")
      * @Gedmo\Versioned()
+     * @Serializer\Type("App\Entity\User")
      */
 
     protected $deletedByUser;
@@ -30,6 +33,7 @@ trait DeleteStateTrait
      * @param boolean $deleteMark
      * @return $this
      */
+
     public function setDeleteMark($deleteMark)
     {
         $this->deleteMark = $deleteMark;
@@ -41,6 +45,7 @@ trait DeleteStateTrait
      * Get deleteMark
      * @return boolean
      */
+
     public function getDeleteMark()
     {
         return $this->deleteMark;
@@ -51,6 +56,7 @@ trait DeleteStateTrait
      * @param string $deletedByUser
      * @return $this
      */
+
     public function setDeletedByUser($deletedByUser)
     {
         $this->deletedByUser = $deletedByUser;
@@ -62,6 +68,7 @@ trait DeleteStateTrait
      * Get deletedByUser
      * @return string
      */
+
     public function getDeletedByUser()
     {
         return $this->deletedByUser;

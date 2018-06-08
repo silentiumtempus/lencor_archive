@@ -10,6 +10,7 @@ use App\Entity\Traits\SlugTrait;
 use App\Entity\Traits\SumErrorsTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -41,6 +42,7 @@ class FolderEntity
     /**
      * @ORM\OneToOne(targetEntity = "ArchiveEntryEntity", inversedBy = "cataloguePath")
      * @ORM\JoinColumn(name = "archive_entry_id", referencedColumnName = "id")
+     * @Serializer\Type("App\Entity\ArchiveEntryEntity")
      */
 
     protected $archiveEntry;
@@ -50,6 +52,7 @@ class FolderEntity
      * @Assert\NotBlank()
      * @Assert\Type("string")
      * @Gedmo\Versioned()
+     * @Serializer\Type("string")
      */
 
     protected $folderName;
@@ -58,6 +61,7 @@ class FolderEntity
      * @Gedmo\TreeLeft
      * @ORM\Column(name = "lft", type = "integer")
      * @Gedmo\Versioned()
+     * @Serializer\Type("integer")
      */
 
     private $lft;
@@ -66,13 +70,16 @@ class FolderEntity
      * @Gedmo\TreeLevel
      * @ORM\Column(name = "lvl", type = "integer")
      * @Gedmo\Versioned()
+     * @Serializer\Type("integer")
      */
+
     private $lvl;
 
     /**
      * @Gedmo\TreeRight
      * @ORM\Column(name = "rgt", type = "integer")
      * @Gedmo\Versioned()
+     * @Serializer\Type("integer")
      */
 
     private $rgt;
@@ -82,6 +89,7 @@ class FolderEntity
      * @ORM\ManyToOne(targetEntity = "FolderEntity")
      * @ORM\JoinColumn(referencedColumnName = "id")
      * @Gedmo\Versioned()
+     * @Serializer\Type("App\Entity\FolderEntity")
      */
 
     private $root;
@@ -91,19 +99,22 @@ class FolderEntity
      * @ORM\ManyToOne(targetEntity = "FolderEntity", inversedBy = "childFolders")
      * @ORM\JoinColumn(referencedColumnName = "id")
      * @Gedmo\Versioned()
+     * @Serializer\Type("App\Entity\FolderEntity")
      */
 
     private $parentFolder;
 
     /**
-     * @ORM\OneToMany(targetEntity = "FolderEntity", mappedBy = "parentFolder")
+     * @ORM\OneToMany(targetEntity = "FolderEntity", mappedBy = "parentFolder", cascade = {"persist"})
      * @ORM\OrderBy({"lft" = "ASC"})
+     * @Serializer\Type("ArrayCollection<App\Entity\FolderEntity>")
      */
 
     private $childFolders;
 
     /**
-     * @ORM\OneToMany(targetEntity="FileEntity", mappedBy="parentFolder")
+     * @ORM\OneToMany(targetEntity="FileEntity", mappedBy="parentFolder", cascade = {"persist"})
+     * @Serializer\Type("ArrayCollection<App\Entity\FileEntity>")
      */
 
     private $files;
@@ -112,6 +123,7 @@ class FolderEntity
      * @Gedmo\Translatable
      * @Gedmo\Slug(fields = {"folderName"})
      * @ORM\Column(name = "slug", type = "string", length = 128)
+     * @Serializer\Type("string")
      */
 
     private $slug;
@@ -124,6 +136,7 @@ class FolderEntity
     {
         $this->childFolders = new ArrayCollection();
         $this->files = new ArrayCollection();
+        $this->requestedByUsers = new ArrayCollection();
     }
 
     public function __toString()

@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\ArchiveEntryEntity;
 use App\Entity\FolderEntity;
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -122,7 +123,7 @@ class EntryService
     public function prepareEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder, User $user)
     {
         $newEntry
-            ->setCataloguePath($newFolder->getId())
+            ->setCataloguePath($newFolder)
             ->setModifiedByUserId($user)
             ->setDeleteMark(false)
             ->setDeletedByUser(null);
@@ -318,17 +319,22 @@ class EntryService
 
     public function restoreEntriesFromFiles(array $files)
     {
+        //$serializer = $this->container->get('jms_serializer');
+        $serializer = SerializerBuilder::create()->build();
 
         foreach ($files as $file)
         {
-            $serializer = SerializerBuilder::create()->build();
+            $xml = file_get_contents($file);
+
             //try {
-                $entry = $serializer->deserialize($file, 'ArchiveEntryEntity', 'xml');
-                $this->em->persist($entry);
+                $entry = $serializer->deserialize($xml, 'App\Entity\ArchiveEntryEntity', 'xml');
+
             //} catch (\Exception $exception) {
            //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
            // }
+            $this->em->persist($entry);
         }
+
         $this->em->flush();
     }
 }

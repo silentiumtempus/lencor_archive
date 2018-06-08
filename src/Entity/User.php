@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use FOS\UserBundle\Model\User as DefaultUSer;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -19,19 +20,116 @@ class User extends DefaultUSer
      * @ORM\Id
      * @ORM\Column(type = "integer")
      * @ORM\GeneratedValue(strategy = "AUTO")
+     * @Serializer\Type("integer")
      */
+
     protected $id;
 
     /**
-     * @ORM\Column(name = "is_ad_user", type = "boolean")
-     * @Assert\Type("boolean")
+     * @var $username
+     * @Serializer\Type("string")
      */
+    
+    protected $username;
+
+    /**
+     * @var $usernameCanonical
+     * @Serializer\Type("string")
+     */
+    
+    protected $usernameCanonical;
+
+    /**
+     * @var $email
+     * @Serializer\Type("string")
+     */
+
+    protected $email;
+
+    /**
+     * @var $emailCanonical
+     * @Serializer\Type("string")
+     */
+
+    protected $emailCanonical;
+
+    /**
+     * @var $enabled
+     * @Serializer\Type("boolean")
+     */
+
+    protected $enabled;
+
+    /**
+     * @var $salt
+     * @Serializer\Type("string")
+     */
+
+    protected $salt;
+
+    /**
+     * @var $password
+     * @Serializer\Type("string")
+     */
+
+    protected $password;
+
+    /**
+     * @var $plainPassword
+     * @Serializer\Type("string")
+     */
+
+    protected $plainPassword;
+
+    /**
+     * @var $lastLogin
+     * @Serializer\Type("DateTime")
+     */
+
+    protected $lastLogin;
+
+    /**
+     * @var $confirmationToken
+     * @Serializer\Type("string")
+     */
+
+    protected $confirmationToken;
+
+    /**
+     * @var $passwordRequestedAt
+     * @Serializer\Type("DateTime")
+     */
+
+    protected $passwordRequestedAt;
+
+    /**
+     * @var $roles
+     * @Serializer\Type("string")
+     */
+
+    protected $roles;
+
+    /**
+     * @var $groups
+     * @Serializer\Type("GroupInterface")
+     */
+
+    protected $groups;
+
+    /**
+     * @ORM\Column(name = "is_ad_user", type = "boolean", nullable = true)
+     * @Assert\Type("boolean")
+     * @Serializer\Type("boolean")
+     */
+
     protected $isADUser;
 
     /**
      * @ORM\Column(name = "ad_user_id", type = "integer", nullable = true)
      * @Assert\Type("integer")
+     * @Serializer\Type("integer")
      */
+
     protected $ADUserId;
 
     /**
@@ -39,6 +137,7 @@ class User extends DefaultUSer
      * @param boolean $isADUser
      * @return User
      */
+
     public function setIsADUser($isADUser)
     {
         $this->isADUser = $isADUser;
@@ -50,6 +149,7 @@ class User extends DefaultUSer
      * Get isADUser
      * @return boolean
      */
+
     public function getIsADUser()
     {
         return $this->isADUser;
@@ -60,6 +160,7 @@ class User extends DefaultUSer
      * @param $ADUserId
      * @return $this
      */
+
     public function setADUserId($ADUserId)
     {
         $this->ADUserId = $ADUserId;
@@ -71,6 +172,7 @@ class User extends DefaultUSer
      * Get ADUserId
      * @return integer
      */
+
     public function getADUserId()
     {
         return $this->ADUserId;

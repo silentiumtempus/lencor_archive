@@ -2,8 +2,10 @@
 
 namespace App\Entity\Traits;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait RestorationRequestsTrait
@@ -12,6 +14,7 @@ trait RestorationRequestsTrait
      * @ORM\Column(type = "boolean", nullable = true)
      * @Assert\Type("boolean")
      * @Gedmo\Versioned()
+     * @Serializer\Type("boolean")
      */
 
     protected $requestMark;
@@ -19,9 +22,15 @@ trait RestorationRequestsTrait
     /**
      * @ORM\Column(type = "json", nullable = true)
      * @Gedmo\Versioned()
+     * @Serializer\Type("ArrayCollection<App\Entity\User>")
      */
 
     protected $requestedByUsers;
+
+    /**
+     * @var $requestsCount
+     * @Serializer\Type("integer")
+     */
 
     protected $requestsCount;
 
@@ -30,6 +39,7 @@ trait RestorationRequestsTrait
      * @param bool $requestMark
      * @return $this
      */
+
     public function setRequestMark(bool $requestMark)
     {
         $this->requestMark = $requestMark;
@@ -41,6 +51,7 @@ trait RestorationRequestsTrait
      * Get requestMark
      * @return bool
      */
+
     public function getRequestMark()
     {
         return $this->requestMark;
@@ -48,10 +59,11 @@ trait RestorationRequestsTrait
 
     /**
      * Set requestedByUsers
-     * @param array $users
+     * @param ArrayCollection $users
      * @return $this
      */
-    public function setRequestedByUsers(array $users = null)
+
+    public function setRequestedByUsers(ArrayCollection $users = null)
     {
         $this->requestedByUsers = $users;
 
@@ -60,8 +72,9 @@ trait RestorationRequestsTrait
 
     /**
      * Get requestedByUsers
-     * @return array
+     * @return ArrayCollection
      */
+
     public function getRequestedByUsers()
     {
         return $this->requestedByUsers;
@@ -72,6 +85,7 @@ trait RestorationRequestsTrait
      * @param int $count
      * @return $this
      */
+
     public function setRequestsCount(int $count)
     {
         $this->requestsCount = $count;
@@ -83,6 +97,7 @@ trait RestorationRequestsTrait
      * Get requestsCount
      * @return int
      */
+
     public function getRequestsCount()
     {
         return count($this->getRequestedByUsers());

@@ -10,6 +10,7 @@ use App\Entity\Traits\SlugTrait;
 use App\Entity\Traits\SumErrorsTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -50,25 +51,28 @@ class ArchiveEntryEntity implements \JsonSerializable
      *     maxMessage="Невозможно выбрать год позднее 2100"
      * )
      * @Gedmo\Versioned()
+     * @Serializer\Type("integer")
      */
 
     protected $year;
 
     /**
-     * @ORM\OneToOne(targetEntity = "FactoryEntity")
+     * @ORM\OneToOne(targetEntity = "FactoryEntity", cascade = {"persist"})
      * @ORM\JoinColumn(name = "factory_id", referencedColumnName="id")
      * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
+     * @Serializer\Type("App\Entity\FactoryEntity")
      */
 
     protected $factory;
 
     /**
 
-     * @ORM\OneToOne(targetEntity = "SettingEntity")
+     * @ORM\OneToOne(targetEntity = "SettingEntity", cascade = {"persist"})
      * @ORM\JoinColumn(name = "setting_id", referencedColumnName = "id")
      * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
+     * @Serializer\Type("App\Entity\SettingEntity")
      */
 
     protected $setting;
@@ -78,6 +82,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Assert\Type("string")
      * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
+     * @Serializer\Type("string")
      */
 
     protected $archiveNumber;
@@ -86,6 +91,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @ORM\Column(type = "string", nullable=true)
      * @Assert\Type("string")
      * @Gedmo\Versioned()
+     * @Serializer\Type("string")
      */
 
     protected $registerNumber;
@@ -95,6 +101,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Assert\Type("string")
      * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
+     * @Serializer\Type("string")
      */
 
     protected $contractNumber;
@@ -104,12 +111,14 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Assert\Type("string")
      * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
+     * @Serializer\Type("string")
      */
 
     protected $fullConclusionName;
 
     /**
-     * @ORM\OneToOne(targetEntity = "FolderEntity", mappedBy = "archiveEntry" )
+     * @ORM\OneToOne(targetEntity = "FolderEntity", mappedBy = "archiveEntry", cascade = {"persist"} )
+     * @Serializer\Type("App\Entity\FolderEntity")
      */
 
     protected $cataloguePath;
@@ -118,6 +127,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Gedmo\Translatable
      * @Gedmo\Slug(fields = {"year", "archiveNumber"})
      * @ORM\Column(name = "slug", type = "string", length = 128)
+     * @Serializer\Type("string")
      */
 
     private $slug;
@@ -125,6 +135,15 @@ class ArchiveEntryEntity implements \JsonSerializable
     /*
    protected $fileName;
    protected $logFileName; */
+
+    /**
+     * Constructor
+    */
+
+    public function __construct()
+    {
+        $this->requestedByUsers = new ArrayCollection();
+    }
 
     /**
      * Set year
@@ -288,7 +307,7 @@ class ArchiveEntryEntity implements \JsonSerializable
 
     /**
      * Set cataloguePath
-     * @param integer $cataloguePath
+     * @param FolderEntity $cataloguePath
      * @return ArchiveEntryEntity
      */
 
@@ -301,20 +320,12 @@ class ArchiveEntryEntity implements \JsonSerializable
 
     /**
      * Get cataloguePath
-     * @return string
+     * @return FolderEntity
      */
 
     public function getCataloguePath()
     {
         return $this->cataloguePath;
-    }
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->cataloguePath = new ArrayCollection();
     }
 
     /**

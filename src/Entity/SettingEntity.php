@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Traits\CommonTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -24,9 +25,10 @@ class SettingEntity
     use CommonTrait;
 
     /**
-     * @ORM\ManyToOne(targetEntity = "FactoryEntity", inversedBy = "settings")
+     * @ORM\ManyToOne(targetEntity = "FactoryEntity", inversedBy = "settings", cascade = {"persist"})
      * @ORM\JoinColumn(name = "factory_id", referencedColumnName = "id")
      * @Gedmo\Versioned()
+     * @Serializer\Type("App\Entity\FactoryEntity")
      */
 
     protected $factory;
@@ -36,6 +38,7 @@ class SettingEntity
      * @Assert\NotBlank()
      * @Assert\Type("string")
      * @Gedmo\Versioned()
+     * @Serializer\Type("string")
      */
 
     protected $settingName;

@@ -5,6 +5,7 @@ namespace App\Entity\Traits;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 
 trait ModificationFieldsTrait
 {
@@ -14,14 +15,16 @@ trait ModificationFieldsTrait
      * @Gedmo\Timestampable(on = "update")
      * @Assert\DateTime()
      * @Gedmo\Versioned()
+     * @Serializer\Type("DateTime")
      */
 
     protected $lastModified;
 
     /**
-     * @ORM\ManyToOne(targetEntity = "User")
+     * @ORM\ManyToOne(targetEntity = "User", cascade = {"persist"})
      * @ORM\JoinColumn(name = "modified_by_user", referencedColumnName = "id")
      * @Gedmo\Versioned()
+     * @Serializer\Type("App\Entity\User")
      */
 
     protected $modifiedByUser;

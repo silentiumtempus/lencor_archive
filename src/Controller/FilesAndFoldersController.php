@@ -355,7 +355,7 @@ class FilesAndFoldersController extends Controller
      *     requirements = { "file" = "\d+" },
      *     defaults = { "file" : "" },
      *     options = { "expose" = true },
-     *     name = "entries_reload_files")
+     *     name = "entries_reload_file")
      * @ParamConverter("file", class = "App:FileEntity", isOptional = true, options = { "id" = "file" })
      */
     public function reloadFiles(Request $request, FileEntity $file, FileService $fileService)
@@ -553,7 +553,7 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
-     * @param FileEntity $requestedFile
+     * @param FileEntity $file
      * @param FileService $fileService
      * @param FileChecksumService $fileChecksumService
      * @return Response
@@ -565,21 +565,21 @@ class FilesAndFoldersController extends Controller
      *     name = "entries_download_file")
      * @ParamConverter("file", class = "App:FileEntity", options = { "id" = "file" })
      */
-    public function downloadFile(Request $request, FileEntity $requestedFile, FileService $fileService, FileChecksumService $fileChecksumService)
+    public function downloadFile(Request $request, FileEntity $file, FileService $fileService, FileChecksumService $fileChecksumService)
     {
         $checkStatus = null;
         $sharePath = null;
         $httpPath = null;
-        $filePath = $fileService->getFilePath($requestedFile, true);
+        $filePath = $fileService->getFilePath($file, true);
         $httpPath = $fileService->getFileHTTPUrl($filePath);
-        $sharePath = $fileService->getFileSharePath($requestedFile);
-        $checkStatus = $fileChecksumService->checkFile($requestedFile, $filePath);
+        $sharePath = $fileService->getFileSharePath($file);
+        $checkStatus = $fileChecksumService->checkFile($file, $filePath);
         if (!$checkStatus) {
-            $fileChecksumService->reportChecksumError($requestedFile, $this->getUser());
+            $fileChecksumService->reportChecksumError($file, $this->getUser()->getId());
         } else {
-            $fileChecksumService->validateChecksumValue($requestedFile, $this->getUser());
+            $fileChecksumService->validateChecksumValue($file, $this->getUser()->getId());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/download_file.html.twig', array('requestedFile' => $requestedFile, 'downloadLink' => $httpPath, 'sharePath' => $sharePath, 'checkPass' => $checkStatus));
+        return $this->render('lencor/admin/archive/archive_manager/download_file.html.twig', array('requestedFile' => $file, 'downloadLink' => $httpPath, 'sharePath' => $sharePath, 'checkPass' => $checkStatus));
     }
 }

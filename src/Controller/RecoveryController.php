@@ -58,17 +58,18 @@ class RecoveryController extends Controller
     {
         $result = null;
         $files = $fileService->locateFiles();
-        $serializer = SerializerBuilder::create()->build();
-        foreach ($files as $file)
-        {
+        //$serializer = SerializerBuilder::create()->build();
+        $entryService->restoreEntriesFromFiles($files);
+//        foreach ($files as $file)
+ //       {
             //try {
-            $xml = file_get_contents($file);
-            $result = $serializer->deserialize($xml, 'ArchiveEntryEntity', 'xml');
-           //$this->em->persist($entry);
+
+            //$xml = file_get_contents($file);
+            //$result = $serializer->deserialize($xml, 'App\Entity\ArchiveEntryEntity', 'xml');
             //} catch (\Exception $exception) {
             //     $this->addFlash('danger', $exception->getMessage());
            // }
-        }
+   //     }
 
             //$entryService->restoreEntriesFromFiles($files);
 
