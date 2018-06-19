@@ -3,7 +3,7 @@
         {% if file.deleteMark != 0 %}
             <i class="fa fa-remove"> </i>
         {% endif %}
-        <a href="#" name="downloadFile"> <i class="fa fa-file-text"> </i>{{ file.fileName }} </a>
+        <a href="#" name="downloadFile"> <i class="fa {{ file.fileName|file_icon }}"> </i>{{ file.fileName }} </a>
     </span>
     <span>{{ file.addedByUser.username }}</span>
     <span> {{ file.addTimestamp|date('Y-m-d H:i:s') }} </span>
