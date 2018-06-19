@@ -35,13 +35,16 @@ class FileTypeIconDeterminationExtension extends AbstractExtension
     public function fileIcon(string $fileName)
     {
         switch (pathinfo($fileName, PATHINFO_EXTENSION)) {
-            case 'txt' || 'rtf' :
+            case 'txt':
+            case 'rtf' :
                 $icon = 'fa-file-text-o';
                 break;
-            case 'doc' || 'docx' :
+            case 'doc' :
+            case 'docx' :
                 $icon = 'fa-file-word-o';
                 break;
-            case 'xls' || 'xlsx' :
+            case 'xls' :
+            case 'xlsx' :
                 $icon = 'fa-file-excel-o';
                 break;
             case 'pdf' :
@@ -50,16 +53,31 @@ class FileTypeIconDeterminationExtension extends AbstractExtension
             case 'ppt' :
                 $icon = 'fa-file-powerpoint-o';
                 break;
-            case 'rar' || 'zip' || 'tar' || 'gz' || 'bz' | '7z' :
+            case 'rar' :
+            case 'zip' :
+            case 'tar' :
+            case 'gz' :
+            case 'bz' :
+            case '7z' :
                 $icon = 'fa-file-archive-o';
                 break;
-            case 'jpg' || 'jpeg' || 'bmp' || 'tiff' || 'gif' :
+            case 'jpg' :
+            case 'jpeg' :
+            case 'bmp' :
+            case 'tiff' :
+            case 'gif' :
                 $icon = 'fa-file-image-o';
                 break;
-            case 'mp3' || 'wav' :
+            case 'mp3' :
+            case 'wav' :
                 $icon = 'fa-file-audio-o';
                 break;
-            case 'avi' || 'mkv' || 'mov' || 'bdmv' || 'mpg' || 'mpeg' :
+            case 'avi' :
+            case 'mkv' :
+            case 'mov' :
+            case 'bdmv' :
+            case 'mpg' :
+            case 'mpeg' :
                 $icon = 'fa-video-o';
                 break;
             default :
