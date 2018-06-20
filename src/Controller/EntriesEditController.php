@@ -25,7 +25,7 @@ class EntriesEditController extends Controller
      * @param $entryId
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("admin/entries/{entryId}/{button}",
+     * @Route("admin/entries/{entryId}",
      *     options = { "expose" = true },
      *     name = "admin-entries",
      *     requirements = { "$entryId" = "\d+" },
@@ -89,7 +89,7 @@ class EntriesEditController extends Controller
             }
             if (!$entryId || $updateStatus) {
                 if ($updateStatus) {
-                    $this->addFlash('success', 'Изменения сохранены' . $button);
+                    $this->addFlash('success', 'Изменения сохранены');
                 }
                     return $this->render(
                         'lencor/admin/archive/administration/entry_edit.html.twig',
