@@ -103,11 +103,13 @@ class EntryForm extends AbstractType
         switch ($function) {
             case 'add':
                 $builder
-                    ->add('submitButton', SubmitType::class, array('label' => 'button.entry.create'));;
+                    ->add('submitButton', SubmitType::class, array('label' => 'button.entry.create'))
+                    ->add('submitAndOpenButton', SubmitType::class, array('label' => 'button.entry.credirect'));
                 break;
             case 'edit':
                 $builder
                     ->add('submitButton', SubmitType::class, array('label' => 'button.entry.edit'))
+                    ->add('submitAndOpenButton', SubmitType::class, array('label' => 'button.entry.eredirect'))
                     ->add('cancelButton', ResetType::class, array('label' => 'button.entry.cancel'));
                 break;
         }

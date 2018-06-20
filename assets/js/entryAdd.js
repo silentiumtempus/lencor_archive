@@ -101,12 +101,14 @@ $(document).ready(function () {
         /** Archive new entry submission **/
 
         $entryFormDiv.on("submit", $entryForm, function (event) {
+            let $button = $(document.activeElement);
+            //alert($button.attr('id'));
             event.preventDefault();
             let entrySerialized = $('#entry_form').serialize();
             if ($formType === 'new_entry') {
-                $path = Routing.generate('entries-new');
+                $path = Routing.generate('entries-new', {button: $button.attr('id')});
             } else if ($formType === 'edit') {
-                $path = Routing.generate('admin-entries', {entryId: $entryFormDiv.find('table').attr('id')});
+                $path = Routing.generate('admin-entries', {button: $button.attr('id'), entryId: $entryFormDiv.find('table').attr('id')});
             }
             $.ajax({
                 url: $path,
@@ -115,6 +117,7 @@ $(document).ready(function () {
                 success: function (response) {
                     /** Flash messages loader **/
                     loadFlashMessages();
+                    document.location.href = "/entries";
                 }
             });
 

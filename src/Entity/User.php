@@ -8,7 +8,7 @@ use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class KerberosUser
+ * Class User
  * @package App\Entity
  * @ORM\Entity
  * @ORM\Table(name = "main_users")
@@ -102,9 +102,11 @@ class User extends DefaultUSer
 
     protected $passwordRequestedAt;
 
+    /* Serializer\Type("array") */
+
     /**
      * @var $roles
-     * @Serializer\Type("string")
+     *
      */
 
     protected $roles;

@@ -22,9 +22,10 @@ trait RestorationRequestsTrait
     /**
      * @ORM\Column(type = "json", nullable = true)
      * @Gedmo\Versioned()
-     * @Serializer\Type("ArrayCollection<App\Entity\User>")
+     * @Serializer\Type("array")
      */
 
+/* Serializer\Type("ArrayCollection<App\Entity\User>") */
     protected $requestedByUsers;
 
     /**

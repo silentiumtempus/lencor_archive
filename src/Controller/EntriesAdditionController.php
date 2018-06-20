@@ -36,6 +36,7 @@ class EntriesAdditionController extends Controller
      * @param SettingService $settingService
      * @param FolderService $folderService
      * @param LoggingService $loggingService
+     * @param string $button
      * @return Response
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\
@@ -50,7 +51,8 @@ class EntriesAdditionController extends Controller
         FactoryService $factoryService,
         SettingService $settingService,
         FolderService $folderService,
-        LoggingService $loggingService
+        LoggingService $loggingService,
+        string $button
     ) {
         $session = $this->container->get('session');
         $entryForm = $this->createForm(EntryForm::class, new ArchiveEntryEntity(), array('attr' => array('id' => 'entry_form', 'function' => 'add')));
@@ -108,6 +110,10 @@ class EntriesAdditionController extends Controller
                             $fileStatus = $entryService->writeDataToEntryFile($newEntryEntity, $filename);
                             $entryService->persistEntry($newEntryEntity, $newFolderEntity);
                             $this->addFlash('success', 'Запись успешно создана.');
+                            if ($button == "entry_form_submitAndOpenButton") {
+
+                                return $this->redirectToRoute('entries');
+                            }
                         } catch (IOException $IOException) {
                             $this->addFlash('danger', 'Ошибка записи файла ячейки: ' . $IOException->getMessage());
                         } catch (ORMException $ORMException) {
