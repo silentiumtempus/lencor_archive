@@ -6,6 +6,7 @@ use App\Entity\ArchiveEntryEntity;
 use App\Form\EntrySearchForm;
 use App\Service\EntrySearchService;
 use App\Service\EntryService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,28 +25,36 @@ class EntriesViewController extends Controller
     /**
      * @param Request $request
      * @param EntrySearchService $entrySearchService
+     * @param ArchiveEntryEntity $entry
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/",
+     * @Route("/entries/{entry}",
      *     options = { "expose" = true },
-     *     name = "entries")
+     *     name = "entries",
+     *     requirements = { "entry" = "\d+" },
+     *     defaults = { "entry" : "" }))
+     * @ParamConverter("entry", class="App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
      */
-    public function loadEntries(Request $request, EntrySearchService $entrySearchService)
+    public function loadEntries(Request $request, EntrySearchService $entrySearchService, ArchiveEntryEntity $entry = null)
     {
         $finalQuery = new Query();
         $filterQuery = new BoolQuery();
         $entrySearchEntity = new ArchiveEntryEntity();
         $searchForm = $this->createForm(EntrySearchForm::class, $entrySearchEntity);
-        $searchForm->handleRequest($request);
-        if ($searchForm->isSubmitted() && $searchForm->isValid() && $request->isMethod('POST')) {
-            try {
-                $filterQuery = $entrySearchService->performSearch($searchForm, $filterQuery);
-            } catch (\Exception $exception) {
-                $this->addFlash('error', $exception->getMessage());
-            }
-        }
-        $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, 5000);
         $rootPath = $this->getParameter('lencor_archive.storage_path');
+        if ($entry) {
+            $archiveEntries[] = $entry;
+        } else {
+            $searchForm->handleRequest($request);
+            if ($searchForm->isSubmitted() && $searchForm->isValid() && $request->isMethod('POST')) {
+                try {
+                    $filterQuery = $entrySearchService->performSearch($searchForm, $filterQuery);
+                } catch (\Exception $exception) {
+                    $this->addFlash('error', $exception->getMessage());
+                }
+            }
+            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, 5000);
+        }
 
         return $this->render('/lencor/admin/archive/archive_manager/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath));
     }
@@ -121,7 +130,7 @@ class EntriesViewController extends Controller
      */
     public function loadSearchHints(Request $request, EntrySearchService $entrySearchService, string $field)
     {
-        $limit= $this->getParameter('lencor_archive.search_hints_limit');
+        $limit = $this->getParameter('lencor_archive.search_hints_limit');
         $data = [];
         $finalQuery = new Query();
         $filterQuery = new BoolQuery();

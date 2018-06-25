@@ -102,25 +102,31 @@ $(document).ready(function () {
 
         $entryFormDiv.on("submit", $entryForm, function (event) {
             let $button = $(document.activeElement);
-            //alert($button.attr('id'));
+            let $entryId;
             event.preventDefault();
             let entrySerialized = $('#entry_form').serialize();
             if ($formType === 'new_entry') {
-                $path = Routing.generate('entries-new', {button: $button.attr('id')});
+                $path = Routing.generate('entries-new');
+                $entryId = null;
             } else if ($formType === 'edit') {
-                $path = Routing.generate('admin-entries', {button: $button.attr('id'), entryId: $entryFormDiv.find('table').attr('id')});
+                $entryId = $entryFormDiv.find('table').attr('id');
+                $path = Routing.generate('admin-entries', {entryId: $entryId});
             }
             $.ajax({
                 url: $path,
                 method: 'POST',
                 data: entrySerialized,
                 success: function (response) {
+                    if ($formType === 'new_entry') {
+                        $entryId = response;
+                    }
                     /** Flash messages loader **/
                     loadFlashMessages();
-                    document.location.href = "/entries";
+                    if ($button.attr('id') === 'entry_form_submitAndOpenButton' && !isNaN(response)) {
+                        setTimeout(function() {document.location.href = Routing.generate('entries', {entry: response})}, 5000);
+                    }
                 }
             });
-
             $path = Routing.generate('entries-new');
 
             return false;

@@ -2,7 +2,7 @@
 {% if entryForm is defined %}
     {% form_theme entryForm '@symfony-collection/jquery.collection.html.twig' %}
     {{ form_start(entryForm) }}
-    <table>
+    <table {% if entryId is not null %} id="{{ entryId }}" {% endif %}>
         <tr>
             <td><p>{{ form_label(entryForm.year) }}</p></td>
             <td><p>{{ form_widget(entryForm.year) }}</p></td>

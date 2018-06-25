@@ -51,13 +51,15 @@ class EntriesAdditionController extends Controller
         SettingService $settingService,
         FolderService $folderService,
         LoggingService $loggingService
-    ) {
+    )
+    {
         $session = $this->container->get('session');
         $entryForm = $this->createForm(EntryForm::class, new ArchiveEntryEntity(), array('attr' => array('id' => 'entry_form', 'function' => 'add')));
         $factoryForm = $this->createForm(FactoryForm::class, new FactoryEntity(), array('attr' => array('id' => 'factory_form', 'function' => 'add')));
         $settingForm = $this->createForm(SettingForm::class, new SettingEntity(), array('attr' => array('id' => 'setting_form', 'function' => 'add')));
         $pathRoot = $this->getParameter('lencor_archive.storage_path');
         $fs = new Filesystem();
+        $entryId = null;
 
         $factoryForm->handleRequest($request);
         if ($factoryForm->isSubmitted()) {
@@ -118,13 +120,17 @@ class EntriesAdditionController extends Controller
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Произошла непредвиденная ошибка:' . $exception->getMessage());
                 }
+
+                return new Response($newEntryEntity->getId());
             } else {
                 $this->addFlash('danger', 'Форма заполнена неверно. Проверьте правильность заполнения формы');
+
+                return $this->render('lencor/admin/archive/archive_manager/entry_form.html.twig', array('entryForm' => $entryForm->createView(), 'entryId' => $entryId));
             }
         } elseif (!$fs->exists($pathRoot)) {
             $this->addFlash('danger', 'Корневой путь файловой системы архива недоступен');
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/new_entry.html.twig', array('entryForm' => $entryForm->createView(), 'factoryForm' => $factoryForm->createView(), 'settingForm' => $settingForm->createView()));
+        return $this->render('lencor/admin/archive/archive_manager/new_entry.html.twig', array('entryForm' => $entryForm->createView(), 'factoryForm' => $factoryForm->createView(), 'settingForm' => $settingForm->createView(), 'entryId' => $entryId));
     }
 }

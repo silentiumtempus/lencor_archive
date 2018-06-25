@@ -57,7 +57,7 @@ class ArchiveEntryEntity implements \JsonSerializable
     protected $year;
 
     /**
-     * @ORM\OneToOne(targetEntity = "FactoryEntity", cascade = {"persist"})
+     * @ORM\ManyToOne(targetEntity = "FactoryEntity", cascade = {"persist"})
      * @ORM\JoinColumn(name = "factory_id", referencedColumnName="id")
      * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
@@ -68,7 +68,7 @@ class ArchiveEntryEntity implements \JsonSerializable
 
     /**
 
-     * @ORM\OneToOne(targetEntity = "SettingEntity", cascade = {"persist"})
+     * @ORM\ManyToOne(targetEntity = "SettingEntity", cascade = {"persist"})
      * @ORM\JoinColumn(name = "setting_id", referencedColumnName = "id")
      * @Assert\NotBlank(groups = {"entry_addition"})
      * @Gedmo\Versioned()
