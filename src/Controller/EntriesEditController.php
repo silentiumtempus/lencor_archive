@@ -100,19 +100,19 @@ class EntriesEditController extends Controller
                 }
             }
             if (!$entryId || $updateStatus) {
+                if ($updateStatus) {
 
-                if ($updateStatus)
-                {
                     return new Response($archiveEntryEntity->getId());
-                } else {
-
-                    return $this->render(
-                        'lencor/admin/archive/administration/entry_edit.html.twig',
-                        array(
-                            'entryForm' => $entryForm->createView(),
-                            'entryId' => $archiveEntryEntity->getId())
-                    );
                 }
+            } else {
+
+                return $this->render(
+                    'lencor/admin/archive/administration/entries.html.twig',
+                    array(
+                        'entrySearchByIdForm' => $entrySearchByIdForm->createView(),
+                        'entryForm' => $entryForm->createView(),
+                        'entryId' => $archiveEntryEntity->getId())
+                );
             }
         } else {
 
