@@ -107,11 +107,15 @@ class AdministrationController extends Controller
         $factoryEditForm->handleRequest($request);
         if ($factoryEditForm->isSubmitted()) {
             if ($factoryEditForm->isValid()) {
-                $factoryService->updateFactory();
-
+                try {
+                    $factoryService->updateFactory();
+                    $this->addFlash('success', 'Завод переименован');
+                } catch (\Exception $exception) {
+                    $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
+                }
                 return $this->render('lencor/admin/archive/administration/factories.html.twig', array('factories' => $factory));
             } else {
-                $this->addFlash('danger', 'Форма не валидна');
+                $this->addFlash('danger', 'Завод с таким наименованием уже существует или форма заполнена неправильно');
             }
         }
 
@@ -155,11 +159,15 @@ class AdministrationController extends Controller
         $settingEditForm->handleRequest($request);
         if ($settingEditForm->isSubmitted()) {
             if ($settingEditForm->isValid()) {
-                $settingService->updateSetting();
-
+                try {
+                    $settingService->updateSetting();
+                    $this->addFlash('success', 'Установка переименована');
+                } catch (\Exception $exception) {
+                    $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
+                }
                 return $this->render('lencor/admin/archive/administration/settings.html.twig', array('settings' => $setting));
             } else {
-                $this->addFlash('danger', 'Форма не валидна');
+                $this->addFlash('danger', 'Установка с таким наименованием уже существует или форма заполнена неправильно');
             }
         }
 
