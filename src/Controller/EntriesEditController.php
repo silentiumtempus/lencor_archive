@@ -32,7 +32,7 @@ class EntriesEditController extends Controller
      *     defaults = { "entryId" : "" }))     *
      */
     //@ParamConverter("archiveEntryEntity", class="App:ArchiveEntryEntity", options = { "id" = "entryId" }, isOptional="true")
-    public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, int $entryId)
+    public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, $entryId)
     {
         $archiveEntryEntity = null;
         $entrySearchByIdForm = $this->createForm(EntrySearchByIdForm::class);
@@ -88,7 +88,6 @@ class EntriesEditController extends Controller
                                     'entryId' => $archiveEntryEntity->getId())
                             );
                         }
-
                     } else {
                         $this->addFlash('danger', 'Указанный каталог уже существует. Операция прервана.');
 
@@ -114,25 +113,17 @@ class EntriesEditController extends Controller
         } else {
 
             return $this->render(
-                'lencor/admin/archive/administration/entries.html.twig',
-                array(
-                    'entrySearchByIdForm' => $entrySearchByIdForm->createView()
-                ));
+                'lencor/admin/archive/administration/entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
         }
-
         if ($entrySearchByIdForm->isSubmitted()) {
 
             return $this->render('lencor/admin/archive/administration/entry_edit.html.twig',
                 array(
                     'entryForm' => $entryForm->createView(),
-                    'entryId' => $archiveEntryEntity->getId())
-            );
+                    'entryId' => $archiveEntryEntity->getId()));
         } else {
 
-            return $this->render('lencor/admin/archive/administration/entries.html.twig',
-                array(
-                    'entrySearchByIdForm' => $entrySearchByIdForm->createView()
-                ));
+            return $this->render('lencor/admin/archive/administration/entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
         }
     }
 }
