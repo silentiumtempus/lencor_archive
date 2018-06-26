@@ -95,9 +95,16 @@ class EntriesEditController extends Controller
                     }
 
                 } else {
-                    $this->addFlash('danger', 'Неправильно заполнена форма. В архиве найден дубликат.');
+                    if (!$request->get('submit')) {
+                        $this->addFlash('danger', 'Форма заполнена неверно. Проверьте правильность заполнения формы');
 
-                    return new Response();
+                        return new Response();
+                    }
+
+                    return $this->render('lencor/admin/archive/administration/entry_edit.html.twig',
+                        array(
+                            'entryForm' => $entryForm->createView(),
+                            'entryId' => $archiveEntryEntity->getId()));
                 }
             }
             if ($entryId) {

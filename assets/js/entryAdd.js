@@ -17,6 +17,8 @@ $(document).ready(function () {
             } else if ($formType === 'edit') {
                 $path = Routing.generate('admin-entries', {entryId: $entryFormDiv.find('table').attr('id')});
             }
+            //$data.push({ name: 'submit', value: false});
+            $data['submit'] = false;
             $.ajax({
                 url: $path,
                 method: 'POST',

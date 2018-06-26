@@ -123,7 +123,11 @@ class EntriesAdditionController extends Controller
 
                 return new Response($newEntryEntity->getId());
             } else {
-                $this->addFlash('danger', 'Форма заполнена неверно. Проверьте правильность заполнения формы');
+                if (!$request->get('submit')) {
+                    $this->addFlash('danger', 'Форма заполнена неверно. Проверьте правильность заполнения формы');
+
+                    return new Response();
+                }
 
                 return $this->render('lencor/admin/archive/archive_manager/entry_form.html.twig', array('entryForm' => $entryForm->createView(), 'entryId' => $entryId));
             }
