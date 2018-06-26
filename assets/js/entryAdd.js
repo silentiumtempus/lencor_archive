@@ -7,6 +7,7 @@ $(document).ready(function () {
         let $entryFormDiv = $('#entryForm');
         let $path = Routing.generate('entries-new');
         let $formType = $entryFormDiv.attr('class');
+
         /** Archive entries new entry page factory->settings AJAX loader **/
         function settingsLoader() {
             $factory = $($entryFormDiv).find('#entry_form_factory');
@@ -17,7 +18,6 @@ $(document).ready(function () {
             } else if ($formType === 'edit') {
                 $path = Routing.generate('admin-entries', {entryId: $entryFormDiv.find('table').attr('id')});
             }
-            //$data.push({ name: 'submit', value: false});
             $data['submit'] = false;
             $.ajax({
                 url: $path,
@@ -125,7 +125,9 @@ $(document).ready(function () {
                     /** Flash messages loader **/
                     loadFlashMessages();
                     if ($button.attr('id') === 'entry_form_submitAndOpenButton' && !isNaN(response) && response !== '') {
-                        setTimeout(function() {document.location.href = Routing.generate('entries', {entry: response})}, 5000);
+                        setTimeout(function () {
+                            document.location.href = Routing.generate('entries', {entry: response})
+                        }, 5000);
                     }
                 }
             });
@@ -143,13 +145,27 @@ $(document).ready(function () {
                 method: "POST",
                 success: function (reloadFlashMessages) {
                     $flashMessages.html($(reloadFlashMessages).filter('#flash-messages').children());
+                    if ($flashMessages.length > 0) {
+                        $flashMessages.fadeOut('fast');
+                        let id = window.setTimeout(null, 0);
+                        while (id--) {
+                            window.clearTimeout(id);
+                        }
+                    }
                     $flashMessages.fadeIn("slow");
-                    //setTimeout(hideFlashMessages, 7000);
+                    window.clearTimeout(0);
+                    setTimeout(hideFlashMessages, 7000);
                 }
             });
 
             return false;
         }
+
+        /** Close flash message manually **/
+
+        $(document).on('click', '#close-alert', function () {
+            $(this).parent().fadeOut("slow");
+        });
 
         /** Flash messages hiding **/
 
