@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\ArchiveEntryEntity;
 use App\Form\EntryForm;
 use App\Form\EntrySearchByIdForm;
 use App\Service\EntryService;
 use App\Service\FolderService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -34,11 +32,9 @@ class EntriesEditController extends Controller
      *     defaults = { "entryId" : "" }))     *
      */
     //@ParamConverter("archiveEntryEntity", class="App:ArchiveEntryEntity", options = { "id" = "entryId" }, isOptional="true")
-    //@TODO: entryId is passing from GET as string
-    public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, $entryId)
+    public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, int $entryId)
     {
         $archiveEntryEntity = null;
-        $updateStatus = false;
         $entrySearchByIdForm = $this->createForm(EntrySearchByIdForm::class);
         if ($request->request->has('entry_search_by_id_form')) {
             $entrySearchByIdForm->handleRequest($request);
@@ -60,7 +56,6 @@ class EntriesEditController extends Controller
             $entryForm->handleRequest($request);
             if ($entryForm->isSubmitted()) {
                 if ($entryForm->isValid()) {
-                    //try {
                     $originalEntry = $entryService->getOriginalData($archiveEntryEntity);
                     $matches = $entryService->checkPathChanges($originalEntry, $archiveEntryEntity);
                     if (count($matches) > 0) {
@@ -70,17 +65,21 @@ class EntriesEditController extends Controller
                             $newEntryFile = $folderService->moveEntryFolder($originalEntry, $archiveEntryEntity);
                         } else {
                             $this->addFlash('danger', 'Директория назначения уже существует. Операция прервана.');
+
+                            return new Response();
                         }
                     } else {
                         $newEntryFile = $entryService->constructEntryPath($archiveEntryEntity) . "/" . $archiveEntryEntity->getArchiveNumber() . ".entry";
                     }
                     if (isset($newEntryFile)) {
-                        if ($entryService->writeDataToEntryFile($archiveEntryEntity, $newEntryFile)) {
+                        try {
                             $entryService->updateEntry();
-                            $updateStatus = true;
+                            $entryService->writeDataToEntryFile($archiveEntryEntity, $newEntryFile);
                             $this->addFlash('success', 'Изменения сохранены');
-                        } else {
-                            $this->addFlash('danger', 'Запись не случилась');
+
+                            return new Response($archiveEntryEntity->getId());
+                        } catch (\Exception $exception) {
+                            $this->addFlash('danger', 'Изменения не сохранены. Ошибка: ' . $exception->getMessage());
 
                             return $this->render(
                                 'lencor/admin/archive/administration/entry_edit.html.twig',
@@ -89,22 +88,20 @@ class EntriesEditController extends Controller
                                     'entryId' => $archiveEntryEntity->getId())
                             );
                         }
+
                     } else {
                         $this->addFlash('danger', 'Указанный каталог уже существует. Операция прервана.');
 
+                        return new Response();
                     }
-                    // } catch (\Exception $exception) {
-                    //      $this->addFlash('danger', 'Ошибка обновления ячейки: ' . $exception->getMessage());
-                    //  }
 
+                } else {
+                    $this->addFlash('danger', 'Неправильно заполнена форма. В архиве найден дубликат.');
+
+                    return new Response();
                 }
             }
-            if (!$entryId || $updateStatus) {
-                if ($updateStatus) {
-
-                    return new Response($archiveEntryEntity->getId());
-                }
-            } else {
+            if ($entryId) {
 
                 return $this->render(
                     'lencor/admin/archive/administration/entries.html.twig',
@@ -122,6 +119,7 @@ class EntriesEditController extends Controller
                     'entrySearchByIdForm' => $entrySearchByIdForm->createView()
                 ));
         }
+
         if ($entrySearchByIdForm->isSubmitted()) {
 
             return $this->render('lencor/admin/archive/administration/entry_edit.html.twig',

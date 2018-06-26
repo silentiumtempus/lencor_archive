@@ -122,7 +122,7 @@ $(document).ready(function () {
                     }
                     /** Flash messages loader **/
                     loadFlashMessages();
-                    if ($button.attr('id') === 'entry_form_submitAndOpenButton' && !isNaN(response)) {
+                    if ($button.attr('id') === 'entry_form_submitAndOpenButton' && !isNaN(response) && response !== '') {
                         setTimeout(function() {document.location.href = Routing.generate('entries', {entry: response})}, 5000);
                     }
                 }
