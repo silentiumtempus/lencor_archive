@@ -96,7 +96,7 @@ class EntriesEditController extends Controller
 
                 } else {
                     if (!$request->get('submit')) {
-                        $this->addFlash('danger', 'Форма заполнена неверно. Проверьте правильность заполнения формы');
+                        $this->addFlash('danger', 'Форма заполнена неверно. Архивная запись с такими ключевыми параметрами уже существует.');
 
                         return new Response();
                     }

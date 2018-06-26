@@ -136,7 +136,7 @@ class EntryService
      */
     public function writeDataToEntryFile(ArchiveEntryEntity $newEntry, string $filename)
     {
-        // try {
+        try {
         $fs = new Filesystem();
         $fs->touch($filename);
         //$encoders = array(new XmlEncoder());
@@ -147,10 +147,10 @@ class EntryService
         file_put_contents($filename, $entryJSONFile);
 
         return true;
-        // } catch (\Exception $exception) {
+        } catch (\Exception $exception) {
 
-        //     return false;
-        //  }
+             return false;
+        }
     }
 
     /**

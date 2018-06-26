@@ -81,7 +81,6 @@ class UserService
         return $encoder->encodePassword($this->defaultPassword, null);
     }
 
-
     /**
      * @param Entry $kerberosUser
      * @return User
@@ -99,6 +98,10 @@ class UserService
             ->setLastLogin(new \DateTime())
             ->setIsADUser(true)
             ->setADUserId($kerberosUser->getAttribute($this->userIDAttribute)[0]);
+        $group = ($kerberosUser->getAttribute('memberOf')) ?? null;
+        if ($group == 'Archive Admins') {
+            $user->addRole('ROLE_ADMIN');
+        }
 
         return $user;
     }

@@ -13,9 +13,7 @@ $(document).ready(function () {
             $factory = $($entryFormDiv).find('#entry_form_factory');
             let $data = {};
             $data[$factory.attr('name')] = $factory.val();
-            if ($formType === 'new_entry') {
-                $path = Routing.generate('entries-new');
-            } else if ($formType === 'edit') {
+            if ($formType === 'edit') {
                 $path = Routing.generate('admin-entries', {entryId: $entryFormDiv.find('table').attr('id')});
             }
             $data['submit'] = false;
@@ -153,7 +151,6 @@ $(document).ready(function () {
                         }
                     }
                     $flashMessages.fadeIn("slow");
-                    window.clearTimeout(0);
                     setTimeout(hideFlashMessages, 7000);
                 }
             });
