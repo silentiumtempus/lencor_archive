@@ -72,5 +72,7 @@ search:
 button:
   entry:
     create: 'Добавить запись'
+    credirect: 'Добавить и открыть'
     edit: 'Сохранить'
+    eredirect: 'Сохранить и открыть'
     cancel: 'Отмена'
