@@ -20,6 +20,7 @@ parameters:
     ldap.user:
     ldap.password:
     ldap.userid.attribute: uidNumber
+    ldap.admins.group:
     default.password:  
     fs_size_conversion.twig.extension.class: App\Twig\FileSystemSizeConverterExtension
     fs_permissions_conversion.twig.extension.class: App\Twig\FilesystemPermissionsConverterExtension

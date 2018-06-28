@@ -19,6 +19,7 @@ class UserService
     protected $encoderFactory;
     protected $defaultPassword;
     protected $userIDAttribute;
+    protected $LDAPAdminsGroup;
     protected $usersRepository;
 
     /**
@@ -34,6 +35,7 @@ class UserService
         $this->encoderFactory = $encoderFactory;
         $this->defaultPassword = $this->container->getParameter('default.password');
         $this->userIDAttribute = $this->container->getParameter('ldap.userid.attribute');
+        $this->LDAPAdminsGroup = $this->container->getParameter('ldap.admins.group');
         $this->usersRepository = $this->em->getRepository('App:User');
     }
 
@@ -98,9 +100,16 @@ class UserService
             ->setLastLogin(new \DateTime())
             ->setIsADUser(true)
             ->setADUserId($kerberosUser->getAttribute($this->userIDAttribute)[0]);
-        $group = ($kerberosUser->getAttribute('memberOf')) ?? null;
-        if ($group == 'Archive Admins') {
-            $user->addRole('ROLE_ADMIN');
+        $groups = ($kerberosUser->getAttribute('memberOf')) ?? null;
+        if ($groups) {
+            $group_names = [];
+            foreach ($groups as $group) {
+                preg_match_all("/([^=]+)=([^,]+) /x", $group, $g);
+                $group_names[] = array_combine($g[1], $g[2])['CN'];
+            }
+            if (in_array($this->LDAPAdminsGroup, $group_names)) {
+                $user->addRole('ROLE_ADMIN');
+            }
         }
 
         return $user;
