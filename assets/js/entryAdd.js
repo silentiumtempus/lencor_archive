@@ -120,23 +120,25 @@ $(document).ready(function () {
                     if ($formType === 'new_entry') {
                         $entryId = response;
                     }
-                    /** Flash messages loader **/
-                    loadFlashMessages();
+                    let $redirect = false;
+                    /** Redirect after submit if requested **/
                     if ($button.attr('id') === 'entry_form_submitAndOpenButton' && !isNaN(response) && response !== '') {
+                        $redirect = true;
                         setTimeout(function () {
-                            document.location.href = Routing.generate('entries', {entry: response})
+                            window.location.replace(Routing.generate('entries', {entry: response}));
                         }, 5000);
                     }
+                    /** Flash messages loader **/
+                    loadFlashMessages($redirect);
                 }
             });
-            $path = Routing.generate('entries-new');
 
             return false;
         });
 
         /** Flash messages loader **/
 
-        function loadFlashMessages() {
+        function loadFlashMessages($redirect) {
             let $flashMessages = $('#flash-messages');
             $.ajax({
                 url: Routing.generate('flash_messages'),
@@ -145,13 +147,17 @@ $(document).ready(function () {
                     $flashMessages.html($(reloadFlashMessages).filter('#flash-messages').children());
                     if ($flashMessages.length > 0) {
                         $flashMessages.fadeOut('fast');
-                        let id = window.setTimeout(null, 0);
-                        while (id--) {
-                            window.clearTimeout(id);
+                        if ($redirect === false) {
+                            let id = window.setTimeout(null, 0);
+                            while (id--) {
+                                window.clearTimeout(id);
+                            }
                         }
                     }
                     $flashMessages.fadeIn("slow");
                     setTimeout(hideFlashMessages, 7000);
+
+                    return false;
                 }
             });
 
@@ -169,6 +175,8 @@ $(document).ready(function () {
         function hideFlashMessages() {
             let $flashMessages = $('#flash-messages');
             $flashMessages.fadeOut("slow");
+
+            return true;
 
         }
     }
