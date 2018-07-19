@@ -485,7 +485,7 @@ class FilesAndFoldersController extends Controller
             $foldersArray = $folderService->getFoldersList($request->get('foldersArray'));
 
             return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $foldersArray));
-        } elseif ($folder) {
+        } else if ($folder) {
 
             return $this->render('lencor/admin/archive/archive_manager/folder.html.twig', array('folder' => $folder));
         } else {

@@ -184,20 +184,19 @@ class FolderService
         $foldersArray = [];
         $restoredFolder = $this->foldersRepository->findOneById($folderId);
         if ($restoredFolder) {
-            $foldersArray[] = $restoredFolder;
+            $foldersArray[] = $restoredFolder->getId();
             $this->unsetFolderDeleteMark($restoredFolder);
             $binaryPath = $this->getPath($restoredFolder);
             foreach ($binaryPath as $folder) {
                 if ($folder->getDeleteMark()) {
                     $this->unsetFolderDeleteMark($folder);
-                    $foldersArray[] = $folder;
+                    $foldersArray[] = $folder->getId();
                 }
             }
             $this->em->flush();
             $this->entryService->changeLastUpdateInfo($restoredFolder->getRoot()->getArchiveEntry()->getId(), $user);
         }
 
-        //return $restoredFolder;
         return $foldersArray;
     }
 
