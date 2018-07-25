@@ -9,4 +9,10 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class ArchiveEntrySearchRepository extends EntityRepository
 {
+
+    public function getSearchHintsByFormData()
+    {
+
+        return true;
+    }
 }

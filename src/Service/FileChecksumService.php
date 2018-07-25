@@ -37,7 +37,6 @@ class FileChecksumService
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
     }
 
-
     /**
      * @param FileEntity $requestedFile
      * @param string $filePath

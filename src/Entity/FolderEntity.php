@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
+use App\Entity\Traits\DeletedTrait;
 use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\RemovalMarkTrait;
 use App\Entity\Traits\FolderFileTrait;
 use App\Entity\Traits\RestorationRequestsTrait;
 use App\Entity\Traits\SlugTrait;
@@ -29,16 +31,18 @@ use Doctrine\Common\Collections\ArrayCollection;
  *     )
  * }),
  * @ORM\Entity(repositoryClass = "App\Repository\FolderRepository")
- * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\FolderLog")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntities\FolderLog")
  */
 class FolderEntity
 {
     use CommonTrait;
     use FolderFileTrait;
     use SlugTrait;
-    use DeleteStateTrait;
+    use RemovalMarkTrait;
     use SumErrorsTrait;
     use RestorationRequestsTrait;
+    use DeleteStateTrait;
+
     /**
      * @ORM\OneToOne(targetEntity = "ArchiveEntryEntity", inversedBy = "cataloguePath")
      * @ORM\JoinColumn(name = "archive_entry_id", referencedColumnName = "id")

@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
+use App\Entity\Traits\DeletedTrait;
 use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\RemovalMarkTrait;
 use App\Entity\Traits\FolderFileTrait;
 use App\Entity\Traits\RestorationRequestsTrait;
 use App\Entity\Traits\SlugTrait;
@@ -28,15 +30,16 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      columns = {"file_name", "parent_folder_id"}
  *     )
  * }),
- * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\FileLog")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntities\FileLog")
  */
 class FileEntity
 {
     use CommonTrait;
     use FolderFileTrait;
     use SlugTrait;
-    use DeleteStateTrait;
+    use RemovalMarkTrait;
     use RestorationRequestsTrait;
+    use DeleteStateTrait;
 
     /**
      * @ORM\Column(type="string")

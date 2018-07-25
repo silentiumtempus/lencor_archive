@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
+use App\Entity\Traits\DeleteStateTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
@@ -18,11 +19,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     groups = {"setting_addition"}
  * )
  * @ORM\Table(name = "archive_settings")
- * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\SettingLog")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntities\SettingLog")
  */
 class SettingEntity
 {
     use CommonTrait;
+    use DeleteStateTrait;
 
     /**
      * @ORM\ManyToOne(targetEntity = "FactoryEntity", inversedBy = "settings", cascade = {"persist"})

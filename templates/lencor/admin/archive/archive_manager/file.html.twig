@@ -1,6 +1,6 @@
-<li id="file_{{ file.id }}" class="dashed row {% if file.deleteMark != 0 %} deleted {% endif %}">
+<li id="file_{{ file.id }}" class="dashed row {% if file.removalMark != 0 %} deleted {% endif %}">
     <span id="{{ file.id }}">
-        {% if file.deleteMark != 0 %}
+        {% if file.removalMark != 0 %}
             <i class="fa fa-remove"> </i>
         {% endif %}
         <a href="#" name="downloadFile"> <i class="fa {{ file.fileName|file_icon }}"> </i>{{ file.fileName }} </a>
@@ -11,7 +11,7 @@
             {% if file.requestMark %}
                 <a href="#" name="isRequested" id="{{ file.id }}" class="non-opaque"><i class="fa fa-fire non-opaque"> </i>({{ file.requestsCount }})</a>
             {% endif %}
-        {% if file.deleteMark != 0 %}
+        {% if file.removalMark != 0 %}
             <i class="fa fa-ban" id="isRemoved"> </i>
             {% else %}
             {% if file.sumError %}
@@ -23,7 +23,7 @@
         <i class="fa fa-user" id="lastChangeInfo"> </i>
         </span>
     <span id="{{ file.id }}" class="text-right width-66">
-        {% if file.deleteMark != 0 %}
+        {% if file.removalMark != 0 %}
             {% if is_granted('ROLE_ADMIN') %}
                 <a href="#" name="restoreFile" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
             {% else %}

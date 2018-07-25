@@ -7,50 +7,79 @@ parameters:
 
 doctrine:
     dbal:
+        default_connection: default
         # configure these for your database server
-        driver: 'pdo_mysql'
-        server_version: '5.7'
-        charset: utf8mb4
-        mapping_types:
-          enum: string
-          set: string
-          varbinary: string
-          tinyblob: text
-        options:
-          1002: "SET NAMES 'UTF8MB4'"
-
-        # With Symfony 3.3, remove the `resolve:` prefix
-        url: '%env(resolve:DATABASE_URL)%'
+        connections:
+          default:
+            driver:   pdo_mysql
+            host:     '%archive.db.host%'
+            port:     '%archive.db.port%'
+            dbname:   '%archive.db.name%'
+            user:     '%archive.db.user%'
+            password: '%archive.db.password%'
+            server_version: '5.7'
+            charset: utf8mb4
+            mapping_types:
+              enum: string
+              set: string
+              varbinary: string
+              tinyblob: text
+            options:
+              1002: "SET NAMES 'UTF8MB4'"
+            # With Symfony 3.3, remove the `resolve:` prefix
+            #url: '%env(resolve:DATABASE_URL)%'
+          removed:
+            driver:   pdo_mysql
+            host:     '%removed.db.host%'
+            port:     '%removed.db.port%'
+            dbname:   '%removed.db.name%'
+            user:     '%removed.db.user%'
+            password: '%removed.db.password%'
+            server_version: '5.7'
+            charset: utf8mb4
+            mapping_types:
+              enum: string
+              set: string
+              varbinary: string
+              tinyblob: text
+            options:
+              1002: "SET NAMES 'UTF8MB4'"
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
-        naming_strategy: doctrine.orm.naming_strategy.underscore
-        auto_mapping: true
-        mappings:
-            App:
+        default_entity_manager: default
+        entity_managers:
+          default:
+            connection: default
+            naming_strategy: doctrine.orm.naming_strategy.underscore
+            filters:
+              deleted: App\Doctrine\DeletedFilter
+            auto_mapping: true
+            mappings:
+              App:
                 is_bundle: false
                 type: annotation
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
-            gedmo_translatable:
+              gedmo_translatable:
                 type: annotation
                 prefix: Gedmo\Translatable\Entity
                 dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translatable/Entity"
                 alias: GedmoTranslatable # (optional) it will default to the name set for the mapping
                 is_bundle: false
-            gedmo_translator:
+              gedmo_translator:
                 type: annotation
                 prefix: Gedmo\Translator\Entity
                 dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translator/Entity"
                 alias: GedmoTranslator # (optional) it will default to the name set for the mapping
                 is_bundle: false
-            gedmo_loggable:
+              gedmo_loggable:
                 type: annotation
                 prefix: Gedmo\Loggable\Entity
                 dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Loggable/Entity"
                 alias: GedmoLoggable # (optional) it will default to the name set for the mappingmapping
                 is_bundle: false
-            gedmo_tree:
+              gedmo_tree:
                 type: annotation
                 prefix: Gedmo\Tree\Entity
                 dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Tree/Entity"

@@ -35,6 +35,7 @@ class FileService
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, FolderService $folderService, UserService $userService, EntryService $entryService)
     {
         $this->em = $entityManager;
+        $this->em->getFilters()->enable('deleted');
         $this->container = $container;
         $this->userService = $userService;
         $this->folderService = $folderService;
@@ -142,9 +143,9 @@ class FileService
             ->setParentFolder($parentFolder)
             ->setFileName($originalName)
             ->setAddedByUser($user)
-            ->setDeleteMark(false)
+            ->setremovalMark(false)
             ->setSlug(null)
-            ->setDeletedByUser(null);
+            ->setmarkedByUser(null);
     }
 
     /**
@@ -168,8 +169,8 @@ class FileService
         $deletedFile = $this->filesRepository->findById($fileId);
         foreach ($deletedFile as $file) {
             $file
-                ->setDeleteMark(true)
-                ->setDeletedByUser($user);
+                ->setremovalMark(true)
+                ->setmarkedByUser($user);
         }
         $this->em->flush();
         $this->entryService->changeLastUpdateInfo($deletedFile[0]->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $user);
@@ -187,8 +188,8 @@ class FileService
         $restoredFile = $this->filesRepository->findById($fileId);
         foreach ($restoredFile as $file) {
             $file
-                ->setDeleteMark(false)
-                ->setDeletedByUser(null)
+                ->setremovalMark(false)
+                ->setmarkedByUser(null)
                 ->setRequestMark(false)
                 ->setRequestedByUsers(null);
         }
@@ -279,10 +280,10 @@ class FileService
         $childFiles = $this->filesRepository->findByParentFolder($folderId);
         if ($childFiles) {
             foreach ($childFiles as $childFile) {
-                if (!$childFile->getDeleteMark()) {
+                if (!$childFile->getremovalMark()) {
                     $childFile
-                        ->setDeleteMark(true)
-                        ->setDeletedByUser($user);
+                        ->setremovalMark(true)
+                        ->setmarkedByUser($user);
                 }
             }
         }

@@ -1,8 +1,8 @@
-<li id="folder_{{ folder.id }}" class="dashed {% if folder.deleteMark !=0 %} deleted {% endif %}">
+<li id="folder_{{ folder.id }}" class="dashed {% if folder.removalMark !=0 %} deleted {% endif %}">
     <ul>
         <li class="row">
             <span id="{{ folder.id }}">
-                {% if folder.deleteMark != 0 %}
+                {% if folder.removalMark != 0 %}
                     <i class="fa fa-remove"> </i>
                 {% endif %}
                 <a href="#" name="openFolder" id="{{ folder.id }}">
@@ -15,7 +15,7 @@
                         {% if folder.requestMark %}
                             <a href="#" name="isRequested" id="{{ folder.id }}" class="non-opaque"><i class="fa fa-fire non-opaque"> </i>({{ folder.requestsCount }})</a>
                         {% endif %}
-                {% if folder.deleteMark != 0 %}
+                {% if folder.removalMark != 0 %}
                     <i class="fa fa-ban" id="isRemoved"> </i>
                     {% else %}
                     {% if (folder.sumErrors is not null) and (folder.sumErrors != 0) %}
@@ -27,7 +27,7 @@
                 &nbsp;<i class="fa fa-user" id="lastChangeInfo"> </i>
                     </span>
             <span id="{{ folder.id }}" class="text-right width-66">
-                    {% if folder.deleteMark != 0 %}
+                    {% if folder.removalMark != 0 %}
                         {% if is_granted('ROLE_ADMIN') %}
                             <a href="#" name="restoreFolder" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
                         {% else %}

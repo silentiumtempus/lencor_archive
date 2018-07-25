@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
 use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\RemovalMarkTrait;
 use App\Entity\Traits\ModificationFieldsTrait;
 use App\Entity\Traits\RestorationRequestsTrait;
 use App\Entity\Traits\SlugTrait;
@@ -29,16 +30,17 @@ use Doctrine\Common\Collections\ArrayCollection;
  *     ignoreNull = true
  * )
  * @ORM\Table(name = "archive_entries")
- * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\ArchiveEntryLog")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntities\ArchiveEntryLog")
  */
 class ArchiveEntryEntity implements \JsonSerializable
 {
     use CommonTrait;
-    use DeleteStateTrait;
+    use RemovalMarkTrait;
     use SlugTrait;
     use SumErrorsTrait;
     use ModificationFieldsTrait;
     use RestorationRequestsTrait;
+    use DeleteStateTrait;
 
     /**
      * @ORM\Column(type = "integer", length = 4)

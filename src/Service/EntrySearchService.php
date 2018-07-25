@@ -31,6 +31,7 @@ class EntrySearchService
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
+        $this->em->getFilters()->enable('deleted');
         $this->container = $container;
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->elasticManager = $this->container->get('fos_elastica.finder.lencor_archive.archive_entries');
@@ -46,8 +47,8 @@ class EntrySearchService
         foreach ($searchForm->getIterator() as $key => $child) {
             if ($child->getData()) {
                 if ($key == 'year') {
-                    $conditionFactory = (new Match())->setFieldQuery($child->getName(), $child->getViewData());
-                    $filterQuery->addMust($conditionFactory);
+                    $conditionYear = (new Match())->setFieldQuery($child->getName(), $child->getViewData());
+                    $filterQuery->addMust($conditionYear);
                 } elseif ($key == 'factory') {
                     $conditionFactory = (new Term())->setTerm('factory.id', $child->getViewData());
                     $filterQuery->addMust($conditionFactory);
@@ -61,6 +62,7 @@ class EntrySearchService
                     $filterQuery->addMust($conditionString);
                 }
             }
+
         }
 
         return $filterQuery;
@@ -70,14 +72,30 @@ class EntrySearchService
      * @param Query $finalQuery
      * @param BoolQuery $filterQuery
      * @param integer $limit
+     * @param bool $excludeDeleted
      * @return mixed
      */
-    public function getQueryResult(Query $finalQuery, BoolQuery $filterQuery, int $limit)
+    public function getQueryResult(Query $finalQuery, BoolQuery $filterQuery, int $limit, bool $excludeDeleted)
     {
+        if ($excludeDeleted) {
+            $filterQuery = $this->excludeDeleted($filterQuery);
+        }
         $finalQuery->setQuery($filterQuery);
         $finalQuery->addSort(array('year' => array('order' => 'ASC')));
 
         return $this->elasticManager->find($finalQuery, $limit);
+    }
+
+    /**
+     * @param BoolQuery $filterQuery
+     * @return BoolQuery
+     */
+    public function excludeDeleted(BoolQuery $filterQuery)
+    {
+        $conditionExcludeDeleted = (new Query\Term())->setTerm('deleted', false);
+        $filterQuery->addMust($conditionExcludeDeleted);
+
+        return $filterQuery;
     }
 
 }

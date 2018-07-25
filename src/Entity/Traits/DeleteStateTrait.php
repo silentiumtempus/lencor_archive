@@ -16,61 +16,28 @@ trait DeleteStateTrait
      * @Serializer\Type("boolean")
      */
 
-    protected $deleteMark;
+    protected $deleted = false;
 
     /**
-     * @ORM\ManyToOne(targetEntity = "User", cascade = {"persist"})
-     * @ORM\JoinColumn(name = "deleted_by_user", referencedColumnName = "id")
-     * @Assert\Type("integer")
-     * @Gedmo\Versioned()
-     * @Serializer\Type("App\Entity\User")
-     */
-
-    protected $deletedByUser;
-
-    /**
-     * Set deleteMark
-     * @param boolean $deleteMark
+     * Set deleted
+     * @param bool $deleted
      * @return $this
      */
 
-    public function setDeleteMark($deleteMark)
+    public function setDeleted(bool $deleted)
     {
-        $this->deleteMark = $deleteMark;
+        $this->deleted = $deleted;
 
         return $this;
     }
 
     /**
-     * Get deleteMark
-     * @return boolean
+     * Get requestMark
+     * @return bool
      */
 
-    public function getDeleteMark()
+    public function getDeleted()
     {
-        return $this->deleteMark;
-    }
-
-    /**
-     * Set deletedByUser
-     * @param string $deletedByUser
-     * @return $this
-     */
-
-    public function setDeletedByUser($deletedByUser)
-    {
-        $this->deletedByUser = $deletedByUser;
-
-        return $this;
-    }
-
-    /**
-     * Get deletedByUser
-     * @return string
-     */
-
-    public function getDeletedByUser()
-    {
-        return $this->deletedByUser;
+        return $this->deleted;
     }
 }

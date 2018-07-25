@@ -43,9 +43,7 @@ fos_elastica:
               contractNumber: ~
               fullConclusionName: ~
               cataloguePath: ~
-              lastModified: ~
-              modifiedByUserId: ~
-              deleteMark: ~
+              deleted: ~
             persistence:
               driver: orm
               model: App\Entity\ArchiveEntryEntity

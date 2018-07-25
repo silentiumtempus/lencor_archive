@@ -49,8 +49,8 @@ $(document).ready(function () {
                 method: $factoryAddForm.attr('method'),
                 data: factorySerialized,
                 success: function (response) {
-                    $('#flash-messages').replaceWith(
-                        $(response).find('#flash-messages'));
+                    let $redirect = false;
+                    loadFlashMessages($redirect);
                     $.ajax({
                         url: $path,
                         method: $entryForm.attr('method'),
@@ -78,8 +78,8 @@ $(document).ready(function () {
                 method: $settingAddForm.attr('method'),
                 data: settingSerialized,
                 success: function (response) {
-                    $('#flash-messages').replaceWith(
-                        $(response).find('#flash-messages'));
+                    let $redirect = false;
+                    loadFlashMessages($redirect);
                     $.ajax({
                         url: $path,
                         method: $settingAddForm.attr('method'),

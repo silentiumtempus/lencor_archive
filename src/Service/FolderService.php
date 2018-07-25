@@ -35,6 +35,7 @@ class FolderService
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EntryService $entryService)
     {
         $this->em = $entityManager;
+        $this->em->getFilters()->enable('deleted');
         $this->container = $container;
         $this->entryService = $entryService;
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
@@ -114,8 +115,8 @@ class FolderService
             ->setArchiveEntry($newEntry)
             ->setFolderName($newEntry->getYear() . "/" . $newEntry->getFactory()->getId() . "/" . $newEntry->getArchiveNumber())
             ->setAddedByUser($user)
-            ->setDeleteMark(false)
-            ->setDeletedByUser(null)
+            ->setremovalMark(false)
+            ->setmarkedByUser(null)
             ->setSlug(null);
     }
 
@@ -131,8 +132,8 @@ class FolderService
         $newFolderEntity
             ->setParentFolder($parentFolder)
             ->setAddedByUser($user)
-            ->setDeleteMark(false)
-            ->setDeletedByUser(null)
+            ->setremovalMark(false)
+            ->setmarkedByUser(null)
             ->setSlug(null);
 
         return $newFolderEntity;
@@ -160,9 +161,9 @@ class FolderService
             $folderChildren = $this->foldersRepository->getChildren($folder, false, null, null, true);
             if ($folderChildren) {
                 foreach ($folderChildren as $childFolder) {
-                    if (!$childFolder->getDeleteMark()) {
-                        $childFolder->setDeleteMark(true);
-                        $childFolder->setDeletedByUser($user);
+                    if (!$childFolder->getremovalMark()) {
+                        $childFolder->setremovalMark(true);
+                        $childFolder->setmarkedByUser($user);
                         $fileService->removeFilesByParentFolder($folderId, $user);
                     }
                 }
@@ -185,11 +186,11 @@ class FolderService
         $restoredFolder = $this->foldersRepository->findOneById($folderId);
         if ($restoredFolder) {
             $foldersArray[] = $restoredFolder->getId();
-            $this->unsetFolderDeleteMark($restoredFolder);
+            $this->unsetFolderremovalMark($restoredFolder);
             $binaryPath = $this->getPath($restoredFolder);
             foreach ($binaryPath as $folder) {
-                if ($folder->getDeleteMark()) {
-                    $this->unsetFolderDeleteMark($folder);
+                if ($folder->getremovalMark()) {
+                    $this->unsetFolderremovalMark($folder);
                     $foldersArray[] = $folder->getId();
                 }
             }
@@ -203,11 +204,11 @@ class FolderService
     /**
      * @param FolderEntity $folderEntity
      */
-    public function unsetFolderDeleteMark(FolderEntity $folderEntity)
+    public function unsetFolderremovalMark(FolderEntity $folderEntity)
     {
         $folderEntity
-            ->setDeleteMark(false)
-            ->setDeletedByUser(null)
+            ->setremovalMark(false)
+            ->setmarkedByUser(null)
             ->setRequestMark(false)
             ->setRequestedByUsers(null);
     }
@@ -222,7 +223,7 @@ class FolderService
         $folder = $this->getParentFolder($folderId);
         $binaryPath = $this->getPath($folder);
         foreach ($binaryPath as $folder) {
-            if ($folder->getDeleteMark()) {
+            if ($folder->getremovalMark()) {
                 if ($folder->getRequestMark() ?? $folder->getRequestMark() != false) {
                     $users = $folder->getRequestedByUsers();
                     if (!$users || (array_search($user->getId(), $users, true)) === false) {

@@ -73,6 +73,8 @@ class EntriesAdditionController extends Controller
             } else {
                 $this->addFlash('danger', 'Завод с указанным именем уже добавлен');
             }
+
+            return new Response();
         }
 
         $settingForm->handleRequest($request);
@@ -87,6 +89,8 @@ class EntriesAdditionController extends Controller
             } else {
                 $this->addFlash('danger', 'Установка с таким именем уже добавлена для выбранного завода');
             }
+
+            return new Response();
         }
 
         $entryForm->handleRequest($request);

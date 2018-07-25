@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
+use App\Entity\Traits\DeleteStateTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -16,14 +17,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity;
  * @UniqueEntity(
  *     fields = {"factoryName"},
- *     groups = {"factory_addition"})
+ *     groups = {"factory_addition"}
+ * )
  * @ORM\Table(name = "archive_factories")
- * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntity\FactoryLog")
+ * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntities\FactoryLog")
  */
 
 class FactoryEntity
 {
     use CommonTrait;
+    use DeleteStateTrait;
 
     /**
      * @ORM\Column(type = "string")

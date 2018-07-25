@@ -36,6 +36,7 @@ class EntryService
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
+        $this->em->getFilters()->enable('deleted');
         $this->container = $container;
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
@@ -125,8 +126,8 @@ class EntryService
         $newEntry
             ->setCataloguePath($newFolder)
             ->setModifiedByUserId($user)
-            ->setDeleteMark(false)
-            ->setDeletedByUser(null);
+            ->setremovalMark(false)
+            ->setmarkedByUser(null);
     }
 
     /**
@@ -173,8 +174,8 @@ class EntryService
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
         $archiveEntry
-            ->setDeleteMark(true)
-            ->setDeletedByUser($user);
+            ->setremovalMark(true)
+            ->setmarkedByUser($user);
         $this->em->flush();
 
         return $archiveEntry;
@@ -189,9 +190,9 @@ class EntryService
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
         $archiveEntry
-            ->setDeleteMark(false)
+            ->setremovalMark(false)
             ->setModifiedByUserId($user)
-            ->setDeletedByUser(null)
+            ->setmarkedByUser(null)
             ->setRequestMark(false)
             ->setRequestedByUsers(null);
         $this->em->flush();
@@ -207,7 +208,7 @@ class EntryService
     public function requestEntry(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
-        if ($archiveEntry->getDeleteMark()) {
+        if ($archiveEntry->getremovalMark()) {
             if ($archiveEntry->getRequestMark() ?? $archiveEntry->getRequestMark() != false) {
                 $users = $archiveEntry->getRequestedByUsers();
                 if (!$users || (array_search($user->getId(), $users, true)) === false) {

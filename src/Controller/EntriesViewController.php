@@ -46,14 +46,16 @@ class EntriesViewController extends Controller
             $archiveEntries[] = $entry;
         } else {
             $searchForm->handleRequest($request);
-            if ($searchForm->isSubmitted() && $searchForm->isValid() && $request->isMethod('POST')) {
-                try {
-                    $filterQuery = $entrySearchService->performSearch($searchForm, $filterQuery);
-                } catch (\Exception $exception) {
-                    $this->addFlash('error', $exception->getMessage());
+            if ($searchForm->isSubmitted()) {
+                if ($searchForm->isValid() && $request->isMethod('POST')) {
+                    try {
+                        $filterQuery = $entrySearchService->performSearch($searchForm, $filterQuery);
+                    } catch (\Exception $exception) {
+                        $this->addFlash('error', $exception->getMessage());
+                    }
                 }
             }
-            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, 5000);
+            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, 5000, true);
         }
 
         return $this->render('/lencor/admin/archive/archive_manager/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath));
@@ -141,7 +143,7 @@ class EntriesViewController extends Controller
         if ($searchForm->isSubmitted() && $searchForm->isValid() && $request->isMethod('POST')) {
 
             $filterQuery = $entrySearchService->performSearch($searchForm, $filterQuery);
-            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $limit);
+            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $limit, true);
             if ($field !== 0) {
                 foreach ($archiveEntries as $entry) {
                     switch ($field) {
