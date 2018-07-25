@@ -13,6 +13,7 @@ parameters:
     lencor_archive.http_path: 'http://localhost/public/storage'
 	lencor_archive.share_path: '\\path\to\share'
 	lencor_archive.search_hints_limit:
+	archive.entries_search_limit:
     archive.db.host:
     archive.db.port:
     archive.db.name:
