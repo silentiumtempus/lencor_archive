@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Entity;
 
 /**
  * Class CommonArchiveService
@@ -21,7 +20,6 @@ class CommonArchiveService
     public function __construct(EntityManagerInterface $entityManager, UserService $userService)
     {
         $this->em = $entityManager;
-        $this->em->getFilters()->enable('deleted');
         $this->userService = $userService;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');

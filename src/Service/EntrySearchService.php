@@ -31,7 +31,6 @@ class EntrySearchService
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
-        $this->em->getFilters()->enable('deleted');
         $this->container = $container;
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->elasticManager = $this->container->get('fos_elastica.finder.lencor_archive.archive_entries');
@@ -72,14 +71,12 @@ class EntrySearchService
      * @param Query $finalQuery
      * @param BoolQuery $filterQuery
      * @param integer $limit
-     * @param bool $excludeDeleted
+     * @param bool $showDeleted
      * @return mixed
      */
-    public function getQueryResult(Query $finalQuery, BoolQuery $filterQuery, int $limit, bool $excludeDeleted)
+    public function getQueryResult(Query $finalQuery, BoolQuery $filterQuery, int $limit, bool $showDeleted)
     {
-        if ($excludeDeleted) {
-            $filterQuery = $this->excludeDeleted($filterQuery);
-        }
+        $filterQuery = $this->showDeleted($filterQuery, $showDeleted);
         $finalQuery->setQuery($filterQuery);
         $finalQuery->addSort(array('year' => array('order' => 'ASC')));
 
@@ -88,11 +85,12 @@ class EntrySearchService
 
     /**
      * @param BoolQuery $filterQuery
+     * @param bool $showDeleted
      * @return BoolQuery
      */
-    public function excludeDeleted(BoolQuery $filterQuery)
+    public function showDeleted(BoolQuery $filterQuery, bool $showDeleted)
     {
-        $conditionExcludeDeleted = (new Query\Term())->setTerm('deleted', false);
+        $conditionExcludeDeleted = (new Query\Term())->setTerm('deleted', $showDeleted);
         $filterQuery->addMust($conditionExcludeDeleted);
 
         return $filterQuery;

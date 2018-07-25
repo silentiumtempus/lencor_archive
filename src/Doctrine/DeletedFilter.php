@@ -24,7 +24,7 @@ class DeletedFilter extends SQLFilter
             return '';
         } else {
 
-            return sprintf('%s.deleted = false', $targetTableAlias);
+            return sprintf('%s.deleted = %s', $targetTableAlias, $this->getParameter('deleted'));
         }
     }
 }

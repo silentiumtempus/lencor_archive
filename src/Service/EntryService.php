@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\ArchiveEntryEntity;
 use App\Entity\FolderEntity;
 use App\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -36,7 +35,6 @@ class EntryService
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
-        $this->em->getFilters()->enable('deleted');
         $this->container = $container;
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');

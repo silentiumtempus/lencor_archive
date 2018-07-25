@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Entity\FactoryEntity;
 use App\Entity\SettingEntity;
 use Doctrine\ORM\EntityManagerInterface;
 

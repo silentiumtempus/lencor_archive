@@ -35,7 +35,6 @@ class FolderService
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EntryService $entryService)
     {
         $this->em = $entityManager;
-        $this->em->getFilters()->enable('deleted');
         $this->container = $container;
         $this->entryService = $entryService;
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');

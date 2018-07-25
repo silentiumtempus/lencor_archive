@@ -35,7 +35,6 @@ class FileService
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, FolderService $folderService, UserService $userService, EntryService $entryService)
     {
         $this->em = $entityManager;
-        $this->em->getFilters()->enable('deleted');
         $this->container = $container;
         $this->userService = $userService;
         $this->folderService = $folderService;
