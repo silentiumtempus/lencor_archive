@@ -61,7 +61,6 @@ class EntrySearchService
                     $filterQuery->addMust($conditionString);
                 }
             }
-
         }
 
         return $filterQuery;
@@ -90,6 +89,14 @@ class EntrySearchService
      */
     public function showDeleted(BoolQuery $filterQuery, bool $showDeleted)
     {
+        if ($showDeleted) {
+            if ($this->em->getFilters()->isEnabled('deleted')) {
+                $this->em->getFilters()->disable('deleted');
+            }
+        } else {
+            $deletedFilter = $this->em->getFilters()->enable('deleted');
+            $deletedFilter->setParameter('deleted', $showDeleted);
+        }
         $conditionExcludeDeleted = (new Query\Term())->setTerm('deleted', $showDeleted);
         $filterQuery->addMust($conditionExcludeDeleted);
 

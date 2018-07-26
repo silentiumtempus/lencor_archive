@@ -56,7 +56,8 @@ class EntriesViewController extends Controller
                     }
                 }
             }
-            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $search_limit, false);
+
+            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $search_limit, true);
         }
 
         return $this->render('/lencor/admin/archive/archive_manager/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath));

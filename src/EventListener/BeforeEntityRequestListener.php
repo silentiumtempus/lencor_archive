@@ -28,9 +28,9 @@ class BeforeEntityRequestListener
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        $deletedFilter = $this->em
-            ->getFilters()
-            ->enable('deleted');
-        $deletedFilter->setParameter('deleted', false);
+        //$deletedFilter = $this->em
+        //    ->getFilters()
+        //    ->enable('deleted');
+        //$deletedFilter->setParameter('deleted', false);
     }
 }

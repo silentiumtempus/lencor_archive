@@ -168,8 +168,8 @@ class FileService
         $deletedFile = $this->filesRepository->findById($fileId);
         foreach ($deletedFile as $file) {
             $file
-                ->setremovalMark(true)
-                ->setmarkedByUser($user);
+                ->setRemovalMark(true)
+                ->setMarkedByUser($user);
         }
         $this->em->flush();
         $this->entryService->changeLastUpdateInfo($deletedFile[0]->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $user);
