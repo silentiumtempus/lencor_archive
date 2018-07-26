@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 /**
- * Class BeforeRequestListener
+ * Class BeforeEntityRequestListener
  * @package App\EventListener
  */
 class BeforeEntityRequestListener
@@ -15,7 +15,7 @@ class BeforeEntityRequestListener
     protected $em;
 
     /**
-     * BeforeRequestListener constructor.
+     * BeforeEntityRequestListener constructor.
      * @param EntityManager $em
      */
     public function __construct(EntityManager $em)
