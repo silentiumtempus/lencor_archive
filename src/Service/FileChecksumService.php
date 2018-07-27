@@ -13,6 +13,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * Class FileChecksumService
  * @package App\Service
  */
+
 class FileChecksumService
 {
     protected $em;
@@ -27,6 +28,7 @@ class FileChecksumService
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      */
+
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
@@ -42,6 +44,7 @@ class FileChecksumService
      * @param string $filePath
      * @return bool
      */
+
     public function checkFile(FileEntity $requestedFile, string $filePath)
     {
         $fs = new Filesystem();
@@ -61,6 +64,7 @@ class FileChecksumService
      * @param int $userId
      * @return bool
      */
+
     public function newChecksumError(FileEntity $fileEntity, int $userId)
     {
         $newFileError = new FileChecksumError();
@@ -81,6 +85,7 @@ class FileChecksumService
      * @param int $userId
      * @return bool
      */
+
     public function reportChecksumError(FileEntity $fileEntity, int $userId)
     {
         $fileError = $this->fileErrorsRepository->findOneByFileId($fileEntity->getId());
@@ -108,6 +113,7 @@ class FileChecksumService
      * @param int $userId
      * @return bool
      */
+
     public function validateChecksumValue(FileEntity $fileEntity, int $userId)
     {
         if ($fileEntity->getSumError() ==  true) {
@@ -128,6 +134,7 @@ class FileChecksumService
      * @param int $status
      * @param int $userId
      */
+
     public function changeErrorStatus(FileChecksumError $fileChecksumError, int $status, int $userId)
     {
         $fileChecksumError
@@ -140,6 +147,7 @@ class FileChecksumService
      * @param FolderEntity $parentFolder
      * @param bool $errorState
      */
+
     public function changeErrorsQuantity(FolderEntity $parentFolder, bool $errorState)
     {
         $binaryPath = $this->foldersRepository->getPath($parentFolder);

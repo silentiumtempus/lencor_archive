@@ -8,11 +8,13 @@ use Twig\Extension\AbstractExtension;
  * Class FileSizeConverterExtension
  * @package App\Twig
  */
+
 class FilesystemSizeConverterExtension extends AbstractExtension
 {
     /**
      * @return array|\Twig_Filter[]
      */
+
     public function getFilters()
     {
         return array(
@@ -23,6 +25,7 @@ class FilesystemSizeConverterExtension extends AbstractExtension
     /**
      * @return string
      */
+
     public function getName()
     {
         return 'bytes_convert';
@@ -33,6 +36,7 @@ class FilesystemSizeConverterExtension extends AbstractExtension
      * @param int $precision
      * @return string
      */
+
     public function bytesConvert(int $bytes, int $precision = 2)
     {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');

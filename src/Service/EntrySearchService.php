@@ -14,6 +14,7 @@ use Symfony\Component\Form\Form;
  * Class EntrySearchService
  * @package App\Service
  */
+
 class EntrySearchService
 {
     protected $em;
@@ -28,6 +29,7 @@ class EntrySearchService
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
+
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
@@ -41,6 +43,7 @@ class EntrySearchService
      * @param BoolQuery $filterQuery
      * @return BoolQuery
      */
+
     public function performSearch(Form $searchForm, BoolQuery $filterQuery)
     {
         foreach ($searchForm->getIterator() as $key => $child) {
@@ -73,6 +76,7 @@ class EntrySearchService
      * @param bool $showDeleted
      * @return mixed
      */
+
     public function getQueryResult(Query $finalQuery, BoolQuery $filterQuery, int $limit, bool $showDeleted)
     {
         $filterQuery = $this->showDeleted($filterQuery, $showDeleted);
@@ -87,6 +91,7 @@ class EntrySearchService
      * @param bool $showDeleted
      * @return BoolQuery
      */
+
     public function showDeleted(BoolQuery $filterQuery, bool $showDeleted)
     {
         if ($showDeleted) {

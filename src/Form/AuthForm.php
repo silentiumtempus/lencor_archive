@@ -13,12 +13,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Class LoginForm
  * @package App\Form
  */
+
 class AuthForm extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -40,6 +42,7 @@ class AuthForm extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
@@ -50,6 +53,10 @@ class AuthForm extends AbstractType
             'translation_domain' => 'auth'
         ));
     }
+
+    /**
+     * @return null|string
+     */
 
     public function getBlockPrefix()
     {

@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Class EntriesEditController
  * @package App\Controller
  */
+
 class EntriesEditController extends Controller
 {
     /**
@@ -31,6 +32,7 @@ class EntriesEditController extends Controller
      *     requirements = { "$entryId" = "\d+" },
      *     defaults = { "entryId" : "" }))     *
      */
+
     //@ParamConverter("archiveEntryEntity", class="App:ArchiveEntryEntity", options = { "id" = "entryId" }, isOptional="true")
     public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, $entryId)
     {

@@ -13,6 +13,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Class EntriesContentViewController
+ * @package App\Controller
+ */
+
 class EntriesContentViewController extends Controller
 {
     /**
@@ -24,6 +29,7 @@ class EntriesContentViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_view_folders")
      */
+
     public function showEntryFolders(Request $request, FolderService $folderService)
     {
         $folderTree = null;
@@ -43,6 +49,7 @@ class EntriesContentViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_view_files")
      */
+
     public function showEntryFiles(Request $request, FileService $fileService)
     {
         $fileList = null;
@@ -62,6 +69,7 @@ class EntriesContentViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_reload_file")
      */
+
     public function changeFileStatus(Request $request, FileService $fileService)
     {
         $fileList = array();
@@ -81,6 +89,7 @@ class EntriesContentViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_view")
      */
+
     public function showEntryDetails(Request $request, FolderService $folderService)
     {
         $entryId = null;
@@ -108,6 +117,7 @@ class EntriesContentViewController extends Controller
      *     options = { "expose" = true },
      *     name = "show_requesters")
      */
+
     public function showRequesters(Request $request, CommonArchiveService $commonArchiveService, TranslatorInterface $translator)
     {
         $requesters = null;

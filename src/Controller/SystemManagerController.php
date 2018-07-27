@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class SystemManagerController
  * @package App\Controller
  */
+
 class SystemManagerController extends Controller
 {
     /**
@@ -22,6 +23,7 @@ class SystemManagerController extends Controller
      *     options = { "expose" = true },
      *     name = "system")
      */
+
     public function statsIndex(Request $request)
     {
         return $this->render('lencor/admin/archive/system_manager/index.html.twig');

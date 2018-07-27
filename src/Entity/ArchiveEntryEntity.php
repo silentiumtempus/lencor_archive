@@ -164,6 +164,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Get year
      * @return integer
      */
+
     public function getYear()
     {
         return $this->year;
@@ -346,6 +347,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Remove cataloguePath
      * @param FolderEntity $cataloguePath
      */
+
     public function removeCataloguePath(FolderEntity $cataloguePath)
     {
         $this->cataloguePath->removeElement($cataloguePath);
@@ -355,6 +357,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Serializing object for update comparison
      * @return array|mixed
      */
+
     public function jsonSerialize()
     {
         return [

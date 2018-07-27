@@ -153,6 +153,7 @@ class FolderEntity
      * @param string $folderName
      * @return FolderEntity
      */
+
     public function setFolderName($folderName)
     {
         $this->folderName = $folderName;
@@ -164,6 +165,7 @@ class FolderEntity
      * Get folderName
      * @return string
      */
+
     public function getFolderName()
     {
         return $this->folderName;
@@ -174,6 +176,7 @@ class FolderEntity
      * @param ArchiveEntryEntity $archiveEntry
      * @return FolderEntity
      */
+
     public function setArchiveEntry(ArchiveEntryEntity $archiveEntry = null)
     {
         $this->archiveEntry = $archiveEntry;
@@ -185,6 +188,7 @@ class FolderEntity
      * Get archiveEntry
      * @return ArchiveEntryEntity
      */
+
     public function getArchiveEntry()
     {
         return $this->archiveEntry;
@@ -195,6 +199,7 @@ class FolderEntity
      * @param FolderEntity $childFolder
      * @return FolderEntity
      */
+
     public function addChildFolder(FolderEntity $childFolder)
     {
         $this->childFolders[] = $childFolder;
@@ -206,6 +211,7 @@ class FolderEntity
      * Remove childFolder
      * @param FolderEntity $childFolder
      */
+
     public function removeChildFolder(FolderEntity $childFolder)
     {
         $this->childFolders->removeElement($childFolder);
@@ -215,6 +221,7 @@ class FolderEntity
      * Get childFolders
      * @return ArrayCollection
      */
+
     public function getChildFolders()
     {
         return $this->childFolders;
@@ -225,6 +232,7 @@ class FolderEntity
      * @param FileEntity $files
      * @return $this
      */
+
     public function addFiles(FileEntity $files)
     {
         $this->files[] = $files;
@@ -236,6 +244,7 @@ class FolderEntity
      * Remove files
      * @param FileEntity $files
      */
+
     public function removeFiles(FileEntity $files)
     {
         $this->files->removeElement($files);
@@ -245,6 +254,7 @@ class FolderEntity
      * Get files
      * @return ArrayCollection
      */
+
     public function getFiles()
     {
         return $this->files;
@@ -255,6 +265,7 @@ class FolderEntity
      * @param integer $lft
      * @return FolderEntity
      */
+
     public function setLft($lft)
     {
         $this->lft = $lft;
@@ -266,6 +277,7 @@ class FolderEntity
      * Get lft
      * @return integer
      */
+
     public function getLft()
     {
         return $this->lft;
@@ -276,6 +288,7 @@ class FolderEntity
      * @param integer $lvl
      * @return FolderEntity
      */
+
     public function setLvl($lvl)
     {
         $this->lvl = $lvl;
@@ -287,6 +300,7 @@ class FolderEntity
      * Get lvl
      * @return integer
      */
+
     public function getLvl()
     {
         return $this->lvl;
@@ -297,6 +311,7 @@ class FolderEntity
      * @param integer $rgt
      * @return FolderEntity
      */
+
     public function setRgt($rgt)
     {
         $this->rgt = $rgt;
@@ -308,6 +323,7 @@ class FolderEntity
      * Get rgt
      * @return integer
      */
+
     public function getRgt()
     {
         return $this->rgt;
@@ -318,6 +334,7 @@ class FolderEntity
      * @param integer $root
      * @return FolderEntity
      */
+
     public function setRoot($root)
     {
         $this->root = $root;
@@ -329,6 +346,7 @@ class FolderEntity
      * Get root
      * @return integer
      */
+
     public function getRoot()
     {
         return $this->root;

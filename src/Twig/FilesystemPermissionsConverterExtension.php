@@ -8,11 +8,13 @@ use Twig\Extension\AbstractExtension;
  * Class FilesystemPermissionsConverterExtension
  * @package App\Twig
  */
+
 class FilesystemPermissionsConverterExtension extends AbstractExtension
 {
     /**
      * @return array|\Twig_Filter[]
      */
+
     public function getFilters()
     {
         return array(
@@ -23,6 +25,7 @@ class FilesystemPermissionsConverterExtension extends AbstractExtension
     /**
      * @return string
      */
+
     public function getName()
     {
         return 'perms_convert';
@@ -32,6 +35,7 @@ class FilesystemPermissionsConverterExtension extends AbstractExtension
      * @param string $perms
      * @return string
      */
+
     public function permsConvert(string $perms)
     {
         return substr(sprintf('%o', $perms), -4);

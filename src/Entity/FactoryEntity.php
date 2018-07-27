@@ -59,6 +59,7 @@ class FactoryEntity
      * @param string $factoryName
      * @return FactoryEntity
      */
+
     public function setFactoryName($factoryName)
     {
         $this->factoryName = $factoryName;
@@ -80,6 +81,7 @@ class FactoryEntity
      * @param SettingEntity $settings
      * @return $this
      */
+
     public function addSettings(SettingEntity $settings)
     {
         $this->settings[] = $settings;
@@ -91,6 +93,7 @@ class FactoryEntity
      * Remove settings
      * @param SettingEntity $settings
      */
+
     public function removeSettings(SettingEntity $settings)
     {
         $this->settings->removeElement($settings);
@@ -100,6 +103,7 @@ class FactoryEntity
      * Get settings
      * @return ArrayCollection
      */
+
     public function getSettings()
     {
         return $this->settings;
@@ -108,6 +112,7 @@ class FactoryEntity
     /**
      * @return mixed
      */
+
     public function __toString()
     {
         return $this->factoryName;

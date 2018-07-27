@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Class LDAPConnectionModel
  * @package App\Security
  */
+
 class LDAPConnectionModel
 {
     protected $container;
@@ -22,6 +23,7 @@ class LDAPConnectionModel
      * LDAPConnectionModel constructor.
      * @param ContainerInterface $container
      */
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -37,6 +39,7 @@ class LDAPConnectionModel
     /**
      * @return string
      */
+
     public function getLDAPHost() {
 
         return $this->ldap_host;
@@ -45,6 +48,7 @@ class LDAPConnectionModel
     /**
      * @return string
      */
+
     public function getLDAPDC() {
 
         return $this->ldap_dc;
@@ -53,6 +57,7 @@ class LDAPConnectionModel
     /**
      * @return integer
      */
+
     public function getLDAPPort() {
 
         return $this->ldap_port;
@@ -61,6 +66,7 @@ class LDAPConnectionModel
     /**
      * @return integer
      */
+
     public function getLDAPVersion() {
 
         return $this->ldap_version;
@@ -69,6 +75,7 @@ class LDAPConnectionModel
     /**
      * @return string
      */
+
     public function getLDAPEncryption() {
 
         return $this->ldap_encryption;
@@ -77,6 +84,7 @@ class LDAPConnectionModel
     /**
      * @return string
      */
+
     public function getLDAPUser() {
 
         return $this->ldap_user;
@@ -85,6 +93,7 @@ class LDAPConnectionModel
     /**
      * @return string
      */
+
     public function getLDAPPassword() {
 
         return $this->ldap_password;

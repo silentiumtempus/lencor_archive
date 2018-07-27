@@ -14,6 +14,7 @@ use Symfony\Component\Finder\Finder;
  * Class FileService
  * @package App\Services
  */
+
 class FileService
 {
     protected $em;
@@ -32,6 +33,7 @@ class FileService
      * @param UserService $userService
      * @param EntryService $entryService
      */
+
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, FolderService $folderService, UserService $userService, EntryService $entryService)
     {
         $this->em = $entityManager;
@@ -47,6 +49,7 @@ class FileService
      * @param int $fileId
      * @return mixed
      */
+
     public function getFileById(int $fileId)
     {
         return $this->filesRepository->findOneById($fileId);
@@ -57,6 +60,7 @@ class FileService
      * @param string $originalName
      * @return string
      */
+
     public function constructFileAbsPath(string $folderAbsPath, string $originalName)
     {
         return $folderAbsPath . "/" . $originalName;
@@ -67,6 +71,7 @@ class FileService
      * @param string $slashDirection
      * @return null|string
      */
+
     public function getFilePath(FileEntity $requestedFile, string $slashDirection)
     {
         $path = null;
@@ -84,6 +89,7 @@ class FileService
      * @param FileEntity $requestedFile
      * @return string
      */
+
     public function getFileSharePath(FileEntity $requestedFile)
     {
         $share_root = $this->container->getParameter('lencor_archive.share_path');
@@ -97,6 +103,7 @@ class FileService
      * @param array $filesArray
      * @return FolderEntity||array
      */
+
     public function getFilesList(array $filesArray)
     {
         return $this->filesRepository->findById($filesArray);
@@ -106,6 +113,7 @@ class FileService
      * @param string $filePath
      * @return string
      */
+
     public function getFileHTTPUrl(string $filePath)
     {
         $httpRoot = $this->container->getParameter('lencor_archive.http_path');
@@ -119,6 +127,7 @@ class FileService
      * @param $file
      * @return FileEntity
      */
+
     public function createFileEntityFromArray(FileEntity $fileArrayEntity, $file)
     {
         $newFileEntity = clone $fileArrayEntity;
@@ -135,6 +144,7 @@ class FileService
      * @param string $originalName
      * @param User $user
      */
+
     public function prepareNewFile(FileEntity $newFileEntity, FolderEntity $parentFolder, string $originalName, User $user)
     {
         $parentFolder = $this->folderService->getParentFolder($parentFolder);
@@ -150,6 +160,7 @@ class FileService
     /**
      * @param FileEntity $fileEntity
      */
+
     public function persistFile(FileEntity $fileEntity)
     {
         $this->em->persist($fileEntity);
@@ -163,6 +174,7 @@ class FileService
      * @param User $user
      * @return mixed
      */
+
     public function removeFile(int $fileId, User $user)
     {
         $deletedFile = $this->filesRepository->findById($fileId);
@@ -182,6 +194,7 @@ class FileService
      * @param User $user
      * @return mixed
      */
+
     public function restoreFile(int $fileId, User $user)
     {
         $restoredFile = $this->filesRepository->findById($fileId);
@@ -204,6 +217,7 @@ class FileService
      * @param FolderService $folderService
      * @return mixed
      */
+
     public function requestFile(int $fileId, User $user, FolderService $folderService)
     {
         $requestedFile = $this->filesRepository->findById($fileId);
@@ -231,6 +245,7 @@ class FileService
      * @param array $originalFile
      * @return bool
      */
+
     public function moveFile(FileEntity $newFile, array $originalFile)
     {
         try {
@@ -256,6 +271,7 @@ class FileService
      * @param FileEntity $file
      * @return array
      */
+
     public function getOriginalData(FileEntity $file)
     {
         return $this->em->getUnitOfWork()->getOriginalEntityData($file);
@@ -264,6 +280,7 @@ class FileService
     /**
      * This is for file name update
      */
+
     public function renameFile()
     {
         $this->em->flush();
@@ -274,6 +291,7 @@ class FileService
      * @param User $user
      * @return bool
      */
+
     public function removeFilesByParentFolder(int $folderId, User $user)
     {
         $childFiles = $this->filesRepository->findByParentFolder($folderId);
@@ -294,6 +312,7 @@ class FileService
      * @param int $folderId
      * @return mixed
      */
+
     public function showEntryFiles(int $folderId)
     {
         $files = $this->filesRepository->findByParentFolder($folderId);
@@ -310,6 +329,7 @@ class FileService
      * @param int $fileId
      * @return mixed
      */
+
     public function reloadFileDetails(int $fileId)
     {
         return $this->filesRepository->findOneById($fileId);
@@ -318,6 +338,7 @@ class FileService
     /**
      * @return array
      */
+
     public function locateFiles()
     {
         $finder = new Finder();

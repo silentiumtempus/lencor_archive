@@ -16,6 +16,7 @@ use Yavin\Symfony\Form\Type\TreeType;
  * Class FolderAddForm
  * @package App\Form
  */
+
 class FolderAddForm extends AbstractType
 {
     protected $em;
@@ -24,8 +25,8 @@ class FolderAddForm extends AbstractType
     /**
      * FolderAddForm constructor.
      * @param EntityManagerInterface $em
-     *
      */
+
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
@@ -36,6 +37,7 @@ class FolderAddForm extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $parentFolder = $this->folderRepository->findOneById($options['attr']['folderId']);
@@ -71,6 +73,7 @@ class FolderAddForm extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

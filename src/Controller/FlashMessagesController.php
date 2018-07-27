@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Class ArchiveViewController
  * @package App\Controller
  */
+
 class FlashMessagesController extends Controller
 {
     /**
@@ -20,6 +21,7 @@ class FlashMessagesController extends Controller
      *     options = { "expose" = true },
      *     name = "flash_messages")
      */
+
     public function showFlashMessages()
     {
         return $this->render('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig');
@@ -32,6 +34,7 @@ class FlashMessagesController extends Controller
      *     options = { "expose" = true },
      *     name = "flash_messages_summary")
      */
+
     public function showFlashMessagesSummary()
     {
         return $this->render('lencor/admin/archive/flash_messages/archive_manager/summary.html.twig');
@@ -44,6 +47,7 @@ class FlashMessagesController extends Controller
      *     options = { "expose" = true },
      *     name = "flash_messages_clear")
      */
+
     public function clearFlashMessages()
     {
         $session = $this->container->get('session');

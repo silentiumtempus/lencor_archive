@@ -18,6 +18,7 @@ use Symfony\Component\Serializer\Serializer;
  * Class EntryService
  * @package App\Services
  */
+
 class EntryService
 {
     protected $em;
@@ -32,6 +33,7 @@ class EntryService
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      */
+
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
@@ -48,6 +50,7 @@ class EntryService
      * @param string $entryId
      * @return ArchiveEntryEntity|null
      */
+
     public function getEntryById(string $entryId)
     {
         return $this->entriesRepository->findOneById($entryId);
@@ -57,6 +60,7 @@ class EntryService
      * @param int $entryId
      * @param User $user
      */
+
     public function changeLastUpdateInfo(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
@@ -70,6 +74,7 @@ class EntryService
      * @param Request $request
      * @return ArchiveEntryEntity
      */
+
     public function loadLastUpdateInfo(Request $request)
     {
         $lastUpdateInfo = null;
@@ -86,6 +91,7 @@ class EntryService
      * @param Request $request
      * @return mixed
      */
+
     public function setEntryId(Request $request)
     {
         $session = $this->container->get('session');
@@ -102,6 +108,7 @@ class EntryService
      * @param Request $request
      * @return mixed
      */
+
     public function setFolderId(Request $request)
     {
         $session = $this->container->get('session');
@@ -119,6 +126,7 @@ class EntryService
      * @param FolderEntity $newFolder
      * @param User $user
      */
+
     public function prepareEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder, User $user)
     {
         $newEntry
@@ -133,6 +141,7 @@ class EntryService
      * @param string $filename
      * @return bool
      */
+
     public function writeDataToEntryFile(ArchiveEntryEntity $newEntry, string $filename)
     {
         try {
@@ -156,6 +165,7 @@ class EntryService
      * @param ArchiveEntryEntity $newEntry
      * @param FolderEntity $newFolder
      */
+
     public function persistEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder)
     {
         $this->em->persist($newEntry);
@@ -168,6 +178,7 @@ class EntryService
      * @param User $user
      * @return ArchiveEntryEntity
      */
+
     public function removeEntry(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
@@ -184,6 +195,7 @@ class EntryService
      * @param User $user
      * @return ArchiveEntryEntity
      */
+
     public function restoreEntry(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
@@ -203,6 +215,7 @@ class EntryService
      * @param User $user
      * @return ArchiveEntryEntity
      */
+
     public function requestEntry(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
@@ -230,6 +243,7 @@ class EntryService
      * @param ArchiveEntryEntity $archiveEntry
      * @return array
      */
+
     public function getOriginalData(ArchiveEntryEntity $archiveEntry)
     {
         return $this->em->getUnitOfWork()->getOriginalEntityData($archiveEntry);
@@ -240,6 +254,7 @@ class EntryService
      * @param ArchiveEntryEntity $archiveEntry
      * @return array
      */
+
     public function checkPathChanges(array $originalEntry, ArchiveEntryEntity $archiveEntry)
     {
         $entryUpdates = $this->checkEntryUpdates($originalEntry, $archiveEntry);
@@ -252,6 +267,7 @@ class EntryService
      * @param ArchiveEntryEntity $archiveEntry
      * @return array
      */
+
     public function checkEntryUpdates(array $originalEntry, ArchiveEntryEntity $archiveEntry)
     {
         $updatedEntry = json_decode(json_encode($archiveEntry), true);
@@ -265,6 +281,7 @@ class EntryService
      * @param array $entryUpdates
      * @return  array
      */
+
     public function findPathParameters(array $entryUpdates)
     {
         $pathParameters = array_flip($this->pathKeys);
@@ -277,6 +294,7 @@ class EntryService
      * @param ArchiveEntryEntity $archiveEntry
      * @return string
      */
+
     public function constructEntryPath(ArchiveEntryEntity $archiveEntry)
     {
         return $this->pathRoot . "/" . $archiveEntry->getYear() . "/" . $archiveEntry->getFactory()->getId() . "/" . $archiveEntry->getArchiveNumber();
@@ -286,6 +304,7 @@ class EntryService
      * @param array $originalEntry
      * @return string
      */
+
     public function constructExistingPath(array $originalEntry)
     {
         return $this->pathRoot . "/" . $originalEntry['year'] . "/" . $originalEntry['factory']->getId() . "/" . $originalEntry['archiveNumber'];
@@ -295,6 +314,7 @@ class EntryService
      * @param ArchiveEntryEntity $archiveEntry
      * @return bool
      */
+
     public function checkNewPath(ArchiveEntryEntity $archiveEntry)
     {
         $newPath = $this->constructEntryPath($archiveEntry);
@@ -311,6 +331,7 @@ class EntryService
     /**
      * This is called on entry update submit
      */
+
     public function updateEntry()
     {
         $this->em->flush();

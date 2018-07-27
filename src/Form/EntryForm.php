@@ -22,6 +22,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Class EntryFormTrait
  * @package App\Form
  */
+
 class EntryForm extends AbstractType
 {
     protected $em;
@@ -32,6 +33,7 @@ class EntryForm extends AbstractType
      * @param EntityManagerInterface $em
      * @param SettingService $settingService
      */
+
     public function __construct(EntityManagerInterface $em, SettingService $settingService)
     {
         $this->em = $em;
@@ -42,6 +44,7 @@ class EntryForm extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $function = $options['attr']['function'];
@@ -120,6 +123,7 @@ class EntryForm extends AbstractType
      * @param string $max
      * @return array
      */
+
     private function getYears($min, $max = 'current')
     {
         $years = range(($max === 'current' ? date('Y') : $max), $min);
@@ -130,6 +134,7 @@ class EntryForm extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
+
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

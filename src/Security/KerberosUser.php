@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * Class KerberosUser
  * @package App\Security
  */
+
 class KerberosUser implements UserInterface, EquatableInterface
 {
     protected $user;
@@ -18,6 +19,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      * KerberosUser constructor.
      * @param User $user
      */
+
     public function __construct(User $user)
     {
         $this->user = $user;
@@ -26,6 +28,7 @@ class KerberosUser implements UserInterface, EquatableInterface
     /**
      * @return string
      */
+
     public function __toString()
     {
         return $this->user->getUsernameCanonical();
@@ -35,6 +38,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      * Get id
      * @return int
      */
+
     public function getId()
     {
         return $this->user->getId();
@@ -44,6 +48,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      * Get username
      * @return string
      */
+
     public function getUsername()
     {
         return $this->user->getUsernameCanonical();
@@ -53,6 +58,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      * Get email
      * @return string
      */
+
     public function getEmail()
     {
         return $this->user->getEmailCanonical();
@@ -62,6 +68,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      * Get salt
      * @return string
      */
+
     public function getSalt()
     {
         return $this->user->getSalt();
@@ -71,6 +78,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      * Get lastLogin
      * @return \DateTime|null
      */
+
     public function getLastLogin()
     {
         return $this->user->getLastLogin();
@@ -80,6 +88,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      * Get roles
      * @return array
      */
+
     public function getRoles()
     {
         return $this->user->getRoles();
@@ -89,6 +98,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      * Get password (null)
      * @return string|void
      */
+
     public function getPassword()
     {
         return null;
@@ -98,6 +108,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      * Emtpy password in User object
      * @return $this
      */
+
     public function eraseCredentials()
     {
         $this->user->setPassword(null);
@@ -109,6 +120,7 @@ class KerberosUser implements UserInterface, EquatableInterface
      * @param UserInterface $user
      * @return bool
      */
+
     public function isEqualTo(UserInterface $user)
     {
         if (!$user instanceof KerberosUser) {

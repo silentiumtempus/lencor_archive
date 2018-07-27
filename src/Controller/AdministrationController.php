@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class AdministrationController
  * @package App\Controller
  */
+
 class AdministrationController extends Controller
 {
     /**
@@ -29,6 +30,7 @@ class AdministrationController extends Controller
      *     options = { "expose" = true },
      *     name="admin")
      */
+
     public function adminIndex(Request $request)
     {
         return $this->render('lencor/admin/archive/administration/index.html.twig');
@@ -43,6 +45,7 @@ class AdministrationController extends Controller
      *     options = { "expose" = true },
      *     name = "admin-factories-and-settings")
      */
+
     public function factoriesAndSettings(Request $request, FactoryService $factoryService)
     {
         $factories = $factoryService->getFactories();
@@ -63,6 +66,7 @@ class AdministrationController extends Controller
      *     name = "admin-settings")
      * @ParamConverter("factory", class="App:FactoryEntity", options = { "id" = "factory" })
      */
+
     public function loadSettings(Request $request, FactoryEntity $factory, SettingService $settingService)
     {
         $settings = $settingService->findSettingsByFactoryId($factory->getId());
@@ -82,6 +86,7 @@ class AdministrationController extends Controller
      *     name = "admin-factory-load")
      * @ParamConverter("factory", class="App:FactoryEntity", options = { "id" = "factory" })
      */
+
     public function loadFactory(Request $request, FactoryEntity $factory)
     {
         return $this->render('lencor/admin/archive/administration/factories.html.twig', array('factories' => $factory));
@@ -100,6 +105,7 @@ class AdministrationController extends Controller
      *     name = "admin-factory-edit")
      * @ParamConverter("factory", class = "App:FactoryEntity", options = { "id" = "factory" })
      */
+
     public function editFactory(Request $request, FactoryEntity $factory, FactoryService $factoryService)
     {
         $form_id = 'factory_form_' . $factory->getId();
@@ -134,6 +140,7 @@ class AdministrationController extends Controller
      *     name = "admin-setting-load")
      * @ParamConverter("setting", class="App:SettingEntity", options = { "id" = "setting" })
      */
+
     public function loadSetting(Request $request, SettingEntity $setting)
     {
         return $this->render('lencor/admin/archive/administration/settings.html.twig', array('settings' => $setting));
@@ -152,6 +159,7 @@ class AdministrationController extends Controller
      *     name = "admin-setting-edit")
      * @ParamConverter("setting", class = "App:SettingEntity", options = { "id" = "setting" })
      */
+
     public function editSetting(Request $request, SettingEntity $setting, SettingService $settingService)
     {
         $form_id = 'setting_form_' . $setting->getId();
@@ -182,6 +190,7 @@ class AdministrationController extends Controller
      *     options = { "expose" = true },
      *     name="admin-news")
      */
+
     public function news(Request $request)
     {
         return $this->render('lencor/admin/archive/administration/news.html.twig');

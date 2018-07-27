@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  * Class UserProvider
  * @package App\Security
  */
+
 class UserProvider implements UserProviderInterface
 {
     protected $LDAPService;
@@ -29,6 +30,7 @@ class UserProvider implements UserProviderInterface
      * @param string $username
      * @return User|User[]|null|UserInterface
      */
+
     public function loadUserByUsername($username)
     {
         $remoteUser = $this->LDAPService->authorizeLDAPUserByUserName($username);
@@ -46,6 +48,7 @@ class UserProvider implements UserProviderInterface
      * @param UserInterface $user
      * @return User|User[]|null|UserInterface
      */
+
     public function refreshUser(UserInterface $user)
     {
         if (!$user instanceof KerberosUser) {
@@ -61,6 +64,7 @@ class UserProvider implements UserProviderInterface
      * @param string $class
      * @return bool
      */
+
     public function supportsClass($class)
     {
         return KerberosUser::class === $class;

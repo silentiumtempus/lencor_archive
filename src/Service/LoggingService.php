@@ -15,6 +15,7 @@ use Symfony\Component\Finder\Finder;
  * Class LoggingService
  * @package App\Service
  */
+
 class LoggingService
 {
     protected $em;
@@ -30,6 +31,7 @@ class LoggingService
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      */
+
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
@@ -45,6 +47,7 @@ class LoggingService
      * @param int $entryId
      * @return string
      */
+
     public function getLogsRootPath(int $entryId)
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
@@ -59,6 +62,7 @@ class LoggingService
      * @param int $entryId
      * @return string
      */
+
     public function getLogsHTTPPath(int $entryId)
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
@@ -74,6 +78,7 @@ class LoggingService
      * @param string $folder
      * @return array|null
      */
+
     public function getLogsNavigationPath(string $parentFolder, string $folder)
     {
         if ($folder == "/" and $parentFolder == "") {
@@ -101,6 +106,7 @@ class LoggingService
      * @param string $folder
      * @return string
      */
+
     public function getLogsCurrentFolder(string $parentFolder, string $folder)
     {
         if ($folder != "/") {
@@ -116,6 +122,7 @@ class LoggingService
      * @param User $user
      * @param array $flashArray
      */
+
     public function logEntry(ArchiveEntryEntity $archiveEntryEntity, string $logsDir, User $user, array $flashArray)
     {
         $fs = new Filesystem();
@@ -143,6 +150,7 @@ class LoggingService
      * @param User $user
      * @param array $messages
      */
+
     public function logEntryContent(int $entryId, User $user, array $messages)
     {
         $entry = $this->entriesRepository->findOneById($entryId);
@@ -154,6 +162,7 @@ class LoggingService
      * @param Finder $finder
      * @return array
      */
+
     public function finderToArray(Finder $finder)
     {
         $array = [];
@@ -168,6 +177,7 @@ class LoggingService
      * @param string $logsPath
      * @return array
      */
+
     public function getEntryLogFolders(string $logsPath)
     {
         $finder = new Finder();
@@ -183,6 +193,7 @@ class LoggingService
      * @param string $logsPath
      * @return array
      */
+
     public function getEntryLogFiles(string $logsPath)
     {
         $finder = new Finder();
@@ -200,6 +211,7 @@ class LoggingService
      * @param int $rowsCount
      * @return null|string[]
      */
+
     public function getFileContent(int $entryId, string $file, int $rowsCount)
     {
         $path = $this->getLogsRootPath($entryId);

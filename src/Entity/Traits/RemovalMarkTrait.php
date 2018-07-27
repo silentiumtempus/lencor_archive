@@ -34,7 +34,7 @@ trait RemovalMarkTrait
      * @return $this
      */
 
-    public function setremovalMark($removalMark)
+    public function setRemovalMark($removalMark)
     {
         $this->removalMark = $removalMark;
 
@@ -46,7 +46,7 @@ trait RemovalMarkTrait
      * @return boolean
      */
 
-    public function getremovalMark()
+    public function getRemovalMark()
     {
         return $this->removalMark;
     }
@@ -57,7 +57,7 @@ trait RemovalMarkTrait
      * @return $this
      */
 
-    public function setmarkedByUser($markedByUser)
+    public function setMarkedByUser($markedByUser)
     {
         $this->markedByUser = $markedByUser;
 
@@ -69,7 +69,7 @@ trait RemovalMarkTrait
      * @return string
      */
 
-    public function getmarkedByUser()
+    public function getMarkedByUser()
     {
         return $this->markedByUser;
     }

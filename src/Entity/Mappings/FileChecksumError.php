@@ -25,6 +25,7 @@ use App\Entity\FileEntity;
  * }),
  * @Gedmo\Loggable(logEntryClass = "App\Entity\Mappings\LogMappings\FileChecksumErrorLog")
  */
+
 class FileChecksumError
 {
     use CommonTrait;

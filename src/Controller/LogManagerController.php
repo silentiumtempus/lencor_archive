@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class LogManagerController
  * @package App\Controller
  */
+
 class LogManagerController extends Controller
 {
     /**
@@ -31,6 +32,7 @@ class LogManagerController extends Controller
      *     options = { "expose" = true},
      *     name = "logging")
      */
+
     public function logManagerIndex(int $entryId, Request $request, LoggingService $loggingService, EntryService $archiveEntryService)
     {
         $logSearchForm = $this->createForm(LogSearchForm::class);
@@ -80,6 +82,7 @@ class LogManagerController extends Controller
      *     name = "logging-open-sub-dir")
      * @TODO : use type-hint for entry in request instead of db querying
      */
+
     public function openSubDir(Request $request, int $entryId, LoggingService $loggingService)
     {
         if ($request->get('folder')) {
@@ -110,6 +113,7 @@ class LogManagerController extends Controller
      *     options = { "expose" = true },
      *     name = "logging-open-file")
      */
+
     public function openLogFile(Request $request, LoggingService $loggingService)
     {
         if ($request->get('file') || $request->get('log_rows_count_form')) {

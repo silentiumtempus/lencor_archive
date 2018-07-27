@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
  * Class BeforeEntityRequestListener
  * @package App\EventListener
  */
+
 class BeforeEntityRequestListener
 {
     protected $em;
@@ -18,6 +19,7 @@ class BeforeEntityRequestListener
      * BeforeEntityRequestListener constructor.
      * @param EntityManager $em
      */
+
     public function __construct(EntityManager $em)
     {
         $this->em = $em;
@@ -26,6 +28,7 @@ class BeforeEntityRequestListener
     /**
      * @param GetResponseEvent $event
      */
+
     public function onKernelRequest(GetResponseEvent $event)
     {
         //$deletedFilter = $this->em

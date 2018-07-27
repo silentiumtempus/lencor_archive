@@ -20,6 +20,7 @@ use Elastica\Query;
  * Class ArchiveViewController
  * @package App\Controller
  */
+
 class EntriesViewController extends Controller
 {
     /**
@@ -35,6 +36,7 @@ class EntriesViewController extends Controller
      *     defaults = { "entry" : "" }))
      * @ParamConverter("entry", class="App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
      */
+
     public function loadEntries(Request $request, EntrySearchService $entrySearchService, ArchiveEntryEntity $entry = null)
     {
         $search_limit = $this->getParameter('archive.entries_search_limit');
@@ -56,7 +58,6 @@ class EntriesViewController extends Controller
                     }
                 }
             }
-
             $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $search_limit, true);
         }
 
@@ -72,6 +73,7 @@ class EntriesViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_remove_entry")
      */
+
     public function removeEntry(Request $request, EntryService $entryService)
     {
         $archiveEntry = null;
@@ -91,6 +93,7 @@ class EntriesViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_restore_entry")
      */
+
     public function restoreEntry(Request $request, EntryService $entryService)
     {
         $archiveEntry = null;
@@ -110,6 +113,7 @@ class EntriesViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_request_entry")
      */
+
     public function requestEntry(Request $request, EntryService $entryService)
     {
         $archiveEntry = null;
@@ -132,6 +136,7 @@ class EntriesViewController extends Controller
      *     defaults = { "field" : "0" }
      *     )
      */
+
     public function loadSearchHints(Request $request, EntrySearchService $entrySearchService, string $field)
     {
         $limit = $this->getParameter('lencor_archive.search_hints_limit');

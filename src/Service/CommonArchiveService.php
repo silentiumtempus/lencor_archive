@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
  * Class CommonArchiveService
  * @package App\Service
  */
+
 class CommonArchiveService
 {
     protected $em;
@@ -16,6 +17,12 @@ class CommonArchiveService
     protected $foldersRepository;
     protected $entriesRepository;
     protected $userService;
+
+    /**
+     * CommonArchiveService constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param UserService $userService
+     */
 
     public function __construct(EntityManagerInterface $entityManager, UserService $userService)
     {
@@ -31,6 +38,7 @@ class CommonArchiveService
      * @param string $type
      * @return array
      */
+
     public function getRequesters(int $id, string $type)
     {
         $repository = null;

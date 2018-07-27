@@ -8,11 +8,13 @@ use Twig\Extension\AbstractExtension;
  * Class FileTypeIconDeterminationExtension
  * @package App\Twig
  */
+
 class FileTypeIconDeterminationExtension extends AbstractExtension
 {
     /**
      * @return array|\Twig_Filter[]
      */
+
     public function getFilters()
     {
         return array(
@@ -23,6 +25,7 @@ class FileTypeIconDeterminationExtension extends AbstractExtension
     /**
      * @return string
      */
+
     public function getName()
     {
         return 'file_icon';
@@ -32,6 +35,7 @@ class FileTypeIconDeterminationExtension extends AbstractExtension
      * @param string $fileName
      * @return string
      */
+
     public function fileIcon(string $fileName)
     {
         switch (pathinfo($fileName, PATHINFO_EXTENSION)) {

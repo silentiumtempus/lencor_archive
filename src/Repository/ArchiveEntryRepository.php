@@ -7,6 +7,11 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Expr\Join;
 
+/**
+ * Class ArchiveEntryRepository
+ * @package App\Repository
+ */
+
 class ArchiveEntryRepository extends EntityRepository
 {
     protected $em;
@@ -18,6 +23,7 @@ class ArchiveEntryRepository extends EntityRepository
      * @param EntityManager $em
      * @param \Doctrine\ORM\Mapping\ClassMetadata $class
      */
+
     public function __construct(EntityManager $em, ClassMetadata $class)
     {
         parent::__construct($em, $class);
@@ -29,6 +35,7 @@ class ArchiveEntryRepository extends EntityRepository
      * @param int $entryId
      * @return array
      */
+
     public function getUpdateInfoByEntry(int $entryId)
     {
         return $this->queryBuilder
@@ -44,6 +51,7 @@ class ArchiveEntryRepository extends EntityRepository
      * @param int $entryId
      * @return array
      */
+
     public function getUpdateInfoByFolder(int $entryId)
     {
         return $this->queryBuilder
@@ -55,6 +63,10 @@ class ArchiveEntryRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
 
     public function createEntriesAndErrorsQueryBuilder()
     {

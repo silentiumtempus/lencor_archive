@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Class EntryAdditionController
  * @package App\Controller
  */
+
 class EntriesAdditionController extends Controller
 {
     /**
@@ -44,6 +45,7 @@ class EntriesAdditionController extends Controller
      *     options = { "expose" = true },
      *     name = "entries-new")
      */
+
     public function archiveEntryAdd(
         Request $request,
         EntryService $entryService,

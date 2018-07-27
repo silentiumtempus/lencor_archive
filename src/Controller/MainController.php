@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class MainController
  * @package App\Controller
  */
+
 class MainController extends Controller
 {
     /**
@@ -19,6 +20,7 @@ class MainController extends Controller
      *     options = { "expose" = true },
      *     name = "index")
      */
+
     public function Index()
     {
         return $this->render('lencor/admin/archive/index.html.twig');

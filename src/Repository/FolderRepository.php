@@ -6,6 +6,11 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
+/**
+ * Class FolderRepository
+ * @package App\Repository
+ */
+
 class FolderRepository extends NestedTreeRepository
 {
     /**
@@ -13,6 +18,7 @@ class FolderRepository extends NestedTreeRepository
      * @param int $folderId
      * @return QueryBuilder
      */
+
     public function getEntryFoldersQuery(EntityRepository $entityRepository, int $folderId)
     {
         return $entityRepository->createQueryBuilder('parent')

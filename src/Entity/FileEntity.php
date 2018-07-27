@@ -109,6 +109,7 @@ class FileEntity
      * Convert to string
      * @return mixed
      */
+
     public function __toString()
     {
         return $this->fileName;
@@ -119,6 +120,7 @@ class FileEntity
      * @param array $files
      * @return FileEntity
      */
+
     public function setFiles($files)
     {
         $this->files = $files;
@@ -130,6 +132,7 @@ class FileEntity
      * Get files
      * @return array
      */
+
     public function getFiles()
     {
         return $this->files;
@@ -140,6 +143,7 @@ class FileEntity
      * @param string $fileName
      * @return FileEntity
      */
+
     public function setFileName($fileName)
     {
         $this->fileName = $fileName;
@@ -151,6 +155,7 @@ class FileEntity
      * Get fileName
      * @return string
      */
+
     public function getFileName()
     {
         return $this->fileName;
@@ -161,6 +166,7 @@ class FileEntity
      * @param string $checksum
      * @return FileEntity
      */
+
     public function setChecksum($checksum)
     {
         $this->checksum = $checksum;
@@ -172,6 +178,7 @@ class FileEntity
      * Get checksum
      * @return string
      */
+
     public function getChecksum()
     {
         return $this->checksum;
@@ -182,6 +189,7 @@ class FileEntity
      * @param boolean $sumError
      * @return FileEntity
      */
+
     public function setSumError($sumError)
     {
         $this->sumError = $sumError;
@@ -193,6 +201,7 @@ class FileEntity
      * Get sumError
      * @return boolean
      */
+
     public function getSumError()
     {
         return $this->sumError;

@@ -28,6 +28,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
  * Class FilesAndFoldersController
  * @package App\Controller
  */
+
 class FilesAndFoldersController extends Controller
 {
     /**
@@ -41,6 +42,7 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_new_folder")
      */
+
     public function createNewFolder(Request $request, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
@@ -147,6 +149,7 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_new_file")
      */
+
     public function uploadNewFile(Request $request, FileService $fileService, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
@@ -276,6 +279,7 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_restore_file")
      */
+
     public function restoreFile(Request $request, FileService $fileService)
     {
         $restoredFile = $fileService->restoreFile($request->get('fileId'), $this->getUser());
@@ -293,6 +297,7 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_request_file")
      */
+
     public function requestFile(Request $request, FileService $fileService, FolderService $folderService)
     {
         $requestedFile = $fileService->requestFile($request->get('fileId'), $this->getUser(), $folderService);
@@ -314,6 +319,7 @@ class FilesAndFoldersController extends Controller
      *     name = "entries_rename_file")
      * @ParamConverter("file", class = "App:FileEntity", options = { "id" = "file" })
      */
+
     public function renameFile(Request $request, FileEntity $file, FileService $fileService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
@@ -358,6 +364,7 @@ class FilesAndFoldersController extends Controller
      *     name = "entries_reload_file")
      * @ParamConverter("file", class = "App:FileEntity", isOptional = true, options = { "id" = "file" })
      */
+
     public function reloadFiles(Request $request, FileEntity $file, FileService $fileService)
     {
         if ($request->request->has('filesArray')) {
@@ -383,6 +390,7 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_remove_folder")
      */
+
     public function removeFolder(Request $request, FolderService $folderService, FileService $fileService)
     {
         $deletedFolder = $folderService->removeFolder($request->get('folderId'), $this->getUser(), $fileService);
@@ -399,6 +407,7 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_restore_folder")
      */
+
     public function restoreFolder(Request $request, FolderService $folderService)
     {
         $restoredFolders = $folderService->restoreFolder($request->get('folderId'), $this->getUser());
@@ -415,6 +424,7 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_request_folder")
      */
+
     public function requestFolder(Request $request, FolderService $folderService)
     {
         $requestedFolder[] = $folderService->requestFolder($request->get('folderId'), $this->getUser());
@@ -434,6 +444,7 @@ class FilesAndFoldersController extends Controller
      *     name = "entries_rename_folder")
      * @ParamConverter("folder", class = "App:FolderEntity", options = { "id" = "folder" })
      */
+
     public function renameFolder(Request $request, FolderEntity $folder, FolderService $folderService, LoggingService $loggingService)
     {
         $session = $this->container->get('session');
@@ -479,6 +490,7 @@ class FilesAndFoldersController extends Controller
      *     name = "entries_reload_folders")
      * @ParamConverter("folder", class = "App:FolderEntity", isOptional = true, options = { "id" = "folder" })
      */
+
     public function reloadFolders(Request $request, FolderEntity $folder = null, FolderService $folderService)
     {
         if ($request->request->has('foldersArray')) {
@@ -503,6 +515,7 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_change_last_update_info")
      */
+
     public function changeLastUpdateInfo($entryId = null, EntryService $archiveEntryService)
     {
         if ($entryId) {
@@ -525,6 +538,7 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_last_update_info")
      */
+
     public function loadLastUpdateInfo(Request $request, EntryService $archiveEntryService)
     {
         $lastUpdateInfo = $archiveEntryService->loadLastUpdateInfo($request);
@@ -541,6 +555,7 @@ class FilesAndFoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_get_folder_entryId")
      */
+
     public function getFolderEntryId(Request $request, FolderService $folderService)
     {
         $entryId = null;
@@ -565,6 +580,7 @@ class FilesAndFoldersController extends Controller
      *     name = "entries_download_file")
      * @ParamConverter("file", class = "App:FileEntity", options = { "id" = "file" })
      */
+
     public function downloadFile(Request $request, FileEntity $file, FileService $fileService, FileChecksumService $fileChecksumService)
     {
         $checkStatus = null;

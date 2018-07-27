@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
  * Class FactoryService
  * @package App\Service
  */
+
 class FactoryService
 {
     protected $em;
@@ -18,6 +19,7 @@ class FactoryService
      * FactoryService constructor.
      * @param EntityManagerInterface $entityManager
      */
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
@@ -27,6 +29,7 @@ class FactoryService
     /**
      * @param FactoryEntity $newFactory
      */
+
     public function createFactory(FactoryEntity $newFactory)
     {
         $this->em->persist($newFactory);
@@ -36,6 +39,7 @@ class FactoryService
     /**
      * This is called on factory property change submit
      */
+
     public function updateFactory()
     {
         $this->em->flush();
@@ -44,6 +48,7 @@ class FactoryService
     /**
      * @return FactoryEntity[]|array
      */
+
     public function getFactories()
     {
         return $this->factoriesRepository->findAll();
@@ -53,6 +58,7 @@ class FactoryService
      * @param integer $factoryId
      * @return FactoryEntity|null|object
      */
+
     public function findFactory(int $factoryId)
     {
         return $this->factoriesRepository->find($factoryId);

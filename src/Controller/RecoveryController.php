@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class RecoveryController
  * @package App\Controller
  */
+
 class RecoveryController extends Controller
 {
     /**
@@ -24,6 +25,7 @@ class RecoveryController extends Controller
      *     options = { "expose" = true },
      *     name = "recovery")
      */
+
     public function recoveryIndex(Request $request) {
 
         return $this->render('lencor/admin/archive/administration/recovery/index.html.twig');
@@ -37,6 +39,7 @@ class RecoveryController extends Controller
      *     options = { "expose" = true },
      *     name = "recovery-find")
      */
+
     public function findEntryFiles(Request $request, FileService $fileService)
     {
         $files = $fileService->locateFiles();
@@ -54,6 +57,7 @@ class RecoveryController extends Controller
      *     options = { "expose" = true },
      *     name = "recovery-exec")
      */
+
     public function restoreEntries(Request $request, FileService $fileService, EntryService $entryService)
     {
         $result = null;

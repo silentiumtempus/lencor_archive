@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name = "log_archive_checksum_errors")
  * @ORM\Entity(repositoryClass = "Gedmo\Loggable\Entity\Repository\LogEntryRepository")
  */
+
 class FileChecksumErrorLog extends AbstractLogEntry
 {
 }

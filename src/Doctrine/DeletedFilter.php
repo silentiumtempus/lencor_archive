@@ -9,6 +9,7 @@ use Doctrine\ORM\Query\Filter\SQLFilter;
  * Class DeletedFilter
  * @package App\Doctrine
  */
+
 class DeletedFilter extends SQLFilter
 {
     /**
@@ -16,6 +17,7 @@ class DeletedFilter extends SQLFilter
      * @param string $targetTableAlias
      * @return string
      */
+
     public function addFilterConstraint(ClassMetadata $targetEntity, $targetTableAlias)
     {
         $classes = [

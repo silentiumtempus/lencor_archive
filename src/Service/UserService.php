@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
  * Class UserService
  * @package App\Service
  */
+
 class UserService
 {
     protected $em;
@@ -28,6 +29,7 @@ class UserService
      * @param ContainerInterface $container
      * @param EncoderFactoryInterface $encoderFactory
      */
+
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EncoderFactoryInterface $encoderFactory)
     {
         $this->em = $entityManager;
@@ -43,6 +45,7 @@ class UserService
      * @param array $userIds
      * @return \App\Entity\User[]|array
      */
+
     public function getUsers(array $userIds)
     {
         return $this->usersRepository->findById($userIds);
@@ -52,6 +55,7 @@ class UserService
      * @param $username
      * @return \App\Entity\User[]|null
      */
+
     public function getUserByCanonicalName($username)
     {
 
@@ -62,6 +66,7 @@ class UserService
      * @param Entry $remoteUser
      * @return User
      */
+
     public function createKerberosUser(Entry $remoteUser)
     {
         $user = $this->prepareKerberosUser($remoteUser);
@@ -76,6 +81,7 @@ class UserService
      * @param User $user
      * @return string
      */
+
     private function setDefaultPassword(User $user)
     {
         $encoder = $this->encoderFactory->getEncoder($user);
@@ -87,6 +93,7 @@ class UserService
      * @param Entry $kerberosUser
      * @return User
      */
+
     private function prepareKerberosUser(Entry $kerberosUser)
     {
         $user = new User();
@@ -118,6 +125,7 @@ class UserService
     /**
      * @param User $user
      */
+
     private function persistNewKerberosUser(User $user)
     {
         $this->em->persist($user);
@@ -127,6 +135,7 @@ class UserService
     /**
      * @param User $user
      */
+
     public function updateLastLogin(User $user)
     {
         $user->setLastLogin(new \DateTime());
