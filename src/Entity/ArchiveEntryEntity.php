@@ -3,7 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
-use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\DeletedChildrenTrait;
+use App\Entity\Traits\DeletedStateTrait;
 use App\Entity\Traits\RemovalMarkTrait;
 use App\Entity\Traits\ModificationFieldsTrait;
 use App\Entity\Traits\RestorationRequestsTrait;
@@ -40,7 +41,8 @@ class ArchiveEntryEntity implements \JsonSerializable
     use SumErrorsTrait;
     use ModificationFieldsTrait;
     use RestorationRequestsTrait;
-    use DeleteStateTrait;
+    use DeletedStateTrait;
+    use DeletedChildrenTrait;
 
     /**
      * @ORM\Column(type = "integer", length = 4)

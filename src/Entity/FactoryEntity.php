@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
-use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\DeletedStateTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -26,7 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class FactoryEntity
 {
     use CommonTrait;
-    use DeleteStateTrait;
+    use DeletedStateTrait;
 
     /**
      * @ORM\Column(type = "string")

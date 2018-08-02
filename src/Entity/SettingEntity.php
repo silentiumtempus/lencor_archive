@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
-use App\Entity\Traits\DeleteStateTrait;
+use App\Entity\Traits\DeletedStateTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SettingEntity
 {
     use CommonTrait;
-    use DeleteStateTrait;
+    use DeletedStateTrait;
 
     /**
      * @ORM\ManyToOne(targetEntity = "FactoryEntity", inversedBy = "settings", cascade = {"persist"})
