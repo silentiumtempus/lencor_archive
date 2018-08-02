@@ -147,7 +147,7 @@ class FileChecksumService
      * @param FolderEntity $parentFolder
      * @param bool $errorState
      */
-
+    
     public function changeErrorsQuantity(FolderEntity $parentFolder, bool $errorState)
     {
         $binaryPath = $this->foldersRepository->getPath($parentFolder);

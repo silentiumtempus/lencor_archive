@@ -27,6 +27,7 @@ class EntriesViewController extends Controller
      * @param Request $request
      * @param EntrySearchService $entrySearchService
      * @param ArchiveEntryEntity $entry
+     * @param string $deleted
      * @return Response
      * @Security("has_role('ROLE_USER')")
      * @Route("/entries/{entry}",
@@ -34,10 +35,22 @@ class EntriesViewController extends Controller
      *     name = "entries",
      *     requirements = { "entry" = "\d+" },
      *     defaults = { "entry" : "" }))
-     * @ParamConverter("entry", class="App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
+     * @Route("/admin/{deleted}/{entry}",
+     *     options = { "expose" = true },
+     *     name = "admin-deleted-entries",
+     *     requirements = {
+     *          "deleted" = "deleted",
+     *          "entry" = "\d+"
+     *     },
+     *     defaults = {
+     *          "deleted" = "deleted",
+     *          "entry" : ""
+     *     },
+     * ))
+     * @ParamConverter("entry", class = "App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
      */
 
-    public function loadEntries(Request $request, EntrySearchService $entrySearchService, ArchiveEntryEntity $entry = null)
+    public function loadEntries(Request $request, EntrySearchService $entrySearchService, string $deleted = null, ArchiveEntryEntity $entry = null)
     {
         $search_limit = $this->getParameter('archive.entries_search_limit');
         $finalQuery = new Query();
@@ -58,10 +71,10 @@ class EntriesViewController extends Controller
                     }
                 }
             }
-            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $search_limit, true);
+            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $search_limit, $deleted ? true : false);
         }
 
-        return $this->render('/lencor/admin/archive/archive_manager/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath));
+        return $this->render('/lencor/admin/archive/archive_manager/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath, 'deleted' => $deleted));
     }
 
     /**
@@ -81,7 +94,7 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->removeEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
+        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry, 'deleted' => false));
     }
 
     /**
@@ -101,7 +114,7 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->restoreEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
+        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry, 'deleted' => false));
     }
 
     /**
@@ -121,7 +134,7 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->requestEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
+        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry, 'deleted' => false));
     }
 
     /**

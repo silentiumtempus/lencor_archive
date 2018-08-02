@@ -21,12 +21,14 @@
     {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
     {{ include('lencor/admin/archive/archive_manager/entries_search.html.twig') }}
     <div>
-        <div class="left page-title"><h3>{{ 'entries.title.list'|trans }}</h3></div>
+        <div class="left page-title"><h3>{% if deleted %} {{ 'entries.deleted.title.list'|trans }} {% else %} {{ 'entries.title.list'|trans }} {% endif %}</h3></div>
+        {% if not deleted %}
         <div class="right">
             <a href="{{ path('entries-new') }}" class="button right">
             <i class="fa fa-pencil" aria-hidden="true"> </i> {{ 'button.entry.create'|trans }}
             </a>
         </div>
+        {% endif %}
     </div>
     <table class="table white" id="main-table" data-path="{{ path('entries') }}">
         <thead>

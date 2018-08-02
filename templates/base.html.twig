@@ -47,46 +47,50 @@
                                     <a href="{{ path('entries-new') }}">{{ 'header.menu.manager.menu2'|trans }}</a>
                                 </li>
                                 {% if is_granted('ROLE_ADMIN') %}
-                                <li>
-                                    <a href="{{ path('admin-entries') }}">{{ 'header.menu.manager.menu3'|trans }}</a>
-                                </li>
+                                    <li>
+                                        <a href="{{ path('admin-entries') }}">{{ 'header.menu.manager.menu3'|trans }}</a>
+                                    </li>
+                                    <li>
+                                        <!-- //@TODO: find a solution for this URL generation issue -->
+                                        <a href="{{ path('admin-deleted-entries')}}/deleted">{{ 'header.menu.manager.menu4'|trans }}</a>
+                                    </li>
                                 {% endif %}
                             </ul>
                         </li>
                         {% if is_granted('ROLE_ADMIN') %}
-                        <li>
-                            <a href="{{ path('system') }}">
-                                <span><i class="fa fa-cog"> </i> {{ 'header.menu.system'|trans }} <i class="fa fa-angle-down"> </i> </span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ path('admin') }}">
-                                <span><i class="fa fa-wrench"> </i> {{ 'header.menu.admin.menu0'|trans }} <i class="fa fa-angle-down"> </i></span>
-                            </a>
-                            <ul>
-                                <li>
-                                    <a href="{{ path('admin-factories-and-settings') }}">{{ 'header.menu.admin.menu1'|trans }}</a>
-                                </li>
-                                <li>
-                                    <a href="{{ path('admin-news') }}">{{ 'header.menu.admin.menu2'|trans }}</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="{{ path('logging') }}">
-                                <span><i class="fa fa-history"> </i> {{ 'header.menu.logging.menu0'|trans }} <i class="fa fa-angle-down"> </i></span>
-                            </a>
-                            <ul>
-                                <li>
-                                    <a href="{{ path('logging') }}"> {{ 'header.menu.logging.menu1'|trans }}</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="{{ path('stats') }}">
-                                <span><i class="fa fa-info"> </i> {{ 'header.menu.stats'|trans }} <i class="fa fa-angle-down"> </i></span>
-                            </a>
-                        </li>
+                            <li>
+                                <a href="{{ path('system') }}">
+                                    <span><i class="fa fa-cog"> </i> {{ 'header.menu.system'|trans }} <i class="fa fa-angle-down"> </i> </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('admin') }}">
+                                    <span><i class="fa fa-wrench"> </i> {{ 'header.menu.admin.menu0'|trans }} <i class="fa fa-angle-down"> </i></span>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="{{ path('admin-factories-and-settings') }}">{{ 'header.menu.admin.menu1'|trans }}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('admin-news') }}">{{ 'header.menu.admin.menu2'|trans }}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="{{ path('logging') }}">
+                                    <span><i class="fa fa-history"> </i> {{ 'header.menu.logging.menu0'|trans }} <i class="fa fa-angle-down"> </i></span>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="{{ path('logging') }}"> {{ 'header.menu.logging.menu1'|trans }}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="{{ path('stats') }}">
+                                    <span><i class="fa fa-info"> </i> {{ 'header.menu.stats'|trans }} <i class="fa fa-angle-down"> </i></span>
+                                </a>
+                            </li>
                         {% endif %}
                     </ul>
                     <ul class="right">
@@ -124,7 +128,7 @@
                             {{ 'header.title'|trans }}
                         </a>
                         {% if app.user %}
-                        <div class="greeting">{{ 'header.greeting'|trans }} {{ app.user.username }}!</div>
+                            <div class="greeting">{{ 'header.greeting'|trans }} {{ app.user.username }}!</div>
                         {% endif %}
                     </div>
                 </div>

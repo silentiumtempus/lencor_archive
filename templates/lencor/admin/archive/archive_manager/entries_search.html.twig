@@ -1,6 +1,6 @@
 {% trans_default_domain 'entries' %}
 <div class="page-title">
-    <h3>{{ 'entries.title.search'|trans }}</h3>
+    <h3>{% if deleted %} {{ 'entries.deleted.title.search'|trans  }} {% else %} {{ 'entries.title.search'|trans }} {% endif %}</h3>
 </div>
 <div>
     {{ form_start(searchForm) }}

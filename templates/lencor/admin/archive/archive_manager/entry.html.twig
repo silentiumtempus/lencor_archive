@@ -1,4 +1,4 @@
-<tr id="entry_{{ entry.id }}" class="description{% if entry.removalMark != 0 %} deleted {% endif %}">
+<tr id="entry_{{ entry.id }}" class="description{% if entry.removalMark != 0 %} marked {% endif %} {% if entry.deleted !=0 %} deleted {% endif %}">
     <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i id="down" class="fa fa-angle-down"> </i><i id="up" class="fa fa-angle-up"> </i><i class="fa fa-folder-o"> </i></a></td>
     <td>
         {% if entry.removalMark != 0 %}
@@ -26,17 +26,20 @@
         {% endif %}
     </td>
     <td class="icons text-center" id="{{ entry.id }}">
-        {#<a href="#" name="openPath" class="open" target="_blank"><i class="fa fa-hdd-o"> </i></a>#}
-        <a href="#" name="addFiles"><i class="fa fa-upload"> </i></a>&nbsp;
-        <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"> </i><i class="fa fa-folder-o"> </i></a>&nbsp;
-        {% if entry.removalMark !=0 %}
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="#" name="restoreEntry" class="non-opaque"><i class="fa fa-undo non-opaque" title="Восстановить ячейку"> </i></a>
+        {% if not deleted %}
+            <a href="#" name="addFiles"><i class="fa fa-upload"> </i></a>&nbsp;
+            <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"> </i><i class="fa fa-folder-o"> </i></a>&nbsp;
+            {% if entry.removalMark !=0 %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="#" name="restoreEntry" class="non-opaque"><i class="fa fa-undo non-opaque" title="Снять метки удаления"> </i></a>
+                {% else %}
+                    <a href="#" name="requestEntry" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
+                {% endif %}
             {% else %}
-                <a href="#" name="requestEntry" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
+                <a href="#" name="removeEntry"><i class="fa fa-trash" title="Пометить к удалению"> </i></a>
             {% endif %}
         {% else %}
-            <a href="#" name="removeEntry"><i class="fa fa-trash" title="Пометить к удалению"> </i></a>
+            <a href="#" name="undeleteEntry" class="non-opaque"><i class="fa fa-undo non-opaque" title="Восстановить ячейку"> </i></a>
         {% endif %}
         {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path('admin-entries', {'entryId' : entry.id}) }}" target="_blank"><i class="fa fa-edit" title="Редактировать"> </i></a>

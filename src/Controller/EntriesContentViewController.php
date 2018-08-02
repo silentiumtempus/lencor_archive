@@ -104,7 +104,8 @@ class EntriesContentViewController extends Controller
         return $this->render('lencor/admin/archive/archive_manager/entries_head.html.twig', array(
             'folderId' => $folderId,
             'entryId' => $entryId,
-            'addHeaderAndButtons' => $addHeaderAndButtons));
+            'addHeaderAndButtons' => $addHeaderAndButtons,
+            'deleted' => $request->get('deleted')));
     }
 
     /**

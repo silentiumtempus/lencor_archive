@@ -141,7 +141,7 @@ body {
           padding: 0;
           vertical-align: middle;
         }
-        .deleted {
+        .marked {
           span {
             color: rgba(#2c3e50, 0.5);
             & :not(.non-opaque) {
@@ -171,12 +171,23 @@ body {
       .border-top {
         border-top: 1px dashed silver;
       }
-      .deleted {
+      .marked {
         td {
           color: rgba(#2c3e50, 0.5);
           & :not(.non-opaque) {
             opacity: 0.5;
           }
+        }
+      }
+      .deleted {
+        &:after {
+          content: " ";
+          position: absolute;
+          display: inline-block;
+          padding: 8px 0;
+          left: 55px;
+          border-bottom: 1px solid darkgrey;
+          width: 95%;
         }
       }
     }

@@ -3,13 +3,19 @@ $(document).ready(function () {
     } else {
         require("jquery-ui/ui/widgets/autocomplete");
         /** Do not touch this **/
-        let $path = Routing.generate('entries');
+        let deleted = false;
+        let $path;
+        if (window.location.href.indexOf("deleted") > -1) {
+            deleted = true;
+            $path = Routing.generate('admin-deleted-entries') + "/deleted";
+        } else {
+            $path = Routing.generate('entries', {deleted: deleted});
+        }
         let $factory = $('#entry_search_form_factory');
         let searchForm = $("#entry_search_form");
         let createFolderBlock = $("#addFolder");
         let uploadFileBlock = $("#addFiles");
         let downloadFileBlock = $("#downloadFile");
-
         /** Seriously, it'a a bad idea  :) **/
 
         /** Archive entries main table factory->settings AJAX loader **/
@@ -41,14 +47,6 @@ $(document).ready(function () {
             $('#main-tbody').hide();
             $('#loading-spinner').show().css('display', 'contents');
             let fields = searchForm.serializeArray();
-            /** @TODO: To be removed if not affecting anything **/
-            /*
-            let values = {};
-            jQuery.each(fields, function (i, field) {
-                values[field.name] = field.value;
-            }); */
-
-            /** **/
             $.ajax({
                 url: $path,
                 method: searchForm.attr('method'),
@@ -100,7 +98,7 @@ $(document).ready(function () {
                 $.ajax({
                     url: Routing.generate('entries_view'),
                     method: searchForm.attr('method'),
-                    data: {entryId: entryId},
+                    data: {entryId: entryId, deleted: deleted},
                     success: function (response) {
                         contentPlace.html($(response));
                         loadLastUpdateInfo(entryId, null);
