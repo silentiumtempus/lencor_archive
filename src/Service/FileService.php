@@ -281,7 +281,7 @@ class FileService
      * This is for file name update
      */
 
-    public function renameFile()
+    public function flushFile()
     {
         $this->em->flush();
     }
@@ -297,10 +297,10 @@ class FileService
         $childFiles = $this->filesRepository->findByParentFolder($folderId);
         if ($childFiles) {
             foreach ($childFiles as $childFile) {
-                if (!$childFile->getremovalMark()) {
+                if (!$childFile->getRemovalMark()) {
                     $childFile
-                        ->setremovalMark(true)
-                        ->setmarkedByUser($user);
+                        ->setRemovalMark(true)
+                        ->setMarkedByUser($user);
                 }
             }
         }
@@ -350,4 +350,5 @@ class FileService
 
         return $entryFiles;
     }
+
 }

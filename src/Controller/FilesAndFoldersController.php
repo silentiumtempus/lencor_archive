@@ -8,6 +8,7 @@ use App\Form\FileAddForm;
 use App\Form\FileRenameForm;
 use App\Form\FolderAddForm;
 use App\Form\FolderRenameForm;
+use App\Service\DeleteService;
 use App\Service\EntryService;
 use App\Service\FileChecksumService;
 use App\Service\FileService;
@@ -15,6 +16,7 @@ use App\Service\FolderService;
 use App\Service\LoggingService;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,7 +30,6 @@ use Symfony\Component\Filesystem\Exception\IOException;
  * Class FilesAndFoldersController
  * @package App\Controller
  */
-
 class FilesAndFoldersController extends Controller
 {
     /**
@@ -231,7 +232,6 @@ class FilesAndFoldersController extends Controller
                                 }
                             };
                         }
-
                         if ($passed != 0) {
                             $this->addFlash('passed', $passed . ' файлов успешно загружено.');
                         }
@@ -331,7 +331,7 @@ class FilesAndFoldersController extends Controller
                 $originalFile = $fileService->getOriginalData($file);
                 if ($originalFile['fileName'] != $file->getFileName()) {
                     if ($fileService->moveFile($file, $originalFile)) {
-                        $fileService->renameFile();
+                        $fileService->flushFile();
                         $this->addFlash('success', 'Переименование ' . $originalFile['fileName'] . ' > ' . $file->getFileName() . ' успешно произведено.');
                     } else {
                         $this->addFlash('danger', 'Переименование отменено из за внутренней ошибки.');
@@ -357,7 +357,7 @@ class FilesAndFoldersController extends Controller
      * @param FileService $fileService
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/reload_files/{file}",
+     * @Route("/entries/reload_file/{file}",
      *     requirements = { "file" = "\d+" },
      *     defaults = { "file" : "" },
      *     options = { "expose" = true },
@@ -365,7 +365,7 @@ class FilesAndFoldersController extends Controller
      * @ParamConverter("file", class = "App:FileEntity", isOptional = true, options = { "id" = "file" })
      */
 
-    public function reloadFiles(Request $request, FileEntity $file, FileService $fileService)
+    public function reloadFile(Request $request, FileEntity $file, FileService $fileService)
     {
         if ($request->request->has('filesArray')) {
             $filesArray = $fileService->getFilesList($request->get('filesArray'));
@@ -374,6 +374,49 @@ class FilesAndFoldersController extends Controller
         } elseif ($file) {
 
             return $this->render('lencor/admin/archive/archive_manager/file.html.twig', array('file' => $file));
+        } else {
+
+            return $this->redirectToRoute('entries');
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param FileEntity $file
+     * @param DeleteService $deleteService
+     * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("/admin/delete/file/{file}",
+     *     requirements = { "file" = "\d+" },
+     *     defaults = { "file" : "" },
+     *     options = { "expose" = true },
+     *     name = "entries_delete_file")
+     * @ParamConverter("file", class = "App:FileEntity", isOptional = true, options = { "id" = "file" })
+     */
+    public function deleteFile(Request $request, FileEntity $file, DeleteService $deleteService)
+    {
+        if ($request->request->has('filesArray')) {
+            try {
+                $deleteService->deleteFiles($request->get('filesArray'));
+                $this->addFlash('success', 'Файлы успешно удалены');
+
+                return new Response(1);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Файлы не удалёны из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new Response(0);
+            }
+        } elseif ($file) {
+            try {
+                $deleteService->deleteFile($file);
+                $this->addFlash('success', 'Файл '. $file->getFileName() . ' успешно удалён');
+
+                return new Response(1);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Файл ' . $file->getFileName() . ' не удалён из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new Response(0);
+            }
         } else {
 
             return $this->redirectToRoute('entries');
@@ -479,19 +522,19 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
-     * @param FolderEntity $folder
      * @param FolderService $folderService
+     * @param FolderEntity $folder
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/reload_folders/{folder}",
+     * @Route("/entries/reload_folder/{folder}",
      *     requirements = { "folder" = "\d+" },
      *     defaults = { "folder" : "" },
      *     options = { "expose" = true },
-     *     name = "entries_reload_folders")
+     *     name = "entries_reload_folder")
      * @ParamConverter("folder", class = "App:FolderEntity", isOptional = true, options = { "id" = "folder" })
      */
 
-    public function reloadFolders(Request $request, FolderEntity $folder = null, FolderService $folderService)
+    public function reloadFolder(Request $request, FolderService $folderService, FolderEntity $folder = null)
     {
         if ($request->request->has('foldersArray')) {
             $foldersArray = $folderService->getFoldersList($request->get('foldersArray'));
@@ -507,8 +550,8 @@ class FilesAndFoldersController extends Controller
     }
 
     /**
-     * @param String $entryId
      * @param EntryService $archiveEntryService
+     * @param String $entryId
      * @return Response
      * @Security("has_role('ROLE_USER')")
      * @Route("/entries/change_last_update_info",
@@ -516,7 +559,7 @@ class FilesAndFoldersController extends Controller
      *     name = "entries_change_last_update_info")
      */
 
-    public function changeLastUpdateInfo($entryId = null, EntryService $archiveEntryService)
+    public function changeLastUpdateInfo(EntryService $archiveEntryService, $entryId = null)
     {
         if ($entryId) {
             try {

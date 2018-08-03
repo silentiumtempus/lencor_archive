@@ -1,4 +1,4 @@
-<li id="file_{{ file.id }}" class="dashed row {% if file.removalMark != 0 %} deleted {% endif %}">
+<li id="file_{{ file.id }}" class="dashed row {% if file.removalMark != 0 %} marked {% endif %}">
     <span id="{{ file.id }}">
         {% if file.removalMark != 0 %}
             <i class="fa fa-remove"> </i>
@@ -23,18 +23,23 @@
         <i class="fa fa-user" id="lastChangeInfo"> </i>
         </span>
     <span id="{{ file.id }}" class="text-right width-66">
-        {% if file.removalMark != 0 %}
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="#" name="restoreFile" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
+        {% if not file.deleted %}
+            {% if file.removalMark != 0 %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="#" name="restoreFile" class="non-opaque"><i class="fa fa-undo non-opaque" title="Снять метку"> </i></a>
+                    <a href="#" name="deleteFile" class="non-opaque"><i class="fa fa-check non-opaque" title="Удалить файл"> </i></a>
+                {% else %}
+                    <a href="#" name="requestFile" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
+                {% endif %}
             {% else %}
-                <a href="#" name="requestFile" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
+                <a href="#" name="downloadFile"><i class="fa fa-download"> </i></a>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="#" name="renameFile"><i class="fa fa-pencil"> </i></a>
+                {% endif %}
+                <a href="#" name="removeFile"><i class="fa fa-trash-o"> </i></a>
             {% endif %}
         {% else %}
-            <a href="#" name="downloadFile"><i class="fa fa-download"> </i></a>
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="#" name="renameFile"><i class="fa fa-pencil"> </i></a>
-            {% endif %}
-            <a href="#" name="removeFile"><i class="fa fa-trash-o"> </i></a>
+            <a href="#" name="undeleteFile" class="non-opaque"><i class="fa fa-undo non-opaque" title="Восстановить файл"> </i></a>
         {% endif %}
         </span>
 </li>

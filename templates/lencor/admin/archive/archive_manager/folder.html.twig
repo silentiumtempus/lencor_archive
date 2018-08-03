@@ -1,4 +1,4 @@
-<li id="folder_{{ folder.id }}" class="dashed {% if folder.removalMark !=0 %} deleted {% endif %}">
+<li id="folder_{{ folder.id }}" class="dashed {% if folder.removalMark !=0 %} marked {% endif %}">
     <ul>
         <li class="row">
             <span id="{{ folder.id }}">
@@ -27,9 +27,11 @@
                 &nbsp;<i class="fa fa-user" id="lastChangeInfo"> </i>
                     </span>
             <span id="{{ folder.id }}" class="text-right width-66">
+                {% if not folder.deleted %}
                     {% if folder.removalMark != 0 %}
                         {% if is_granted('ROLE_ADMIN') %}
                             <a href="#" name="restoreFolder" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
+                            <a href="#" name="deleteFolder" class="non-opaque"><i class="fa fa-check non-opaque" title="Удалить каталог"> </i></a>
                         {% else %}
                             <a href="#" name="requestFolder" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
                         {% endif %}
@@ -41,6 +43,9 @@
                         {% endif %}
                         <a href="#" name="removeFolder"><i class="fa fa-trash-o" id="removeFolder"> </i></a>
                     {% endif %}
+                {% else %}
+                    <a href="#" name="undeleteFolder" class="non-opaque"><i class="fa fa-undo non-opaque" title="Восстановить каталог"> </i></a>
+                {% endif %}
             </span>
         </li>
     </ul>

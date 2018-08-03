@@ -3,7 +3,7 @@ $(document).ready(function () {
     } else {
         require("jquery-ui/ui/widgets/autocomplete");
         /** Do not touch this **/
-        let deleted = false;
+        let deleted = null;
         let $path;
         if (window.location.href.indexOf("deleted") > -1) {
             deleted = true;
@@ -302,8 +302,15 @@ $(document).ready(function () {
                     downloadFileBlock.show();
                 }
             });
+            reloadFileInfo(fileId);
+
+            return false;
+        }
+
+        /** Common function to reload file rowon file state change **/
+
+        function reloadFileInfo(fileId) {
             let fileInfo = $('#file_' + fileId);
-            console.log(fileId);
             $.ajax({
                 url: Routing.generate('entries_reload_file', {file: fileId}),
                 method: "POST",
@@ -464,6 +471,28 @@ $(document).ready(function () {
                         $($('#file_' + fileId).children('span').first()).replaceWith($(file).children('span').first());
                     }
                 }
+            });
+
+            return false;
+        }
+
+        /** Confirm file delete **/
+
+        $(document).on('click', 'a[name="deleteFile"]', deleteFile);
+
+        function deleteFile() {
+            let fileId = $(this).parent().attr("id");
+            $.ajax({
+                url: Routing.generate('entries_delete_file', {file: fileId}),
+                method: "POST",
+                data: null,
+                success: function (file) {
+                    if (file === '1') {
+                        $('#file_'+fileId).remove();
+                    }
+                    loadFlashMessages();
+                }
+
             });
 
             return false;
@@ -733,20 +762,38 @@ $(document).ready(function () {
 
         /** Flash messages loader **/
 
-        function loadFlashMessages() {
+        function loadFlashMessages($redirect) {
             let $flashMessages = $('#flash-messages');
             $.ajax({
                 url: Routing.generate('flash_messages'),
                 method: "POST",
                 success: function (reloadFlashMessages) {
+                    if ($flashMessages.length > 0) {
+                        $flashMessages.fadeOut('fast');
+                        if ($redirect === false) {
+                            let id = window.setTimeout(null, 0);
+                            while (id--) {
+                                window.clearTimeout(id);
+                            }
+                        }
+                    }
                     $flashMessages.html($(reloadFlashMessages).filter('#flash-messages').children());
                     $flashMessages.fadeIn("slow");
                     setTimeout(hideFlashMessages, 7000);
+
+                    return false;
                 }
             });
 
             return false;
         }
+
+        /** Close flash message manually **/
+
+        $(document).on('click', '#close-alert', function () {
+            $(this).parent().fadeOut("slow");
+        });
+
 
         /** Flash messages summary loader **/
 

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\ArchiveEntryEntity;
 use App\Form\EntrySearchForm;
+use App\Service\DeleteService;
 use App\Service\EntrySearchService;
 use App\Service\EntryService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -46,7 +47,7 @@ class EntriesViewController extends Controller
      *          "deleted" = "deleted",
      *          "entry" : ""
      *     },
-     * ))
+     * )
      * @ParamConverter("entry", class = "App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
      */
 
@@ -94,7 +95,7 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->removeEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry, 'deleted' => false));
+        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
     }
 
     /**
@@ -114,7 +115,7 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->restoreEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry, 'deleted' => false));
+        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
     }
 
     /**
@@ -134,7 +135,28 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->requestEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry, 'deleted' => false));
+        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
+    }
+
+    /**
+     * @param Request $request
+     * @param DeleteService $deleteService
+     * @param ArchiveEntryEntity $entry
+     * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("admin/delete/entry/{entry}",
+     *     options = { "expose" = true },
+     *     name = "entries_delete",
+     *     requirements = { "entry" = "\d+" },
+     *     defaults = {"entry" : ""}
+     *     )
+     * @ParamConverter("entry", class = "App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
+     */
+    public function deleteEntry(Request $request, DeleteService $deleteService, ArchiveEntryEntity $entry = null)
+    {
+
+        $resp = $entry ? $entry->getArchiveNumber() : 'Нет данных';
+        return new Response($resp);
     }
 
     /**

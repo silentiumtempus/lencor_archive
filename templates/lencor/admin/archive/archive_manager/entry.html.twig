@@ -26,12 +26,13 @@
         {% endif %}
     </td>
     <td class="icons text-center" id="{{ entry.id }}">
-        {% if not deleted %}
+        {% if not entry.deleted %}
             <a href="#" name="addFiles"><i class="fa fa-upload"> </i></a>&nbsp;
-            <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"> </i><i class="fa fa-folder-o"> </i></a>&nbsp;
+            <a href="#" name="addFolder"><i class="fa fa-plus-square-o" id="createCatalogue"> </i><i class="fa fa-folder-o"> </i></a>
             {% if entry.removalMark !=0 %}
                 {% if is_granted('ROLE_ADMIN') %}
                     <a href="#" name="restoreEntry" class="non-opaque"><i class="fa fa-undo non-opaque" title="Снять метки удаления"> </i></a>
+                    <a href="#" name="deleteEntry" class="non-opaque"><i class="fa fa-check non-opaque" title="Удалить ячейку"> </i></a>
                 {% else %}
                     <a href="#" name="requestEntry" class="non-opaque"><i class="fa fa-undo non-opaque"> </i></a>
                 {% endif %}

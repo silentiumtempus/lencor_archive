@@ -62,26 +62,6 @@ class EntriesContentViewController extends Controller
 
     /**
      * @param Request $request
-     * @param FileService $fileService
-     * @return Response
-     * @Security("has_role('ROLE_USER')")
-     * @Route("/entries/reload_file",
-     *     options = { "expose" = true },
-     *     name = "entries_reload_file")
-     */
-
-    public function changeFileStatus(Request $request, FileService $fileService)
-    {
-        $fileList = array();
-        if ($request->request->has('fileId')) {
-            $fileList[0] = $fileService->reloadFileDetails($request->request->get('fileId'));
-        }
-
-        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $fileList));
-    }
-
-    /**
-     * @param Request $request
      * @param FolderService $folderService
      * @return Response
      * @Security("has_role('ROLE_USER')")
