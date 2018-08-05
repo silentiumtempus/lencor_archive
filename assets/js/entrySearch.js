@@ -543,7 +543,7 @@ $(document).ready(function () {
                                 $folderEntry = $('#folder_' + value);
                                 let $temp = $(folderReload).filter('#folder_' + value);
                                 $($folderEntry.children('ul').first()).replaceWith($temp.children('ul').first());
-                                $folderEntry.removeClass('deleted');
+                                $folderEntry.removeClass('marked');
                             });
                         }
                     });
