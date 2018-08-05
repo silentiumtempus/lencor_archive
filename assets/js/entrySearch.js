@@ -203,7 +203,7 @@ $(document).ready(function () {
                                     openFolder(folderId);
                                 } else {
                                     $.ajax({
-                                        url: Routing.generate('entries_view_folders'),
+                                        url: Routing.generate('entries_view_folder'),
                                         method: searchForm.attr('method'),
                                         data: {folderId: folderId, deleted: deleted},
                                         success: function (reloadResponse) {
@@ -535,7 +535,7 @@ $(document).ready(function () {
                 data: {folderId: folderId},
                 success: function (folderRestoration) {
                     $.ajax({
-                        url: Routing.generate('entries_reload_folders'),
+                        url: Routing.generate('entries_reload_folder'),
                         method: "POST",
                         data: {foldersArray: folderRestoration},
                         success: function (folderReload) {
@@ -608,7 +608,7 @@ $(document).ready(function () {
         $(document).on('click', '#folder_rename_form_cancelButton', function () {
             let folderId = $(this).parents('span').attr('id');
             $.ajax({
-                url: Routing.generate('entries_reload_folders', {folder: folderId}),
+                url: Routing.generate('entries_reload_folder', {folder: folderId}),
                 method: "POST",
                 data: null,
                 success: function (folder) {
