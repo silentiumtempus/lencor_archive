@@ -424,6 +424,30 @@ class FilesAndFoldersController extends Controller
 
     /**
      * @param Request $request
+     * @param FileService $fileService
+     * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("/entries/undelete_file",
+     *     options = { "expose" = true },
+     *     name = "entries_undelete_file")
+     */
+
+    public function unDeleteFile(Request $request, FileService $fileService)
+    {
+        $unDeletedFile = null;
+        try {
+            $unDeletedFile = $fileService->unDeleteFile($request->get('fileId'));
+            $this->addFlash('success', 'Файл ' . $unDeletedFile[0]->getFileName() . ' успешно востановлен');
+        } catch (\Exception $exception) {
+            $this->addFlash('danger', 'Прозошла непредвиденная ошибка: ' . $exception->getMessage());
+        }
+
+        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $unDeletedFile));
+    }
+
+
+    /**
+     * @param Request $request
      * @param FolderService $folderService
      * @param FileService $fileService
      * @return Response

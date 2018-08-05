@@ -185,16 +185,31 @@ class FileService
 
     public function removeFile(int $fileId, User $user)
     {
-        $deletedFile = $this->filesRepository->findById($fileId);
-        foreach ($deletedFile as $file) {
+        $markedFile = $this->filesRepository->findById($fileId);
+        foreach ($markedFile as $file) {
             $file
                 ->setRemovalMark(true)
                 ->setMarkedByUser($user);
         }
         $this->em->flush();
-        $this->entryService->changeLastUpdateInfo($deletedFile[0]->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $user);
+        $this->entryService->changeLastUpdateInfo($markedFile[0]->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $user);
 
-        return $deletedFile;
+        return $markedFile;
+    }
+
+    /**
+     * @param int $fileId
+     * @return mixed
+     */
+    public function undeleteFile(int $fileId)
+    {
+        $unDeletedFile = $this->filesRepository->findById($fileId);
+        foreach ($unDeletedFile as $file) {
+            $file->setDeleted(false);
+        }
+        $this->em->flush();
+
+        return $unDeletedFile;
     }
 
     /**

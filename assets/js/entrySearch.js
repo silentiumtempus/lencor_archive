@@ -418,6 +418,25 @@ $(document).ready(function () {
             return false;
         }
 
+        /** Archive entries file undelete action **/
+
+        $(document).on("click", 'a[name="undeleteFile"]', unDeleteFile)
+
+        function unDeleteFile() {
+            let fileId = $(this).parent().attr("id");
+            $.ajax({
+                url: Routing.generate('entries_undelete_file'),
+                method: "POST",
+                data: {fileId: fileId},
+                success: function (fileUnDeleted) {
+                    $('#file_' + fileId).replaceWith(fileUnDeleted);
+                    loadFlashMessages();
+                }
+            });
+
+            return false;
+        }
+
         /** Archive entries file rename action **/
 
         $(document).on("click", 'a[name="renameFile"]', renameFile);
@@ -451,7 +470,7 @@ $(document).ready(function () {
         $(document).on('click', '#file_rename_form_cancelButton', function () {
             let fileId = $(this).parents('span').attr('id');
             $.ajax({
-                url: Routing.generate('entries_reload_files', {file: fileId}),
+                url: Routing.generate('entries_reload_file', {file: fileId}),
                 method: "POST",
                 data: null,
                 success: function (file) {
