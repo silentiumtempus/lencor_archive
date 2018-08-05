@@ -21,21 +21,24 @@ class EntrySearchService
     protected $container;
     protected $elasticManager;
     protected $entriesRepository;
+    protected $dSwitcherService;
 
     /**
      * EntrySearchService constructor
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
+     * @param DeleteSwitcherService $dSwitcherService
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
 
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, DeleteSwitcherService $dSwitcherService)
     {
         $this->em = $entityManager;
         $this->container = $container;
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->elasticManager = $this->container->get('fos_elastica.finder.lencor_archive.archive_entries');
+        $this->dSwitcherService = $dSwitcherService;
     }
 
     /**
@@ -73,13 +76,13 @@ class EntrySearchService
      * @param Query $finalQuery
      * @param BoolQuery $filterQuery
      * @param integer $limit
-     * @param bool $showDeleted
+     * @param bool $switchDeleted
      * @return mixed
      */
 
-    public function getQueryResult(Query $finalQuery, BoolQuery $filterQuery, int $limit, bool $showDeleted)
+    public function getQueryResult(Query $finalQuery, BoolQuery $filterQuery, int $limit, bool $switchDeleted)
     {
-        $filterQuery = $this->showDeleted($filterQuery, $showDeleted);
+        $filterQuery = $this->showDeleted($filterQuery, $switchDeleted);
         $finalQuery->setQuery($filterQuery);
         $finalQuery->addSort(array('year' => array('order' => 'ASC')));
 
@@ -88,24 +91,20 @@ class EntrySearchService
 
     /**
      * @param BoolQuery $filterQuery
-     * @param bool $showDeleted
+     * @param bool $switchDeleted
      * @return BoolQuery
      */
 
-    public function showDeleted(BoolQuery $filterQuery, bool $showDeleted)
+    public function showDeleted(BoolQuery $filterQuery, bool $switchDeleted)
     {
-        if ($showDeleted) {
-            if ($this->em->getFilters()->isEnabled('deleted')) {
-                $this->em->getFilters()->disable('deleted');
-            }
-        } else {
-            $deletedFilter = $this->em->getFilters()->enable('deleted');
-            $deletedFilter->setParameter('deleted', $showDeleted);
+        $this->dSwitcherService->switchDeleted($switchDeleted);
+        $conditionDeleted = (new Query\Term())->setTerm('deleted', $switchDeleted);
+        if ($switchDeleted) {
+            $conditionDeletedChildren = (new Query\Range('deleted_children', array('gte' => 0)));
+            $filterQuery->addShould($conditionDeletedChildren);
         }
-        $conditionExcludeDeleted = (new Query\Term())->setTerm('deleted', $showDeleted);
-        $filterQuery->addMust($conditionExcludeDeleted);
+        $filterQuery->addShould($conditionDeleted);
 
         return $filterQuery;
     }
-
 }

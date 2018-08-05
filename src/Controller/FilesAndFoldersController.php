@@ -16,7 +16,6 @@ use App\Service\FolderService;
 use App\Service\LoggingService;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -48,7 +47,7 @@ class FilesAndFoldersController extends Controller
     {
         $session = $this->container->get('session');
         $folderId = $archiveEntryService->setFolderId($request);
-        $entryId = $folderService->getFolderEntryId($folderId);
+        $entryId = $folderService->getFolderEntry($folderId)->getId();
         $user = $this->getUser();
         $newFolder = new FolderEntity();
         $isRoot = $folderService->isRoot($folderId);
@@ -155,7 +154,7 @@ class FilesAndFoldersController extends Controller
     {
         $session = $this->container->get('session');
         $folderId = $archiveEntryService->setFolderId($request);
-        $entryId = $folderService->getFolderEntryId($folderId);
+        $entryId = $folderService->getFolderEntry($folderId)->getId();
         $newFile = new FileEntity();
         $user = $this->getUser();
         $isRoot = $folderService->isRoot($folderId);
@@ -601,12 +600,12 @@ class FilesAndFoldersController extends Controller
 
     public function getFolderEntryId(Request $request, FolderService $folderService)
     {
-        $entryId = null;
+        $entry = null;
         if ($request->request->has('folderId')) {
-            $entryId = $folderService->getFolderEntryId($request->get('folderId'));
+            $entry = $folderService->getFolderEntry($request->get('folderId'));
         }
 
-        return new Response($entryId);
+        return new Response($entry->getId());
     }
 
     /**

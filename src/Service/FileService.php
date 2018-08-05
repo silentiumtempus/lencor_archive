@@ -24,6 +24,7 @@ class FileService
     protected $userService;
     protected $entryService;
     protected $pathRoot;
+    protected $dSwitchService;
 
     /**
      * FileService constructor.
@@ -32,9 +33,15 @@ class FileService
      * @param FolderService $folderService
      * @param UserService $userService
      * @param EntryService $entryService
+     * @param DeleteSwitcherService $dSwitchService
      */
 
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, FolderService $folderService, UserService $userService, EntryService $entryService)
+    public function __construct(EntityManagerInterface $entityManager,
+                                ContainerInterface $container,
+                                FolderService $folderService,
+                                UserService $userService,
+                                EntryService $entryService,
+                                DeleteSwitcherService $dSwitchService)
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -43,6 +50,7 @@ class FileService
         $this->entryService = $entryService;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->dSwitchService = $dSwitchService;
     }
 
     /**
@@ -310,11 +318,17 @@ class FileService
 
     /**
      * @param int $folderId
+     * @param bool $deleted
      * @return mixed
      */
 
-    public function showEntryFiles(int $folderId)
+    public function showEntryFiles(int $folderId, bool $deleted)
     {
+        if ($this->folderService->getFolderEntry($folderId)->getDeleted()) {
+            $this->dSwitchService->switchDeleted(null);
+        } else {
+            $this->dSwitchService->switchDeleted($deleted);
+        }
         $files = $this->filesRepository->findByParentFolder($folderId);
         foreach ($files as $file) {
             if ($file->getRequestMark()) {
@@ -350,5 +364,4 @@ class FileService
 
         return $entryFiles;
     }
-
 }

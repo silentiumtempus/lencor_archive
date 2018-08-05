@@ -26,15 +26,17 @@ class FolderService
     protected $pathRoot;
     protected $pathPermissions;
     protected $entryService;
+    protected $dSwitchService;
 
     /**
      * FolderService constructor.
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      * @param EntryService $entryService
+     * @param DeleteSwitcherService $dSwitchService
      */
 
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EntryService $entryService)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EntryService $entryService, DeleteSwitcherService $dSwitchService)
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -43,6 +45,19 @@ class FolderService
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
         $this->pathPermissions = $this->container->getParameter('lencor_archive.storage_permissions');
+        $this->dSwitchService = $dSwitchService;
+    }
+
+    /**
+     * @param int $folderId
+     * @return mixed
+     */
+
+    public function getFolderEntry(int $folderId)
+    {
+        $folderNode = $this->foldersRepository->findOneById($folderId);
+
+        return $folderNode->getRoot()->getArchiveEntry();
     }
 
     /**
@@ -50,11 +65,12 @@ class FolderService
      * @return mixed
      */
 
-    public function getFolderEntryId(int $folderId)
+    //@TODO: To be removed
+    /*public function getFolderEntryId(int $folderId)
     {
         $folderNode = $this->foldersRepository->findOneById($folderId);
         return $folderNode->getRoot()->getArchiveEntry()->getId();
-    }
+    } */
 
     /**
      * @param $entryId
@@ -217,7 +233,7 @@ class FolderService
      * @param FolderEntity $folderEntity
      */
 
-    public function unsetFolderremovalMark(FolderEntity $folderEntity)
+    public function unsetFolderRemovalMark(FolderEntity $folderEntity)
     {
         $folderEntity
             ->setremovalMark(false)
@@ -321,18 +337,22 @@ class FolderService
     }
 
     /**
-     * @param $folderId
+     * @param int $folderId
+     * @param bool $deleted
      * @return mixed
      */
 
-    public function getEntryFolders(int $folderId)
+    public function showEntryFolders(int $folderId, bool $deleted)
     {
         /** First code version to retrieve folders as nested tree */
         //$options = array();
         //$folderNode = $this->foldersRepository->findOneById($folderId);
         //$folderTree = $this->foldersRepository->childrenHierarchy($folderNode, true, $options, false);
-        /**  */
-
+        if ($this->getFolderEntry($folderId)->getDeleted()) {
+            $this->dSwitchService->switchDeleted(null);
+        } else {
+            $this->dSwitchService->switchDeleted($deleted);
+        }
         $folderList = $this->foldersRepository->findByParentFolder($folderId);
 
         return $folderList;

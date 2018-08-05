@@ -44,6 +44,7 @@ fos_elastica:
               fullConclusionName: ~
               cataloguePath: ~
               deleted: ~
+              deleted_children: ~
             persistence:
               driver: orm
               model: App\Entity\ArchiveEntryEntity

@@ -28,14 +28,23 @@ class DeletedFilter extends SQLFilter
             'App\Entity\LogEntities\FolderLog',
             'App\Entity\LogEntities\SettingLog',
             'App\Entity\Mappings\FileCheckSumError',
-            'App\Entity\Mappings\LogMappings\FileCheckSumErrorLog'
+            'App\Entity\Mappings\LogMappings\FileCheckSumErrorLog',
+            'App\Entity\FactoryEntity',
+            'App\Entity\SettingEntity'
         ];
         if (in_array($targetEntity->getReflectionClass()->name, $classes)) {
 
             return '';
+
+        } else if ($targetEntity->getReflectionClass()->name == 'App\Entity\ArchiveEntryEntity' || $targetEntity->getReflectionClass()->name == 'App\Entity\FolderEntity' ) {
+
+            return sprintf('%s.deleted = %s or %s.deleted_children > 0', $targetTableAlias, $this->getParameter('deleted'), $targetTableAlias);
+
         } else {
 
             return sprintf('%s.deleted = %s', $targetTableAlias, $this->getParameter('deleted'));
         }
+
+
     }
 }

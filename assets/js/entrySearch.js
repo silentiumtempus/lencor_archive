@@ -3,11 +3,11 @@ $(document).ready(function () {
     } else {
         require("jquery-ui/ui/widgets/autocomplete");
         /** Do not touch this **/
-        let deleted = null;
+        let deleted = 0;
         let $path;
         if (window.location.href.indexOf("deleted") > -1) {
-            deleted = true;
-            $path = Routing.generate('admin-deleted-entries') + "/deleted";
+            deleted = 1;
+            $path = Routing.generate('admin-deleted-entries', {deleted: deleted}) + "/deleted";
         } else {
             $path = Routing.generate('entries', {deleted: deleted});
         }
@@ -47,6 +47,7 @@ $(document).ready(function () {
             $('#main-tbody').hide();
             $('#loading-spinner').show().css('display', 'contents');
             let fields = searchForm.serializeArray();
+            console.log(deleted);
             $.ajax({
                 url: $path,
                 method: searchForm.attr('method'),
@@ -133,10 +134,11 @@ $(document).ready(function () {
             let folderContent = $('#folderContent_' + folderId);
             let fileContent = $('#fileContent_' + folderId);
             if ($(folderContent).is(":hidden")) {
+                console.log(deleted);
                 $.ajax({
                     url: Routing.generate('entries_view_folders'),
                     method: "POST",
-                    data: {folderId: folderId},
+                    data: {folderId: folderId, deleted: deleted},
                     success: function (response) {
                         folderContent.html(response);
                         loadLastUpdateInfo(null, folderId);
@@ -145,7 +147,7 @@ $(document).ready(function () {
                 $.ajax({
                     url: Routing.generate('entries_view_files'),
                     method: "POST",
-                    data: {folderId: folderId},
+                    data: {folderId: folderId, deleted: deleted},
                     success: function (response) {
                         fileContent.html(response);
                     }
@@ -203,7 +205,7 @@ $(document).ready(function () {
                                     $.ajax({
                                         url: Routing.generate('entries_view_folders'),
                                         method: searchForm.attr('method'),
-                                        data: {folderId: folderId},
+                                        data: {folderId: folderId, deleted: deleted},
                                         success: function (reloadResponse) {
                                             folderContent.hide();
                                             folderContent.html(reloadResponse);
@@ -266,7 +268,7 @@ $(document).ready(function () {
                                     $.ajax({
                                         url: Routing.generate('entries_view_files'),
                                         method: searchForm.attr('method'),
-                                        data: {folderId: folderId},
+                                        data: {folderId: folderId, deleted: deleted},
                                         success: function (reloadResponse) {
                                             fileContent.hide();
                                             fileContent.html(reloadResponse);

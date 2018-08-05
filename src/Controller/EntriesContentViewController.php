@@ -34,7 +34,7 @@ class EntriesContentViewController extends Controller
     {
         $folderTree = null;
         if ($request->request->has('folderId')) {
-            $folderTree = $folderService->getEntryFolders($request->request->get('folderId'));
+            $folderTree = $folderService->showEntryFolders($request->get('folderId'), (bool) $request->get('deleted'));
         }
 
         return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $folderTree, 'placeholder' => true));
@@ -54,7 +54,7 @@ class EntriesContentViewController extends Controller
     {
         $fileList = null;
         if ($request->request->has('folderId')) {
-            $fileList = $fileService->showEntryFiles($request->request->get('folderId'));
+            $fileList = $fileService->showEntryFiles($request->get('folderId'), (bool) $request->get('deleted'));
         }
 
         return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $fileList));

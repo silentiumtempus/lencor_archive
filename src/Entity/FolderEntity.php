@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
 use App\Entity\Traits\DeletedChildrenTrait;
-use App\Entity\Traits\DeletedTrait;
 use App\Entity\Traits\DeletedStateTrait;
 use App\Entity\Traits\RemovalMarkTrait;
 use App\Entity\Traits\FolderFileTrait;

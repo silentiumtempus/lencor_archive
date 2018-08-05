@@ -28,3 +28,12 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    before_entity_request_listener:
+      class: App\EventListener\BeforeEntityRequestListener
+      arguments: ["@doctrine.orm.entity_manager"]
+      tags:
+        -
+          name: kernel.event_listener
+          event: kernel.request
+          method: onKernelRequest
