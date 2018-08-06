@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\FolderEntity;
 use App\Form\FolderAddForm;
 use App\Form\FolderRenameForm;
+use App\Service\DeleteService;
 use App\Service\EntryService;
 use App\Service\FileService;
 use App\Service\FolderService;
@@ -146,9 +147,9 @@ class FoldersController extends Controller
 
     public function removeFolder(Request $request, FolderService $folderService, FileService $fileService)
     {
-        $removedFolder = $folderService->removeFolder($request->get('folderId'), $this->getUser(), $fileService);
+        $removedFolders[] = $folderService->removeFolder($request->get('folderId'), $this->getUser(), $fileService);
 
-        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $removedFolder));
+        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $removedFolders));
     }
 
     /**
@@ -253,6 +254,48 @@ class FoldersController extends Controller
         } else if ($folder) {
 
             return $this->render('lencor/admin/archive/archive_manager/folder.html.twig', array('folder' => $folder));
+        } else {
+
+            return $this->redirectToRoute('entries');
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param FolderEntity $folder
+     * @param DeleteService $deleteService
+     * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("/admin/delete/folder/{folder}",
+     *     requirements = { "folder" = "\d+" },
+     *     defaults = { "folder" : "" },
+     *     options = { "expose" = true },
+     *     name = "entries_delete_folder")
+     * @ParamConverter("folder", class = "App:FolderEntity", isOptional = true, options = { "id" = "folder" })
+     */
+    public function deleteFolder(Request $request, FolderEntity $folder, DeleteService $deleteService) {
+        if ($request->request->has('foldersArray')) {
+            try {
+                $deleteService->deleteFolders($request->get('filesArray'));
+                $this->addFlash('success', 'Директории успешно удалены');
+
+                return new Response(1);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Директории не удалёны из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new Response(0);
+            }
+        } elseif ($folder) {
+            try {
+                $deleteService->deleteFolder($folder);
+                $this->addFlash('success', 'Директория '. $folder->getFolderName() . ' успешно удалёна');
+
+                return new Response(1);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Директория ' . $folder->getFolderName() . ' не удалёна из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new Response(0);
+            }
         } else {
 
             return $this->redirectToRoute('entries');

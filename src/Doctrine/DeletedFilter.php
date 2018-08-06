@@ -9,7 +9,6 @@ use Doctrine\ORM\Query\Filter\SQLFilter;
  * Class DeletedFilter
  * @package App\Doctrine
  */
-
 class DeletedFilter extends SQLFilter
 {
     /**
@@ -36,15 +35,13 @@ class DeletedFilter extends SQLFilter
 
             return '';
 
-        } else if ($targetEntity->getReflectionClass()->name == 'App\Entity\ArchiveEntryEntity' || $targetEntity->getReflectionClass()->name == 'App\Entity\FolderEntity' ) {
+        } else if ($targetEntity->getReflectionClass()->name == 'App\Entity\ArchiveEntryEntity' || $targetEntity->getReflectionClass()->name == 'App\Entity\FolderEntity') {
+            if ($this->getParameter('deleted') == '\'1\'') {
 
-            return sprintf('%s.deleted = %s or %s.deleted_children > 0', $targetTableAlias, $this->getParameter('deleted'), $targetTableAlias);
-
-        } else {
-
-            return sprintf('%s.deleted = %s', $targetTableAlias, $this->getParameter('deleted'));
+                return sprintf('%s.deleted = %s or %s.deleted_children > 0', $targetTableAlias, $this->getParameter('deleted'), $targetTableAlias);
+            }
         }
 
-
+        return sprintf('%s.deleted = %s', $targetTableAlias, $this->getParameter('deleted'));
     }
 }

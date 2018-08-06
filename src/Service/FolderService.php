@@ -55,7 +55,7 @@ class FolderService
 
     public function getFolderEntry(int $folderId)
     {
-        $folderNode = $this->foldersRepository->findOneById($folderId);
+        $folderNode = $this->foldersRepository->find($folderId);
 
         return $folderNode->getRoot()->getArchiveEntry();
     }
@@ -92,7 +92,7 @@ class FolderService
 
     public function isRoot(int $folderId)
     {
-        $folderEntity = $this->foldersRepository->findOneById($folderId);
+        $folderEntity = $this->foldersRepository->find($folderId);
 
         return ($folderEntity->getId() == $folderEntity->getRoot()->getId()) ? true : false;
     }
@@ -104,7 +104,7 @@ class FolderService
 
     public function getParentFolder($parentFolder)
     {
-        return $this->foldersRepository->findOneById($parentFolder);
+        return $this->foldersRepository->find($parentFolder);
     }
 
     /**
@@ -153,7 +153,7 @@ class FolderService
     public function prepareNewFolder(FormInterface $folderAddForm, User $user)
     {
         $newFolderEntity = $folderAddForm->getData();
-        $parentFolder = $this->foldersRepository->findOneById($folderAddForm->get('parentFolder')->getViewData());
+        $parentFolder = $this->foldersRepository->find($folderAddForm->get('parentFolder')->getViewData());
         $newFolderEntity
             ->setParentFolder($parentFolder)
             ->setAddedByUser($user)
@@ -183,23 +183,21 @@ class FolderService
 
     public function removeFolder(int $folderId, User $user, FileService $fileService)
     {
-        $deletedFolder = $this->foldersRepository->findById($folderId);
-        foreach ($deletedFolder as $folder) {
-            $folderChildren = $this->foldersRepository->getChildren($folder, false, null, null, true);
+        $removedFolder = $this->foldersRepository->find($folderId);
+            $folderChildren = $this->foldersRepository->getChildren($removedFolder, false, null, null, true);
             if ($folderChildren) {
                 foreach ($folderChildren as $childFolder) {
-                    if (!$childFolder->getremovalMark()) {
-                        $childFolder->setremovalMark(true);
-                        $childFolder->setmarkedByUser($user);
-                        $fileService->removeFilesByParentFolder($folderId, $user);
+                    if (!$childFolder->getRemovalMark()) {
+                        $childFolder->setRemovalMark(true);
+                        $childFolder->setMarkedByUser($user);
+                        $fileService->removeFilesByParentFolder($childFolder, $user);
                     }
                 }
             }
-        }
         $this->em->flush();
-        $this->entryService->changeLastUpdateInfo($deletedFolder[0]->getRoot()->getArchiveEntry()->getId(), $user);
+        $this->entryService->changeLastUpdateInfo($removedFolder->getRoot()->getArchiveEntry()->getId(), $user);
 
-        return $deletedFolder;
+        return $removedFolder;
     }
 
     /**
@@ -211,13 +209,13 @@ class FolderService
     public function restoreFolder(int $folderId, User $user)
     {
         $foldersArray = [];
-        $restoredFolder = $this->foldersRepository->findOneById($folderId);
+        $restoredFolder = $this->foldersRepository->find($folderId);
         if ($restoredFolder) {
             $foldersArray[] = $restoredFolder->getId();
             $this->unsetFolderremovalMark($restoredFolder);
             $binaryPath = $this->getPath($restoredFolder);
             foreach ($binaryPath as $folder) {
-                if ($folder->getremovalMark()) {
+                if ($folder->getRemovalMark()) {
                     $this->unsetFolderremovalMark($folder);
                     $foldersArray[] = $folder->getId();
                 }

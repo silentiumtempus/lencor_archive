@@ -154,9 +154,9 @@ class FilesController extends Controller
     //@TODO: Unite two methods below
     public function removeFile(Request $request, FileService $fileService)
     {
-        $deletedFile = $fileService->removeFile($request->get('fileId'), $this->getUser());
+        $removedFile = $fileService->removeFile($request->get('fileId'), $this->getUser());
 
-        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $deletedFile));
+        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $removedFile));
     }
 
     /**
@@ -282,6 +282,7 @@ class FilesController extends Controller
      *     name = "entries_delete_file")
      * @ParamConverter("file", class = "App:FileEntity", isOptional = true, options = { "id" = "file" })
      */
+
     public function deleteFile(Request $request, FileEntity $file, DeleteService $deleteService)
     {
         if ($request->request->has('filesArray')) {

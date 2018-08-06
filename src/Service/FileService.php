@@ -310,14 +310,14 @@ class FileService
     }
 
     /**
-     * @param int $folderId
+     * @param FolderEntity $folder
      * @param User $user
      * @return bool
      */
 
-    public function removeFilesByParentFolder(int $folderId, User $user)
+    public function removeFilesByParentFolder(FolderEntity $folder, User $user)
     {
-        $childFiles = $this->filesRepository->findByParentFolder($folderId);
+        $childFiles = $folder->getFiles();
         if ($childFiles) {
             foreach ($childFiles as $childFile) {
                 if (!$childFile->getRemovalMark()) {

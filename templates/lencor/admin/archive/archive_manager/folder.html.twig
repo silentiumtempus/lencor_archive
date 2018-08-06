@@ -1,4 +1,4 @@
-<li id="folder_{{ folder.id }}" class="dashed {% if folder.removalMark !=0 %} marked {% endif %}">
+<li id="folder_{{ folder.id }}" class="dashed {% if folder.removalMark !=0 %} marked {% endif %}{% if folder.deleted !=0 %} deleted {% endif %}">
     <ul>
         <li class="row">
             <span id="{{ folder.id }}">

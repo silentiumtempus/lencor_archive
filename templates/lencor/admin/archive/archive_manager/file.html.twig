@@ -1,4 +1,4 @@
-<li id="file_{{ file.id }}" class="dashed row {% if file.removalMark != 0 %} marked {% endif %}">
+<li id="file_{{ file.id }}" class="dashed row {% if file.removalMark != 0 %} marked {% endif %}{% if file.deleted !=0 %} deleted {% endif %}">
     <span id="{{ file.id }}">
         {% if file.removalMark != 0 %}
             <i class="fa fa-remove"> </i>

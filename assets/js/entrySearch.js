@@ -93,6 +93,7 @@ $(document).ready(function () {
 
         function openEntryContents() {
             let entryId = $(this).parent().attr("id");
+            console.log('entryId: ' + entryId);
             let entryRow = $('#entry_' + entryId);
             let contentPlace = $('#entryContent_' + entryId);
             if ($(contentPlace).is(":hidden")) {
@@ -104,6 +105,7 @@ $(document).ready(function () {
                         contentPlace.html($(response));
                         loadLastUpdateInfo(entryId, null);
                         let folderId = contentPlace.find('#rootEntry').children('td').attr('id');
+                        console.log('folderId: ' + folderId);
                         openFolder(folderId);
                         contentPlace.show().css('display', 'table-cell');
                         entryRow.find('#up').css('display', 'inline-flex');
@@ -146,7 +148,7 @@ $(document).ready(function () {
                 });
                 $.ajax({
                     url: Routing.generate('entries_view_files'),
-                    method: "POST",
+                    method: "POfST",
                     data: {folderId: folderId, deleted: deleted},
                     success: function (response) {
                         fileContent.html(response);
@@ -203,7 +205,7 @@ $(document).ready(function () {
                                     openFolder(folderId);
                                 } else {
                                     $.ajax({
-                                        url: Routing.generate('entries_view_folder'),
+                                        url: Routing.generate('entries_view_folders'),
                                         method: searchForm.attr('method'),
                                         data: {folderId: folderId, deleted: deleted},
                                         success: function (reloadResponse) {
@@ -624,7 +626,7 @@ $(document).ready(function () {
 
         /** Folder editing cancellation **/
 
-        $(document).on('click', '#folder_rename_form_cancelButton', function () {
+        $(document).on("click", '#folder_rename_form_cancelButton', function () {
             let folderId = $(this).parents('span').attr('id');
             $.ajax({
                 url: Routing.generate('entries_reload_folder', {folder: folderId}),
@@ -648,6 +650,28 @@ $(document).ready(function () {
                     if ($(folder).filter('#folder_' + folderId).length) {
                         $($('#folder_' + folderId).children('ul').first()).replaceWith($(folder).children('ul').first());
                     }
+                }
+            });
+
+            return false;
+        }
+
+        $(document).on("click", 'a[name="deleteFolder"]', deleteFolder);
+
+        function deleteFolder() {
+            let folderId = $(this).parents('span').attr("id");
+            let folderContent = $('#folderContent_' + folderId);
+            $.ajax({
+                url: Routing.generate('entries_delete_folder', {folder: folderId}),
+                method: "POST",
+                data: null,
+                success: function (folder) {
+                    if (folder === '1') {
+                        folderContent.remove();
+                        $('#folder_'+folderId).remove();
+                    }
+                    loadFlashMessages();
+                    loadLastUpdateInfo(null, folderId);
                 }
             });
 
