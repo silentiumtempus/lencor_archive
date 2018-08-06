@@ -30,6 +30,26 @@ class FilesController extends Controller
     /**
      * @param Request $request
      * @param FileService $fileService
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
+     * @Route("/entries/view_files",
+     *     options = { "expose" = true },
+     *     name = "entries_view_files")
+     */
+
+    public function showEntryFiles(Request $request, FileService $fileService)
+    {
+        $fileList = null;
+        if ($request->request->has('folderId')) {
+            $fileList = $fileService->showEntryFiles($request->get('folderId'), (bool) $request->get('deleted'));
+        }
+
+        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $fileList));
+    }
+
+    /**
+     * @param Request $request
+     * @param FileService $fileService
      * @param FolderService $folderService
      * @param EntryService $archiveEntryService
      * @param LoggingService $loggingService

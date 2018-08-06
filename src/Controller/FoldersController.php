@@ -30,6 +30,26 @@ class FoldersController extends Controller
     /**
      * @param Request $request
      * @param FolderService $folderService
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
+     * @Route("/entries/view_folders",
+     *     options = { "expose" = true },
+     *     name = "entries_view_folders")
+     */
+
+    public function showEntryFolders(Request $request, FolderService $folderService)
+    {
+        $folderTree = null;
+        if ($request->request->has('folderId')) {
+            $folderTree = $folderService->showEntryFolders($request->get('folderId'), (bool) $request->get('deleted'));
+        }
+
+        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $folderTree, 'placeholder' => true));
+    }
+
+    /**
+     * @param Request $request
+     * @param FolderService $folderService
      * @param EntryService $archiveEntryService
      * @param LoggingService $loggingService
      * @return Response
