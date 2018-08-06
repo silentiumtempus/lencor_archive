@@ -148,7 +148,7 @@ $(document).ready(function () {
                 });
                 $.ajax({
                     url: Routing.generate('entries_view_files'),
-                    method: "POfST",
+                    method: "POST",
                     data: {folderId: folderId, deleted: deleted},
                     success: function (response) {
                         fileContent.html(response);
