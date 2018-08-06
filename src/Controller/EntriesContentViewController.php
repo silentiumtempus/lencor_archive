@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\CommonArchiveService;
+use App\Service\EntryService;
 use App\Service\FileService;
 use App\Service\FolderService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -124,5 +125,45 @@ class EntriesContentViewController extends Controller
         }
 
         return $this->render('lencor/admin/archive/archive_manager/show_requesters.html.twig', array('requesters' => $requesters, 'headerText' => $headerText));
+    }
+
+    /**
+     * @param EntryService $archiveEntryService
+     * @param String $entryId
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
+     * @Route("/entries/change_last_update_info",
+     *     options = { "expose" = true },
+     *     name = "entries_change_last_update_info")
+     */
+
+    public function changeLastUpdateInfo(EntryService $archiveEntryService, $entryId = null)
+    {
+        if ($entryId) {
+            try {
+                $archiveEntryService->changeLastUpdateInfo($entryId, $this->getUser());
+            } catch (\Exception $exception) {
+                $this->addFlash('error', 'Информация об изменениях не записана в ячейку. Ошибка: ' . $exception->getMessage());
+            }
+        }
+        // @TODO: create proper return
+        return new Response();
+    }
+
+    /**
+     * @param Request $request
+     * @param EntryService $archiveEntryService
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
+     * @Route("/entries/last_update_info",
+     *     options = { "expose" = true },
+     *     name = "entries_last_update_info")
+     */
+
+    public function loadLastUpdateInfo(Request $request, EntryService $archiveEntryService)
+    {
+        $lastUpdateInfo = $archiveEntryService->loadLastUpdateInfo($request);
+
+        return $this->render('lencor/admin/archive/archive_manager/entries_update_info.html.twig', array('lastUpdateInfo' => $lastUpdateInfo));
     }
 }
