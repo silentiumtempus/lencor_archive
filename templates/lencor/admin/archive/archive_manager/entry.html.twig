@@ -1,4 +1,4 @@
-<tr id="entry_{{ entry.id }}" class="description{% if entry.removalMark != 0 %} marked {% endif %} {% if entry.deleted !=0 %} deleted {% endif %}">
+<tr id="entry_{{ entry.id }}" class="description{% if entry.removalMark != 0 %} marked {% endif %} {% if entry.deleted !=0 %} deleted-entry {% endif %}">
     <td id="{{ entry.id }}"><a href="#" name="entryId" class="open"><i id="down" class="fa fa-angle-down"> </i><i id="up" class="fa fa-angle-up"> </i><i class="fa fa-folder-o"> </i></a></td>
     <td>
         {% if entry.removalMark != 0 %}

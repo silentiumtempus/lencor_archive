@@ -182,15 +182,37 @@ body {
           }
         }
       }
-      .deleted {
+      .deleted-entry {
         &:after {
           content: " ";
           position: absolute;
           display: inline-block;
-          padding: 8px 0;
+          padding: 9px 0;
           left: 55px;
           border-bottom: 1px solid darkgrey;
-          width: 95%;
+          width: 88%;
+        }
+      }
+      .deleted-folder {
+        &:before {
+          content: " ";
+          position: absolute;
+          display: inline-block;
+          padding: 5px 0;
+          left: 40px;
+          border-bottom: 1px solid darkgrey;
+          width: 90%;
+        }
+      }
+      .deleted-file {
+        &:before {
+          content: " ";
+          position: absolute;
+          display: inline-block;
+          padding: 5px 0;
+          left: 38px;
+          border-bottom: 1px solid darkgrey;
+          width: 90%;
         }
       }
     }
