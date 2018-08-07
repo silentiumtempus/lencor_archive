@@ -283,7 +283,7 @@ class FoldersController extends Controller
     /**
      * @param Request $request
      * @param FolderEntity $folder
-     * @param DeleteService $deleteService
+     * @param FolderService $folderService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/admin/delete/folder/{folder}",
@@ -293,10 +293,10 @@ class FoldersController extends Controller
      *     name = "entries_delete_folder")
      * @ParamConverter("folder", class = "App:FolderEntity", isOptional = true, options = { "id" = "folder" })
      */
-    public function deleteFolder(Request $request, FolderEntity $folder, DeleteService $deleteService) {
+    public function deleteFolder(Request $request, FolderEntity $folder, FolderService $folderService) {
         if ($request->request->has('foldersArray')) {
             try {
-                $deleteService->deleteFolders($request->get('filesArray'));
+                $folderService->deleteFolders($request->get('filesArray'));
                 $this->addFlash('success', 'Директории успешно удалены');
 
                 return new Response(1);
@@ -307,7 +307,7 @@ class FoldersController extends Controller
             }
         } elseif ($folder) {
             try {
-                $deleteService->deleteFolder($folder);
+                $folderService->deleteFolder($folder);
                 $this->addFlash('success', 'Директория '. $folder->getFolderName() . ' успешно удалёна');
 
                 return new Response(1);

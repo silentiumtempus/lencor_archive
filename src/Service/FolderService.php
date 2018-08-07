@@ -27,6 +27,7 @@ class FolderService
     protected $pathPermissions;
     protected $entryService;
     protected $dSwitchService;
+    protected $commonArchiveService;
 
     /**
      * FolderService constructor.
@@ -34,13 +35,19 @@ class FolderService
      * @param ContainerInterface $container
      * @param EntryService $entryService
      * @param DeleteSwitcherService $dSwitchService
+     * @param CommonArchiveService $commonArchiveService
      */
 
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EntryService $entryService, DeleteSwitcherService $dSwitchService)
+    public function __construct(EntityManagerInterface $entityManager,
+                                ContainerInterface $container,
+                                EntryService $entryService,
+                                DeleteSwitcherService $dSwitchService,
+                                CommonArchiveService $commonArchiveService)
     {
         $this->em = $entityManager;
         $this->container = $container;
         $this->entryService = $entryService;
+        $this->commonArchiveService = $commonArchiveService;
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
@@ -270,6 +277,53 @@ class FolderService
         $this->entryService->changeLastUpdateInfo($folder->getRoot()->getArchiveEntry()->getId(), $user);
 
         return $folder;
+    }
+
+    /**
+     * @param array $foldersArray
+     */
+
+    public function deleteFolders(array $foldersArray)
+    {
+        foreach ($foldersArray as $folder) {
+            $folderEntity = $this->foldersRepository->find($folder);
+            $this->deleteFolder($folderEntity);
+        }
+        //$this->entryService->changeLastUpdateInfo($removedFolder[0]->getRoot()->getArchiveEntry()->getId(), $user);
+    }
+
+    /**
+     * @param FolderEntity $folder
+     */
+
+    public function deleteFolder(FolderEntity $folder)
+    {
+        $foldersChain = $this->foldersRepository->getChildren($folder, false, null, null, true);
+        foreach ($foldersChain as $folder) {
+            if (!$folder->getDeleted()) {
+                $folder->setDeleted(true);
+                $this->commonArchiveService->changeDeletesQuantity($folder, true);
+            }
+            $this->deleteFilesByParentFolder($folder);
+        }
+        $this->em->flush();
+    }
+
+    /**
+     * @param FolderEntity $folder
+     */
+
+    public function deleteFilesByParentFolder(FolderEntity $folder)
+    {
+        $childFiles = $folder->getFiles();
+        if ($childFiles) {
+            foreach ($childFiles as $childFile) {
+                if (!$childFile->getDeleted()) {
+                    $childFile->setDeleted(true);
+                    $this->commonArchiveService->changeDeletesQuantity($folder, true);
+                }
+            }
+        }
     }
 
     /**

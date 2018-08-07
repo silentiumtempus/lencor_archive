@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\FolderEntity;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -54,5 +55,26 @@ class CommonArchiveService
         $requesters = $this->userService->getUsers($requesterIds);
 
         return $requesters;
+    }
+
+    /**
+     * @param FolderEntity $parentFolder
+     * @param bool $deleteState
+     */
+
+    public function changeDeletesQuantity(FolderEntity $parentFolder, bool $deleteState)
+    {
+        $binaryPath = $this->foldersRepository->getPath($parentFolder);
+        foreach ($binaryPath as $folder) {
+            if ($deleteState) {
+                $folder->setDeletedChildren($folder->getDeletedChildren() + 1);
+            } else {
+                $folder->setDeletedChildren($folder->getDeletedChildren() - 1);
+            }
+        }
+        // @TODO: Temporary solution, find out how to use joins with FOSElasticaBundle
+        $rootFolder = $parentFolder->getRoot();
+        $entry = $parentFolder->getRoot()->getArchiveEntry();
+        $entry->setDeletedChildren($rootFolder->getDeletedChildren());
     }
 }

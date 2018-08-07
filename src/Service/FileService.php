@@ -14,7 +14,6 @@ use Symfony\Component\Finder\Finder;
  * Class FileService
  * @package App\Services
  */
-
 class FileService
 {
     protected $em;
@@ -24,6 +23,7 @@ class FileService
     protected $userService;
     protected $entryService;
     protected $pathRoot;
+    protected $commonArchiveService;
     protected $dSwitchService;
 
     /**
@@ -34,6 +34,7 @@ class FileService
      * @param UserService $userService
      * @param EntryService $entryService
      * @param DeleteSwitcherService $dSwitchService
+     * @param CommonArchiveService $commonArchiveService
      */
 
     public function __construct(EntityManagerInterface $entityManager,
@@ -41,13 +42,15 @@ class FileService
                                 FolderService $folderService,
                                 UserService $userService,
                                 EntryService $entryService,
-                                DeleteSwitcherService $dSwitchService)
+                                DeleteSwitcherService $dSwitchService,
+                                CommonArchiveService $commonArchiveService)
     {
         $this->em = $entityManager;
         $this->container = $container;
         $this->userService = $userService;
         $this->folderService = $folderService;
         $this->entryService = $entryService;
+        $this->commonArchiveService = $commonArchiveService;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
         $this->dSwitchService = $dSwitchService;
@@ -199,43 +202,6 @@ class FileService
 
     /**
      * @param int $fileId
-     * @return mixed
-     */
-    public function undeleteFile(int $fileId)
-    {
-        $unDeletedFile = $this->filesRepository->findById($fileId);
-        foreach ($unDeletedFile as $file) {
-            $file->setDeleted(false);
-        }
-        $this->em->flush();
-
-        return $unDeletedFile;
-    }
-
-    /**
-     * @param int $fileId
-     * @param User $user
-     * @return mixed
-     */
-
-    public function restoreFile(int $fileId, User $user)
-    {
-        $restoredFile = $this->filesRepository->findById($fileId);
-        foreach ($restoredFile as $file) {
-            $file
-                ->setremovalMark(false)
-                ->setmarkedByUser(null)
-                ->setRequestMark(false)
-                ->setRequestedByUsers(null);
-        }
-        $this->em->flush();
-        $this->entryService->changeLastUpdateInfo($restoredFile[0]->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $user);
-
-        return $restoredFile;
-    }
-
-    /**
-     * @param int $fileId
      * @param User $user
      * @param FolderService $folderService
      * @return mixed
@@ -264,6 +230,129 @@ class FileService
     }
 
     /**
+     * @param int $fileId
+     * @param User $user
+     * @return mixed
+     */
+
+    public function restoreFile(int $fileId, User $user)
+    {
+        $restoredFile = $this->filesRepository->findById($fileId);
+        foreach ($restoredFile as $file) {
+            $file
+                ->setremovalMark(false)
+                ->setmarkedByUser(null)
+                ->setRequestMark(false)
+                ->setRequestedByUsers(null);
+        }
+        $this->em->flush();
+        $this->entryService->changeLastUpdateInfo($restoredFile[0]->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $user);
+
+        return $restoredFile;
+    }
+
+    /**
+     * @param array $filesArray
+     */
+
+    public function deleteFiles(array $filesArray)
+    {
+        foreach ($filesArray as $file) {
+            $fileEntity = $this->filesRepository->find($file);
+            $this->deleteFile($fileEntity);
+        }
+    }
+
+    /**
+     * @param FileEntity $file
+     */
+
+    public function deleteFile(FileEntity $file)
+    {
+        $deleted = '_deleted_';
+        $restored = '_restored_';
+        $originalFile["fileName"] = $file->getFileName();
+        $extPosIndex = strrpos($file->getFileName(), '.');
+        $resPosIndex = strrpos($file->getFileName(), $restored);
+        if ($resPosIndex === false) {
+            if ($extPosIndex === false) {
+                $file->setFileName($file->getFileName() . $deleted);
+            } else {
+                $targz = '.tar.gz';
+                $targzPosIndex = strrpos($file->getFileName(), $targz);
+                if ($targzPosIndex === false) {
+                    $ext = $extPosIndex;
+                } else {
+                    $ext = $targzPosIndex;
+                }
+                $file->setFileName(substr($file->getFileName(), 0, $ext) . $deleted . substr($file->getFileName(), $ext));
+            }
+        } else {
+            $restored_length = strlen($restored);
+            $file->setFileName(substr_replace($file->getFileName(), $deleted, $resPosIndex, $restored_length));
+        }
+        if ($this->moveFile($file, $originalFile) === true) {
+            $file->setDeleted(true);
+            $this->commonArchiveService->changeDeletesQuantity($file->getParentFolder(), true);
+            $this->em->flush();
+        }
+    }
+
+    /**
+     * @param array $filesArray
+     */
+
+    public function unDeleteFiles(array $filesArray)
+    {
+        foreach ($filesArray as $file) {
+            $fileEntity = $this->filesRepository->find($file);
+            $this->unDeleteFile($fileEntity);
+        }
+    }
+
+    /**
+     * @param FileEntity $file
+     */
+
+    public function unDeleteFile(FileEntity $file)
+    {
+        $deleted = '_deleted_';
+        $restored = '_restored_';
+        $originalFile["fileName"] = $file->getFileName();
+        $delPosIndex = strrpos($file->getFileName(), $deleted);
+        $resPosIndex = strrpos($file->getFileName(), $restored);
+        if ($delPosIndex !== false) {
+            $deleted_length = strlen($deleted);
+            $file->setFileName(substr_replace($file->getFileName(), $restored, $delPosIndex, $deleted_length));
+        } elseif ($resPosIndex === false) {
+            $extPosIndex = strrpos($file->getFileName(), '.');
+            if ($extPosIndex === false) {
+                $file->setFileName($file->getFileName() . "_restored_");
+
+            } else {
+                $targz = '.tar.gz';
+                $targzPosIndex = strrpos($file->getFileName(), $targz);
+                if ($targzPosIndex === false) {
+                    $ext = $extPosIndex;
+                } else {
+                    $ext = $targzPosIndex;
+                }
+                $file->setFileName(substr($file->getFileName(), 0, $ext) . '_restored_' . substr($file->getFileName(), $ext));
+            }
+        }
+        if ($this->moveFile($file, $originalFile) === true) {
+            $binaryPath = $this->folderService->getPath($file->getParentFolder());
+            foreach ($binaryPath as $folder) {
+                if ($folder->getDeleted() === true) {
+                    $folder->setDeleted(false);
+                }
+            }
+            $file->setDeleted(false);
+            $this->em->flush();
+        }
+    }
+
+    /**
      * @param FileEntity $newFile
      * @param array $originalFile
      * @return bool
@@ -280,7 +369,7 @@ class FileService
         }
         try {
             $fs = new Filesystem();
-            $fs->rename($absPath . "/" . $originalFile['fileName'], $absPath . "/" . $newFile->getFileName());
+            $fs->rename($absPath . "/" . $originalFile["fileName"], $absPath . "/" . $newFile->getFileName());
 
             return true;
         } catch (\Exception $exception) {

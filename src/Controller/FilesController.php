@@ -41,7 +41,7 @@ class FilesController extends Controller
     {
         $fileList = null;
         if ($request->request->has('folderId')) {
-            $fileList = $fileService->showEntryFiles($request->get('folderId'), (bool) $request->get('deleted'));
+            $fileList = $fileService->showEntryFiles($request->get('folderId'), (bool)$request->get('deleted'));
         }
 
         return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $fileList));
@@ -303,11 +303,11 @@ class FilesController extends Controller
      * @ParamConverter("file", class = "App:FileEntity", isOptional = true, options = { "id" = "file" })
      */
 
-    public function deleteFile(Request $request, FileEntity $file, DeleteService $deleteService)
+    public function deleteFile(Request $request, FileEntity $file, FileService $fileService)
     {
         if ($request->request->has('filesArray')) {
             try {
-                $deleteService->deleteFiles($request->get('filesArray'));
+                $fileService->deleteFiles($request->get('filesArray'));
                 $this->addFlash('success', 'Файлы успешно удалены');
 
                 return new Response(1);
@@ -318,8 +318,8 @@ class FilesController extends Controller
             }
         } elseif ($file) {
             try {
-                $deleteService->deleteFile($file);
-                $this->addFlash('success', 'Файл '. $file->getFileName() . ' успешно удалён');
+                $fileService->deleteFile($file);
+                $this->addFlash('success', 'Файл ' . $file->getFileName() . ' успешно удалён');
 
                 return new Response(1);
             } catch (\Exception $exception) {
@@ -335,26 +335,47 @@ class FilesController extends Controller
 
     /**
      * @param Request $request
+     * @param FileEntity $file
      * @param FileService $fileService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/entries/undelete_file",
+     * @Route("/entries/undelete/file{file}",
      *     options = { "expose" = true },
-     *     name = "entries_undelete_file")
+     *     name = "entries_undelete_file",
+     *     requirements = { "file" = "\d+" },
+     *     defaults = { "file" : "" }
+     *     )
+     * @ParamConverter("file", class = "App:FileEntity", isOptional = true, options = { "id" = "file" })
      */
 
-    public function unDeleteFile(Request $request, FileService $fileService)
+    public function unDeleteFile(Request $request, FileEntity $file, FileService $fileService)
     {
-        $unDeletedFile = null;
-        try {
-            $unDeletedFile = $fileService->unDeleteFile($request->get('fileId'));
-            //TODO: refactor with batch deletion in future
-            $this->addFlash('success', 'Файл ' . $unDeletedFile[0]->getFileName() . ' успешно востановлен');
-        } catch (\Exception $exception) {
-            $this->addFlash('danger', 'Прозошла непредвиденная ошибка: ' . $exception->getMessage());
-        }
+        if ($request->request->has('filesArray')) {
+            try {
+                $fileService->unDeleteFiles($request->get('filesArray'));
+                $this->addFlash('success', 'Файлы успешно восстановлены');
 
-        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $unDeletedFile));
+                return new Response(1);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Файлы не восстановлены из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new Response(0);
+            }
+        } elseif ($file) {
+            try {
+                $fileService->unDeleteFile($file);
+                $this->addFlash('success', 'Файл ' . $file->getFileName() . ' успешно восстановлен');
+
+                return new Response(1);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Файл ' . $file->getFileName() . ' не восстановлен из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new Response(0);
+            }
+        } else {
+
+            return $this->redirectToRoute('entries');
+        }
     }
 
     /**
