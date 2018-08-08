@@ -281,22 +281,24 @@ class FolderService
 
     /**
      * @param array $foldersArray
+     * @param FileService $fileService
      */
 
-    public function deleteFolders(array $foldersArray)
+    public function deleteFolders(array $foldersArray, FileService $fileService)
     {
         foreach ($foldersArray as $folder) {
             $folderEntity = $this->foldersRepository->find($folder);
-            $this->deleteFolder($folderEntity);
+            $this->deleteFolder($folderEntity, $fileService);
         }
         //$this->entryService->changeLastUpdateInfo($removedFolder[0]->getRoot()->getArchiveEntry()->getId(), $user);
     }
 
     /**
      * @param FolderEntity $folder
+     * @param FileService $fileService
      */
 
-    public function deleteFolder(FolderEntity $folder)
+    public function deleteFolder(FolderEntity $folder, FileService $fileService)
     {
         $foldersChain = $this->foldersRepository->getChildren($folder, false, null, null, true);
         foreach ($foldersChain as $folder) {
@@ -304,23 +306,23 @@ class FolderService
                 $folder->setDeleted(true);
                 $this->commonArchiveService->changeDeletesQuantity($folder, true);
             }
-            $this->deleteFilesByParentFolder($folder);
+            $this->deleteFilesByParentFolder($folder, $fileService);
         }
         $this->em->flush();
     }
 
     /**
      * @param FolderEntity $folder
+     * @param FileService $fileService
      */
 
-    public function deleteFilesByParentFolder(FolderEntity $folder)
+    public function deleteFilesByParentFolder(FolderEntity $folder, FileService $fileService)
     {
         $childFiles = $folder->getFiles();
         if ($childFiles) {
             foreach ($childFiles as $childFile) {
                 if (!$childFile->getDeleted()) {
-                    $childFile->setDeleted(true);
-                    $this->commonArchiveService->changeDeletesQuantity($folder, true);
+                    $fileService->deleteFile($childFile);
                 }
             }
         }

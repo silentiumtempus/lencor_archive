@@ -17,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -307,7 +308,7 @@ class FilesController extends Controller
     {
         if ($request->request->has('filesArray')) {
             try {
-                $fileService->deleteFiles($request->get('filesArray'));
+                $fileService->deleteFiles($request->get('filesArray'), $fileService);
                 $this->addFlash('success', 'Файлы успешно удалены');
 
                 return new Response(1);
@@ -318,7 +319,7 @@ class FilesController extends Controller
             }
         } elseif ($file) {
             try {
-                $fileService->deleteFile($file);
+                $fileService->deleteFile($file, $fileService);
                 $this->addFlash('success', 'Файл ' . $file->getFileName() . ' успешно удалён');
 
                 return new Response(1);
@@ -337,7 +338,7 @@ class FilesController extends Controller
      * @param Request $request
      * @param FileEntity $file
      * @param FileService $fileService
-     * @return Response
+     * @return JsonResponse
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/entries/undelete/file{file}",
      *     options = { "expose" = true },
@@ -352,29 +353,29 @@ class FilesController extends Controller
     {
         if ($request->request->has('filesArray')) {
             try {
-                $fileService->unDeleteFiles($request->get('filesArray'));
+                $folders = $fileService->unDeleteFiles($request->get('filesArray'));
                 $this->addFlash('success', 'Файлы успешно восстановлены');
 
-                return new Response(1);
+                return new JsonResponse($folders);
             } catch (\Exception $exception) {
                 $this->addFlash('danger', 'Файлы не восстановлены из за непредвиденной ошибки: ' . $exception->getMessage());
 
-                return new Response(0);
+                return new JsonResponse(0);
             }
         } elseif ($file) {
             try {
-                $fileService->unDeleteFile($file);
+                $folders = $fileService->unDeleteFile($file, []);
                 $this->addFlash('success', 'Файл ' . $file->getFileName() . ' успешно восстановлен');
 
-                return new Response(1);
+                return new JsonResponse($folders);
             } catch (\Exception $exception) {
                 $this->addFlash('danger', 'Файл ' . $file->getFileName() . ' не восстановлен из за непредвиденной ошибки: ' . $exception->getMessage());
 
-                return new Response(0);
+                return new JsonResponse(0);
             }
         } else {
 
-            return $this->redirectToRoute('entries');
+            return new JsonResponse(1);
         }
     }
 

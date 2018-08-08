@@ -422,16 +422,34 @@ $(document).ready(function () {
 
         /** Archive entries file undelete action **/
 
-        $(document).on("click", 'a[name="undeleteFile"]', unDeleteFile)
+        $(document).on("click", 'a[name="undeleteFile"]', unDeleteFile);
 
         function unDeleteFile() {
             let fileId = $(this).parent().attr("id");
             $.ajax({
-                url: Routing.generate('entries_undelete_file'),
+                url: Routing.generate('entries_undelete_file', {file: fileId}),
                 method: "POST",
-                data: {fileId: fileId},
-                success: function (fileUnDeleted) {
-                    $('#file_' + fileId).replaceWith(fileUnDeleted);
+                data: null,
+                success: function (parentFoldersArray) {
+                    //alert(file);
+                    if (parentFoldersArray !== '1') {
+                        $.ajax({
+                            url: Routing.generate('entries_reload_folder'),
+                            method: "POST",
+                            data: {foldersArray: parentFoldersArray},
+                            success: function (folderReload) {
+                                let $folderEntry = null;
+                                jQuery.each(parentFoldersArray, function (index, value) {
+                                    $folderEntry = $('#folder_' + value);
+                                    let $temp = $(folderReload).filter('#folder_' + value);
+                                    $($folderEntry.children('ul').first()).replaceWith($temp.children('ul').first());
+                                    $folderEntry.removeClass('deleted');
+                                });
+                            }
+                        });
+                    } else {
+
+                    }
                     loadFlashMessages();
                 }
             });
@@ -511,7 +529,7 @@ $(document).ready(function () {
                 data: null,
                 success: function (file) {
                     if (file === '1') {
-                        $('#file_'+fileId).remove();
+                        $('#file_' + fileId).remove();
                     }
                     loadFlashMessages();
                 }
@@ -668,7 +686,7 @@ $(document).ready(function () {
                 success: function (folder) {
                     if (folder === '1') {
                         folderContent.remove();
-                        $('#folder_'+folderId).remove();
+                        $('#folder_' + folderId).remove();
                     }
                     loadFlashMessages();
                     loadLastUpdateInfo(null, folderId);

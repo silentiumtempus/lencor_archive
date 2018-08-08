@@ -300,21 +300,27 @@ class FileService
 
     /**
      * @param array $filesArray
+     * @return array
      */
 
     public function unDeleteFiles(array $filesArray)
     {
+        $foldersArray = [];
         foreach ($filesArray as $file) {
             $fileEntity = $this->filesRepository->find($file);
-            $this->unDeleteFile($fileEntity);
+            $foldersArray = $this->unDeleteFile($fileEntity, $foldersArray);
         }
+
+        return $foldersArray;
     }
 
     /**
      * @param FileEntity $file
+     * @param array $foldersArray
+     * @return array
      */
 
-    public function unDeleteFile(FileEntity $file)
+    public function unDeleteFile(FileEntity $file, array $foldersArray)
     {
         $deleted = '_deleted_';
         $restored = '_restored_';
@@ -328,7 +334,6 @@ class FileService
             $extPosIndex = strrpos($file->getFileName(), '.');
             if ($extPosIndex === false) {
                 $file->setFileName($file->getFileName() . "_restored_");
-
             } else {
                 $targz = '.tar.gz';
                 $targzPosIndex = strrpos($file->getFileName(), $targz);
@@ -345,11 +350,16 @@ class FileService
             foreach ($binaryPath as $folder) {
                 if ($folder->getDeleted() === true) {
                     $folder->setDeleted(false);
+                    if (!array_search($folder->getId(), $foldersArray)) {
+                        $foldersArray[] = $folder->getId();
+                    }
                 }
             }
             $file->setDeleted(false);
             $this->em->flush();
         }
+
+        return $foldersArray;
     }
 
     /**
