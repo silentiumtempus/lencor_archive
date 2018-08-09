@@ -7,7 +7,7 @@ $(document).ready(function () {
         let $path;
         if (window.location.href.indexOf("deleted") > -1) {
             deleted = 1;
-            $path = Routing.generate('admin-deleted-entries', {deleted: deleted}) + "/deleted";
+            $path = Routing.generate('admin-deleted-entries') + "/deleted";
         } else {
             $path = Routing.generate('entries', {deleted: deleted});
         }
@@ -420,9 +420,9 @@ $(document).ready(function () {
             return false;
         }
 
-        /** Archive entries file undelete action **/
+        /** Archive entries file unDelete action **/
 
-        $(document).on("click", 'a[name="undeleteFile"]', unDeleteFile);
+        $(document).on("click", 'a[name="unDeleteFile"]', unDeleteFile);
 
         function unDeleteFile() {
             let fileId = $(this).parent().attr("id");
@@ -431,7 +431,6 @@ $(document).ready(function () {
                 method: "POST",
                 data: null,
                 success: function (parentFoldersArray) {
-                    //alert(file);
                     if (parentFoldersArray !== '1') {
                         $.ajax({
                             url: Routing.generate('entries_reload_folder'),
