@@ -61,6 +61,6 @@ class FactoryService
 
     public function findFactory(int $factoryId)
     {
-        return $this->factoriesRepository->find($factoryId);
+        return $this->factoriesRepository->findOneById($factoryId);
     }
 }
