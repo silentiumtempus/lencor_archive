@@ -346,16 +346,19 @@ class FileService
             }
         }
         if ($this->moveFile($file, $originalFile) === true) {
+
             $binaryPath = $this->folderService->getPath($file->getParentFolder());
             foreach ($binaryPath as $folder) {
                 if ($folder->getDeleted() === true) {
                     $folder->setDeleted(false);
+                    $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
                     if (!array_search($folder->getId(), $foldersArray)) {
                         $foldersArray[] = $folder->getId();
                     }
                 }
             }
             $file->setDeleted(false);
+           $this->commonArchiveService->changeDeletesQuantity($file->getParentFolder(), false);
             $this->em->flush();
         }
 

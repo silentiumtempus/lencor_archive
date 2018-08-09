@@ -304,7 +304,7 @@ class FolderService
         foreach ($foldersChain as $folder) {
             if (!$folder->getDeleted()) {
                 $folder->setDeleted(true);
-                $this->commonArchiveService->changeDeletesQuantity($folder, true);
+                $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), true);
             }
             $this->deleteFilesByParentFolder($folder, $fileService);
         }
