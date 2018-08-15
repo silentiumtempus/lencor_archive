@@ -100,7 +100,7 @@ class EntrySearchService
         $this->dSwitcherService->switchDeleted($switchDeleted);
         $conditionDeleted = (new Query\Term())->setTerm('deleted', $switchDeleted);
         if ($switchDeleted) {
-            $conditionDeletedChildren = (new Query\Range('deleted_children', array('gte' => 0)));
+            $conditionDeletedChildren = (new Query\Range('deleted_children', array('gt' => 0)));
             $filterQuery->addShould($conditionDeletedChildren);
         }
         $filterQuery->addShould($conditionDeleted);

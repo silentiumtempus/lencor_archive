@@ -346,23 +346,24 @@ class FileService
             }
         }
         if ($this->moveFile($file, $originalFile) === true) {
-
+            $file->setDeleted(false);
+            $this->commonArchiveService->changeDeletesQuantity($file->getParentFolder(), false);
             $binaryPath = $this->folderService->getPath($file->getParentFolder());
             foreach ($binaryPath as $folder) {
                 if ($folder->getDeleted() === true) {
                     $folder->setDeleted(false);
                     $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
+                }
+                if (($folder->getDeletedChildren() === 0) && ($folder->getRoot()->getId() != $folder->getId())) {
                     if (!array_search($folder->getId(), $foldersArray)) {
                         $foldersArray[] = $folder->getId();
                     }
                 }
             }
-            $file->setDeleted(false);
-           $this->commonArchiveService->changeDeletesQuantity($file->getParentFolder(), false);
             $this->em->flush();
         }
 
-        return $foldersArray;
+        return array_reverse($foldersArray);
     }
 
     /**

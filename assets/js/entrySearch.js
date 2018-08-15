@@ -47,7 +47,6 @@ $(document).ready(function () {
             $('#main-tbody').hide();
             $('#loading-spinner').show().css('display', 'contents');
             let fields = searchForm.serializeArray();
-            console.log(deleted);
             $.ajax({
                 url: $path,
                 method: searchForm.attr('method'),
@@ -93,7 +92,6 @@ $(document).ready(function () {
 
         function openEntryContents() {
             let entryId = $(this).parent().attr("id");
-            console.log('entryId: ' + entryId);
             let entryRow = $('#entry_' + entryId);
             let contentPlace = $('#entryContent_' + entryId);
             if ($(contentPlace).is(":hidden")) {
@@ -105,7 +103,6 @@ $(document).ready(function () {
                         contentPlace.html($(response));
                         loadLastUpdateInfo(entryId, null);
                         let folderId = contentPlace.find('#rootEntry').children('td').attr('id');
-                        console.log('folderId: ' + folderId);
                         openFolder(folderId);
                         contentPlace.show().css('display', 'table-cell');
                         entryRow.find('#up').css('display', 'inline-flex');
@@ -136,7 +133,6 @@ $(document).ready(function () {
             let folderContent = $('#folderContent_' + folderId);
             let fileContent = $('#fileContent_' + folderId);
             if ($(folderContent).is(":hidden")) {
-                console.log(deleted);
                 $.ajax({
                     url: Routing.generate('entries_view_folders'),
                     method: "POST",
@@ -431,7 +427,15 @@ $(document).ready(function () {
                 method: "POST",
                 data: null,
                 success: function (parentFoldersArray) {
-                    if (parentFoldersArray !== '1') {
+                    console.log(parentFoldersArray);
+                    if ((parentFoldersArray !== '1') || (parentFoldersArray !== '0')) {
+                        $('#file_' + fileId).remove();
+                        jQuery.each(parentFoldersArray, function (index, value) {
+                            console.log(value);
+                           $('#folderContent_' + value).remove();
+                           $('#fileContent_' + value).remove();
+                           $('#folder_' + value).remove();
+                        });
                         $.ajax({
                             url: Routing.generate('entries_reload_folder'),
                             method: "POST",
@@ -446,8 +450,6 @@ $(document).ready(function () {
                                 });
                             }
                         });
-                    } else {
-
                     }
                     loadFlashMessages();
                 }
