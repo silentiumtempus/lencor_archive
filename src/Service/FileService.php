@@ -322,6 +322,8 @@ class FileService
 
     public function unDeleteFile(FileEntity $file, array $foldersArray)
     {
+        $foldersArray['remove'] = [];
+        $foldersArray['reload'] = [];
         $deleted = '_deleted_';
         $restored = '_restored_';
         $originalFile["fileName"] = $file->getFileName();
@@ -353,17 +355,40 @@ class FileService
                 if ($folder->getDeleted() === true) {
                     $folder->setDeleted(false);
                     $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
-                }
-                if (($folder->getDeletedChildren() === 0) && ($folder->getRoot()->getId() != $folder->getId())) {
-                    if (!array_search($folder->getId(), $foldersArray)) {
-                        $foldersArray[] = $folder->getId();
+                    if ($folder->getRoot()->getId() !== $folder->getId()) {
+                        $i = ($folder->getDeletedChildren() === 0) ? 'remove' : 'reload';
+                        $foldersArray[$i][] = $this->addFolderIdToArray($folder, $foldersArray, $i);
+                    }
+                } else {
+                    if ($folder->getRoot()->getId() !== $folder->getId()) {
+                        if ($folder->getDeletedChildren() === 0) {
+                            $foldersArray['remove'][] =  $this->addFolderIdToArray($folder, $foldersArray, 'remove');
+                        }
                     }
                 }
             }
             $this->em->flush();
         }
+        array_reverse($foldersArray['remove']);
 
-        return array_reverse($foldersArray);
+        return $foldersArray;
+    }
+
+    /**
+     * @param FolderEntity $folder
+     * @param array $foldersArray
+     * @param string $i
+     * @return int|null
+     */
+
+    private function addFolderIdToArray(FolderEntity $folder, array $foldersArray, string $i)
+    {
+        if (!array_search($folder->getId(), $foldersArray[$i])) {
+
+            return $folder->getId();
+        }
+
+        return null;
     }
 
     /**

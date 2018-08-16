@@ -430,29 +430,51 @@ $(document).ready(function () {
                     console.log(parentFoldersArray);
                     if ((parentFoldersArray !== '1') || (parentFoldersArray !== '0')) {
                         $('#file_' + fileId).remove();
-                        jQuery.each(parentFoldersArray, function (index, value) {
-                            console.log(value);
-                           $('#folderContent_' + value).remove();
-                           $('#fileContent_' + value).remove();
-                           $('#folder_' + value).remove();
-                        });
-                        $.ajax({
-                            url: Routing.generate('entries_reload_folder'),
-                            method: "POST",
-                            data: {foldersArray: parentFoldersArray},
-                            success: function (folderReload) {
-                                let $folderEntry = null;
-                                jQuery.each(parentFoldersArray, function (index, value) {
-                                    $folderEntry = $('#folder_' + value);
-                                    let $temp = $(folderReload).filter('#folder_' + value);
-                                    $($folderEntry.children('ul').first()).replaceWith($temp.children('ul').first());
-                                    $folderEntry.removeClass('deleted');
-                                });
-                            }
-                        });
+                        if (parentFoldersArray['remove'].length !== 0) {
+                            removeFolders(parentFoldersArray['remove']);
+                        }
+                        if (parentFoldersArray['reload'].length !== 0) {
+                            reloadFolders(parentFoldersArray['reload']);
+                        }
                     }
                     loadFlashMessages();
                 }
+            });
+
+            return false;
+        }
+
+        /** Archive entries folders reload  **/
+
+        function reloadFolders(folderIdsArray) {
+            $.ajax({
+                url: Routing.generate('entries_reload_folder'),
+                method: "POST",
+                data: {foldersArray: folderIdsArray},
+                success: function (folderReload) {
+                    let $folderEntry = null;
+                    jQuery.each(folderIdsArray, function (index, value) {
+                        $folderEntry = $('#folder_' + value);
+                        let $temp = $(folderReload).filter('#folder_' + value);
+                        $($folderEntry.children('ul').first()).replaceWith($temp.children('ul').first());
+                        $folderEntry.removeClass('deleted-folder');
+                        $folderEntry.find('#up').css('display', 'inline-flex');
+                        $folderEntry.find('#down').hide();
+                    });
+                }
+            });
+
+            return false;
+        }
+
+        /** Archive entries folders remove from being shown on the page **/
+
+        function removeFolders(folderIdsArray) {
+            jQuery.each(folderIdsArray, function (index, value) {
+                console.log(value);
+                $('#folderContent_' + value).remove();
+                $('#fileContent_' + value).remove();
+                $('#folder_' + value).remove();
             });
 
             return false;
