@@ -77,4 +77,21 @@ class CommonArchiveService
         $entry = $parentFolder->getRoot()->getArchiveEntry();
         $entry->setDeletedChildren($rootFolder->getDeletedChildren());
     }
+
+    /**
+     * @param FolderEntity $folder
+     * @param array $foldersArray
+     * @param string $i
+     * @return int|null
+     */
+
+    public function addFolderIdToArray(FolderEntity $folder, array $foldersArray, string $i)
+    {
+        if (!array_search($folder->getId(), $foldersArray[$i])) {
+
+            return $folder->getId();
+        }
+
+        return null;
+    }
 }

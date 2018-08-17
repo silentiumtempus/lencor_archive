@@ -293,7 +293,7 @@ class FilesController extends Controller
     /**
      * @param Request $request
      * @param FileEntity $file
-     * @param DeleteService $deleteService
+     * @param FileService $fileService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/admin/delete/file/{file}",
@@ -340,7 +340,7 @@ class FilesController extends Controller
      * @param FileService $fileService
      * @return JsonResponse
      * @Security("has_role('ROLE_ADMIN')")
-     * @Route("/entries/undelete/file{file}",
+     * @Route("/admin/undelete/file/{file}",
      *     options = { "expose" = true },
      *     name = "entries_undelete_file",
      *     requirements = { "file" = "\d+" },

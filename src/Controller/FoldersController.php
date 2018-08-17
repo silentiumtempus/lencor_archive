@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\FolderEntity;
 use App\Form\FolderAddForm;
 use App\Form\FolderRenameForm;
-use App\Service\DeleteService;
 use App\Service\EntryService;
 use App\Service\FileService;
 use App\Service\FolderService;
@@ -230,7 +229,7 @@ class FoldersController extends Controller
                 $originalFolder = $folderService->getOriginalData($folder);
                 if ($originalFolder['folderName'] != $folder->getFolderName()) {
                     if ($folderService->moveFolder($folder, $originalFolder)) {
-                        $folderService->renameFolder();
+                        $folderService->flushFolder();
                         $this->addFlash('success', 'Переименование ' . $originalFolder['folderName'] . ' > ' . $folder->getFolderName() . ' успешно произведено.');
                     } else {
                         $this->addFlash('danger', 'Переименование отменено из за внутренней ошибки.');
@@ -320,6 +319,51 @@ class FoldersController extends Controller
         } else {
 
             return $this->redirectToRoute('entries');
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param FolderEntity $folder
+     * @param FolderService $folderService
+     * @return JsonResponse
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("/admin/undelete/folder/{folder}",
+     *     options = { "expose" = true },
+     *     name = "entries_undelete_folder",
+     *     requirements = { "folder" = "\d+" },
+     *     defaults = { "folder" : "" }
+     *     )
+     * @ParamConverter("folder", class = "App:FolderEntity", isOptional = true, options = { "id" = "folder" })
+     */
+
+    public function unDeleteFolder(Request $request, FolderEntity $folder, FolderService $folderService)
+    {
+        if ($request->request->has('filesArray')) {
+            try {
+                $folders = $folderService->unDeleteFolders($request->get('filesArray'));
+                $this->addFlash('success', 'Каталоги успешно восстановлены');
+
+                return new JsonResponse($folders);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Каталоги не восстановлены из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new JsonResponse(0);
+            }
+        } elseif ($folder) {
+            try {
+                $folders = $folderService->unDeleteFolder($folder, []);
+                $this->addFlash('success', 'Каталог ' . $folder->getFolderName() . ' успешно восстановлен');
+
+                return new JsonResponse($folders);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Каталог ' . $folder->getFolderName() . ' не восстановлен из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new JsonResponse(0);
+            }
+        } else {
+
+            return new JsonResponse(1);
         }
     }
 

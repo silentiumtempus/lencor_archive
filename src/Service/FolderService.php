@@ -16,7 +16,6 @@ use Symfony\Component\Form\FormInterface;
  * Class FolderService
  * @package App\Services
  */
-
 class FolderService
 {
     protected $em;
@@ -66,18 +65,6 @@ class FolderService
 
         return $folderNode->getRoot()->getArchiveEntry();
     }
-
-    /**
-     * @param $folderId
-     * @return mixed
-     */
-
-    //@TODO: To be removed
-    /*public function getFolderEntryId(int $folderId)
-    {
-        $folderNode = $this->foldersRepository->findOneById($folderId);
-        return $folderNode->getRoot()->getArchiveEntry()->getId();
-    } */
 
     /**
      * @param $entryId
@@ -191,16 +178,16 @@ class FolderService
     public function removeFolder(int $folderId, User $user, FileService $fileService)
     {
         $removedFolder = $this->foldersRepository->find($folderId);
-            $folderChildren = $this->foldersRepository->getChildren($removedFolder, false, null, null, true);
-            if ($folderChildren) {
-                foreach ($folderChildren as $childFolder) {
-                    if (!$childFolder->getRemovalMark()) {
-                        $childFolder->setRemovalMark(true);
-                        $childFolder->setMarkedByUser($user);
-                        $fileService->removeFilesByParentFolder($childFolder, $user);
-                    }
+        $folderChildren = $this->foldersRepository->getChildren($removedFolder, false, null, null, true);
+        if ($folderChildren) {
+            foreach ($folderChildren as $childFolder) {
+                if (!$childFolder->getRemovalMark()) {
+                    $childFolder->setRemovalMark(true);
+                    $childFolder->setMarkedByUser($user);
+                    $fileService->removeFilesByParentFolder($childFolder, $user);
                 }
             }
+        }
         $this->em->flush();
         $this->entryService->changeLastUpdateInfo($removedFolder->getRoot()->getArchiveEntry()->getId(), $user);
 
@@ -290,7 +277,6 @@ class FolderService
             $folderEntity = $this->foldersRepository->find($folder);
             $this->deleteFolder($folderEntity, $fileService);
         }
-        //$this->entryService->changeLastUpdateInfo($removedFolder[0]->getRoot()->getArchiveEntry()->getId(), $user);
     }
 
     /**
@@ -303,8 +289,12 @@ class FolderService
         $foldersChain = $this->foldersRepository->getChildren($folder, false, null, null, true);
         foreach ($foldersChain as $folder) {
             if (!$folder->getDeleted()) {
-                $folder->setDeleted(true);
-                $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), true);
+                $originalFolder['folderName'] = $folder->getFolderName();
+                $folder->setFolderName($this->renameFolder($folder->getFolderName(), true));
+                if ($this->moveFolder($folder, $originalFolder)) {
+                    $folder->setDeleted(true);
+                    $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), true);
+                }
             }
             $this->deleteFilesByParentFolder($folder, $fileService);
         }
@@ -316,7 +306,7 @@ class FolderService
      * @param FileService $fileService
      */
 
-    public function deleteFilesByParentFolder(FolderEntity $folder, FileService $fileService)
+    private function deleteFilesByParentFolder(FolderEntity $folder, FileService $fileService)
     {
         $childFiles = $folder->getFiles();
         if ($childFiles) {
@@ -326,6 +316,93 @@ class FolderService
                 }
             }
         }
+    }
+
+    /**
+     * @param array $foldersArray
+     * @return array
+     */
+
+    public function unDeleteFolders(array $foldersArray)
+    {
+        $folderIdsArray = [];
+        $folderEntities = $this->foldersRepository->find($foldersArray);
+        foreach ($folderEntities as $folder) {
+            $folderIdsArray = $this->unDeleteFolder($folder, $folderIdsArray);
+        }
+
+        return $folderIdsArray;
+    }
+
+    /**
+     * @param FolderEntity $folder
+     * @param array $folderIdsArray
+     * @return array
+     */
+
+    public function unDeleteFolder(FolderEntity $folder, array $folderIdsArray)
+    {
+        $folderIdsArray['remove'] = [];
+        $folderIdsArray['reload'] = [];
+        $originalFolder['folderName'] = $folder->getFolderName();
+        $folder->setFolderName($this->renameFolder($folder->getFolderName(), false));
+        if ($this->moveFolder($folder, $originalFolder)) {
+            $binaryPath = $this->getPath($folder);
+            foreach ($binaryPath as $folder) {
+                if ($folder->getDeleted() === true) {
+                    $folder->setDeleted(false);
+                    $folder->setFolderName($this->renameFolder($folder->getFolderName(), false));
+                    if ($folder->getRoot()->getId() !== $folder->getId()) {
+                        $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
+                        $i = ($folder->getDeletedChildren() === 0) ? 'remove' : 'reload';
+                        $folderIdsArray[$i][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, $i);
+                    }
+                } else {
+                    if ($folder->getRoot()->getId() !== $folder->getId()) {
+                        if ($folder->getDeletedChildren() === 0) {
+                            $folderIdsArray['remove'][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
+                        }
+                    }
+                }
+            }
+            $this->em->flush();
+        }
+        array_reverse($folderIdsArray['remove']);
+
+        return $folderIdsArray;
+    }
+
+    /**
+     * @param string $folderName
+     * @param bool $condition
+     * @return mixed|string
+     */
+
+    private function renameFolder(string $folderName, bool $condition)
+    {
+        $deleted = '_deleted_';
+        $restored = '_restored_';
+        $delPosIndex = strrpos($folderName, $deleted);
+        $resPosIndex = strrpos($folderName, $restored);
+        if ($condition === false) {
+            if ($delPosIndex != $condition) {
+
+                return substr_replace($folderName, $restored, $delPosIndex, strlen($deleted));
+            } elseif ($resPosIndex === $condition) {
+
+                return $folderName . $restored . (hash('crc32', uniqid(), false));
+            }
+        } elseif ($condition === true) {
+            if ($resPosIndex == $condition) {
+
+                return substr_replace($folderName, $deleted, $resPosIndex, strlen($restored));
+            } elseif ($delPosIndex !== $condition) {
+
+                return $folderName . $deleted . (hash('crc32', uniqid(), false));
+            }
+        }
+
+        return $folderName;
     }
 
     /**
@@ -369,7 +446,7 @@ class FolderService
      * This is for folder name update
      */
 
-    public function renameFolder()
+    public function flushFolder()
     {
         $this->em->flush();
     }
@@ -477,8 +554,7 @@ class FolderService
         $fs = new Filesystem();
         $fs->rename($oldPath, $newPath);
         $newEntryFile = $newPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".entry";
-        if ($originalEntry['archiveNumber'] != $archiveEntryEntity->getArchiveNumber())
-        {
+        if ($originalEntry['archiveNumber'] != $archiveEntryEntity->getArchiveNumber()) {
             $oldEntryFile = $newPath . "/" . $originalEntry["archiveNumber"] . ".entry";
             $fs->rename($oldEntryFile, $newEntryFile);
         }

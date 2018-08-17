@@ -305,33 +305,32 @@ class FileService
 
     public function unDeleteFiles(array $filesArray)
     {
-        $foldersArray = [];
-        foreach ($filesArray as $file) {
-            $fileEntity = $this->filesRepository->find($file);
-            $foldersArray = $this->unDeleteFile($fileEntity, $foldersArray);
+        $folderIdsArray = [];
+        $fileEntities = $this->filesRepository->find($filesArray);
+        foreach ($fileEntities as $file) {
+            $folderIdsArray = $this->unDeleteFile($file, $folderIdsArray);
         }
 
-        return $foldersArray;
+        return $folderIdsArray;
     }
 
     /**
      * @param FileEntity $file
-     * @param array $foldersArray
+     * @param array $folderIdsArray
      * @return array
      */
 
-    public function unDeleteFile(FileEntity $file, array $foldersArray)
+    public function unDeleteFile(FileEntity $file, array $folderIdsArray)
     {
-        $foldersArray['remove'] = [];
-        $foldersArray['reload'] = [];
+        $folderIdsArray['remove'] = [];
+        $folderIdsArray['reload'] = [];
         $deleted = '_deleted_';
         $restored = '_restored_';
         $originalFile["fileName"] = $file->getFileName();
         $delPosIndex = strrpos($file->getFileName(), $deleted);
         $resPosIndex = strrpos($file->getFileName(), $restored);
-        if ($delPosIndex !== false) {
-            $deleted_length = strlen($deleted);
-            $file->setFileName(substr_replace($file->getFileName(), $restored, $delPosIndex, $deleted_length));
+        if ($delPosIndex === true) {
+            $file->setFileName(substr_replace($file->getFileName(), $restored, $delPosIndex,  strlen($deleted)));
         } elseif ($resPosIndex === false) {
             $extPosIndex = strrpos($file->getFileName(), '.');
             if ($extPosIndex === false) {
@@ -354,41 +353,24 @@ class FileService
             foreach ($binaryPath as $folder) {
                 if ($folder->getDeleted() === true) {
                     $folder->setDeleted(false);
-                    $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
                     if ($folder->getRoot()->getId() !== $folder->getId()) {
+                        $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
                         $i = ($folder->getDeletedChildren() === 0) ? 'remove' : 'reload';
-                        $foldersArray[$i][] = $this->addFolderIdToArray($folder, $foldersArray, $i);
+                        $folderIdsArray[$i][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, $i);
                     }
                 } else {
                     if ($folder->getRoot()->getId() !== $folder->getId()) {
                         if ($folder->getDeletedChildren() === 0) {
-                            $foldersArray['remove'][] =  $this->addFolderIdToArray($folder, $foldersArray, 'remove');
+                            $folderIdsArray['remove'][] =  $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
                         }
                     }
                 }
             }
             $this->em->flush();
         }
-        array_reverse($foldersArray['remove']);
+        array_reverse($folderIdsArray['remove']);
 
-        return $foldersArray;
-    }
-
-    /**
-     * @param FolderEntity $folder
-     * @param array $foldersArray
-     * @param string $i
-     * @return int|null
-     */
-
-    private function addFolderIdToArray(FolderEntity $folder, array $foldersArray, string $i)
-    {
-        if (!array_search($folder->getId(), $foldersArray[$i])) {
-
-            return $folder->getId();
-        }
-
-        return null;
+        return $folderIdsArray;
     }
 
     /**
