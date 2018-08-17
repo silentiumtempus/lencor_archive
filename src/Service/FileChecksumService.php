@@ -17,6 +17,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class FileChecksumService
 {
     protected $em;
+    protected $pathRoot;
     protected $container;
     protected $filesRepository;
     protected $foldersRepository;
@@ -37,6 +38,7 @@ class FileChecksumService
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->fileErrorsRepository = $this->em->getRepository('App:Mappings\FileChecksumError');
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
+        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
     }
 
     /**
@@ -48,7 +50,7 @@ class FileChecksumService
     public function checkFile(FileEntity $requestedFile, string $filePath)
     {
         $fs = new Filesystem();
-        $absRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $absRoot = $this->pathRoot;
         $absPath = $absRoot . '/' . $filePath;
         if (!$fs->exists($absPath)) {
             $checkStatus = false;

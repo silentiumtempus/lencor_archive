@@ -52,8 +52,8 @@ class FileService
         $this->entryService = $entryService;
         $this->commonArchiveService = $commonArchiveService;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
-        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
         $this->dSwitchService = $dSwitchService;
+        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
     }
 
     /**
@@ -330,7 +330,7 @@ class FileService
         $delPosIndex = strrpos($file->getFileName(), $deleted);
         $resPosIndex = strrpos($file->getFileName(), $restored);
         if ($delPosIndex === true) {
-            $file->setFileName(substr_replace($file->getFileName(), $restored, $delPosIndex,  strlen($deleted)));
+            $file->setFileName(substr_replace($file->getFileName(), $restored, $delPosIndex, strlen($deleted)));
         } elseif ($resPosIndex === false) {
             $extPosIndex = strrpos($file->getFileName(), '.');
             if ($extPosIndex === false) {
@@ -361,7 +361,7 @@ class FileService
                 } else {
                     if ($folder->getRoot()->getId() !== $folder->getId()) {
                         if ($folder->getDeletedChildren() === 0) {
-                            $folderIdsArray['remove'][] =  $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
+                            $folderIdsArray['remove'][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
                         }
                     }
                 }

@@ -32,6 +32,7 @@ class UserService
 
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EncoderFactoryInterface $encoderFactory)
     {
+
         $this->em = $entityManager;
         $this->container = $container;
         $this->encoderFactory = $encoderFactory;

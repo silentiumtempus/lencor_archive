@@ -29,11 +29,4 @@ class DeleteService
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
     }
-
-
-
-
-
-
-
 }

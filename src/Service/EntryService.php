@@ -18,7 +18,6 @@ use Symfony\Component\Serializer\Serializer;
  * Class EntryService
  * @package App\Services
  */
-
 class EntryService
 {
     protected $em;
@@ -40,8 +39,8 @@ class EntryService
         $this->container = $container;
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
-        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
         $this->pathKeys = ['year', 'factory', 'archiveNumber'];
+        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
     }
 
     //@TODO: why string?
@@ -145,19 +144,19 @@ class EntryService
     public function writeDataToEntryFile(ArchiveEntryEntity $newEntry, string $filename)
     {
         try {
-        $fs = new Filesystem();
-        $fs->touch($filename);
-        //$encoders = array(new XmlEncoder());
-        //$normalizers = array(new ObjectNormalizer());
-        //$serializer = new Serializer($normalizers, $encoders);
-        $serializer = SerializerBuilder::create()->build();
-        $entryJSONFile = $serializer->serialize($newEntry, 'xml');
-        file_put_contents($filename, $entryJSONFile);
+            $fs = new Filesystem();
+            $fs->touch($filename);
+            //$encoders = array(new XmlEncoder());
+            //$normalizers = array(new ObjectNormalizer());
+            //$serializer = new Serializer($normalizers, $encoders);
+            $serializer = SerializerBuilder::create()->build();
+            $entryJSONFile = $serializer->serialize($newEntry, 'xml');
+            file_put_contents($filename, $entryJSONFile);
 
-        return true;
+            return true;
         } catch (\Exception $exception) {
 
-             return false;
+            return false;
         }
     }
 
@@ -342,16 +341,15 @@ class EntryService
         //$serializer = $this->container->get('jms_serializer');
         $serializer = SerializerBuilder::create()->build();
 
-        foreach ($files as $file)
-        {
+        foreach ($files as $file) {
             $xml = file_get_contents($file);
 
             //try {
-                $entry = $serializer->deserialize($xml, 'App\Entity\ArchiveEntryEntity', 'xml');
+            $entry = $serializer->deserialize($xml, 'App\Entity\ArchiveEntryEntity', 'xml');
 
             //} catch (\Exception $exception) {
-           //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
-           // }
+            //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
+            // }
             $this->em->persist($entry);
         }
 
