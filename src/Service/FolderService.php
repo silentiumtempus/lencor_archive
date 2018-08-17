@@ -344,12 +344,12 @@ class FolderService
     {
         $folderIdsArray['remove'] = [];
         $folderIdsArray['reload'] = [];
-        $originalFolder['folderName'] = $folder->getFolderName();
-        $folder->setFolderName($this->renameFolder($folder->getFolderName(), false));
-        if ($this->moveFolder($folder, $originalFolder)) {
-            $binaryPath = $this->getPath($folder);
-            foreach ($binaryPath as $folder) {
-                if ($folder->getDeleted() === true) {
+        $binaryPath = $this->getPath($folder);
+        foreach ($binaryPath as $folder) {
+            if ($folder->getDeleted() === true) {
+                $originalFolder['folderName'] = $folder->getFolderName();
+                $folder->setFolderName($this->renameFolder($folder->getFolderName(), false));
+                if ($this->moveFolder($folder, $originalFolder)) {
                     $folder->setDeleted(false);
                     $folder->setFolderName($this->renameFolder($folder->getFolderName(), false));
                     if ($folder->getRoot()->getId() !== $folder->getId()) {
@@ -357,16 +357,16 @@ class FolderService
                         $i = ($folder->getDeletedChildren() === 0) ? 'remove' : 'reload';
                         $folderIdsArray[$i][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, $i);
                     }
-                } else {
-                    if ($folder->getRoot()->getId() !== $folder->getId()) {
-                        if ($folder->getDeletedChildren() === 0) {
-                            $folderIdsArray['remove'][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
-                        }
+                }
+            } else {
+                if ($folder->getRoot()->getId() !== $folder->getId()) {
+                    if ($folder->getDeletedChildren() === 0) {
+                        $folderIdsArray['remove'][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
                     }
                 }
             }
-            $this->em->flush();
         }
+        $this->em->flush();
         array_reverse($folderIdsArray['remove']);
 
         return $folderIdsArray;
@@ -388,7 +388,7 @@ class FolderService
             if ($delPosIndex != $condition) {
 
                 return substr_replace($folderName, $restored, $delPosIndex, strlen($deleted));
-            } elseif ($resPosIndex === $condition) {
+            } elseif ($resPosIndex == $condition) {
 
                 return $folderName . $restored . (hash('crc32', uniqid(), false));
             }
@@ -396,7 +396,7 @@ class FolderService
             if ($resPosIndex == $condition) {
 
                 return substr_replace($folderName, $deleted, $resPosIndex, strlen($restored));
-            } elseif ($delPosIndex !== $condition) {
+            } elseif ($delPosIndex != $condition) {
 
                 return $folderName . $deleted . (hash('crc32', uniqid(), false));
             }
