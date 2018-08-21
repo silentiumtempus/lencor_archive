@@ -341,22 +341,21 @@ $(document).ready(function () {
             else if (folderId !== null) {
                 $('#update-info-spinner').show().css('display', 'contents');
                 $.ajax({
-                        url: Routing.generate('entries_get_folder_entryId'),
-                        method: "POST",
-                        data: {folderId: folderId},
-                        success: function (entryId) {
-                            $.ajax({
-                                url: Routing.generate('entries_last_update_info'),
-                                method: "POST",
-                                data: {folderId: folderId},
-                                success: function (reloadLastUpdateInfo) {
-                                    $('#update-info-spinner').hide();
-                                    $($('#entryContent_' + entryId).find('#last-update')).html(reloadLastUpdateInfo);
-                                }
-                            });
-                        }
+                    url: Routing.generate('entries_get_folder_entryId'),
+                    method: "POST",
+                    data: {folderId: folderId},
+                    success: function (entryId) {
+                        $.ajax({
+                            url: Routing.generate('entries_last_update_info'),
+                            method: "POST",
+                            data: {folderId: folderId},
+                            success: function (reloadLastUpdateInfo) {
+                                $('#update-info-spinner').hide();
+                                $($('#entryContent_' + entryId).find('#last-update')).html(reloadLastUpdateInfo);
+                            }
+                        });
                     }
-                );
+                });
             }
 
             return false;
@@ -442,28 +441,28 @@ $(document).ready(function () {
 
             return false;
         }
-        
+
         /** Archive entries folder undelete action **/
-        
+
         $(document).on("click", 'a[name="unDeleteFolder"]', unDeleteFolder);
-        
+
         function unDeleteFolder() {
             let folderId = $(this).parent().attr("id");
             $.ajax({
-               url: Routing.generate('entries_undelete_folder', {folder: folderId}),
-               method: "POST",
-               data: null,
-               success: function (parentFoldersArray) {
-                   if ((parentFoldersArray !== '1') || (parentFoldersArray !== '0')) {
-                       if (parentFoldersArray['remove'].length !== 0) {
-                           removeFolders(parentFoldersArray['remove']);
-                       }
-                       if (parentFoldersArray['reload'].length !== 0) {
-                           reloadFolders(parentFoldersArray['reload']);
-                       }
-                   }
-                   loadFlashMessages();
-               }
+                url: Routing.generate('entries_undelete_folder', {folder: folderId}),
+                method: "POST",
+                data: null,
+                success: function (parentFoldersArray) {
+                    if ((parentFoldersArray !== '1') || (parentFoldersArray !== '0')) {
+                        if (parentFoldersArray['remove'].length !== 0) {
+                            removeFolders(parentFoldersArray['remove']);
+                        }
+                        if (parentFoldersArray['reload'].length !== 0) {
+                            reloadFolders(parentFoldersArray['reload']);
+                        }
+                    }
+                    loadFlashMessages();
+                }
             });
 
             return false;
@@ -524,6 +523,7 @@ $(document).ready(function () {
         }
 
         /** Update folder **/
+
         $(document).on("submit", 'form[name="file_rename_form"]', function () {
             $(this).off('submit');
             let fileId = $(this).parent().attr('id');
@@ -534,6 +534,7 @@ $(document).ready(function () {
         });
 
         /** File editing cancellation **/
+
         $(document).on('click', '#file_rename_form_cancelButton', function () {
             let fileId = $(this).parents('span').attr('id');
             $.ajax({
@@ -804,6 +805,22 @@ $(document).ready(function () {
             });
 
             return false;
+        }
+
+        /** Archive entry delete action **/
+
+        $(document).on("click", 'a[name="deleteEntry"]', deleteEntry);
+
+        function deleteEntry() {
+            let entryId = $(this).parent().attr("id");
+            $.ajax({
+               url: Routing.generate('entries_delete', {entry: entryId}),
+               method: "POST",
+               data: null,
+               success: function (entryDelete) {
+                   console.log('OK');
+               }
+            });
         }
 
         /** Showing requesters for deleted items **/

@@ -9,6 +9,7 @@ use App\Form\EntryForm;
 use App\Form\FactoryForm;
 use App\Entity\FactoryEntity;
 use App\Form\SettingForm;
+use App\Service\CommonArchiveService;
 use App\Service\EntryService;
 use App\Service\FactoryService;
 use App\Service\FolderService;
@@ -37,6 +38,7 @@ class EntriesAdditionController extends Controller
      * @param SettingService $settingService
      * @param FolderService $folderService
      * @param LoggingService $loggingService
+     * @param CommonArchiveService $commonArchiveService
      * @return Response
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\
@@ -52,7 +54,8 @@ class EntriesAdditionController extends Controller
         FactoryService $factoryService,
         SettingService $settingService,
         FolderService $folderService,
-        LoggingService $loggingService
+        LoggingService $loggingService,
+        CommonArchiveService $commonArchiveService
     )
     {
         $session = $this->container->get('session');
@@ -100,7 +103,7 @@ class EntriesAdditionController extends Controller
             if ($entryForm->isValid()) {
                 try {
                     $newEntryEntity = $entryForm->getData();
-                    $entryPath = $folderService->checkAndCreateFolders($newEntryEntity, true);
+                    $entryPath = $commonArchiveService->checkAndCreateFolders($newEntryEntity, true, false);
                     $filename = $entryPath . "/" . $newEntryEntity->getArchiveNumber() . ".entry";
                     $logsDir = $entryPath . "/logs";
 

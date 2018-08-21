@@ -2,14 +2,17 @@
 
 namespace App\Service;
 
+use App\Entity\ArchiveEntryEntity;
 use App\Entity\FolderEntity;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class CommonArchiveService
  * @package App\Service
  */
-
 class CommonArchiveService
 {
     protected $em;
@@ -18,20 +21,28 @@ class CommonArchiveService
     protected $foldersRepository;
     protected $entriesRepository;
     protected $userService;
+    protected $pathRoot;
+    protected $pathPermissions;
+    protected $deletedFolder;
 
     /**
      * CommonArchiveService constructor.
      * @param EntityManagerInterface $entityManager
+     * @param ContainerInterface $container
      * @param UserService $userService
      */
 
-    public function __construct(EntityManagerInterface $entityManager, UserService $userService)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, UserService $userService)
     {
         $this->em = $entityManager;
+        $this->container = $container;
         $this->userService = $userService;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
+        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->pathPermissions = $this->container->getParameter('lencor_archive.storage_permissions');
+        $this->deletedFolder = $this->container->getParameter('archive.deleted.foldername');
     }
 
     /**
@@ -44,11 +55,14 @@ class CommonArchiveService
     {
         $repository = null;
         switch ($type) {
-            case 'file' : $repository = $this->filesRepository;
-            break;
-            case 'folder' : $repository = $this->foldersRepository;
-            break;
-            case 'entry' : $repository = $this->entriesRepository;
+            case 'file' :
+                $repository = $this->filesRepository;
+                break;
+            case 'folder' :
+                $repository = $this->foldersRepository;
+                break;
+            case 'entry' :
+                $repository = $this->entriesRepository;
         }
         $source = $repository->findOneById($id);
         $requesterIds = $source->getRequestedByUsers();
@@ -93,5 +107,75 @@ class CommonArchiveService
         }
 
         return null;
+    }
+
+    /**
+     * Directory for deleted entries initialization
+     */
+    public function checkAndCreateDeletedFolder()
+    {
+        $fs = new Filesystem();
+        if (!$fs->exists($this->pathRoot . "/deleted")) {
+            $fs->mkdir($this->pathRoot . "/deleted");
+        }
+    }
+
+    /**
+     * @param ArchiveEntryEntity $archiveEntryEntity
+     * @param bool $isNew
+     * @param bool $isDeleted
+     * @return string
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+
+    public function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity, bool $isNew, bool $isDeleted)
+    {
+        $fs = new Filesystem();
+
+        if ($isDeleted) {
+            $this->checkAndCreateDeletedFolder();
+            $pathYear = $this->pathRoot . "/" . $this->deletedFolder . "/" . $archiveEntryEntity->getYear();
+        } else {
+            $pathYear = $this->pathRoot . "/" . $archiveEntryEntity->getYear();
+        }
+        $pathFactory = $pathYear . "/" . $archiveEntryEntity->getFactory()->getId();
+        $pathEntry = $pathFactory . "/" . $archiveEntryEntity->getArchiveNumber();
+        $pathLogs = $pathEntry . "/logs";
+
+        try {
+            if (!$fs->exists($pathYear)) {
+                $fs->mkdir($pathYear, $this->pathPermissions);
+            }
+            if (!$fs->exists($pathFactory)) {
+                $fs->mkdir($pathFactory, $this->pathPermissions);
+            }
+            if ($isNew) {
+                if (!$fs->exists($pathEntry)) {
+                    $fs->mkdir($pathEntry, $this->pathPermissions);
+                } else {
+                    $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! Директория для новой ячейки: ' . $pathEntry . ' уже существует');
+                }
+                if (!$fs->exists($pathLogs)) {
+                    $fs->mkdir($pathLogs, $this->pathPermissions);
+                } else {
+                    $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! директория логов: ' . $pathEntry . ' уже существует');
+                }
+            } else {
+                if ($fs->exists($pathEntry)) {
+                    $this->container->get('session')->getFlashBag()->add('danger', 'Внимание! Директория назначения: ' . $pathEntry . ' уже существует. Операция прервана.');
+
+                } else {
+                    if ($fs->exists($pathLogs)) {
+                        $this->container->get('session')->getFlashBag()->add('danger', 'Внимание! Директория логов: ' . $pathLogs . 'уже существует. Операция прервана.');
+                    }
+                }
+            }
+
+        } catch (IOException $IOException) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка создания директории: ' . $IOException->getMessage());
+        }
+
+        return $pathEntry;
     }
 }

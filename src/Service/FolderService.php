@@ -273,9 +273,9 @@ class FolderService
 
     public function deleteFolders(array $foldersArray, FileService $fileService)
     {
-        foreach ($foldersArray as $folder) {
-            $folderEntity = $this->foldersRepository->find($folder);
-            $this->deleteFolder($folderEntity, $fileService);
+        $folders = $this->foldersRepository->find($foldersArray);
+        foreach ($folders as $folder) {
+            $this->deleteFolder($folder, $fileService);
         }
     }
 
@@ -291,7 +291,7 @@ class FolderService
             if (!$folder->getDeleted()) {
                 $originalFolder['folderName'] = $folder->getFolderName();
                 $folder->setFolderName($this->renameFolder($folder->getFolderName(), true));
-                if ($this->moveFolder($folder, $originalFolder)) {
+                if ($this->moveFolder($folder, $originalFolder, false)) {
                     $folder->setDeleted(true);
                     $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), true);
                 }
@@ -349,7 +349,7 @@ class FolderService
             if ($folder->getDeleted() === true) {
                 $originalFolder['folderName'] = $folder->getFolderName();
                 $folder->setFolderName($this->renameFolder($folder->getFolderName(), false));
-                if ($this->moveFolder($folder, $originalFolder)) {
+                if ($this->moveFolder($folder, $originalFolder, false)) {
                     $folder->setDeleted(false);
                     $folder->setFolderName($this->renameFolder($folder->getFolderName(), false));
                     if ($folder->getRoot()->getId() !== $folder->getId()) {
@@ -490,58 +490,6 @@ class FolderService
     }
 
     /**
-     * @param ArchiveEntryEntity $archiveEntryEntity
-     * @param boolean $isNew
-     * @return string
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
-     */
-
-    public function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity, bool $isNew)
-    {
-        $fs = new Filesystem();
-        $pathYear = $this->pathRoot . "/" . $archiveEntryEntity->getYear();
-        $pathFactory = $pathYear . "/" . $archiveEntryEntity->getFactory()->getId();
-        $pathEntry = $pathFactory . "/" . $archiveEntryEntity->getArchiveNumber();
-        $pathLogs = $pathEntry . "/logs";
-
-        try {
-            if (!$fs->exists($pathYear)) {
-                $fs->mkdir($pathYear, $this->pathPermissions);
-            }
-            if (!$fs->exists($pathFactory)) {
-                $fs->mkdir($pathFactory, $this->pathPermissions);
-            }
-            if ($isNew) {
-                if (!$fs->exists($pathEntry)) {
-                    $fs->mkdir($pathEntry, $this->pathPermissions);
-                } else {
-                    $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! Директория для новой ячейки: ' . $pathEntry . ' уже существует');
-                }
-                if (!$fs->exists($pathLogs)) {
-                    $fs->mkdir($pathLogs, $this->pathPermissions);
-                } else {
-                    $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! директория логов: ' . $pathEntry . ' уже существует');
-                }
-            } else {
-                if ($fs->exists($pathEntry)) {
-                    $this->container->get('session')->getFlashBag()->add('danger', 'Внимание! Директория назначения: ' . $pathEntry . ' уже существует. Операция прервана.');
-
-                } else {
-                    if ($fs->exists($pathLogs)) {
-                        $this->container->get('session')->getFlashBag()->add('danger', 'Внимание! Директория логов: ' . $pathLogs . 'уже существует. Операция прервана.');
-                    }
-                }
-            }
-
-        } catch (IOException $IOException) {
-            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка создания директории: ' . $IOException->getMessage());
-        }
-
-        return $pathEntry;
-    }
-
-    /**
      * @param array $originalEntry
      * @param ArchiveEntryEntity $archiveEntryEntity
      * @return string
@@ -550,7 +498,7 @@ class FolderService
     public function moveEntryFolder(array $originalEntry, ArchiveEntryEntity $archiveEntryEntity)
     {
         $oldPath = $this->entryService->constructExistingPath($originalEntry);
-        $newPath = $this->checkAndCreateFolders($archiveEntryEntity, false);
+        $newPath = $this->commonArchiveService->checkAndCreateFolders($archiveEntryEntity, false, false);
         $fs = new Filesystem();
         $fs->rename($oldPath, $newPath);
         $newEntryFile = $newPath . "/" . $archiveEntryEntity->getArchiveNumber() . ".entry";

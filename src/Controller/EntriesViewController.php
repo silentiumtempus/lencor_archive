@@ -171,7 +171,8 @@ class EntriesViewController extends Controller
 
     /**
      * @param Request $request
-     * @param DeleteService $deleteService
+     * @param EntryService $entryService
+     * @param FolderService $folderService
      * @param ArchiveEntryEntity $entry
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
@@ -183,11 +184,34 @@ class EntriesViewController extends Controller
      *     )
      * @ParamConverter("entry", class = "App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
      */
-    public function deleteEntry(Request $request, DeleteService $deleteService, ArchiveEntryEntity $entry = null)
+    public function deleteEntry(Request $request, EntryService $entryService, FolderService $folderService, ArchiveEntryEntity $entry = null)
     {
+        if ($request->request->has('entriesArray')) {
+            try {
+                $entryService->deleteEntries($request->get('filesArray'));
+                $this->addFlash('success', 'Ячейки успешно удалены');
 
-        $resp = $entry ? $entry->getArchiveNumber() : 'Нет данных';
-        return new Response($resp);
+                return new Response(1);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Ячкейи не удалёны из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new Response(0);
+            }
+        } elseif ($entry) {
+            try {
+                $entryService->deleteEntry($entry);
+                $this->addFlash('success', 'Директория '. $entry->getId() . ' успешно удалёна');
+
+                return new Response(1);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Директория ' . $entry->getId() . ' не удалёна из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new Response(0);
+            }
+        } else {
+
+            return $this->redirectToRoute('entries');
+        }
     }
 
     /**

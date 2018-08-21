@@ -24,23 +24,28 @@ class EntryService
     protected $container;
     protected $pathRoot;
     protected $pathKeys;
+    protected $deletedFolder;
     protected $entriesRepository;
     protected $foldersRepository;
+    protected $commonArchiveService;
 
     /**
      * EntryService constructor.
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
+     * @param CommonArchiveService $commonArchiveService
      */
 
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, CommonArchiveService $commonArchiveService)
     {
         $this->em = $entityManager;
         $this->container = $container;
+        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->deletedFolder = $this->container->getParameter('archive.deleted.foldername');
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->pathKeys = ['year', 'factory', 'archiveNumber'];
-        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->commonArchiveService = $commonArchiveService;
     }
 
     //@TODO: why string?
@@ -291,11 +296,17 @@ class EntryService
 
     /**
      * @param ArchiveEntryEntity $archiveEntry
+     * @param bool $isDeleted
      * @return string
      */
 
-    public function constructEntryPath(ArchiveEntryEntity $archiveEntry)
+    public function constructEntryPath(ArchiveEntryEntity $archiveEntry, bool $isDeleted)
     {
+        if ($isDeleted) {
+
+            return $this->pathRoot . "/" . $this->deletedFolder . "/" . $archiveEntry->getYear() . "/" . $archiveEntry->getFactory()->getId() . "/" . $archiveEntry->getArchiveNumber();
+        }
+
         return $this->pathRoot . "/" . $archiveEntry->getYear() . "/" . $archiveEntry->getFactory()->getId() . "/" . $archiveEntry->getArchiveNumber();
     }
 
@@ -311,12 +322,13 @@ class EntryService
 
     /**
      * @param ArchiveEntryEntity $archiveEntry
+     * @param bool $isDeleted
      * @return bool
      */
 
-    public function checkNewPath(ArchiveEntryEntity $archiveEntry)
+    public function checkNewPath(ArchiveEntryEntity $archiveEntry, bool $isDeleted)
     {
-        $newPath = $this->constructEntryPath($archiveEntry);
+        $newPath = $this->constructEntryPath($archiveEntry, $isDeleted);
         $fs = new Filesystem();
         if ($fs->exists($newPath)) {
 
@@ -335,6 +347,53 @@ class EntryService
     {
         $this->em->flush();
     }
+
+    /**
+     * @param array $entriesArray
+     */
+
+    public function deleteEntries(array $entriesArray)
+    {
+        $entries = $this->entriesRepository->find($entriesArray);
+        foreach ($entries as $entry) {
+            $this->deleteEntry($entry);
+        }
+    }
+
+    /**
+     * @param ArchiveEntryEntity $entryEntity
+     */
+
+    public function deleteEntry(ArchiveEntryEntity $entryEntity)
+    {
+        $this->commonArchiveService->checkAndCreateFolders($entryEntity, true, true);
+        //if ($this->checkNewPath($entryEntity, true)) {
+            if ($this->moveEntry($entryEntity, true)) {
+             $entryEntity->setDeleted(true);
+             $this->updateEntry();
+            //}
+        }
+
+    }
+
+    private function moveEntry(ArchiveEntryEntity $entryEntity, bool $isDeleted) {
+        //try {
+
+            $oldPath = $this->constructEntryPath($entryEntity, false);
+            $newPath = $this->constructEntryPath($entryEntity, $isDeleted);
+            $fs = new Filesystem();
+            $fs->rename($oldPath, $newPath);
+
+            return true;
+        //} catch (\Exception $exception) {
+
+        //    return false;
+        //}
+    }
+
+    /**
+     * @param array $files
+     */
 
     public function restoreEntriesFromFiles(array $files)
     {

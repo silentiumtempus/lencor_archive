@@ -257,9 +257,9 @@ class FileService
 
     public function deleteFiles(array $filesArray)
     {
-        foreach ($filesArray as $file) {
-            $fileEntity = $this->filesRepository->find($file);
-            $this->deleteFile($fileEntity);
+        $files = $this->filesRepository->find($filesArray);
+        foreach ($files as $file) {
+            $this->deleteFile($file);
         }
     }
 
@@ -376,6 +376,7 @@ class FileService
     /**
      * @param FileEntity $newFile
      * @param array $originalFile
+     * @param bool $delete
      * @return bool
      */
 
