@@ -812,15 +812,20 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="deleteEntry"]', deleteEntry);
 
         function deleteEntry() {
-            let entryId = $(this).parent().attr("id");
+            let $entryId = $(this).parent().attr("id");
             $.ajax({
-               url: Routing.generate('entries_delete', {entry: entryId}),
+               url: Routing.generate('entries_delete', {entry: $entryId}),
                method: "POST",
                data: null,
                success: function (entryDelete) {
-                   console.log('OK');
+                   if (entryDelete === '1') {
+                       removeEntryBlock($entryId);
+                   }
+                   loadFlashMessages();
                }
             });
+
+            return false;
         }
 
         /** Archive entry unDelete action **/
@@ -828,15 +833,26 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="unDeleteEntry"]', unDeleteEntry);
 
         function unDeleteEntry() {
-            let entryId = $(this).parent().attr("id");
+            let $entryId = $(this).parent().attr("id");
             $.ajax({
-                url: Routing.generate('entries_undelete', {entry: entryId}),
+                url: Routing.generate('entries_undelete', {entry: $entryId}),
                 method: "POST",
                 data: null,
                 success: function (entryUnDelete) {
-                    console.log('OK');
+                    if (entryUnDelete === '1') {
+                        removeEntryBlock($entryId);
+                    }
+                    loadFlashMessages();
                 }
             });
+
+            return false;
+        }
+
+        function removeEntryBlock($entryId)
+        {
+            $('#entry_' + $entryId).remove();
+            $('#entryContent_' + $entryId).parent().remove();
         }
 
         /** Showing requesters for deleted items **/
