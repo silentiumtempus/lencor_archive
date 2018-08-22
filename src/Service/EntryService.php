@@ -350,45 +350,47 @@ class EntryService
 
     /**
      * @param array $entriesArray
+     * @param bool $delete
      */
 
-    public function deleteEntries(array $entriesArray)
+    public function handleEntriesDeleteState(array $entriesArray, bool $delete)
     {
         $entries = $this->entriesRepository->find($entriesArray);
         foreach ($entries as $entry) {
-            $this->deleteEntry($entry);
+            $this->handleEntryDeleteState($entry, $delete);
         }
     }
 
     /**
      * @param ArchiveEntryEntity $entryEntity
+     * @param bool $delete
      */
 
-    public function deleteEntry(ArchiveEntryEntity $entryEntity)
+    public function handleEntryDeleteState(ArchiveEntryEntity $entryEntity, bool $delete)
     {
-        $this->commonArchiveService->checkAndCreateFolders($entryEntity, true, true);
-        //if ($this->checkNewPath($entryEntity, true)) {
-            if ($this->moveEntry($entryEntity, true)) {
-             $entryEntity->setDeleted(true);
-             $this->updateEntry();
-            //}
+        $this->commonArchiveService->checkAndCreateFolders($entryEntity, false, $delete);
+        if ($this->moveEntry($entryEntity, $delete)) {
+                $entryEntity->setDeleted($delete);
+                $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryEntity);
+                $rootFolder->setDeleted($delete);
+                $this->updateEntry();
         }
-
     }
 
-    private function moveEntry(ArchiveEntryEntity $entryEntity, bool $isDeleted) {
-        //try {
+    /**
+     * @param ArchiveEntryEntity $entryEntity
+     * @param bool $delete
+     * @return bool
+     */
 
-            $oldPath = $this->constructEntryPath($entryEntity, false);
-            $newPath = $this->constructEntryPath($entryEntity, $isDeleted);
-            $fs = new Filesystem();
-            $fs->rename($oldPath, $newPath);
+    private function moveEntry(ArchiveEntryEntity $entryEntity, bool $delete)
+    {
+        $oldPath = $this->constructEntryPath($entryEntity, ($delete ? false : true));
+        $newPath = $this->constructEntryPath($entryEntity, $delete);
+        $fs = new Filesystem();
+        $fs->rename($oldPath, $newPath);
 
-            return true;
-        //} catch (\Exception $exception) {
-
-        //    return false;
-        //}
+        return true;
     }
 
     /**

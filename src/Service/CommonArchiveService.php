@@ -150,7 +150,7 @@ class CommonArchiveService
             if (!$fs->exists($pathFactory)) {
                 $fs->mkdir($pathFactory, $this->pathPermissions);
             }
-            if ($isNew) {
+            if ($isNew && !$isDeleted) {
                 if (!$fs->exists($pathEntry)) {
                     $fs->mkdir($pathEntry, $this->pathPermissions);
                 } else {

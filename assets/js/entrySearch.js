@@ -823,6 +823,22 @@ $(document).ready(function () {
             });
         }
 
+        /** Archive entry unDelete action **/
+
+        $(document).on("click", 'a[name="unDeleteEntry"]', unDeleteEntry);
+
+        function unDeleteEntry() {
+            let entryId = $(this).parent().attr("id");
+            $.ajax({
+                url: Routing.generate('entries_undelete', {entry: entryId}),
+                method: "POST",
+                data: null,
+                success: function (entryUnDelete) {
+                    console.log('OK');
+                }
+            });
+        }
+
         /** Showing requesters for deleted items **/
 
         $(document).on("click", 'a[name="isRequested"]', function (event) {

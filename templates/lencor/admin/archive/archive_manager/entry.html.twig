@@ -40,7 +40,7 @@
                 <a href="#" name="removeEntry"><i class="fa fa-trash" title="Пометить к удалению"> </i></a>
             {% endif %}
         {% else %}
-            <a href="#" name="undeleteEntry" class="non-opaque"><i class="fa fa-undo non-opaque" title="Восстановить ячейку"> </i></a>
+            <a href="#" name="unDeleteEntry" class="non-opaque"><i class="fa fa-undo non-opaque" title="Восстановить ячейку"> </i></a>
         {% endif %}
         {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path('admin-entries', {'entryId' : entry.id}) }}" target="_blank"><i class="fa fa-edit" title="Редактировать"> </i></a>

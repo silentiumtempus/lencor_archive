@@ -172,7 +172,6 @@ class EntriesViewController extends Controller
     /**
      * @param Request $request
      * @param EntryService $entryService
-     * @param FolderService $folderService
      * @param ArchiveEntryEntity $entry
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
@@ -184,11 +183,11 @@ class EntriesViewController extends Controller
      *     )
      * @ParamConverter("entry", class = "App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
      */
-    public function deleteEntry(Request $request, EntryService $entryService, FolderService $folderService, ArchiveEntryEntity $entry = null)
+    public function deleteEntry(Request $request, EntryService $entryService, ArchiveEntryEntity $entry = null)
     {
         if ($request->request->has('entriesArray')) {
             try {
-                $entryService->deleteEntries($request->get('filesArray'));
+                $entryService->handleEntriesDeleteState($request->get('filesArray'), true);
                 $this->addFlash('success', 'Ячейки успешно удалены');
 
                 return new Response(1);
@@ -199,12 +198,56 @@ class EntriesViewController extends Controller
             }
         } elseif ($entry) {
             try {
-                $entryService->deleteEntry($entry);
+                $entryService->handleEntryDeleteState($entry, true);
                 $this->addFlash('success', 'Директория '. $entry->getId() . ' успешно удалёна');
 
                 return new Response(1);
             } catch (\Exception $exception) {
                 $this->addFlash('danger', 'Директория ' . $entry->getId() . ' не удалёна из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new Response(0);
+            }
+        } else {
+
+            return $this->redirectToRoute('entries');
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param EntryService $entryService
+     * @param ArchiveEntryEntity $entry
+     * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("admin/undelete/entry/{entry}",
+     *     options = { "expose" = true },
+     *     name = "entries_undelete",
+     *     requirements = { "entry" = "\d+" },
+     *     defaults = {"entry" : ""}
+     *     )
+     * @ParamConverter("entry", class = "App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
+     */
+    public function unDeleteEntry(Request $request, EntryService $entryService, ArchiveEntryEntity $entry = null)
+    {
+        if ($request->request->has('entriesArray')) {
+            try {
+                $entryService->handleEntriesDeleteState($request->get('filesArray'), false);
+                $this->addFlash('success', 'Ячейки успешно восстановлены');
+
+                return new Response(1);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Ячкейи не восстановлены из за непредвиденной ошибки: ' . $exception->getMessage());
+
+                return new Response(0);
+            }
+        } elseif ($entry) {
+            try {
+                $entryService->handleEntryDeleteState($entry, false);
+                $this->addFlash('success', 'Директория '. $entry->getId() . ' успешно восстановлена');
+
+                return new Response(1);
+            } catch (\Exception $exception) {
+                $this->addFlash('danger', 'Директория ' . $entry->getId() . ' не восстановлена из за непредвиденной ошибки: ' . $exception->getMessage());
 
                 return new Response(0);
             }
