@@ -878,6 +878,20 @@ $(document).ready(function () {
                             $entry.replaceWith(entriesList);
                     }
                 });
+            } else {
+                $.ajax({
+                    url: Routing.generate('entries_reload'),
+                    method: "POST",
+                    data: {entriesArray: entries},
+                    success: function (entriesList) {
+                        //@TODO: Not tested
+                        $.each(entries, function (index, value) {
+                            let $temp = $(entriesList).filter('#entry_' + value);
+                            let $entry = $('#entry_' + value);
+                            $entry.replaceWith($temp);
+                        });
+                    }
+                });
             }
         }
 
