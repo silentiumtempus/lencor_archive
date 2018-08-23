@@ -23,8 +23,10 @@ class FileService
     protected $userService;
     protected $entryService;
     protected $pathRoot;
+    protected $deletedFolder;
     protected $commonArchiveService;
     protected $dSwitchService;
+    protected $fileChecksumService;
 
     /**
      * FileService constructor.
@@ -35,6 +37,7 @@ class FileService
      * @param EntryService $entryService
      * @param DeleteSwitcherService $dSwitchService
      * @param CommonArchiveService $commonArchiveService
+     * @param FileChecksumService $fileChecksumService
      */
 
     public function __construct(EntityManagerInterface $entityManager,
@@ -43,7 +46,8 @@ class FileService
                                 UserService $userService,
                                 EntryService $entryService,
                                 DeleteSwitcherService $dSwitchService,
-                                CommonArchiveService $commonArchiveService)
+                                CommonArchiveService $commonArchiveService,
+                                FileChecksumService $fileChecksumService)
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -53,7 +57,10 @@ class FileService
         $this->commonArchiveService = $commonArchiveService;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->dSwitchService = $dSwitchService;
+        $this->fileChecksumService = $fileChecksumService;
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->deletedFolder = $this->container->getParameter('archive.deleted.folder_name');
+
     }
 
     /**
@@ -97,17 +104,48 @@ class FileService
     }
 
     /**
-     * @param FileEntity $requestedFile
+     * @param FileEntity $fileEntity
+     * @param bool $deleted
      * @return string
      */
 
-    public function getFileSharePath(FileEntity $requestedFile)
+    public function getFileHTTPUrl(FileEntity $fileEntity, bool $deleted)
     {
-        $share_root = $this->container->getParameter('lencor_archive.share_path');
-        $fileAbsPath = $this->getFilePath($requestedFile, false);
+        $filePath = $this->getFilePath($fileEntity, true);
 
-        return $share_root . '\\' . $fileAbsPath;
+        return $this->container->getParameter('lencor_archive.http_path') . '/' . ($deleted ? '/' . $this->deletedFolder : '') . $filePath;
+    }
 
+
+    /**
+     * @param FileEntity $fileEntity
+     * @param bool $deleted ;
+     * @return string
+     */
+
+    public function getFileSharePath(FileEntity $fileEntity, bool $deleted)
+    {
+        $fileAbsPath = $this->getFilePath($fileEntity, false);
+
+        return $this->container->getParameter('lencor_archive.share_path') . ($deleted ? '\\' . $this->deletedFolder : '') . '\\' . $fileAbsPath;
+
+    }
+
+    /**
+     * @param FileEntity $file
+     * @return mixed
+     */
+
+    public function getFileDownloadInfo(FileEntity $file)
+    {
+        $parentEntry = $file->getParentFolder()->getRoot()->getArchiveEntry();
+        $deleted = ($file->getDeleted() || $parentEntry->getDeleted()) ? true : false;
+        $filePath = $this->getFilePath($file, true);
+        $fileInfo['share_path'] = $this->getFileSharePath($file, $deleted);
+        $fileInfo['http_url'] = $this->getFileHTTPUrl($file, $deleted);
+        $fileInfo['check_status'] = $this->fileChecksumService->checkFile($file, $filePath, $deleted);
+
+        return $fileInfo;
     }
 
     /**
@@ -118,19 +156,6 @@ class FileService
     public function getFilesList(array $filesArray)
     {
         return $this->filesRepository->findById($filesArray);
-    }
-
-    /**
-     * @param string $filePath
-     * @return string
-     */
-
-    public function getFileHTTPUrl(string $filePath)
-    {
-        $httpRoot = $this->container->getParameter('lencor_archive.http_path');
-        $httpPath = $httpRoot . '/' . $filePath;
-
-        return $httpPath;
     }
 
     /**

@@ -23,6 +23,7 @@ class FileChecksumService
     protected $foldersRepository;
     protected $fileErrorsRepository;
     protected $entriesRepository;
+    protected $deletedFolder;
 
     /**
      * FileChecksumService constructor.
@@ -39,19 +40,20 @@ class FileChecksumService
         $this->fileErrorsRepository = $this->em->getRepository('App:Mappings\FileChecksumError');
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->deletedFolder = $this->container->getParameter('archive.deleted.folder_name');
     }
 
     /**
      * @param FileEntity $requestedFile
      * @param string $filePath
+     * @param bool $deleted
      * @return bool
      */
 
-    public function checkFile(FileEntity $requestedFile, string $filePath)
+    public function checkFile(FileEntity $requestedFile, string $filePath, bool $deleted)
     {
         $fs = new Filesystem();
-        $absRoot = $this->pathRoot;
-        $absPath = $absRoot . '/' . $filePath;
+        $absPath = $this->pathRoot . ($deleted ? '/' . $this->deletedFolder : '') . '/' . $filePath;
         if (!$fs->exists($absPath)) {
             $checkStatus = false;
         } else {

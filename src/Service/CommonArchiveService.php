@@ -42,7 +42,7 @@ class CommonArchiveService
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
         $this->pathPermissions = $this->container->getParameter('lencor_archive.storage_permissions');
-        $this->deletedFolder = $this->container->getParameter('archive.deleted.foldername');
+        $this->deletedFolder = $this->container->getParameter('archive.deleted.folder_name');
     }
 
     /**

@@ -380,7 +380,6 @@ class FilesController extends Controller
     }
 
     /**
-     * @param Request $request
      * @param FileEntity $file
      * @param FileService $fileService
      * @param FileChecksumService $fileChecksumService
@@ -394,21 +393,15 @@ class FilesController extends Controller
      * @ParamConverter("file", class = "App:FileEntity", options = { "id" = "file" })
      */
 
-    public function downloadFile(Request $request, FileEntity $file, FileService $fileService, FileChecksumService $fileChecksumService)
+    public function downloadFile(FileEntity $file, FileService $fileService, FileChecksumService $fileChecksumService)
     {
-        $checkStatus = null;
-        $sharePath = null;
-        $httpPath = null;
-        $filePath = $fileService->getFilePath($file, true);
-        $httpPath = $fileService->getFileHTTPUrl($filePath);
-        $sharePath = $fileService->getFileSharePath($file);
-        $checkStatus = $fileChecksumService->checkFile($file, $filePath);
-        if (!$checkStatus) {
+        $fileInfo = $fileService->getFileDownloadInfo($file);
+        if (!$fileInfo['check_status']) {
             $fileChecksumService->reportChecksumError($file, $this->getUser()->getId());
         } else {
             $fileChecksumService->validateChecksumValue($file, $this->getUser()->getId());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/download_file.html.twig', array('requestedFile' => $file, 'downloadLink' => $httpPath, 'sharePath' => $sharePath, 'checkPass' => $checkStatus));
+        return $this->render('lencor/admin/archive/archive_manager/download_file.html.twig', array('requestedFile' => $file, 'downloadLink' => $fileInfo['http_url'], 'sharePath' => $fileInfo['share_path'], 'checkPass' => $fileInfo['check_status']));
     }
 }
