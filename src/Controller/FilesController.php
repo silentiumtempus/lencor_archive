@@ -239,15 +239,19 @@ class FilesController extends Controller
         if ($fileRenameForm->isSubmitted()) {
             if ($fileRenameForm->isValid()) {
                 $originalFile = $fileService->getOriginalData($file);
-                if ($originalFile['fileName'] != $file->getFileName()) {
-                    if ($fileService->moveFile($file, $originalFile)) {
-                        $fileService->flushFile();
-                        $this->addFlash('success', 'Переименование ' . $originalFile['fileName'] . ' > ' . $file->getFileName() . ' успешно произведено.');
+                if ($file->getDeleted() !== true) {
+                    if ($originalFile['fileName'] != $file->getFileName()) {
+                        if ($fileService->moveFile($file, $originalFile)) {
+                            $fileService->flushFile();
+                            $this->addFlash('success', 'Переименование ' . $originalFile['fileName'] . ' > ' . $file->getFileName() . ' успешно произведено.');
+                        } else {
+                            $this->addFlash('danger', 'Переименование отменено из за внутренней ошибки.');
+                        }
                     } else {
-                        $this->addFlash('danger', 'Переименование отменено из за внутренней ошибки.');
+                        $this->addFlash('warning', 'Новое имя файла ' . $file->getFileName() . ' совпадает с текущим. Операция отклонена.');
                     }
                 } else {
-                    $this->addFlash('warning', 'Новое имя файла ' . $file->getFileName() . ' совпадает с текущим. Операция отклонена.');
+                    $this->addFlash('warning', 'Переименование удалённого файла запрещено');
                 }
                 $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
 

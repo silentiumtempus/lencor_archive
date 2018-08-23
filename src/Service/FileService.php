@@ -401,7 +401,6 @@ class FileService
     /**
      * @param FileEntity $newFile
      * @param array $originalFile
-     * @param bool $delete
      * @return bool
      */
 
