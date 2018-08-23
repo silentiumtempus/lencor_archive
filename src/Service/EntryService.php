@@ -61,6 +61,16 @@ class EntryService
     }
 
     /**
+     * @param array $entryIdsArray
+     * @return ArchiveEntryEntity|null|object
+     */
+
+    public function getEntriesList(array $entryIdsArray)
+    {
+        return $this->entriesRepository->find($entryIdsArray);
+    }
+
+    /**
      * @param int $entryId
      * @param User $user
      */
@@ -351,22 +361,29 @@ class EntryService
     /**
      * @param array $entriesArray
      * @param bool $delete
+     * @return array
      */
 
-    public function handleEntriesDeleteState(array $entriesArray, bool $delete)
+    public function handleEntriesDelete(array $entriesArray, bool $delete)
     {
+        $entryIdsArray['remove'] = [];
+        $entryIdsArray['reload'] = [];
         $entries = $this->entriesRepository->find($entriesArray);
         foreach ($entries as $entry) {
-            $this->handleEntryDeleteState($entry, $delete);
+            $entryIdsArray = $this->handleEntryDelete($entry, $delete, $entryIdsArray);
         }
+
+        return $entryIdsArray;
     }
 
     /**
      * @param ArchiveEntryEntity $entryEntity
      * @param bool $delete
+     * @param array $entryIdsArray
+     * @return array
      */
 
-    public function handleEntryDeleteState(ArchiveEntryEntity $entryEntity, bool $delete)
+    public function handleEntryDelete(ArchiveEntryEntity $entryEntity, bool $delete, array $entryIdsArray)
     {
         $this->commonArchiveService->checkAndCreateFolders($entryEntity, false, $delete);
         if ($this->moveEntry($entryEntity, $delete)) {
@@ -374,7 +391,14 @@ class EntryService
                 $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryEntity);
                 $rootFolder->setDeleted($delete);
                 $this->updateEntry();
+                if ($entryEntity->getDeletedChildren() > 0) {
+                    $entryIdsArray['reload'][] = $entryEntity->getId();
+                } else {
+                    $entryIdsArray['remove'][] = $entryEntity->getId();
+                }
         }
+
+        return $entryIdsArray;
     }
 
     /**

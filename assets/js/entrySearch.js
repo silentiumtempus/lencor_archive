@@ -425,14 +425,14 @@ $(document).ready(function () {
                 url: Routing.generate('entries_undelete_file', {file: fileId}),
                 method: "POST",
                 data: null,
-                success: function (parentFoldersArray) {
-                    if ((parentFoldersArray !== '1') || (parentFoldersArray !== '0')) {
+                success: function (parentFolders) {
+                    if ((parentFolders !== '1') || (parentFolders !== '0')) {
                         $('#file_' + fileId).remove();
-                        if (parentFoldersArray['remove'].length !== 0) {
-                            removeFolders(parentFoldersArray['remove']);
+                        if (parentFolders['remove'].length !== 0) {
+                            removeFolders(parentFolders['remove']);
                         }
-                        if (parentFoldersArray['reload'].length !== 0) {
-                            reloadFolders(parentFoldersArray['reload']);
+                        if (parentFolders['reload'].length !== 0) {
+                            reloadFolders(parentFolders['reload']);
                         }
                     }
                     loadFlashMessages();
@@ -818,8 +818,12 @@ $(document).ready(function () {
                method: "POST",
                data: null,
                success: function (entryDelete) {
-                   if (entryDelete === '1') {
-                       removeEntryBlock($entryId);
+                   if (entryDelete !== '0' && entryDelete !== '1') {
+                       if (window.location.href.indexOf("deleted") > -1) {
+                           reloadEntries($entryId);
+                       } else {
+                           removeEntries([$entryId]);
+                       }
                    }
                    loadFlashMessages();
                }
@@ -838,9 +842,14 @@ $(document).ready(function () {
                 url: Routing.generate('entries_undelete', {entry: $entryId}),
                 method: "POST",
                 data: null,
-                success: function (entryUnDelete) {
-                    if (entryUnDelete === '1') {
-                        removeEntryBlock($entryId);
+                success: function (entries) {
+                    if (entries !== '0' && entries !== '1') {
+                        if (entries['remove'].length !== 0) {
+                            removeEntries(entries['remove']);
+                        }
+                        if (entries['reload'].length !== 0) {
+                            reloadEntries(entries['reload'][0]);
+                        }
                     }
                     loadFlashMessages();
                 }
@@ -849,10 +858,27 @@ $(document).ready(function () {
             return false;
         }
 
-        function removeEntryBlock($entryId)
+        function removeEntries(entries)
         {
-            $('#entry_' + $entryId).remove();
-            $('#entryContent_' + $entryId).parent().remove();
+            $.each(entries, function (index, value) {
+                $('#entry_' + value).remove();
+                $('#entryContent_' + value).parent().remove();
+            });
+        }
+
+        function reloadEntries(entries)
+        {
+            if (!Array.isArray(entries)) {
+                $.ajax({
+                    url: Routing.generate('entries_reload', {entry: entries}),
+                    method: "POST",
+                    data: null,
+                    success: function (entriesList) {
+                            let $entry = $('#entry_' + entries);
+                            $entry.replaceWith(entriesList);
+                    }
+                });
+            }
         }
 
         /** Showing requesters for deleted items **/

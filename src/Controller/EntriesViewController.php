@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\ArchiveEntryEntity;
 use App\Form\EntrySearchForm;
 use App\Service\CommonArchiveService;
-use App\Service\DeleteService;
 use App\Service\EntrySearchService;
 use App\Service\EntryService;
 use App\Service\FolderService;
@@ -173,7 +172,7 @@ class EntriesViewController extends Controller
      * @param Request $request
      * @param EntryService $entryService
      * @param ArchiveEntryEntity $entry
-     * @return Response
+     * @return JsonResponse
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/delete/entry/{entry}",
      *     options = { "expose" = true },
@@ -187,29 +186,29 @@ class EntriesViewController extends Controller
     {
         if ($request->request->has('entriesArray')) {
             try {
-                $entryService->handleEntriesDeleteState($request->get('filesArray'), true);
+                $entryIdsArray = $entryService->handleEntriesDelete($request->get('filesArray'), true);
                 $this->addFlash('success', 'Ячейки успешно удалены');
 
-                return new Response(1);
+                return new JsonResponse($entryIdsArray);
             } catch (\Exception $exception) {
                 $this->addFlash('danger', 'Ячкейи не удалёны из за непредвиденной ошибки: ' . $exception->getMessage());
 
-                return new Response(0);
+                return new JsonResponse(0);
             }
         } elseif ($entry) {
             try {
-                $entryService->handleEntryDeleteState($entry, true);
+                $entryIdsArray = $entryService->handleEntryDelete($entry, true, ['remove' => [], 'reload' => []]);
                 $this->addFlash('success', 'Директория '. $entry->getId() . ' успешно удалёна');
 
-                return new Response(1);
+                return new JsonResponse($entryIdsArray);
             } catch (\Exception $exception) {
                 $this->addFlash('danger', 'Директория ' . $entry->getId() . ' не удалёна из за непредвиденной ошибки: ' . $exception->getMessage());
 
-                return new Response(0);
+                return new JsonResponse(0);
             }
         } else {
 
-            return $this->redirectToRoute('entries');
+            return new JsonResponse(1);
         }
     }
 
@@ -217,7 +216,7 @@ class EntriesViewController extends Controller
      * @param Request $request
      * @param EntryService $entryService
      * @param ArchiveEntryEntity $entry
-     * @return Response
+     * @return JsonResponse
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/undelete/entry/{entry}",
      *     options = { "expose" = true },
@@ -231,26 +230,55 @@ class EntriesViewController extends Controller
     {
         if ($request->request->has('entriesArray')) {
             try {
-                $entryService->handleEntriesDeleteState($request->get('filesArray'), false);
+                $entryIdsArray = $entryService->handleEntriesDelete($request->get('filesArray'), false);
                 $this->addFlash('success', 'Ячейки успешно восстановлены');
 
-                return new Response(1);
+                return new JsonResponse($entryIdsArray);
             } catch (\Exception $exception) {
                 $this->addFlash('danger', 'Ячкейи не восстановлены из за непредвиденной ошибки: ' . $exception->getMessage());
 
-                return new Response(0);
+                return new JsonResponse(0);
             }
         } elseif ($entry) {
             try {
-                $entryService->handleEntryDeleteState($entry, false);
+                $entryIdsArray = $entryService->handleEntryDelete($entry, false, ['remove' => [], 'reload' => []]);
                 $this->addFlash('success', 'Директория '. $entry->getId() . ' успешно восстановлена');
 
-                return new Response(1);
+                return new JsonResponse($entryIdsArray);
             } catch (\Exception $exception) {
                 $this->addFlash('danger', 'Директория ' . $entry->getId() . ' не восстановлена из за непредвиденной ошибки: ' . $exception->getMessage());
 
-                return new Response(0);
+                return new JsonResponse(0);
             }
+        } else {
+
+            return new JsonResponse(1);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param EntryService $entryService
+     * @param ArchiveEntryEntity $entry
+     * @return Response
+     * @Security("has_role('ROLE_USER')")
+     * @Route("/entries/reload/{entry}",
+     *     requirements = { "entry" = "\d+" },
+     *     defaults = { "entry" : "" },
+     *     options = { "expose" = true },
+     *     name = "entries_reload")
+     * @ParamConverter("entry", class = "App:ArchiveEntryEntity", isOptional = true, options = { "id" = "entry" })
+     */
+
+    public function reloadFolder(Request $request, EntryService $entryService, ArchiveEntryEntity $entry = null)
+    {
+        if ($request->request->has('entriesArray')) {
+            $entriesArray = $entryService->getEntriesList($request->get('foldersArray'));
+
+            return $this->render('/lencor/admin/archive/archive_manager/entries_list.html.twig', array('archiveEntries' => $entriesArray));
+        } else if ($entry) {
+
+            return $this->render('/lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $entry));
         } else {
 
             return $this->redirectToRoute('entries');
