@@ -102,8 +102,6 @@ class User extends DefaultUSer
 
     protected $passwordRequestedAt;
 
-    /* Serializer\Type("array") */
-
     /**
      * @var $roles
      *

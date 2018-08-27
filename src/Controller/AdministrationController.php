@@ -7,10 +7,12 @@ use App\Entity\SettingEntity;
 use App\Form\FactoryForm;
 use App\Form\SettingForm;
 use App\Service\FactoryService;
+use App\Service\SerializerService;
 use App\Service\SettingService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -186,6 +188,21 @@ class AdministrationController extends Controller
     public function adminUsers()
     {
         return $this->render('lencor/admin/archive/administration/users/index.html.twig');
+    }
+
+    /**
+     * @param SerializerService $serializerService
+     * @return JsonResponse
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("admin/serialize/users",
+     *     options = { "expose" = true },
+     *     name = "admin-serialize-users")
+     */
+    public function serializeUsers(SerializerService $serializerService)
+    {
+        $serializerService->serializeUsers();
+
+        return new JsonResponse(0);
     }
 
     /**

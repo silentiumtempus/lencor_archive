@@ -108,6 +108,16 @@ class SerializerService
         $internalPath = $this->checkAndCreateInternalFolderPath();
         $internalUsersFile = $internalPath . "users";
         $users = $this->usersRepository->findAll();
+        $normalizer->setIgnoredAttributes(array(
+           'user' => 'salt', 'plainPassword', 'accountNonExpired', 'accountNonLocked', 'superAdmin', 'groups', 'groupNames', 'credentialsNonExpired', 'passwordRequestedAt'
+        ));
+        $timeStamp = function ($dateTime) {
+            return (!$dateTime instanceof  \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
+        };
+        $normalizer->setCallbacks(array(
+            'lastLogin' => $timeStamp,
+            'passwordRequestedAt' => $timeStamp
+        ));
         if ($users)
         {
             $usersArray = '';
