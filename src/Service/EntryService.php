@@ -28,7 +28,6 @@ class EntryService
     protected $pathRoot;
     protected $pathKeys;
     protected $deletedFolder;
-    protected $usersRepository;
     protected $entriesRepository;
     protected $foldersRepository;
     protected $commonArchiveService;
@@ -48,7 +47,6 @@ class EntryService
         $this->deletedFolder = $this->container->getParameter('archive.deleted.folder_name');
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
-        $this->usersRepository = $this->em->getRepository('App:User');
         $this->pathKeys = ['year', 'factory', 'archiveNumber'];
         $this->commonArchiveService = $commonArchiveService;
     }
@@ -153,77 +151,6 @@ class EntryService
             ->setAddedByUser($user)
             ->setRemovalMark(false)
             ->setMarkedByUser(null);
-    }
-
-    /**
-     * @param ArchiveEntryEntity $newEntry
-     * @param string $filename
-     * @return bool
-     */
-
-    public function writeDataToEntryFile(ArchiveEntryEntity $newEntry, string $filename)
-    {
-        //try {
-        $fs = new Filesystem();
-        $fs->touch($filename);
-        $encoder = new JsonEncoder();
-        $normalizer = new ObjectNormalizer();
-        $normalizer->setSerializer(new Serializer(array($normalizer), array($encoder)));
-        $normalizer->setIgnoredAttributes(array(
-            'childFolders' => 'lft', 'rgt', 'lvl', 'requestsCount',
-            'files' => 'id', 'uploadedFiles', 'requestsCount'
-        ));
-        $normalizer->setCircularReferenceHandler(function ($object) {
-            return $object->__toString();
-        });
-        $timeStamp = function ($dateTime) {
-            return (!$dateTime instanceof \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
-        };
-        $factoryCallback = function ($factory) {
-            return (!$factory instanceof FactoryEntity) ?: $factory->getFactoryName();
-        };
-        $settingCallback = function ($setting) {
-            return (!$setting instanceof SettingEntity) ?: $setting->getSettingName();
-        };
-        $userCallback = function ($user) {
-            return (!$user instanceof User) ?: $user->getUsername();
-        };
-        $requestedByCallback = function ($users) {
-            if (is_array($users)) {
-                $users = $this->usersRepository->findById($users);
-            }
-            $usersString = '';
-            if ($users) {
-                foreach ($users as $user) {
-                    $usersString .= $user->getUsername() . ',';
-                }
-                $usersString = rtrim($usersString, ',');
-            }
-
-            return $usersString;
-        };
-        $normalizer->setCallbacks(array(
-            'addTimestamp' => $timeStamp,
-            'lastModified' => $timeStamp,
-            'lastLogin' => $timeStamp,
-            'factory' => $factoryCallback,
-            'setting' => $settingCallback,
-            'addedByUser' => $userCallback,
-            'markedByUser' => $userCallback,
-            'modifiedByUser' => $userCallback,
-            'requestedByUsers' => $requestedByCallback
-        ));
-        $array = $normalizer->normalize($newEntry);
-        $entryJSON = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        //file_put_contents($filename, $entryJSONFile);
-        $fs->dumpFile($filename, $entryJSON);
-
-        return true;
-        //} catch (\Exception $exception) {
-        //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
-
-        //    return false;
-        //}
     }
 
     /**

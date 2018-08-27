@@ -2,6 +2,10 @@
 
 namespace App\Service;
 
+use App\Entity\ArchiveEntryEntity;
+use App\Entity\FactoryEntity;
+use App\Entity\SettingEntity;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -16,6 +20,7 @@ class SerializerService
     protected $pathRoot;
     protected $internalFolder;
     protected $pathPermissions;
+    protected $usersRepository;
     protected $factoriesRepository;
     protected $settingsRepository;
     protected $commonArchiveService;
@@ -29,6 +34,7 @@ class SerializerService
         $this->pathPermissions = $this->container->getParameter('lencor_archive.storage_permissions');
         $this->commonArchiveService = $archiveService;
         $this->factoriesRepository = $this->em->getRepository('App:FactoryEntity');
+        $this->usersRepository = $this->em->getRepository('App:User');
     }
 
     /**
@@ -41,15 +47,26 @@ class SerializerService
     }
 
     /**
+     * @return ObjectNormalizer
+     */
+
+    private function prepareJSONSerializer()
+    {
+        $encoder = new JsonEncoder();
+        $normalizer = new ObjectNormalizer();
+        $normalizer->setSerializer(new Serializer(array($normalizer), array($encoder)));
+
+        return $normalizer;
+    }
+
+    /**
      * @return bool
      */
 
     public function serializeFactoriesAndSettings()
     {
         $fs = new Filesystem();
-        $encoder = new JsonEncoder();
-        $normalizer = new ObjectNormalizer();
-        $normalizer->setSerializer(new Serializer(array($normalizer), array($encoder)));
+        $normalizer = $this->prepareJSONSerializer();
         $normalizer->setIgnoredAttributes(array('settings' => 'id'));
         $normalizer->setCircularReferenceHandler(function ($object) {
             return $object->__toString();
@@ -72,5 +89,74 @@ class SerializerService
         }
 
         return true;
+    }
+
+    /**
+     * @param ArchiveEntryEntity $newEntry
+     * @param string $filename
+     * @return bool
+     */
+
+    public function serializeEntry(ArchiveEntryEntity $newEntry, string $filename)
+    {
+        //try {
+        $fs = new Filesystem();
+        $fs->touch($filename);
+        $normalizer = $this->prepareJSONSerializer();
+        $normalizer->setIgnoredAttributes(array(
+            'childFolders' => 'lft', 'rgt', 'lvl', 'requestsCount',
+            'files' => 'id', 'uploadedFiles', 'requestsCount'
+        ));
+        $normalizer->setCircularReferenceHandler(function ($object) {
+            return $object->__toString();
+        });
+        $timeStamp = function ($dateTime) {
+            return (!$dateTime instanceof \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
+        };
+        $factoryCallback = function ($factory) {
+            return (!$factory instanceof FactoryEntity) ?: $factory->getFactoryName();
+        };
+        $settingCallback = function ($setting) {
+            return (!$setting instanceof SettingEntity) ?: $setting->getSettingName();
+        };
+        $userCallback = function ($user) {
+            return (!$user instanceof User) ?: $user->getUsername();
+        };
+        $requestedByCallback = function ($users) {
+            if (is_array($users)) {
+                $users = $this->usersRepository->findById($users);
+            }
+            $usersString = '';
+            if ($users) {
+                foreach ($users as $user) {
+                    $usersString .= $user->getUsername() . ',';
+                }
+                $usersString = rtrim($usersString, ',');
+            }
+
+            return $usersString;
+        };
+        $normalizer->setCallbacks(array(
+            'addTimestamp' => $timeStamp,
+            'lastModified' => $timeStamp,
+            'lastLogin' => $timeStamp,
+            'factory' => $factoryCallback,
+            'setting' => $settingCallback,
+            'addedByUser' => $userCallback,
+            'markedByUser' => $userCallback,
+            'modifiedByUser' => $userCallback,
+            'requestedByUsers' => $requestedByCallback
+        ));
+        $array = $normalizer->normalize($newEntry);
+        $entryJSON = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        //file_put_contents($filename, $entryJSONFile);
+        $fs->dumpFile($filename, $entryJSON);
+
+        return true;
+        //} catch (\Exception $exception) {
+        //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
+
+        //    return false;
+        //}
     }
 }

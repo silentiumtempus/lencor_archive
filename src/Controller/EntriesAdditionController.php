@@ -14,6 +14,7 @@ use App\Service\EntryService;
 use App\Service\FactoryService;
 use App\Service\FolderService;
 use App\Service\LoggingService;
+use App\Service\SerializerService;
 use App\Service\SettingService;
 use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -39,6 +40,7 @@ class EntriesAdditionController extends Controller
      * @param FolderService $folderService
      * @param LoggingService $loggingService
      * @param CommonArchiveService $commonArchiveService
+     * @param SerializerService $serializerService
      * @return Response
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\
@@ -55,7 +57,8 @@ class EntriesAdditionController extends Controller
         SettingService $settingService,
         FolderService $folderService,
         LoggingService $loggingService,
-        CommonArchiveService $commonArchiveService
+        CommonArchiveService $commonArchiveService,
+        SerializerService $serializerService
     )
     {
         $session = $this->container->get('session');
@@ -116,7 +119,7 @@ class EntriesAdditionController extends Controller
                             $newFolderEntity = new FolderEntity();
                             $entryService->prepareEntry($newEntryEntity, $newFolderEntity, $this->getUser());
                             $folderService->prepareNewRootFolder($newFolderEntity, $newEntryEntity, $this->getUser());
-                            $fileStatus = $entryService->writeDataToEntryFile($newEntryEntity, $filename);
+                            $fileStatus = $serializerService->serializeEntry($newEntryEntity, $filename);
                             $entryService->persistEntry($newEntryEntity, $newFolderEntity);
                             $this->addFlash('success', 'Запись успешно создана.');
                         } catch (IOException $IOException) {

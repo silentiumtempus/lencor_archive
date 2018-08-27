@@ -6,6 +6,7 @@ use App\Form\EntryForm;
 use App\Form\EntrySearchByIdForm;
 use App\Service\EntryService;
 use App\Service\FolderService;
+use App\Service\SerializerService;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,6 +24,7 @@ class EntriesEditController extends Controller
      * @param Request $request
      * @param EntryService $entryService
      * @param FolderService $folderService
+     * @param SerializerService $serializerService
      * @param integer $entryId
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
@@ -34,7 +36,7 @@ class EntriesEditController extends Controller
      */
 
     //@ParamConverter("archiveEntryEntity", class="App:ArchiveEntryEntity", options = { "id" = "entryId" }, isOptional="true")
-    public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, $entryId)
+    public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, SerializerService $serializerService, $entryId)
     {
         $archiveEntryEntity = null;
         $entrySearchByIdForm = $this->createForm(EntrySearchByIdForm::class);
@@ -76,7 +78,7 @@ class EntriesEditController extends Controller
                     if (isset($newEntryFile)) {
                         try {
                             $entryService->updateEntry();
-                            $entryService->writeDataToEntryFile($archiveEntryEntity, $newEntryFile);
+                            $serializerService->serializeEntry($archiveEntryEntity, $newEntryFile);
                             $this->addFlash('success', 'Изменения сохранены');
 
                             return new Response($archiveEntryEntity->getId());
