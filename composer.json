@@ -6,6 +6,7 @@
     "require": {
 		"php": "^7.1.13",
 		"ext-iconv": "*",
+		"ext-json": "^1.6",
 		"components/jquery": "^3.2",
 		"doctrine/annotations": "^1.6",
 		"doctrine/doctrine-bundle": "^1.8",

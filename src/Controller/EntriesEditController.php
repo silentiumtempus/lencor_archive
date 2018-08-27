@@ -71,7 +71,7 @@ class EntriesEditController extends Controller
                             return new Response();
                         }
                     } else {
-                        $newEntryFile = $entryService->constructEntryPath($archiveEntryEntity) . "/" . $archiveEntryEntity->getArchiveNumber() . ".entry";
+                        $newEntryFile = $entryService->constructEntryPath($archiveEntryEntity, false) . "/" . $archiveEntryEntity->getArchiveNumber() . ".entry";
                     }
                     if (isset($newEntryFile)) {
                         try {
