@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\FileEntity;
 use App\Entity\FolderEntity;
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -169,7 +170,7 @@ class FileService
         $newFileEntity = clone $fileArrayEntity;
         $newFileEntity
             ->setFileName($file)
-            ->setFiles(null);
+            ->setUploadedFiles(null);
 
         return $newFileEntity;
     }
@@ -236,13 +237,18 @@ class FileService
     {
         $requestedFile = $this->filesRepository->findById($fileId);
         foreach ($requestedFile as $file) {
-            if ($file->getRequestMark() != null && $file->getRequestMark() != false) {
+            if ($file->getRequestMark()) {
                 $users = $file->getRequestedByUsers();
                 if ((array_search($user->getId(), $users, true)) === false) {
-                    $users[] = $user;
+                    //if(!$users->contains($user)) {
+                    //     $users->add($user);
+                    //  }
+                    $users[] = $user->getId();
+                    //}
                 }
             } else {
-                $users[] = $user;
+                $users[] = $user->getId();
+                //$users = new ArrayCollection([$user->getId()]);
             }
             $file
                 ->setRequestMark(true)
@@ -482,7 +488,7 @@ class FileService
         $files = $this->filesRepository->findByParentFolder($folderId);
         foreach ($files as $file) {
             if ($file->getRequestMark()) {
-                $file->setRequestsCount(count($file->getRequestedByUsers()));
+                $file->setRequestsCount($file->getRequestsCount());
             }
         }
 

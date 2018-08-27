@@ -149,6 +149,11 @@ class ArchiveEntryEntity implements \JsonSerializable
         $this->requestedByUsers = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->year . '/' . $this->factory->getFactoryName() . '/' . $this->archiveNumber;
+    }
+
     /**
      * Set year
      * @param integer $year

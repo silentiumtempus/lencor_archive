@@ -20,7 +20,7 @@ trait RestorationRequestsTrait
     protected $requestMark;
 
     /**
-     * @ORM\Column(type = "json", nullable = true)
+     * @ORM\Column(type = "json_array", nullable = true)
      * @Gedmo\Versioned()
      * @Serializer\Type("array")
      */
@@ -60,11 +60,11 @@ trait RestorationRequestsTrait
 
     /**
      * Set requestedByUsers
-     * @param ArrayCollection $users
+     * @param array $users
      * @return $this
      */
 
-    public function setRequestedByUsers(ArrayCollection $users = null)
+    public function setRequestedByUsers(array $users = null)
     {
         $this->requestedByUsers = $users;
 
@@ -73,7 +73,7 @@ trait RestorationRequestsTrait
 
     /**
      * Get requestedByUsers
-     * @return ArrayCollection
+     * @return array
      */
 
     public function getRequestedByUsers()
@@ -102,7 +102,7 @@ trait RestorationRequestsTrait
     public function getRequestsCount()
     {
         return count($this->getRequestedByUsers());
-        //$arr[] = $this->getRequestedByUsers();
+        //$arr = $this->getRequestedByUsers();
         //return count($arr);
     }
 

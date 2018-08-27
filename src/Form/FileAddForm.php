@@ -52,7 +52,7 @@ class FileAddForm extends AbstractType
                     'orderFields' => ['lft' => 'asc'],
                     'prefixAttributeName' => 'data-level-prefix',
                     'treeLevelField' => 'lvl',
-                    'query_builder' => $this->folderRepository->getEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
+                    'query_builder' => $this->folderRepository->showEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
                 ));
         } else {
             $builder
@@ -63,7 +63,7 @@ class FileAddForm extends AbstractType
                 ));
         }
         $builder
-            ->add('files', FileType::class, array(
+            ->add('uploadedFiles', FileType::class, array(
                 'label' => 'file.upload.name',
                 'attr' => array('size' => 20),
                 'multiple' => true

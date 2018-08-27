@@ -52,7 +52,7 @@ class FolderAddForm extends AbstractType
                     'orderFields' => ['lft' => 'asc'],
                     'prefixAttributeName' => 'data-level-prefix',
                     'treeLevelField' => 'lvl',
-                    'query_builder' => $this->folderRepository->getEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
+                    'query_builder' => $this->folderRepository->showEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
                 ));
         } else {
             $builder

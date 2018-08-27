@@ -3,13 +3,16 @@
 namespace App\Service;
 
 use App\Entity\ArchiveEntryEntity;
+use App\Entity\FactoryEntity;
 use App\Entity\FolderEntity;
+use App\Entity\SettingEntity;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -25,6 +28,7 @@ class EntryService
     protected $pathRoot;
     protected $pathKeys;
     protected $deletedFolder;
+    protected $usersRepository;
     protected $entriesRepository;
     protected $foldersRepository;
     protected $commonArchiveService;
@@ -44,6 +48,7 @@ class EntryService
         $this->deletedFolder = $this->container->getParameter('archive.deleted.folder_name');
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
+        $this->usersRepository = $this->em->getRepository('App:User');
         $this->pathKeys = ['year', 'factory', 'archiveNumber'];
         $this->commonArchiveService = $commonArchiveService;
     }
@@ -79,7 +84,7 @@ class EntryService
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
         $archiveEntry
-            ->setModifiedByUserId($user)
+            ->setModifiedByUser($user)
             ->setLastModified(new \DateTime());
         $this->em->flush();
     }
@@ -145,9 +150,9 @@ class EntryService
     {
         $newEntry
             ->setCataloguePath($newFolder)
-            ->setModifiedByUserId($user)
-            ->setremovalMark(false)
-            ->setmarkedByUser(null);
+            ->setAddedByUser($user)
+            ->setRemovalMark(false)
+            ->setMarkedByUser(null);
     }
 
     /**
@@ -158,21 +163,67 @@ class EntryService
 
     public function writeDataToEntryFile(ArchiveEntryEntity $newEntry, string $filename)
     {
-        try {
-            $fs = new Filesystem();
-            $fs->touch($filename);
-            //$encoders = array(new XmlEncoder());
-            //$normalizers = array(new ObjectNormalizer());
-            //$serializer = new Serializer($normalizers, $encoders);
-            $serializer = SerializerBuilder::create()->build();
-            $entryJSONFile = $serializer->serialize($newEntry, 'xml');
-            file_put_contents($filename, $entryJSONFile);
+        //try {
+        $fs = new Filesystem();
+        $fs->touch($filename);
+        $encoder = new JsonEncoder();
+        $normalizer = new ObjectNormalizer();
+        $normalizer->setIgnoredAttributes(array(
+            'childFolders' => 'lft', 'rgt', 'lvl', 'requestsCount',
+            'files' => 'id', 'uploadedFiles', 'requestsCount'
+        ));
+        $normalizer->setCircularReferenceHandler(function ($object) {
+            return $object->__toString();
+        });
+        $timeStamp = function ($dateTime) {
+            return (!$dateTime instanceof \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
+        };
+        $factoryCallback = function ($factory) {
+            return (!$factory instanceof FactoryEntity) ?: $factory->getFactoryName();
+        };
+        $settingCallback = function ($setting) {
+            return (!$setting instanceof SettingEntity) ?: $setting->getSettingName();
+        };
+        $userCallback = function ($user) {
+            return (!$user instanceof User) ?: $user->getUsername();
+        };
+        $requestedByCallback = function ($users) {
+            if (is_array($users)) {
+                $users = $this->usersRepository->findById($users);
+            }
+            $usersString = '';
+            if ($users) {
+                foreach ($users as $user) {
+                    $usersString .= $user->getUsername() . ',';
+                }
+                $usersString = rtrim($usersString, ',');
+            }
 
-            return true;
-        } catch (\Exception $exception) {
+            return $usersString;
+        };
+        $normalizer->setCallbacks(array(
+            'addTimestamp' => $timeStamp,
+            'lastModified' => $timeStamp,
+            'lastLogin' => $timeStamp,
+            'factory' => $factoryCallback,
+            'setting' => $settingCallback,
+            'addedByUser' => $userCallback,
+            'markedByUser' => $userCallback,
+            'modifiedByUser' => $userCallback,
+            'requestedByUsers' => $requestedByCallback,
 
-            return false;
-        }
+        ));
+        $normalizer->setSerializer(new Serializer(array($normalizer), array($encoder)));
+        $array = $normalizer->normalize($newEntry);
+        $entryJSONFile = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        file_put_contents($filename, $entryJSONFile);
+
+        return true;
+        //} catch (\Exception $exception) {
+        //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
+
+        //    return false;
+        //}
     }
 
     /**
@@ -214,8 +265,8 @@ class EntryService
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
         $archiveEntry
-            ->setremovalMark(false)
-            ->setModifiedByUserId($user)
+            ->setRemovalMark(false)
+            ->setModifiedByUser($user)
             ->setmarkedByUser(null)
             ->setRequestMark(false)
             ->setRequestedByUsers(null);
@@ -244,7 +295,7 @@ class EntryService
                 $archiveEntry
                     ->setRequestMark(true)
                     ->setRequestedByUsers([$user->getId()])
-                    ->setRequestsCount(count($archiveEntry->getRequestedByUsers()));
+                    ->setRequestsCount($archiveEntry->getRequestsCount());
             }
             $this->em->flush();
         }
@@ -387,15 +438,15 @@ class EntryService
     {
         $this->commonArchiveService->checkAndCreateFolders($entryEntity, false, $delete);
         if ($this->moveEntry($entryEntity, $delete)) {
-                $entryEntity->setDeleted($delete);
-                $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryEntity);
-                $rootFolder->setDeleted($delete);
-                $this->updateEntry();
-                if ($entryEntity->getDeletedChildren() > 0) {
-                    $entryIdsArray['reload'][] = $entryEntity->getId();
-                } else {
-                    $entryIdsArray['remove'][] = $entryEntity->getId();
-                }
+            $entryEntity->setDeleted($delete);
+            $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryEntity);
+            $rootFolder->setDeleted($delete);
+            $this->updateEntry();
+            if ($entryEntity->getDeletedChildren() > 0) {
+                $entryIdsArray['reload'][] = $entryEntity->getId();
+            } else {
+                $entryIdsArray['remove'][] = $entryEntity->getId();
+            }
         }
 
         return $entryIdsArray;

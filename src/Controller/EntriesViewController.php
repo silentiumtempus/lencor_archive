@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Elastica\Query\BoolQuery;
 use Elastica\Query;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**

@@ -56,7 +56,7 @@ class FileEntity
      * @Serializer\Type("Symfony\Component\HttpFoundation\File\File")
      */
 
-    protected $files;
+    protected $uploadedFiles;
 
     /**
      * @ORM\ManyToOne(targetEntity = "FolderEntity", inversedBy = "files")
@@ -120,9 +120,9 @@ class FileEntity
      * @return FileEntity
      */
 
-    public function setFiles($files)
+    public function setUploadedFiles($files)
     {
-        $this->files = $files;
+        $this->uploadedFiles = $files;
 
         return $this;
     }
@@ -132,9 +132,9 @@ class FileEntity
      * @return array
      */
 
-    public function getFiles()
+    public function getUploadedFiles()
     {
-        return $this->files;
+        return $this->uploadedFiles;
     }
 
     /**

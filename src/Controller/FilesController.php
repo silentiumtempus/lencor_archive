@@ -94,7 +94,7 @@ class FilesController extends Controller
                     try {
                         $passed = 0;
                         $errors = 0;
-                        foreach ($newFilesArray->getFiles() as $newFile) {
+                        foreach ($newFilesArray->getUploadedFiles() as $newFile) {
                             $newFileEntity = $fileService->createFileEntityFromArray($newFilesArray, $newFile);
                             $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
                             $fileWithAbsPath = $fileService->constructFileAbsPath($folderAbsPath, $originalName);

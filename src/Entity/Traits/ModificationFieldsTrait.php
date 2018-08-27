@@ -58,7 +58,7 @@ trait ModificationFieldsTrait
      * @return $this
      */
 
-    public function setModifiedByUserId(User $modifiedByUser)
+    public function setModifiedByUser(User $modifiedByUser)
     {
         $this->modifiedByUser = $modifiedByUser;
 
@@ -70,7 +70,7 @@ trait ModificationFieldsTrait
      * @return User
      */
 
-    public function getModifiedByUserId()
+    public function getModifiedByUser()
     {
         return $this->modifiedByUser;
     }

@@ -133,8 +133,8 @@ class FolderService
             ->setArchiveEntry($newEntry)
             ->setFolderName($newEntry->getYear() . "/" . $newEntry->getFactory()->getId() . "/" . $newEntry->getArchiveNumber())
             ->setAddedByUser($user)
-            ->setremovalMark(false)
-            ->setmarkedByUser(null)
+            ->setRemovalMark(false)
+            ->setMarkedByUser(null)
             ->setSlug(null);
     }
 
@@ -151,8 +151,8 @@ class FolderService
         $newFolderEntity
             ->setParentFolder($parentFolder)
             ->setAddedByUser($user)
-            ->setremovalMark(false)
-            ->setmarkedByUser(null)
+            ->setRemovalMark(false)
+            ->setMarkedByUser(null)
             ->setSlug(null);
 
         return $newFolderEntity;
@@ -228,8 +228,8 @@ class FolderService
     public function unsetFolderRemovalMark(FolderEntity $folderEntity)
     {
         $folderEntity
-            ->setremovalMark(false)
-            ->setmarkedByUser(null)
+            ->setRemovalMark(false)
+            ->setMarkedByUser(null)
             ->setRequestMark(false)
             ->setRequestedByUsers(null);
     }
@@ -256,7 +256,7 @@ class FolderService
                     $folder
                         ->setRequestMark(true)
                         ->setRequestedByUsers(new ArrayCollection($user))
-                        ->setRequestsCount(count($folder->getRequestedByUsers()));
+                        ->setRequestsCount($folder->getRequestsCount());
                 }
             }
         }
