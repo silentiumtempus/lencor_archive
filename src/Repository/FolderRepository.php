@@ -19,7 +19,7 @@ class FolderRepository extends NestedTreeRepository
      * @return QueryBuilder
      */
 
-    public function getEntryFoldersQuery(EntityRepository $entityRepository, int $folderId)
+    public function showEntryFoldersQuery(EntityRepository $entityRepository, int $folderId)
     {
         return $entityRepository->createQueryBuilder('parent')
             ->where('parent.root = :folderId', 'parent.removalMark = 0')
