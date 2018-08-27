@@ -50,11 +50,14 @@ class SerializerService
      * @return ObjectNormalizer
      */
 
-    private function prepareJSONSerializer()
+    private function prepareJSONNormalizer()
     {
         $encoder = new JsonEncoder();
         $normalizer = new ObjectNormalizer();
         $normalizer->setSerializer(new Serializer(array($normalizer), array($encoder)));
+        $normalizer->setCircularReferenceHandler(function ($object) {
+            return $object->__toString();
+        });
 
         return $normalizer;
     }
@@ -66,11 +69,8 @@ class SerializerService
     public function serializeFactoriesAndSettings()
     {
         $fs = new Filesystem();
-        $normalizer = $this->prepareJSONSerializer();
+        $normalizer = $this->prepareJSONNormalizer();
         $normalizer->setIgnoredAttributes(array('settings' => 'id'));
-        $normalizer->setCircularReferenceHandler(function ($object) {
-            return $object->__toString();
-        });
         $internalPath = $this->constructInternalFolderPath();
         if (!$fs->exists($internalPath)) {
             $fs->mkdir($internalPath, $this->pathPermissions);
@@ -102,14 +102,11 @@ class SerializerService
         //try {
         $fs = new Filesystem();
         $fs->touch($filename);
-        $normalizer = $this->prepareJSONSerializer();
+        $normalizer = $this->prepareJSONNormalizer();
         $normalizer->setIgnoredAttributes(array(
             'childFolders' => 'lft', 'rgt', 'lvl', 'requestsCount',
             'files' => 'id', 'uploadedFiles', 'requestsCount'
         ));
-        $normalizer->setCircularReferenceHandler(function ($object) {
-            return $object->__toString();
-        });
         $timeStamp = function ($dateTime) {
             return (!$dateTime instanceof \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
         };
