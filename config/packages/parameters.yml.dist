@@ -12,7 +12,8 @@ parameters:
     lencor_archive.storage_permissions: 0777
     lencor_archive.http_path: 'http://localhost/public/storage'
 	lencor_archive.share_path: '\\path\to\share'
-	archive.deleted.foldername: 'deleted'
+	archive.deleted.folder_name: 'deleted'
+	archive.internal.folder_name: 'internal'
 	lencor_archive.search_hints_limit:
 	archive.entries_search_limit:
     archive.db.host:

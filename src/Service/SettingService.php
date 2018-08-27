@@ -14,15 +14,18 @@ class SettingService
 {
     protected $em;
     protected $settingsRepository;
+    protected $serializerService;
 
     /**
      * SettingService constructor.
      * @param EntityManagerInterface $entityManager
+     * @param SerializerService $serializerService
      */
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, SerializerService $serializerService)
     {
         $this->em = $entityManager;
+        $this->serializerService = $serializerService;
         $this->settingsRepository = $this->em->getRepository('App:SettingEntity');
     }
 
@@ -32,6 +35,7 @@ class SettingService
 
     public function createSetting(SettingEntity $newSetting)
     {
+        $this->serializerService->serializeFactoriesAndSettings();
         $this->em->persist($newSetting);
         $this->em->flush();
     }

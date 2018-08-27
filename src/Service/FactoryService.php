@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\FactoryEntity;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class FactoryService
@@ -13,16 +14,25 @@ use Doctrine\ORM\EntityManagerInterface;
 class FactoryService
 {
     protected $em;
+    protected $container;
+    protected $pathRoot;
+    protected $internalFolder;
+    protected $pathPermissions;
     protected $factoriesRepository;
+    protected $serializerService;
 
     /**
      * FactoryService constructor.
      * @param EntityManagerInterface $entityManager
+     * @param ContainerInterface $container
+     * @param SerializerService $serializerService
      */
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, SerializerService $serializerService)
     {
         $this->em = $entityManager;
+        $this->container = $container;
+        $this->serializerService = $serializerService;
         $this->factoriesRepository = $this->em->getRepository('App:FactoryEntity');
     }
 
@@ -33,6 +43,7 @@ class FactoryService
     public function createFactory(FactoryEntity $newFactory)
     {
         $this->em->persist($newFactory);
+        $this->serializerService->serializeFactoriesAndSettings();
         $this->em->flush();
     }
 
@@ -42,6 +53,7 @@ class FactoryService
 
     public function updateFactory()
     {
+        $this->serializerService->serializeFactoriesAndSettings();
         $this->em->flush();
     }
 
@@ -63,4 +75,5 @@ class FactoryService
     {
         return $this->factoriesRepository->findOneById($factoryId);
     }
+
 }

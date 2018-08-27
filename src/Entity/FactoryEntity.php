@@ -117,6 +117,4 @@ class FactoryEntity
     {
         return $this->factoryName;
     }
-
-
 }

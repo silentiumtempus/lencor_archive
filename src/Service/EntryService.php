@@ -168,6 +168,7 @@ class EntryService
         $fs->touch($filename);
         $encoder = new JsonEncoder();
         $normalizer = new ObjectNormalizer();
+        $normalizer->setSerializer(new Serializer(array($normalizer), array($encoder)));
         $normalizer->setIgnoredAttributes(array(
             'childFolders' => 'lft', 'rgt', 'lvl', 'requestsCount',
             'files' => 'id', 'uploadedFiles', 'requestsCount'
@@ -210,13 +211,12 @@ class EntryService
             'addedByUser' => $userCallback,
             'markedByUser' => $userCallback,
             'modifiedByUser' => $userCallback,
-            'requestedByUsers' => $requestedByCallback,
-
+            'requestedByUsers' => $requestedByCallback
         ));
-        $normalizer->setSerializer(new Serializer(array($normalizer), array($encoder)));
         $array = $normalizer->normalize($newEntry);
-        $entryJSONFile = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        file_put_contents($filename, $entryJSONFile);
+        $entryJSON = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        //file_put_contents($filename, $entryJSONFile);
+        $fs->dumpFile($filename, $entryJSON);
 
         return true;
         //} catch (\Exception $exception) {

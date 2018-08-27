@@ -46,29 +46,6 @@ class SettingEntity
     protected $settingName;
 
     /**
-     * Set name
-     * @param string $settingName
-     * @return SettingEntity
-     */
-
-    public function setName($settingName)
-    {
-        $this->settingName = $settingName;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     * @return string
-     */
-
-    public function getName()
-    {
-        return $this->settingName;
-    }
-
-    /**
      * Set factory
      * @param FactoryEntity $factory
      * @return SettingEntity

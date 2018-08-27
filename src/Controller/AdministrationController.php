@@ -114,7 +114,7 @@ class AdministrationController extends Controller
         if ($factoryEditForm->isSubmitted()) {
             if ($factoryEditForm->isValid()) {
                 try {
-                    $factoryService->updateFactory();
+                    $factoryService->updateFactory($factory);
                     $this->addFlash('success', 'Завод переименован');
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
