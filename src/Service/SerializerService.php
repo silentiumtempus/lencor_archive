@@ -23,25 +23,34 @@ class SerializerService
     protected $usersRepository;
     protected $factoriesRepository;
     protected $settingsRepository;
-    protected $commonArchiveService;
 
-    public function __construct(EntityManagerInterface $em, ContainerInterface $container, CommonArchiveService $archiveService)
+    public function __construct(EntityManagerInterface $em, ContainerInterface $container)
     {
         $this->em = $em;
         $this->container = $container;
         $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
         $this->internalFolder = $this->container->getParameter('archive.internal.folder_name');
         $this->pathPermissions = $this->container->getParameter('lencor_archive.storage_permissions');
-        $this->commonArchiveService = $archiveService;
         $this->factoriesRepository = $this->em->getRepository('App:FactoryEntity');
         $this->usersRepository = $this->em->getRepository('App:User');
+    }
+
+    private function checkAndCreateInternalFolderPath()
+    {
+        $fs = new Filesystem();
+        $internalPath = $this->constructInternalFolderPath();
+        if (!$fs->exists($internalPath)) {
+            $fs->mkdir($internalPath, $this->pathPermissions);
+        }
+
+        return $internalPath;
     }
 
     /**
      * @return string
      */
 
-    public function constructInternalFolderPath()
+    private function constructInternalFolderPath()
     {
         return $this->pathRoot . '/' . $this->internalFolder . '/';
     }
@@ -71,10 +80,7 @@ class SerializerService
         $fs = new Filesystem();
         $normalizer = $this->prepareJSONNormalizer();
         $normalizer->setIgnoredAttributes(array('settings' => 'id'));
-        $internalPath = $this->constructInternalFolderPath();
-        if (!$fs->exists($internalPath)) {
-            $fs->mkdir($internalPath, $this->pathPermissions);
-        }
+        $internalPath = $this->checkAndCreateInternalFolderPath();
         $internalFactoriesFile = $internalPath . "factories_and_settings";
         $factories = $this->factoriesRepository->findAll();
         if ($factories)
@@ -86,6 +92,31 @@ class SerializerService
                 $factoriesArray .= json_encode($factory, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n";
             }
             $fs->dumpFile($internalFactoriesFile, $factoriesArray);
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+
+    public function serializeUsers()
+    {
+        $fs = new Filesystem();
+        $normalizer = $this->prepareJSONNormalizer();
+        $internalPath = $this->checkAndCreateInternalFolderPath();
+        $internalUsersFile = $internalPath . "users";
+        $users = $this->usersRepository->findAll();
+        if ($users)
+        {
+            $usersArray = '';
+            foreach ($users as $user)
+            {
+                $user = $normalizer->normalize($user);
+                $usersArray .= json_encode($user, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n";
+            }
+            $fs->dumpFile($internalUsersFile, $usersArray);
         }
 
         return true;

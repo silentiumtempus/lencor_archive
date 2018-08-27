@@ -19,11 +19,9 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class AdministrationController
  * @package App\Controller
  */
-
 class AdministrationController extends Controller
 {
     /**
-     * @param Request $request
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/admin",
@@ -31,13 +29,12 @@ class AdministrationController extends Controller
      *     name="admin")
      */
 
-    public function adminIndex(Request $request)
+    public function adminIndex()
     {
         return $this->render('lencor/admin/archive/administration/index.html.twig');
     }
 
     /**
-     * @param Request $request
      * @param FactoryService $factoryService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
@@ -46,7 +43,7 @@ class AdministrationController extends Controller
      *     name = "admin-factories-and-settings")
      */
 
-    public function factoriesAndSettings(Request $request, FactoryService $factoryService)
+    public function adminFactoriesAndSettings(FactoryService $factoryService)
     {
         $factories = $factoryService->getFactories();
 
@@ -54,7 +51,6 @@ class AdministrationController extends Controller
     }
 
     /**
-     * @param Request $request
      * @param FactoryEntity $factory
      * @param SettingService $settingService
      * @return Response
@@ -67,7 +63,7 @@ class AdministrationController extends Controller
      * @ParamConverter("factory", class="App:FactoryEntity", options = { "id" = "factory" })
      */
 
-    public function loadSettings(Request $request, FactoryEntity $factory, SettingService $settingService)
+    public function loadSettings(FactoryEntity $factory, SettingService $settingService)
     {
         $settings = $settingService->findSettingsByFactoryId($factory->getId());
 
@@ -75,7 +71,6 @@ class AdministrationController extends Controller
     }
 
     /**
-     * @param Request $request
      * @param FactoryEntity $factory
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
@@ -87,7 +82,7 @@ class AdministrationController extends Controller
      * @ParamConverter("factory", class="App:FactoryEntity", options = { "id" = "factory" })
      */
 
-    public function loadFactory(Request $request, FactoryEntity $factory)
+    public function loadFactory(FactoryEntity $factory)
     {
         return $this->render('lencor/admin/archive/administration/factories.html.twig', array('factories' => $factory));
     }
@@ -129,7 +124,6 @@ class AdministrationController extends Controller
     }
 
     /**
-     * @param Request $request
      * @param SettingEntity $setting
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
@@ -141,7 +135,7 @@ class AdministrationController extends Controller
      * @ParamConverter("setting", class="App:SettingEntity", options = { "id" = "setting" })
      */
 
-    public function loadSetting(Request $request, SettingEntity $setting)
+    public function loadSetting(SettingEntity $setting)
     {
         return $this->render('lencor/admin/archive/administration/settings.html.twig', array('settings' => $setting));
     }
@@ -183,16 +177,27 @@ class AdministrationController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("admin/users",
+     *     options = { "expose" = true },
+     *     name = "admin-users")
+     */
+
+    public function adminUsers()
+    {
+        return $this->render('lencor/admin/archive/administration/users/index.html.twig');
+    }
+
+    /**
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/news",
      *     options = { "expose" = true },
-     *     name="admin-news")
+     *     name = "admin-news")
      */
 
-    public function news(Request $request)
+    public function adminNews()
     {
-        return $this->render('lencor/admin/archive/administration/news.html.twig');
+        return $this->render('lencor/admin/archive/administration/news/index.html.twig');
     }
 }

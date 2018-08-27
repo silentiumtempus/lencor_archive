@@ -22,6 +22,7 @@ class UserService
     protected $userIDAttribute;
     protected $LDAPAdminsGroup;
     protected $usersRepository;
+    protected $serializerService;
 
     /**
      * UserService constructor.
@@ -30,12 +31,13 @@ class UserService
      * @param EncoderFactoryInterface $encoderFactory
      */
 
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EncoderFactoryInterface $encoderFactory)
+    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EncoderFactoryInterface $encoderFactory, SerializerService $serializerService)
     {
 
         $this->em = $entityManager;
         $this->container = $container;
         $this->encoderFactory = $encoderFactory;
+        $this->serializerService = $serializerService;
         $this->defaultPassword = $this->container->getParameter('default.password');
         $this->userIDAttribute = $this->container->getParameter('ldap.userid.attribute');
         $this->LDAPAdminsGroup = $this->container->getParameter('ldap.admins.group');
@@ -130,6 +132,7 @@ class UserService
     private function persistNewKerberosUser(User $user)
     {
         $this->em->persist($user);
+        $this->serializerService->serializeUsers();
         $this->em->flush();
     }
 
@@ -140,6 +143,7 @@ class UserService
     public function updateLastLogin(User $user)
     {
         $user->setLastLogin(new \DateTime());
+        $this->serializerService->serializeUsers();
         $this->em->flush();
     }
 }

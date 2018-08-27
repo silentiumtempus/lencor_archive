@@ -1,0 +1,24 @@
+{% extends 'lencor/admin/archive/administration/index.html.twig' %}
+{% trans_default_domain 'admin' %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('build/js/users.js') }}"></script>
+{% endblock %}
+{% block main %}
+    <div id="#flash_messages"></div>
+    <div>
+        <ul class="fa-ul">
+            <li class="row">
+            <span>
+                <a class="button" id="findEntryFiles" name="findEntryFiles" href="">Найти всех пользователей</a>
+            </span>
+                <span id="">
+                <a class="button" id="recoverDatabase" name="recoverDatabase" href="">Синхронизировать пользователей</a>
+            </span>
+            </li>
+        </ul>
+    </div>
+    <div id="container">
+
+    </div>
+{% endblock %}

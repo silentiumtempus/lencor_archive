@@ -21,7 +21,6 @@ class FileService
     protected $container;
     protected $folderService;
     protected $filesRepository;
-    protected $userService;
     protected $entryService;
     protected $pathRoot;
     protected $deletedFolder;
@@ -34,7 +33,6 @@ class FileService
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      * @param FolderService $folderService
-     * @param UserService $userService
      * @param EntryService $entryService
      * @param DeleteSwitcherService $dSwitchService
      * @param CommonArchiveService $commonArchiveService
@@ -44,7 +42,6 @@ class FileService
     public function __construct(EntityManagerInterface $entityManager,
                                 ContainerInterface $container,
                                 FolderService $folderService,
-                                UserService $userService,
                                 EntryService $entryService,
                                 DeleteSwitcherService $dSwitchService,
                                 CommonArchiveService $commonArchiveService,
@@ -52,7 +49,6 @@ class FileService
     {
         $this->em = $entityManager;
         $this->container = $container;
-        $this->userService = $userService;
         $this->folderService = $folderService;
         $this->entryService = $entryService;
         $this->commonArchiveService = $commonArchiveService;

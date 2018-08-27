@@ -18,6 +18,7 @@ Encore
     .addEntry('js/logSearch', './assets/js/logSearch.js')
     .addEntry('js/menuScript', './assets/js/menuScript.js')
     .addEntry('js/recovery', './assets/js/recovery.js')
+    .addEntry('js/users', './assets/js/users.js')
     .addStyleEntry('css/common', './assets/css/common.scss')
     .addStyleEntry('css/header', './assets/css/header.scss')
     .addStyleEntry('css/entries', './assets/css/entries.scss')

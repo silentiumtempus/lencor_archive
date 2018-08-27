@@ -155,7 +155,7 @@ $(document).ready(function () {
                         }
                     }
                     $flashMessages.fadeIn("slow");
-                    setTimeout(hideFlashMessages, 7000);
+                    setTimeout(hideFlashMessages, 14000);
 
                     return false;
                 }
