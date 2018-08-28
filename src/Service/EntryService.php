@@ -79,14 +79,17 @@ class EntryService
     }
 
     /**
-     * @param int $entryId
+     * @param ArchiveEntryEntity $entryEntity
      * @param User $user
+     * @param int $entryId
      */
 
-    public function changeLastUpdateInfo(int $entryId, User $user)
+    public function changeLastUpdateInfo(ArchiveEntryEntity $entryEntity, User $user, int $entryId = null)
     {
-        $archiveEntry = $this->entriesRepository->findOneById($entryId);
-        $archiveEntry
+        if (!$entryEntity) {
+            $entryEntity = $this->entriesRepository->findOneById($entryId);
+        }
+        $entryEntity
             ->setModifiedByUser($user)
             ->setLastModified(new \DateTime());
         $this->em->flush();
@@ -106,6 +109,7 @@ class EntryService
             $folderNode = $this->foldersRepository->findOneById($request->get('folderId'));
             $lastUpdateInfo = $this->entriesRepository->getUpdateInfoByFolder($folderNode->getRoot()->getArchiveEntry()->getId());
         }
+
         return $lastUpdateInfo;
     }
 
@@ -120,8 +124,10 @@ class EntryService
         $entryId = $request->get('entryId');
         if ($entryId) {
             $session->set('entryId', $request->get('entryId'));
+
             return $entryId;
         } else {
+
             return $session->get('entryId');
         }
     }
@@ -137,8 +143,10 @@ class EntryService
         $folderId = $request->get('folderId');
         if ($folderId) {
             $session->set('folderId', $request->get('folderId'));
+
             return $folderId;
         } else {
+
             return $session->get('folderId');
         }
     }
@@ -148,16 +156,16 @@ class EntryService
         try {
             $entryPath = $this->commonArchiveService->checkAndCreateFolders($newEntry, true, false);
             $logsDir = $entryPath . "/logs";
-                try {
-                    $newFolderEntity = new FolderEntity();
-                    $this->prepareEntry($newEntry, $newFolderEntity, $user);
-                    $folderService->prepareNewRootFolder($newFolderEntity, $newEntry, $user);
-                    $this->serializerService->serializeEntry($newEntry, $entryPath, true);
-                    $this->persistEntry($newEntry, $newFolderEntity);
-                    $this->container->get('session')->getFlashBag()->add('success', 'Запись успешно создана.');
-                } catch (IOException $IOException) {
-                    $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка записи файла ячейки: ' . $IOException->getMessage());
-                }
+            try {
+                $newFolderEntity = new FolderEntity();
+                $this->prepareEntry($newEntry, $newFolderEntity, $user);
+                $folderService->prepareNewRootFolder($newFolderEntity, $newEntry, $user);
+                $this->serializerService->serializeEntry($newEntry, $entryPath, true);
+                $this->persistEntry($newEntry, $newFolderEntity);
+                $this->container->get('session')->getFlashBag()->add('success', 'Запись успешно создана.');
+            } catch (IOException $IOException) {
+                $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка записи файла ячейки: ' . $IOException->getMessage());
+            }
 
             $this->loggingService->logEntry($newEntry, $logsDir, $user, $this->container->get('session')->getFlashBag()->peekAll());
         } catch (\Exception $exception) {
@@ -259,7 +267,7 @@ class EntryService
             }
             $this->em->flush();
         }
-        $this->changeLastUpdateInfo($entryId, $user);
+        $this->updateEntryInfo($archiveEntry, $user, true);
 
         return $archiveEntry;
     }
@@ -452,5 +460,18 @@ class EntryService
         }
 
         $this->em->flush();
+    }
+
+    /**
+     * @param ArchiveEntryEntity $entryEntity
+     * @param User $user
+     * @param bool $updated
+     */
+
+    public function updateEntryInfo(ArchiveEntryEntity $entryEntity, User $user, bool $updated)
+    {
+        $entryPath = $this->constructEntryPath($entryEntity, false);
+        (!$updated) ?: $this->changeLastUpdateInfo($entryEntity, $user, null);
+        $this->serializerService->serializeEntry($entryEntity, $entryPath, false);
     }
 }

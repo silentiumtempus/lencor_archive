@@ -77,7 +77,7 @@ class EntriesEditController extends Controller
                     if (isset($entryFolder)) {
                         try {
                             $entryService->updateEntry();
-                            $serializerService->serializeEntry($archiveEntryEntity, $entryFolder, false);
+                            $entryService->updateEntryInfo($archiveEntryEntity, $this->getUser(), true);
                             $this->addFlash('success', 'Изменения сохранены');
 
                             return new Response($archiveEntryEntity->getId());

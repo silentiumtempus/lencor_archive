@@ -214,7 +214,7 @@ class FoldersController extends Controller
     public function deleteFolder(Request $request, FolderEntity $folder, FolderService $folderService, FileService $fileService) {
         if ($request->request->has('foldersArray')) {
             try {
-                $folderService->deleteFolders($request->get('filesArray'), $fileService);
+                $folderService->deleteFolders($request->get('filesArray'), $fileService, $this->getUser());
                 $this->addFlash('success', 'Директории успешно удалены');
 
                 return new Response(1);
@@ -225,7 +225,7 @@ class FoldersController extends Controller
             }
         } elseif ($folder) {
             try {
-                $folderService->deleteFolder($folder, $fileService);
+                $folderService->deleteFolder($folder, $fileService, false, $this->getUser());
                 $this->addFlash('success', 'Директория '. $folder->getFolderName() . ' успешно удалёна');
 
                 return new Response(1);
@@ -259,7 +259,7 @@ class FoldersController extends Controller
     {
         if ($request->request->has('filesArray')) {
             try {
-                $folders = $folderService->unDeleteFolders($request->get('filesArray'));
+                $folders = $folderService->unDeleteFolders($request->get('filesArray'), $this->getUser());
                 $this->addFlash('success', 'Каталоги успешно восстановлены');
 
                 return new JsonResponse($folders);
@@ -270,7 +270,7 @@ class FoldersController extends Controller
             }
         } elseif ($folder) {
             try {
-                $folders = $folderService->unDeleteFolder($folder, []);
+                $folders = $folderService->unDeleteFolder($folder, [], false, $this->getUser());
                 $this->addFlash('success', 'Каталог ' . $folder->getFolderName() . ' успешно восстановлен');
 
                 return new JsonResponse($folders);

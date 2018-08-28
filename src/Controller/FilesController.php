@@ -156,7 +156,7 @@ class FilesController extends Controller
         $fileRenameForm->handleRequest($request);
         if ($fileRenameForm->isSubmitted()) {
             if ($fileRenameForm->isValid()) {
-                $fileService->renameFile($file);
+                $fileService->renameFile($file, $this->getUser());
                 $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
 
                 return $this->render('lencor/admin/archive/archive_manager/files_and_folders/file.html.twig', array('file' => $file));
@@ -216,7 +216,7 @@ class FilesController extends Controller
     {
         if ($request->request->has('filesArray')) {
             try {
-                $fileService->deleteFiles($request->get('filesArray'));
+                $fileService->deleteFiles($request->get('filesArray'), $this->getUser());
                 $this->addFlash('success', 'Файлы успешно удалены');
 
                 return new Response(1);
@@ -227,7 +227,7 @@ class FilesController extends Controller
             }
         } elseif ($file) {
             try {
-                $fileService->deleteFile($file);
+                $fileService->deleteFile($file, false, $this->getUser());
                 $this->addFlash('success', 'Файл ' . $file->getFileName() . ' успешно удалён');
 
                 return new Response(1);
@@ -261,7 +261,7 @@ class FilesController extends Controller
     {
         if ($request->request->has('filesArray')) {
             try {
-                $folders = $fileService->unDeleteFiles($request->get('filesArray'));
+                $folders = $fileService->unDeleteFiles($request->get('filesArray'), $this->getUser());
                 $this->addFlash('success', 'Файлы успешно восстановлены');
 
                 return new JsonResponse($folders);
@@ -272,7 +272,7 @@ class FilesController extends Controller
             }
         } elseif ($file) {
             try {
-                $folders = $fileService->unDeleteFile($file, []);
+                $folders = $fileService->unDeleteFile($file, [], false, $this->getUser());
                 $this->addFlash('success', 'Файл ' . $file->getFileName() . ' успешно восстановлен');
 
                 return new JsonResponse($folders);

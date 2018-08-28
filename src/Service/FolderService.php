@@ -198,7 +198,7 @@ class FolderService
             if ($creationNotFailed) {
                 try {
                     $this->persistFolder($newFolderEntity);
-                    $this->entryService->changeLastUpdateInfo($entryId, $user);
+                    $this->entryService->updateEntryInfo($this->entryService->getEntryById($entryId), $user, true);
                     $this->container->get('session')->getFlashBag()->add('success', 'Новая директория успешно добавлена в БД');
                 } catch (\Exception $exception) {
                     if ($exception instanceof ConstraintViolationException) {
@@ -261,6 +261,7 @@ class FolderService
         if ($originalFolder['folderName'] != $folder->getFolderName()) {
             if ($this->moveFolder($folder, $originalFolder)) {
                 $this->flushFolder();
+                $this->entryService->updateEntryInfo($folder->getRoot()->getArchiveEntry(), $user, true);
                 $this->container->get('session')->getFlashBag()->add('success', 'Переименование ' . $originalFolder['folderName'] . ' > ' . $folder->getFolderName() . ' успешно произведено.');
             } else {
                 $this->container->get('session')->getFlashBag()->add('danger', 'Переименование отменено из за внутренней ошибки.');
@@ -292,7 +293,7 @@ class FolderService
             }
         }
         $this->em->flush();
-        $this->entryService->changeLastUpdateInfo($removedFolder->getRoot()->getArchiveEntry()->getId(), $user);
+        $this->entryService->updateEntryInfo($removedFolder->getRoot()->getArchiveEntry(), $user, false);
 
         return $removedFolder;
     }
@@ -318,7 +319,7 @@ class FolderService
                 }
             }
             $this->em->flush();
-            $this->entryService->changeLastUpdateInfo($restoredFolder->getRoot()->getArchiveEntry()->getId(), $user);
+            $this->entryService->updateEntryInfo($restoredFolder->getRoot()->getArchiveEntry(), $user, false);
         }
 
         return $foldersArray;
@@ -345,8 +346,8 @@ class FolderService
 
     public function requestFolder(int $folderId, User $user)
     {
-        $folder = $this->getParentFolder($folderId);
-        $binaryPath = $this->getPath($folder);
+        $requestedFolder = $this->getParentFolder($folderId);
+        $binaryPath = $this->getPath($requestedFolder);
         foreach ($binaryPath as $folder) {
             if ($folder->getremovalMark()) {
                 if ($folder->getRequestMark() ?? $folder->getRequestMark() != false) {
@@ -364,32 +365,36 @@ class FolderService
             }
         }
         $this->em->flush();
-        $this->entryService->changeLastUpdateInfo($folder->getRoot()->getArchiveEntry()->getId(), $user);
+        $this->entryService->updateEntryInfo($requestedFolder->getRoot()->getArchiveEntry(), $user, false);
 
-        return $folder;
+        return $requestedFolder;
     }
 
     /**
      * @param array $foldersArray
      * @param FileService $fileService
+     * @param User $user
      */
 
-    public function deleteFolders(array $foldersArray, FileService $fileService)
+    public function deleteFolders(array $foldersArray, FileService $fileService, User $user)
     {
-        $folders = $this->foldersRepository->find($foldersArray);
-        foreach ($folders as $folder) {
-            $this->deleteFolder($folder, $fileService);
+        $deletedFolders = $this->foldersRepository->find($foldersArray);
+        foreach ($deletedFolders as $folder) {
+            $this->deleteFolder($folder, $fileService, true, $user);
         }
+        $this->entryService->updateEntryInfo($deletedFolders[0]->getRoot()->getArchiveEntry(), $user, true);
     }
 
     /**
-     * @param FolderEntity $folder
+     * @param FolderEntity $folderEntity
      * @param FileService $fileService
+     * @param bool $multiple
+     * @param User $user
      */
 
-    public function deleteFolder(FolderEntity $folder, FileService $fileService)
+    public function deleteFolder(FolderEntity $folderEntity, FileService $fileService, bool $multiple, User $user)
     {
-        $foldersChain = $this->foldersRepository->getChildren($folder, false, null, null, true);
+        $foldersChain = $this->foldersRepository->getChildren($folderEntity, false, null, null, true);
         foreach ($foldersChain as $folder) {
             if (!$folder->getDeleted()) {
                 $originalFolder['folderName'] = $folder->getFolderName();
@@ -399,23 +404,27 @@ class FolderService
                     $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), true);
                 }
             }
-            $this->deleteFilesByParentFolder($folder, $fileService);
+            $this->deleteFilesByParentFolder($folder, $fileService, $user);
         }
         $this->em->flush();
+        if (!$multiple) {
+            $this->entryService->updateEntryInfo($folderEntity->getRoot()->getArchiveEntry(), $user, true);
+        }
     }
 
     /**
      * @param FolderEntity $folder
      * @param FileService $fileService
+     * @param User $user
      */
 
-    private function deleteFilesByParentFolder(FolderEntity $folder, FileService $fileService)
+    private function deleteFilesByParentFolder(FolderEntity $folder, FileService $fileService, User $user)
     {
         $childFiles = $folder->getFiles();
         if ($childFiles) {
             foreach ($childFiles as $childFile) {
                 if (!$childFile->getDeleted()) {
-                    $fileService->deleteFile($childFile);
+                    $fileService->deleteFile($childFile, false, $user);
                 }
             }
         }
@@ -423,31 +432,34 @@ class FolderService
 
     /**
      * @param array $foldersArray
+     * @param User $user
      * @return array
      */
 
-    public function unDeleteFolders(array $foldersArray)
+    public function unDeleteFolders(array $foldersArray, User $user)
     {
         $folderIdsArray = [];
-        $folderEntities = $this->foldersRepository->find($foldersArray);
-        foreach ($folderEntities as $folder) {
-            $folderIdsArray = $this->unDeleteFolder($folder, $folderIdsArray);
+        $unDeletedFolders = $this->foldersRepository->find($foldersArray);
+        foreach ($unDeletedFolders as $folder) {
+            $folderIdsArray = $this->unDeleteFolder($folder, $folderIdsArray, true, $user);
         }
+        $this->entryService->updateEntryInfo($unDeletedFolders[0]->getRoot()->getArchiveEntry(), $user, true);
 
         return $folderIdsArray;
     }
 
     /**
-     * @param FolderEntity $folder
+     * @param FolderEntity $folderEntity
      * @param array $folderIdsArray
+     * @param bool $multiple
      * @return array
      */
 
-    public function unDeleteFolder(FolderEntity $folder, array $folderIdsArray)
+    public function unDeleteFolder(FolderEntity $folderEntity, array $folderIdsArray, bool $multiple, User $user)
     {
         $folderIdsArray['remove'] = [];
         $folderIdsArray['reload'] = [];
-        $binaryPath = $this->getPath($folder);
+        $binaryPath = $this->getPath($folderEntity);
         foreach ($binaryPath as $folder) {
             if ($folder->getDeleted() === true) {
                 $originalFolder['folderName'] = $folder->getFolderName();
@@ -470,6 +482,9 @@ class FolderService
             }
         }
         $this->em->flush();
+        if (!$multiple) {
+            $this->entryService->updateEntryInfo($folderEntity->getRoot()->getArchiveEntry(), $user, true);
+        }
         array_reverse($folderIdsArray['remove']);
 
         return $folderIdsArray;
