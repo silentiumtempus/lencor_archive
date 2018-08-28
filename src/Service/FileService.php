@@ -55,7 +55,7 @@ class FileService
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->dSwitchService = $dSwitchService;
         $this->fileChecksumService = $fileChecksumService;
-        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->pathRoot = $this->container->getParameter('archive.storage_path');
         $this->deletedFolder = $this->container->getParameter('archive.deleted.folder_name');
     }
 
@@ -109,7 +109,7 @@ class FileService
     {
         $filePath = $this->getFilePath($fileEntity, true);
 
-        return $this->container->getParameter('lencor_archive.http_path') . '/' . ($deleted ? '/' . $this->deletedFolder : '') . $filePath;
+        return $this->container->getParameter('archive.http_path') . '/' . ($deleted ? '/' . $this->deletedFolder : '') . $filePath;
     }
 
     /**
@@ -122,7 +122,7 @@ class FileService
     {
         $fileAbsPath = $this->getFilePath($fileEntity, false);
 
-        return $this->container->getParameter('lencor_archive.share_path') . ($deleted ? '\\' . $this->deletedFolder : '') . '\\' . $fileAbsPath;
+        return $this->container->getParameter('archive.share_path') . ($deleted ? '\\' . $this->deletedFolder : '') . '\\' . $fileAbsPath;
     }
 
     /**

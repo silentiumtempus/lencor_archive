@@ -61,7 +61,7 @@ class EntriesViewController extends Controller
         $filterQuery = new BoolQuery();
         $entrySearchEntity = new ArchiveEntryEntity();
         $searchForm = $this->createForm(EntrySearchForm::class, $entrySearchEntity);
-        $rootPath = $this->getParameter('lencor_archive.storage_path');
+        $rootPath = $this->getParameter('archive.storage_path');
         if ($entry) {
             $archiveEntries[] = $entry;
         } else {
@@ -301,7 +301,7 @@ class EntriesViewController extends Controller
 
     public function loadSearchHints(Request $request, EntrySearchService $entrySearchService, string $field)
     {
-        $limit = $this->getParameter('lencor_archive.search_hints_limit');
+        $limit = $this->getParameter('archive.search_hints_limit');
         $data = [];
         $finalQuery = new Query();
         $filterQuery = new BoolQuery();

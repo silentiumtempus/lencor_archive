@@ -8,13 +8,13 @@ parameters:
     fos_elastica.host: localhost
     fos_elastica.port: 9200
     storage_path: '%kernel.project_dir%/public/storage'
-    lencor_archive.storage_path: '%kernel.project_dir%/public/storage'
-    lencor_archive.storage_permissions: 0777
-    lencor_archive.http_path: 'http://localhost/public/storage'
-	lencor_archive.share_path: '\\path\to\share'
+    archive.storage_path: '%kernel.project_dir%/public/storage'
+    archive.storage_permissions: 0777
+    archive.http_path: 'http://localhost/public/storage'
+	archive.share_path: '\\path\to\share'
 	archive.deleted.folder_name: 'deleted'
 	archive.internal.folder_name: 'internal'
-	lencor_archive.search_hints_limit:
+	archive.search_hints_limit:
 	archive.entries_search_limit:
     archive.db.host:
     archive.db.port:

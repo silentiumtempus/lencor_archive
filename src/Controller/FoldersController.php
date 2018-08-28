@@ -79,8 +79,8 @@ class FoldersController extends Controller
                 try {
                     $newFolderEntity = $folderService->prepareNewFolder($folderAddForm, $user);
                     $fileSystem = new Filesystem();
-                    $newFolderAbsPath = $this->getParameter('lencor_archive.storage_path');
-                    $pathPermissions = $this->getParameter('lencor_archive.storage_permissions');
+                    $newFolderAbsPath = $this->getParameter('archive.storage_path');
+                    $pathPermissions = $this->getParameter('archive.storage_permissions');
                     $creationNotFailed = true;
                     $directoryExistedPreviously = false;
 

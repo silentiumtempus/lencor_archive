@@ -50,8 +50,8 @@ class FolderService
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->dSwitchService = $dSwitchService;
-        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
-        $this->pathPermissions = $this->container->getParameter('lencor_archive.storage_permissions');
+        $this->pathRoot = $this->container->getParameter('archive.storage_path');
+        $this->pathPermissions = $this->container->getParameter('archive.storage_permissions');
     }
 
     /**

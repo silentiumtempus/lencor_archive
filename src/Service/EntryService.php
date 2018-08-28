@@ -43,7 +43,7 @@ class EntryService
     {
         $this->em = $entityManager;
         $this->container = $container;
-        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->pathRoot = $this->container->getParameter('archive.storage_path');
         $this->deletedFolder = $this->container->getParameter('archive.deleted.folder_name');
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');

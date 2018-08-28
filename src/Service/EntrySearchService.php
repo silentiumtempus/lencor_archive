@@ -37,7 +37,7 @@ class EntrySearchService
         $this->em = $entityManager;
         $this->container = $container;
         $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
-        $this->elasticManager = $this->container->get('fos_elastica.finder.lencor_archive.archive_entries');
+        $this->elasticManager = $this->container->get('fos_elastica.finder.archive.archive_entries');
         $this->dSwitcherService = $dSwitcherService;
     }
 

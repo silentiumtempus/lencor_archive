@@ -7,7 +7,7 @@ fos_elastica:
             host: "%fos_elastica.host%"
             port: "%fos_elastica.port%"
     indexes:
-      lencor_archive:
+      archive:
         index_name: archive_entries
         client: default
         types:

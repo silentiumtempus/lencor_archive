@@ -28,9 +28,9 @@ class SerializerService
     {
         $this->em = $em;
         $this->container = $container;
-        $this->pathRoot = $this->container->getParameter('lencor_archive.storage_path');
+        $this->pathRoot = $this->container->getParameter('archive.storage_path');
         $this->internalFolder = $this->container->getParameter('archive.internal.folder_name');
-        $this->pathPermissions = $this->container->getParameter('lencor_archive.storage_permissions');
+        $this->pathPermissions = $this->container->getParameter('archive.storage_permissions');
         $this->factoriesRepository = $this->em->getRepository('App:FactoryEntity');
         $this->usersRepository = $this->em->getRepository('App:User');
     }
