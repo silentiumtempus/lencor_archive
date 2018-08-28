@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Entity\Traits;
-
+/**
+ * Trait SlugTrait
+ * @package App\Entity\Traits
+ */
 trait SlugTrait
 {
     /**

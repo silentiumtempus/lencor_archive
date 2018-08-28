@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\CommonTrait;
 use App\Entity\Traits\DeletedStateTrait;
+use App\Entity\Traits\ModificationStampTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -22,7 +23,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name = "archive_factories")
  * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntities\FactoryLog")
  */
-
 class FactoryEntity
 {
     use CommonTrait;

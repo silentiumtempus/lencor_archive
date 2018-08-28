@@ -8,6 +8,7 @@ use App\Entity\SettingEntity;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -63,7 +64,7 @@ class SerializerService
     {
         $encoder = new JsonEncoder();
         $normalizer = new ObjectNormalizer();
-        $normalizer->setSerializer(new Serializer([$normalizer],[$encoder]));
+        $normalizer->setSerializer(new Serializer([$normalizer], [$encoder]));
         $normalizer->setCircularReferenceHandler(function ($object) {
             return $object->__toString();
         });
@@ -83,11 +84,9 @@ class SerializerService
         $internalPath = $this->checkAndCreateInternalFolderPath();
         $internalFactoriesFile = $internalPath . "factories_and_settings";
         $factories = $this->factoriesRepository->findAll();
-        if ($factories)
-        {
+        if ($factories) {
             $factoriesArray = '';
-            foreach ($factories as $factory)
-            {
+            foreach ($factories as $factory) {
                 $factory = $normalizer->normalize($factory);
                 $factoriesArray .= json_encode($factory, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n";
             }
@@ -109,20 +108,18 @@ class SerializerService
         $internalUsersFile = $internalPath . "users";
         $users = $this->usersRepository->findAll();
         $normalizer->setIgnoredAttributes(array(
-           'user' => 'salt', 'plainPassword', 'accountNonExpired', 'accountNonLocked', 'superAdmin', 'groups', 'groupNames', 'credentialsNonExpired', 'passwordRequestedAt', 'confirmationToken'
+            'user' => 'salt', 'plainPassword', 'accountNonExpired', 'accountNonLocked', 'superAdmin', 'groups', 'groupNames', 'credentialsNonExpired', 'passwordRequestedAt', 'confirmationToken'
         ));
         $timeStamp = function ($dateTime) {
-            return (!$dateTime instanceof  \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
+            return (!$dateTime instanceof \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
         };
         $normalizer->setCallbacks(array(
             'lastLogin' => $timeStamp,
             'passwordRequestedAt' => $timeStamp
         ));
-        if ($users)
-        {
+        if ($users) {
             $usersArray = '';
-            foreach ($users as $user)
-            {
+            foreach ($users as $user) {
                 $user = $normalizer->normalize($user);
                 $usersArray .= json_encode($user, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n";
             }
@@ -134,66 +131,73 @@ class SerializerService
 
     /**
      * @param ArchiveEntryEntity $newEntry
-     * @param string $filename
+     * @param string $entryPath
+     * @param bool $isNew
      * @return bool
      */
 
-    public function serializeEntry(ArchiveEntryEntity $newEntry, string $filename)
+    public function serializeEntry(ArchiveEntryEntity $newEntry, string $entryPath, bool $isNew)
     {
         //try {
+        $filename = $entryPath . "/" . $newEntry->getArchiveNumber() . ".entry";
         $fs = new Filesystem();
-        $fs->touch($filename);
-        $normalizer = $this->prepareJSONNormalizer();
-        $normalizer->setIgnoredAttributes(array(
-            'childFolders' => 'lft', 'rgt', 'lvl', 'requestsCount',
-            'files' => 'id', 'uploadedFiles', 'requestsCount'
-        ));
-        $timeStamp = function ($dateTime) {
-            return (!$dateTime instanceof \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
-        };
-        $factoryCallback = function ($factory) {
-            return (!$factory instanceof FactoryEntity) ?: $factory->getFactoryName();
-        };
-        $settingCallback = function ($setting) {
-            return (!$setting instanceof SettingEntity) ?: $setting->getSettingName();
-        };
-        $userCallback = function ($user) {
-            return (!$user instanceof User) ?: $user->getUsername();
-        };
-        $requestedByCallback = function ($users) {
-            $usersString = '';
-            if (is_array($users)) {
-                $users = $this->usersRepository->findById($users);
-                if ($users) {
-                    foreach ($users as $user) {
-                        $usersString .= $user->getUsername() . ',';
+        if ($isNew && $fs->exists($filename)) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка: файл ячейки: ' . $filename . ' уже существует. Продолжение прервано.');
+            throw new IOException('Файл ячейки уже существует');
+        } else {
+            $fs->touch($filename);
+            $normalizer = $this->prepareJSONNormalizer();
+            $normalizer->setIgnoredAttributes(array(
+                'childFolders' => 'lft', 'rgt', 'lvl', 'requestsCount',
+                'files' => 'id', 'uploadedFiles', 'requestsCount'
+            ));
+            $timeStamp = function ($dateTime) {
+                return (!$dateTime instanceof \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
+            };
+            $factoryCallback = function ($factory) {
+                return (!$factory instanceof FactoryEntity) ?: $factory->getFactoryName();
+            };
+            $settingCallback = function ($setting) {
+                return (!$setting instanceof SettingEntity) ?: $setting->getSettingName();
+            };
+            $userCallback = function ($user) {
+                return (!$user instanceof User) ?: $user->getUsername();
+            };
+            $requestedByCallback = function ($users) {
+                $usersString = '';
+                if (is_array($users)) {
+                    $users = $this->usersRepository->findById($users);
+                    if ($users) {
+                        foreach ($users as $user) {
+                            $usersString .= $user->getUsername() . ',';
+                        }
+                        $usersString = rtrim($usersString, ',');
                     }
-                    $usersString = rtrim($usersString, ',');
                 }
-            }
 
-            return $usersString;
-        };
-        $normalizer->setCallbacks(array(
-            'addTimestamp' => $timeStamp,
-            'lastModified' => $timeStamp,
-            'lastLogin' => $timeStamp,
-            'factory' => $factoryCallback,
-            'setting' => $settingCallback,
-            'addedByUser' => $userCallback,
-            'markedByUser' => $userCallback,
-            'modifiedByUser' => $userCallback,
-            'requestedByUsers' => $requestedByCallback
-        ));
-        $array = $normalizer->normalize($newEntry);
-        $entryJSON = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        $fs->dumpFile($filename, $entryJSON);
+                return $usersString;
+            };
+            $normalizer->setCallbacks(array(
+                'addTimestamp' => $timeStamp,
+                'lastModified' => $timeStamp,
+                'lastLogin' => $timeStamp,
+                'factory' => $factoryCallback,
+                'setting' => $settingCallback,
+                'addedByUser' => $userCallback,
+                'markedByUser' => $userCallback,
+                'modifiedByUser' => $userCallback,
+                'requestedByUsers' => $requestedByCallback
+            ));
+            $array = $normalizer->normalize($newEntry);
+            $entryJSON = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            $fs->dumpFile($filename, $entryJSON);
 
-        return true;
-        //} catch (\Exception $exception) {
-        //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
+            return true;
+            //} catch (\Exception $exception) {
+            //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
 
-        //    return false;
-        //}
+            //    return false;
+            //}
+        }
     }
 }

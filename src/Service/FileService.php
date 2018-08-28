@@ -94,9 +94,8 @@ class FileService
         foreach ($binaryPath as $folderName) {
             $path .= $folderName . $slash;
         }
-        $path .= $requestedFile->getFileName();
 
-        return $path;
+        return $path . $requestedFile->getFileName();
     }
 
     /**
@@ -182,7 +181,7 @@ class FileService
             ->setParentFolder($parentFolder)
             ->setFileName($originalName)
             ->setAddedByUser($user)
-            ->setremovalMark(false)
+            ->setRemovalMark(false)
             ->setSlug(null)
             ->setmarkedByUser(null);
     }
@@ -264,8 +263,8 @@ class FileService
         $restoredFile = $this->filesRepository->findById($fileId);
         foreach ($restoredFile as $file) {
             $file
-                ->setremovalMark(false)
-                ->setmarkedByUser(null)
+                ->setRemovalMark(false)
+                ->setMarkedByUser(null)
                 ->setRequestMark(false)
                 ->setRequestedByUsers(null);
         }

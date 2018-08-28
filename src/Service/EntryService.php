@@ -8,8 +8,10 @@ use App\Entity\FolderEntity;
 use App\Entity\SettingEntity;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMException;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -31,15 +33,24 @@ class EntryService
     protected $entriesRepository;
     protected $foldersRepository;
     protected $commonArchiveService;
+    protected $serializerService;
+    protected $loggingService;
 
     /**
      * EntryService constructor.
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      * @param CommonArchiveService $commonArchiveService
+     * @param SerializerService $serializerService
+     * @param LoggingService $loggingService
      */
 
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, CommonArchiveService $commonArchiveService)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContainerInterface $container,
+        CommonArchiveService $commonArchiveService,
+        SerializerService $serializerService,
+        LoggingService $loggingService)
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -49,6 +60,8 @@ class EntryService
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->pathKeys = ['year', 'factory', 'archiveNumber'];
         $this->commonArchiveService = $commonArchiveService;
+        $this->serializerService = $serializerService;
+        $this->loggingService = $loggingService;
     }
 
     //@TODO: why string?
@@ -138,6 +151,30 @@ class EntryService
         }
     }
 
+    public function createEntry(ArchiveEntryEntity $newEntry, User $user, FolderService $folderService)
+    {
+        try {
+            $entryPath = $this->commonArchiveService->checkAndCreateFolders($newEntry, true, false);
+            $logsDir = $entryPath . "/logs";
+                try {
+                    $newFolderEntity = new FolderEntity();
+                    $this->prepareEntry($newEntry, $newFolderEntity, $user);
+                    $folderService->prepareNewRootFolder($newFolderEntity, $newEntry, $user);
+                    $this->serializerService->serializeEntry($newEntry, $entryPath, true);
+                    $this->persistEntry($newEntry, $newFolderEntity);
+                    $this->container->get('session')->getFlashBag()->add('success', 'Запись успешно создана.');
+                } catch (IOException $IOException) {
+                    $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка записи файла ячейки: ' . $IOException->getMessage());
+                }
+
+            $this->loggingService->logEntry($newEntry, $logsDir, $user, $this->container->get('session')->getFlashBag()->peekAll());
+        } catch (\Exception $exception) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Произошла непредвиденная ошибка:' . $exception->getMessage());
+        }
+
+        return $newEntry;
+    }
+
     /**
      * @param ArchiveEntryEntity $newEntry
      * @param FolderEntity $newFolder
@@ -148,7 +185,7 @@ class EntryService
     {
         $newEntry
             ->setCataloguePath($newFolder)
-            ->setAddedByUser($user)
+            ->setModifiedByUser($user)
             ->setRemovalMark(false)
             ->setMarkedByUser(null);
     }
@@ -160,9 +197,13 @@ class EntryService
 
     public function persistEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder)
     {
-        $this->em->persist($newEntry);
-        $this->em->persist($newFolder);
-        $this->em->flush();
+        try {
+            $this->em->persist($newEntry);
+            $this->em->persist($newFolder);
+            $this->em->flush();
+        } catch (\Exception $exception) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
+        }
     }
 
     /**
@@ -175,8 +216,8 @@ class EntryService
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
         $archiveEntry
-            ->setremovalMark(true)
-            ->setmarkedByUser($user);
+            ->setRemovalMark(true)
+            ->setMarkedByUser($user);
         $this->em->flush();
 
         return $archiveEntry;
@@ -194,7 +235,7 @@ class EntryService
         $archiveEntry
             ->setRemovalMark(false)
             ->setModifiedByUser($user)
-            ->setmarkedByUser(null)
+            ->setMarkedByUser(null)
             ->setRequestMark(false)
             ->setRequestedByUsers(null);
         $this->em->flush();
@@ -402,18 +443,18 @@ class EntryService
     public function restoreEntriesFromFiles(array $files)
     {
         //$serializer = $this->container->get('jms_serializer');
-        $serializer = SerializerBuilder::create()->build();
+        //$serializer = SerializerBuilder::create()->build();
 
         foreach ($files as $file) {
-            $xml = file_get_contents($file);
+            //$xml = file_get_contents($file);
 
             //try {
-            $entry = $serializer->deserialize($xml, 'App\Entity\ArchiveEntryEntity', 'xml');
+            //$entry = $serializer->deserialize($xml, 'App\Entity\ArchiveEntryEntity', 'xml');
 
             //} catch (\Exception $exception) {
             //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
             // }
-            $this->em->persist($entry);
+            //$this->em->persist($entry);
         }
 
         $this->em->flush();

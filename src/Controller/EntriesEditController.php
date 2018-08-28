@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
  * Class EntriesEditController
  * @package App\Controller
  */
-
 class EntriesEditController extends Controller
 {
     /**
@@ -73,12 +72,12 @@ class EntriesEditController extends Controller
                             return new Response();
                         }
                     } else {
-                        $newEntryFile = $entryService->constructEntryPath($archiveEntryEntity, false) . "/" . $archiveEntryEntity->getArchiveNumber() . ".entry";
+                        $entryFolder = $entryService->constructEntryPath($archiveEntryEntity, false);
                     }
-                    if (isset($newEntryFile)) {
+                    if (isset($entryFolder)) {
                         try {
                             $entryService->updateEntry();
-                            $serializerService->serializeEntry($archiveEntryEntity, $newEntryFile);
+                            $serializerService->serializeEntry($archiveEntryEntity, $entryFolder, false);
                             $this->addFlash('success', 'Изменения сохранены');
 
                             return new Response($archiveEntryEntity->getId());

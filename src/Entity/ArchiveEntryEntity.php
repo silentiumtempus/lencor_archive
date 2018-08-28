@@ -6,7 +6,7 @@ use App\Entity\Traits\CommonTrait;
 use App\Entity\Traits\DeletedChildrenTrait;
 use App\Entity\Traits\DeletedStateTrait;
 use App\Entity\Traits\RemovalMarkTrait;
-use App\Entity\Traits\ModificationFieldsTrait;
+use App\Entity\Traits\ModificationStampTrait;
 use App\Entity\Traits\RestorationRequestsTrait;
 use App\Entity\Traits\SlugTrait;
 use App\Entity\Traits\SumErrorsTrait;
@@ -39,7 +39,7 @@ class ArchiveEntryEntity implements \JsonSerializable
     use RemovalMarkTrait;
     use SlugTrait;
     use SumErrorsTrait;
-    use ModificationFieldsTrait;
+    use ModificationStampTrait;
     use RestorationRequestsTrait;
     use DeletedStateTrait;
     use DeletedChildrenTrait;

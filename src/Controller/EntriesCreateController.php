@@ -30,7 +30,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @package App\Controller
  */
 
-class EntriesAdditionController extends Controller
+class EntriesCreateController extends Controller
 {
     /**
      * @param Request $request
@@ -38,9 +38,6 @@ class EntriesAdditionController extends Controller
      * @param FactoryService $factoryService
      * @param SettingService $settingService
      * @param FolderService $folderService
-     * @param LoggingService $loggingService
-     * @param CommonArchiveService $commonArchiveService
-     * @param SerializerService $serializerService
      * @return Response
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\
@@ -50,18 +47,13 @@ class EntriesAdditionController extends Controller
      *     name = "entries-new")
      */
 
-    public function archiveEntryAdd(
+    public function createArchiveEntry(
         Request $request,
         EntryService $entryService,
         FactoryService $factoryService,
         SettingService $settingService,
-        FolderService $folderService,
-        LoggingService $loggingService,
-        CommonArchiveService $commonArchiveService,
-        SerializerService $serializerService
-    )
+        FolderService $folderService)
     {
-        $session = $this->container->get('session');
         $entryForm = $this->createForm(EntryForm::class, new ArchiveEntryEntity(), array('attr' => array('id' => 'entry_form', 'function' => 'add')));
         $factoryForm = $this->createForm(FactoryForm::class, new FactoryEntity(), array('attr' => array('id' => 'factory_form', 'function' => 'add')));
         $settingForm = $this->createForm(SettingForm::class, new SettingEntity(), array('attr' => array('id' => 'setting_form', 'function' => 'add')));
@@ -104,36 +96,9 @@ class EntriesAdditionController extends Controller
         $entryForm->handleRequest($request);
         if ($entryForm->isSubmitted() && $fs->exists($pathRoot)) {
             if ($entryForm->isValid()) {
-                try {
-                    $newEntryEntity = $entryForm->getData();
-                    $entryPath = $commonArchiveService->checkAndCreateFolders($newEntryEntity, true, false);
-                    $filename = $entryPath . "/" . $newEntryEntity->getArchiveNumber() . ".entry";
-                    $logsDir = $entryPath . "/logs";
+                $newEntry = $entryService->createEntry($entryForm->getData(), $this->getUser(), $folderService);
 
-                    //TODO: mb change the below design ?
-                    if ($fs->exists($filename)) {
-                        $this->addFlash('danger', 'Ошибка: файл ячейки: ' . $filename . ' уже существует. Продолжение прервано.');
-                        throw new IOException('Файл ячейки уже существует');
-                    } else {
-                        try {
-                            $newFolderEntity = new FolderEntity();
-                            $entryService->prepareEntry($newEntryEntity, $newFolderEntity, $this->getUser());
-                            $folderService->prepareNewRootFolder($newFolderEntity, $newEntryEntity, $this->getUser());
-                            $fileStatus = $serializerService->serializeEntry($newEntryEntity, $filename);
-                            $entryService->persistEntry($newEntryEntity, $newFolderEntity);
-                            $this->addFlash('success', 'Запись успешно создана.');
-                        } catch (IOException $IOException) {
-                            $this->addFlash('danger', 'Ошибка записи файла ячейки: ' . $IOException->getMessage());
-                        } catch (ORMException $ORMException) {
-                            $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $ORMException->getMessage());
-                        }
-                    }
-                    $loggingService->logEntry($newEntryEntity, $logsDir, $this->getUser(), $session->getFlashBag()->peekAll());
-                } catch (\Exception $exception) {
-                    $this->addFlash('danger', 'Произошла непредвиденная ошибка:' . $exception->getMessage());
-                }
-
-                return new Response($newEntryEntity->getId());
+                return new Response($newEntry->getId());
             } else {
                 if (!$request->get('submit')) {
                     $this->addFlash('danger', 'Форма заполнена неверно. Проверьте правильность заполнения формы');

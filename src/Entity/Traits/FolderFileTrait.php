@@ -9,6 +9,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Trait FolderFileTrait
+ * @package App\Entity\Traits
+ */
 trait FolderFileTrait
 {
     /**

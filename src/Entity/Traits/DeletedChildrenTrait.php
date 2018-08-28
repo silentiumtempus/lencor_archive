@@ -11,7 +11,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Trait DeletedChildrenTrait
  * @package App\Entity\Traits
  */
-
 trait DeletedChildrenTrait
 {
 

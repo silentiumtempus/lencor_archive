@@ -4,6 +4,10 @@ namespace App\Entity\Traits;
 
 use JMS\Serializer\Annotation as Serializer;
 
+/**
+ * Trait CommonTrait
+ * @package App\Entity\Traits
+ */
 trait CommonTrait
 {
     /**
