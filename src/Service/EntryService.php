@@ -446,9 +446,8 @@ class EntryService
     {
         //$serializer = $this->container->get('jms_serializer');
         //$serializer = SerializerBuilder::create()->build();
-
         foreach ($files as $file) {
-            //$xml = file_get_contents($file);
+            $xml = file_get_contents($file);
 
             //try {
             //$entry = $serializer->deserialize($xml, 'App\Entity\ArchiveEntryEntity', 'xml');

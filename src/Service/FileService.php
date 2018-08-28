@@ -619,20 +619,4 @@ class FileService
     {
         return $this->filesRepository->findOneById($fileId);
     }
-
-    /**
-     * @return array
-     */
-
-    public function locateFiles()
-    {
-        $finder = new Finder();
-        $finder
-            ->files()->name('*.entry')
-            ->in($this->pathRoot)
-            ->exclude('logs');
-        $entryFiles = iterator_to_array($finder);
-
-        return $entryFiles;
-    }
 }

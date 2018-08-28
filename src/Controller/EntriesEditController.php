@@ -23,7 +23,6 @@ class EntriesEditController extends Controller
      * @param Request $request
      * @param EntryService $entryService
      * @param FolderService $folderService
-     * @param SerializerService $serializerService
      * @param integer $entryId
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
@@ -35,7 +34,7 @@ class EntriesEditController extends Controller
      */
 
     //@ParamConverter("archiveEntryEntity", class="App:ArchiveEntryEntity", options = { "id" = "entryId" }, isOptional="true")
-    public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, SerializerService $serializerService, $entryId)
+    public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, $entryId)
     {
         $archiveEntryEntity = null;
         $entrySearchByIdForm = $this->createForm(EntrySearchByIdForm::class);

@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Entity\ArchiveEntryEntity;
 use App\Service\EntryService;
 use App\Service\FileService;
+use App\Service\RecoveryService;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -49,21 +50,19 @@ class RecoveryController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param FileService $fileService
-     * @param EntryService $entryService
+     * @param RecoveryService $recoveryService
      * @return Response
      * @Route("/admin/recovery/exec",
      *     options = { "expose" = true },
      *     name = "recovery-exec")
      */
 
-    public function restoreEntries(Request $request, FileService $fileService, EntryService $entryService)
+    public function restoreEntries(RecoveryService $recoveryService)
     {
         $result = null;
-        $files = $fileService->locateFiles();
+        $recoveryService->restoreDatabase();
+
         //$serializer = SerializerBuilder::create()->build();
-        $entryService->restoreEntriesFromFiles($files);
 //        foreach ($files as $file)
  //       {
             //try {
