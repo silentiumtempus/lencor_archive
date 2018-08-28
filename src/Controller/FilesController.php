@@ -45,7 +45,7 @@ class FilesController extends Controller
             $fileList = $fileService->showEntryFiles($request->get('folderId'), (bool)$request->get('deleted'));
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $fileList));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_files.html.twig', array('fileList' => $fileList));
     }
 
     /**
@@ -160,7 +160,7 @@ class FilesController extends Controller
             $loggingService->logEntryContent($entryId, $this->getUser(), $session->getFlashBag()->peekAll());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'entryId' => $entryId));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'entryId' => $entryId));
     }
 
     /**
@@ -177,7 +177,7 @@ class FilesController extends Controller
     {
         $removedFile = $fileService->removeFile($request->get('fileId'), $this->getUser());
 
-        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $removedFile));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_files.html.twig', array('fileList' => $removedFile));
     }
 
     /**
@@ -194,7 +194,7 @@ class FilesController extends Controller
     {
         $restoredFile = $fileService->restoreFile($request->get('fileId'), $this->getUser());
 
-        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $restoredFile));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_files.html.twig', array('fileList' => $restoredFile));
     }
 
     /**
@@ -212,7 +212,7 @@ class FilesController extends Controller
     {
         $requestedFile = $fileService->requestFile($request->get('fileId'), $this->getUser(), $folderService);
 
-        return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $requestedFile));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_files.html.twig', array('fileList' => $requestedFile));
     }
 
     /**
@@ -255,14 +255,14 @@ class FilesController extends Controller
                 }
                 $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
 
-                return $this->render('lencor/admin/archive/archive_manager/file.html.twig', array('file' => $file));
+                return $this->render('lencor/admin/archive/archive_manager/files_and_folders/file.html.twig', array('file' => $file));
             } else {
                 $this->addFlash('danger', 'Форма заполнена неверно, недопустимое или уже существующее имя файла ' . $file->getFileName() . '.');
             }
             $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
         }
 
-        return $this->render('lencor/admin/archive/administration/file_rename.html.twig', array('fileRenameForm' => $fileRenameForm->createView()));
+        return $this->render('lencor/admin/archive/administration/files_and_folders/file_rename.html.twig', array('fileRenameForm' => $fileRenameForm->createView()));
     }
 
     /**
@@ -284,10 +284,10 @@ class FilesController extends Controller
         if ($request->request->has('filesArray')) {
             $filesArray = $fileService->getFilesList($request->get('filesArray'));
 
-            return $this->render('lencor/admin/archive/archive_manager/show_files.html.twig', array('fileList' => $filesArray));
+            return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_files.html.twig', array('fileList' => $filesArray));
         } elseif ($file) {
 
-            return $this->render('lencor/admin/archive/archive_manager/file.html.twig', array('file' => $file));
+            return $this->render('lencor/admin/archive/archive_manager/files_and_folders/file.html.twig', array('file' => $file));
         } else {
 
             return $this->redirectToRoute('entries');
@@ -406,6 +406,6 @@ class FilesController extends Controller
             $fileChecksumService->validateChecksumValue($file, $this->getUser()->getId());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/download_file.html.twig', array('requestedFile' => $file, 'downloadLink' => $fileInfo['http_url'], 'sharePath' => $fileInfo['share_path'], 'checkPass' => $fileInfo['check_status']));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/download_file.html.twig', array('requestedFile' => $file, 'downloadLink' => $fileInfo['http_url'], 'sharePath' => $fileInfo['share_path'], 'checkPass' => $fileInfo['check_status']));
     }
 }

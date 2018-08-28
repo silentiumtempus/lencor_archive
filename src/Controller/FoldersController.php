@@ -43,7 +43,7 @@ class FoldersController extends Controller
             $folderTree = $folderService->showEntryFolders($request->get('folderId'), (bool) $request->get('deleted'));
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $folderTree, 'placeholder' => true));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig', array('folderTree' => $folderTree, 'placeholder' => true));
     }
 
     /**
@@ -149,7 +149,7 @@ class FoldersController extends Controller
             }
             $loggingService->logEntryContent($entryId, $this->getUser(), $session->getFlashBag()->peekAll());
         }
-        return $this->render('lencor/admin/archive/archive_manager/new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entryId));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entryId));
     }
 
 
@@ -168,7 +168,7 @@ class FoldersController extends Controller
     {
         $removedFolders[] = $folderService->removeFolder($request->get('folderId'), $this->getUser(), $fileService);
 
-        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $removedFolders));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig', array('folderTree' => $removedFolders));
     }
 
     /**
@@ -202,7 +202,7 @@ class FoldersController extends Controller
     {
         $requestedFolder[] = $folderService->requestFolder($request->get('folderId'), $this->getUser());
 
-        return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $requestedFolder));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig', array('folderTree' => $requestedFolder));
     }
 
     /**
@@ -239,7 +239,7 @@ class FoldersController extends Controller
                 }
                 $loggingService->logEntryContent($folder->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
 
-                return $this->render('lencor/admin/archive/archive_manager/folder.html.twig', array('folder' => $folder));
+                return $this->render('lencor/admin/archive/archive_manager/files_and_folders/folder.html.twig', array('folder' => $folder));
             } else {
                 $this->addFlash('danger', 'Форма заполнена неверно, недопустимое или уже существующее имя каталога ' . $folder->getFolderName() . '.');
             }
@@ -247,7 +247,7 @@ class FoldersController extends Controller
             $loggingService->logEntryContent($folder->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
         }
 
-        return $this->render('lencor/admin/archive/administration/folder_rename.html.twig', array('folderRenameForm' => $folderRenameForm->createView()));
+        return $this->render('lencor/admin/archive/administration/files_and_folders/folder_rename.html.twig', array('folderRenameForm' => $folderRenameForm->createView()));
     }
 
     /**
@@ -269,10 +269,10 @@ class FoldersController extends Controller
         if ($request->request->has('foldersArray')) {
             $foldersArray = $folderService->getFoldersList($request->get('foldersArray'));
 
-            return $this->render('lencor/admin/archive/archive_manager/show_folders.html.twig', array('folderTree' => $foldersArray));
+            return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig', array('folderTree' => $foldersArray));
         } else if ($folder) {
 
-            return $this->render('lencor/admin/archive/archive_manager/folder.html.twig', array('folder' => $folder));
+            return $this->render('lencor/admin/archive/archive_manager/files_and_folders/folder.html.twig', array('folder' => $folder));
         } else {
 
             return $this->redirectToRoute('entries');

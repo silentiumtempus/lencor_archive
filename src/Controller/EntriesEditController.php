@@ -86,7 +86,7 @@ class EntriesEditController extends Controller
                             $this->addFlash('danger', 'Изменения не сохранены. Ошибка: ' . $exception->getMessage());
 
                             return $this->render(
-                                'lencor/admin/archive/administration/entry_edit.html.twig',
+                                'lencor/admin/archive/administration/entries/entry_edit.html.twig',
                                 array(
                                     'entryForm' => $entryForm->createView(),
                                     'entryId' => $archiveEntryEntity->getId())
@@ -105,7 +105,7 @@ class EntriesEditController extends Controller
                         return new Response();
                     }
 
-                    return $this->render('lencor/admin/archive/administration/entry_edit.html.twig',
+                    return $this->render('lencor/admin/archive/administration/entries/entry_edit.html.twig',
                         array(
                             'entryForm' => $entryForm->createView(),
                             'entryId' => $archiveEntryEntity->getId()));
@@ -114,7 +114,7 @@ class EntriesEditController extends Controller
             if ($entryId) {
 
                 return $this->render(
-                    'lencor/admin/archive/administration/entries.html.twig',
+                    'lencor/admin/archive/administration/entries/entries.html.twig',
                     array(
                         'entrySearchByIdForm' => $entrySearchByIdForm->createView(),
                         'entryForm' => $entryForm->createView(),
@@ -124,17 +124,17 @@ class EntriesEditController extends Controller
         } else {
 
             return $this->render(
-                'lencor/admin/archive/administration/entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
+                'lencor/admin/archive/administration/entries/entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
         }
         if ($entrySearchByIdForm->isSubmitted()) {
 
-            return $this->render('lencor/admin/archive/administration/entry_edit.html.twig',
+            return $this->render('lencor/admin/archive/administration/entries/entry_edit.html.twig',
                 array(
                     'entryForm' => $entryForm->createView(),
                     'entryId' => $archiveEntryEntity->getId()));
         } else {
 
-            return $this->render('lencor/admin/archive/administration/entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
+            return $this->render('lencor/admin/archive/administration/entries/entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
         }
     }
 }

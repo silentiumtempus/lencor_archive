@@ -1,0 +1,4 @@
+{% extends 'lencor/admin/archive/archive_manager/index.html.twig' %}
+{% block entries %}
+    {{ include('lencor/admin/archive/archive_manager/entries/entries_list.html.twig', { 'archiveEntries': archiveEntries }) }}
+{% endblock %}

@@ -49,7 +49,7 @@ class AdministrationController extends Controller
     {
         $factories = $factoryService->getFactories();
 
-        return $this->render('lencor/admin/archive/administration/factories_and_settings.html.twig', array('factories' => $factories));
+        return $this->render('lencor/admin/archive/administration/factories_and_settings/factories_and_settings.html.twig', array('factories' => $factories));
     }
 
     /**
@@ -69,7 +69,7 @@ class AdministrationController extends Controller
     {
         $settings = $settingService->findSettingsByFactoryId($factory->getId());
 
-        return $this->render('lencor/admin/archive/administration/settings.html.twig', array('settings' => $settings));
+        return $this->render('lencor/admin/archive/administration/factories_and_settings/settings.html.twig', array('settings' => $settings));
     }
 
     /**
@@ -86,7 +86,7 @@ class AdministrationController extends Controller
 
     public function loadFactory(FactoryEntity $factory)
     {
-        return $this->render('lencor/admin/archive/administration/factories.html.twig', array('factories' => $factory));
+        return $this->render('lencor/admin/archive/administration/factories_and_settings/factories.html.twig', array('factories' => $factory));
     }
 
     /**
@@ -116,13 +116,13 @@ class AdministrationController extends Controller
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
                 }
-                return $this->render('lencor/admin/archive/administration/factories.html.twig', array('factories' => $factory));
+                return $this->render('lencor/admin/archive/administration/factories_and_settings/factories.html.twig', array('factories' => $factory));
             } else {
                 $this->addFlash('danger', 'Завод с таким наименованием уже существует или форма заполнена неправильно');
             }
         }
 
-        return $this->render('lencor/admin/archive/administration/factory_edit.html.twig', array('factoryForm' => $factoryEditForm->createView()));
+        return $this->render('lencor/admin/archive/administration/factories_and_settings/factory_edit.html.twig', array('factoryForm' => $factoryEditForm->createView()));
     }
 
     /**
@@ -139,7 +139,7 @@ class AdministrationController extends Controller
 
     public function loadSetting(SettingEntity $setting)
     {
-        return $this->render('lencor/admin/archive/administration/settings.html.twig', array('settings' => $setting));
+        return $this->render('lencor/admin/archive/administration/factories_and_settings/settings.html.twig', array('settings' => $setting));
     }
 
     /**
@@ -169,13 +169,13 @@ class AdministrationController extends Controller
                 } catch (\Exception $exception) {
                     $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
                 }
-                return $this->render('lencor/admin/archive/administration/settings.html.twig', array('settings' => $setting));
+                return $this->render('lencor/admin/archive/administration/factories_and_settings/settings.html.twig', array('settings' => $setting));
             } else {
                 $this->addFlash('danger', 'Установка с таким наименованием уже существует или форма заполнена неправильно');
             }
         }
 
-        return $this->render('lencor/admin/archive/administration/setting_edit.html.twig', array('settingForm' => $settingEditForm->createView()));
+        return $this->render('lencor/admin/archive/administration/factories_and_settings/setting_edit.html.twig', array('settingForm' => $settingEditForm->createView()));
     }
 
     /**

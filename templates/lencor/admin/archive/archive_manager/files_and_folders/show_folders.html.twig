@@ -9,7 +9,7 @@
 {% endif %}
 {% if (folderTree is not empty) %}
     {% for folder in folderTree %}
-        {{ include('lencor/admin/archive/archive_manager/folder.html.twig', { 'folder': folder }) }}
+        {{ include('lencor/admin/archive/archive_manager/files_and_folders/folder.html.twig', { 'folder': folder }) }}
     {% endfor %}
 {% else %}
 {% endif %}

@@ -17,11 +17,11 @@
     </div>
         {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
     <div class="search-div">
-        {{ include('lencor/admin/archive/administration/entry_search.html.twig') }}
+        {{ include('lencor/admin/archive/administration/entries/entry_search.html.twig') }}
     </div>
     <div class="edit" id="entryForm">
         {% if entryForm is defined %}
-            {{ include('lencor/admin/archive/administration/entry_edit.html.twig', {'entryForm' : entryForm, 'entryId' : entryId}) }}
+            {{ include('lencor/admin/archive/administration/entries/entry_edit.html.twig', {'entryForm' : entryForm, 'entryId' : entryId}) }}
         {% else %}
             Запись не найдена
         {% endif %}

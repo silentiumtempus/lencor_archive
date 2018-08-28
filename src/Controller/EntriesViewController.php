@@ -78,7 +78,7 @@ class EntriesViewController extends Controller
             $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $search_limit, $deleted ?: false);
         }
 
-        return $this->render('/lencor/admin/archive/archive_manager/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath, 'deleted' => $deleted));
+        return $this->render('/lencor/admin/archive/archive_manager/entries/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath, 'deleted' => $deleted));
     }
 
     /**
@@ -102,7 +102,7 @@ class EntriesViewController extends Controller
             $folderId = $folderService->getRootFolder($entryId);
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entries_head.html.twig', array(
+        return $this->render('lencor/admin/archive/archive_manager/entries/entries_head.html.twig', array(
             'folderId' => $folderId,
             'entryId' => $entryId,
             'addHeaderAndButtons' => $addHeaderAndButtons,
@@ -126,7 +126,7 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->removeEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
+        return $this->render('lencor/admin/archive/archive_manager/entries/entry.html.twig', array('entry' => $archiveEntry));
     }
 
     /**
@@ -146,7 +146,7 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->restoreEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
+        return $this->render('lencor/admin/archive/archive_manager/entries/entry.html.twig', array('entry' => $archiveEntry));
     }
 
     /**
@@ -166,7 +166,7 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->requestEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $archiveEntry));
+        return $this->render('lencor/admin/archive/archive_manager/entries/entry.html.twig', array('entry' => $archiveEntry));
     }
 
     /**
@@ -276,10 +276,10 @@ class EntriesViewController extends Controller
         if ($request->request->has('entriesArray')) {
             $entriesArray = $entryService->getEntriesList($request->get('foldersArray'));
 
-            return $this->render('/lencor/admin/archive/archive_manager/entries_list.html.twig', array('archiveEntries' => $entriesArray));
+            return $this->render('/lencor/admin/archive/archive_manager/entries/entries_list.html.twig', array('archiveEntries' => $entriesArray));
         } else if ($entry) {
 
-            return $this->render('/lencor/admin/archive/archive_manager/entry.html.twig', array('entry' => $entry));
+            return $this->render('/lencor/admin/archive/archive_manager/entries/entry.html.twig', array('entry' => $entry));
         } else {
 
             return $this->redirectToRoute('entries');
@@ -410,6 +410,6 @@ class EntriesViewController extends Controller
     {
         $lastUpdateInfo = $archiveEntryService->loadLastUpdateInfo($request);
 
-        return $this->render('lencor/admin/archive/archive_manager/entries_update_info.html.twig', array('lastUpdateInfo' => $lastUpdateInfo));
+        return $this->render('lencor/admin/archive/archive_manager/entries/entries_update_info.html.twig', array('lastUpdateInfo' => $lastUpdateInfo));
     }
 }

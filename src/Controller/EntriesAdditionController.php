@@ -147,6 +147,6 @@ class EntriesAdditionController extends Controller
             $this->addFlash('danger', 'Корневой путь файловой системы архива недоступен');
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/new_entry.html.twig', array('entryForm' => $entryForm->createView(), 'factoryForm' => $factoryForm->createView(), 'settingForm' => $settingForm->createView(), 'entryId' => $entryId));
+        return $this->render('lencor/admin/archive/archive_manager/new/new_entry.html.twig', array('entryForm' => $entryForm->createView(), 'factoryForm' => $factoryForm->createView(), 'settingForm' => $settingForm->createView(), 'entryId' => $entryId));
     }
 }

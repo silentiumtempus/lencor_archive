@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 {% endblock %}
 
-
 {% block javascripts %}
      {{ parent() }}
      <script type="text/javascript" src="{{ asset('build/js/entrySearch.js') }}"></script>
@@ -19,7 +18,7 @@
 
 {% block main %}
     {{ include('lencor/admin/archive/flash_messages/archive_manager/flash_messages.html.twig') }}
-    {{ include('lencor/admin/archive/archive_manager/entries_search.html.twig') }}
+    {{ include('lencor/admin/archive/archive_manager/entries/entries_search.html.twig') }}
     <div>
         <div class="left page-title"><h3>{% if deleted %} {{ 'entries.deleted.title.list'|trans }} {% else %} {{ 'entries.title.list'|trans }} {% endif %}</h3></div>
         {% if not deleted %}
@@ -46,9 +45,10 @@
         </tr>
         </thead>
         <tbody id="main-tbody" class="entries">
-        {% block entries %}
 
+        {% block entries %}
         {% endblock %}
+
         </tbody>
         <tfoot>
             <tr id="loading-spinner" class="loading-spinner" hidden>

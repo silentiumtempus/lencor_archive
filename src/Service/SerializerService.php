@@ -63,7 +63,7 @@ class SerializerService
     {
         $encoder = new JsonEncoder();
         $normalizer = new ObjectNormalizer();
-        $normalizer->setSerializer(new Serializer(array($normalizer), array($encoder)));
+        $normalizer->setSerializer(new Serializer([$normalizer],[$encoder]));
         $normalizer->setCircularReferenceHandler(function ($object) {
             return $object->__toString();
         });
@@ -109,7 +109,7 @@ class SerializerService
         $internalUsersFile = $internalPath . "users";
         $users = $this->usersRepository->findAll();
         $normalizer->setIgnoredAttributes(array(
-           'user' => 'salt', 'plainPassword', 'accountNonExpired', 'accountNonLocked', 'superAdmin', 'groups', 'groupNames', 'credentialsNonExpired', 'passwordRequestedAt'
+           'user' => 'salt', 'plainPassword', 'accountNonExpired', 'accountNonLocked', 'superAdmin', 'groups', 'groupNames', 'credentialsNonExpired', 'passwordRequestedAt', 'confirmationToken'
         ));
         $timeStamp = function ($dateTime) {
             return (!$dateTime instanceof  \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
@@ -161,15 +161,15 @@ class SerializerService
             return (!$user instanceof User) ?: $user->getUsername();
         };
         $requestedByCallback = function ($users) {
+            $usersString = '';
             if (is_array($users)) {
                 $users = $this->usersRepository->findById($users);
-            }
-            $usersString = '';
-            if ($users) {
-                foreach ($users as $user) {
-                    $usersString .= $user->getUsername() . ',';
+                if ($users) {
+                    foreach ($users as $user) {
+                        $usersString .= $user->getUsername() . ',';
+                    }
+                    $usersString = rtrim($usersString, ',');
                 }
-                $usersString = rtrim($usersString, ',');
             }
 
             return $usersString;
@@ -187,7 +187,6 @@ class SerializerService
         ));
         $array = $normalizer->normalize($newEntry);
         $entryJSON = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        //file_put_contents($filename, $entryJSONFile);
         $fs->dumpFile($filename, $entryJSON);
 
         return true;
