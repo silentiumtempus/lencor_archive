@@ -5,11 +5,13 @@ namespace App\Service;
 use App\Entity\FileEntity;
 use App\Entity\FolderEntity;
 use App\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Class FileService
@@ -152,12 +154,96 @@ class FileService
     }
 
     /**
+     * @param FormInterface $fileAddForm
+     * @param User $user
+     * @param int $entryId
+     */
+
+    public function uploadFiles(FormInterface $fileAddForm, User $user, int $entryId)
+    {
+        try {
+            $parentFolder = null;
+            $folderAbsPath = null;
+            $uploadNotFailed = true;
+            $newFilesArray = $fileAddForm->getData();
+            $this->container->get('session')->getFlashBag()->clear();
+            try {
+                $parentFolder = $this->folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
+                $folderAbsPath = $this->folderService->constructFolderAbsPath($parentFolder);
+            } catch (\Exception $exception) {
+                $this->container->get('session')->getFlashBag()->add('danger', "Ошибка создания пути: " . $exception->getMessage());
+            }
+            try {
+                $passed = 0;
+                $errors = 0;
+                foreach ($newFilesArray->getUploadedFiles() as $newFile) {
+                    $newFileEntity = $this->createFileEntityFromArray($newFilesArray, $newFile);
+                    $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
+                    $fileWithAbsPath = $this->constructFileAbsPath($folderAbsPath, $originalName);
+                    $fileSystem = new Filesystem();
+                    if (!$fileSystem->exists($fileWithAbsPath)) {
+                        $fileExistedPreviously = false;
+                        try {
+                            $newFileEntity->getFileName()->move($folderAbsPath, $originalName);
+                            $this->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
+                            $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
+                            $this->container->get('session')->getFlashBag()->add('success', 'Новый документ ' . $originalName . ' записан в директорию ' . $parentFolder);
+                        } catch (\Exception $exception) {
+                            $uploadNotFailed = false;
+                            $this->container->get('session')->getFlashBag()->add('danger', 'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage());
+                            $this->container->get('session')->getFlashBag()->add('danger', 'Загрузка в БД прервана: изменения не внесены.');
+                            $errors++;
+                        }
+                    } else {
+                        $fileExistedPreviously = true;
+                        $this->container->get('session')->getFlashBag()->add('danger', 'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.');
+                        $errors++;
+                    }
+                    if ($uploadNotFailed) {
+                        try {
+                            $this->persistFile($newFileEntity);
+                            $this->entryService->changeLastUpdateInfo($entryId, $user);
+                            $this->container->get('session')->getFlashBag()->add('success', 'Новый документ добавлен в БД');
+                            $passed++;
+                        } catch (\Exception $exception) {
+                            if ($exception instanceof ConstraintViolationException) {
+                                $this->container->get('session')->getFlashBag()->add('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage());
+                            } else {
+                                $this->container->get('session')->getFlashBag()->add('danger', 'Документ не записан в БД. Ошибка БД: ' . $exception->getMessage());
+                            }
+                            if (!$fileExistedPreviously) {
+                                try {
+                                    $fileSystem->remove($fileWithAbsPath);
+                                    $this->container->get('session')->getFlashBag()->add('danger', 'Новый документ удалён из директории в связи с ошибкой БД.');
+                                } catch (IOException $IOException) {
+                                    $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка файловой системы при удалении загруженного документа: ' . $IOException->getMessage());
+                                };
+                            }
+                            $errors++;
+                        }
+                    };
+                }
+                if ($passed != 0) {
+                    $this->container->get('session')->getFlashBag()->add('passed', $passed . ' файлов успешно загружено.');
+                }
+                if ($errors != 0) {
+                    $this->container->get('session')->getFlashBag()->add('errors', $errors . ' ошибок при загрузке.');
+                }
+            } catch (\Exception $exception) {
+                $this->container->get('session')->getFlashBag()->add('danger', "Ошибка загрузки файла(ов) : " . $exception->getMessage());
+            }
+        } catch (\Exception $exception) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
+        }
+    }
+
+    /**
      * @param FileEntity $fileArrayEntity
      * @param $file
      * @return FileEntity
      */
 
-    public function createFileEntityFromArray(FileEntity $fileArrayEntity, $file)
+    private function createFileEntityFromArray(FileEntity $fileArrayEntity, $file)
     {
         $newFileEntity = clone $fileArrayEntity;
         $newFileEntity
@@ -174,7 +260,7 @@ class FileService
      * @param User $user
      */
 
-    public function prepareNewFile(FileEntity $newFileEntity, FolderEntity $parentFolder, string $originalName, User $user)
+    private function prepareNewFile(FileEntity $newFileEntity, FolderEntity $parentFolder, string $originalName, User $user)
     {
         $parentFolder = $this->folderService->getParentFolder($parentFolder);
         $newFileEntity
@@ -190,7 +276,7 @@ class FileService
      * @param FileEntity $fileEntity
      */
 
-    public function persistFile(FileEntity $fileEntity)
+    private function persistFile(FileEntity $fileEntity)
     {
         $this->em->persist($fileEntity);
         $this->em->flush();
@@ -394,6 +480,29 @@ class FileService
         array_reverse($folderIdsArray['remove']);
 
         return $folderIdsArray;
+    }
+
+    /**
+     * @param FileEntity $file
+     */
+
+    public function renameFile(FileEntity $file)
+    {
+        $originalFile = $this->getOriginalData($file);
+        if ($file->getDeleted() !== true) {
+            if ($originalFile['fileName'] != $file->getFileName()) {
+                if ($this->moveFile($file, $originalFile)) {
+                    $this->flushFile();
+                    $this->container->get('session')->getFlashBag()->add('success', 'Переименование ' . $originalFile['fileName'] . ' > ' . $file->getFileName() . ' успешно произведено.');
+                } else {
+                    $this->container->get('session')->getFlashBag()->add('danger', 'Переименование отменено из за внутренней ошибки.');
+                }
+            } else {
+                $this->container->get('session')->getFlashBag()->add('warning', 'Новое имя файла ' . $file->getFileName() . ' совпадает с текущим. Операция отклонена.');
+            }
+        } else {
+            $this->container->get('session')->getFlashBag()->add('warning', 'Переименование удалённого файла запрещено');
+        }
     }
 
     /**

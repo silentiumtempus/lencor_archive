@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Service;
+
 use App\Model\LDAPConnectionModel;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Ldap\Entry;

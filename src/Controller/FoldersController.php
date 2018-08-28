@@ -63,87 +63,17 @@ class FoldersController extends Controller
         $session = $this->container->get('session');
         $folderId = $archiveEntryService->setFolderId($request);
         $entryId = $folderService->getFolderEntry($folderId)->getId();
-        $user = $this->getUser();
         $newFolder = new FolderEntity();
         $isRoot = $folderService->isRoot($folderId);
-
         $folderAddForm = $this->createForm(
             FolderAddForm::class,
             $newFolder,
             array('action' => $this->generateUrl('entries_new_folder'), 'attr' => array('isRoot' => $isRoot, 'folderId' => $folderId, 'id' => 'folder_add_form'))
         );
-
         $folderAddForm->handleRequest($request);
         if ($folderAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($folderAddForm->isValid()) {
-                try {
-                    $newFolderEntity = $folderService->prepareNewFolder($folderAddForm, $user);
-                    $fileSystem = new Filesystem();
-                    $newFolderAbsPath = $this->getParameter('archive.storage_path');
-                    $pathPermissions = $this->getParameter('archive.storage_permissions');
-                    $creationNotFailed = true;
-                    $directoryExistedPreviously = false;
-
-                    if ($fileSystem->exists($newFolderAbsPath)) {
-                        try {
-                            $binaryPath = $folderService->getPath($newFolderEntity->getParentFolder());
-                            foreach ($binaryPath as $folderName) {
-                                $newFolderAbsPath .= "/" . $folderName;
-                                if (!$fileSystem->exists($newFolderAbsPath)) {
-                                    $this->addFlash('warning', 'Директория ' . $newFolderAbsPath . ' отсутствует в файловой системе. Пересоздаю...');
-                                    try {
-                                        $fileSystem->mkdir($newFolderAbsPath, $pathPermissions);
-                                        $this->addFlash('success', 'Директория ' . $newFolderAbsPath . ' cоздана.');
-                                    } catch (IOException $IOException) {
-                                        $this->addFlash('danger', 'Директория ' . $newFolderAbsPath . ' не создана. Ошибка файловой системы: ' . $IOException->getMessage());
-                                        $this->addFlash('danger', 'Загрузка в БД прервана: изменения не внесены.');
-                                        $creationNotFailed = false;
-                                    }
-                                }
-                            }
-                            $newFolderAbsPath .= "/" . $newFolderEntity->getFolderName();
-                            if (!$fileSystem->exists($newFolderAbsPath)) {
-                                try {
-                                    $fileSystem->mkdir($newFolderAbsPath, $pathPermissions);
-                                    $this->addFlash('success', 'Новая директория ' . $newFolderEntity->getFolderName() . ' успешно создана.');
-                                } catch (IOException $IOException) {
-                                    $this->addFlash('danger', 'Новая директория ' . $newFolderAbsPath . ' не создана. Ошибка файловой системы: ' . $IOException->getMessage());
-                                    $creationNotFailed = false;
-                                }
-                            } else {
-                                $directoryExistedPreviously = true;
-                                $this->addFlash('warning', 'Директория ' . $newFolderAbsPath . ' уже существует в файловой системе.');
-                            }
-                        } catch (\Exception $exception) {
-                            $this->addFlash('danger', 'Новая директория не записана в файловую систему. Ошибка файловой системы: ' . $exception->getMessage());
-                        }
-                    } else {
-                        $this->addFlash('danger', 'Файловая система архива недоступна. Операция не выполнена.');
-                    }
-                    if ($creationNotFailed) {
-                        try {
-                            $folderService->persistFolder($newFolderEntity);
-                            $archiveEntryService->changeLastUpdateInfo($entryId, $user);
-                            $this->addFlash('success', 'Новая директория успешно добавлена в БД');
-                        } catch (\Exception $exception) {
-                            if ($exception instanceof ConstraintViolationException) {
-                                $this->addFlash('danger', ' В БД найдена запись о дубликате создаваемой директории. Именения БД отклонены.');
-                            } else {
-                                $this->addFlash('danger', 'Директория не записана в БД. Ошибка БД: ' . $exception->getMessage());
-                            }
-                            if (!$directoryExistedPreviously) {
-                                try {
-                                    $fileSystem->remove($newFolderAbsPath);
-                                    $this->addFlash('danger', 'Новая директория удалёна из файловой системы в связи с ошибкой БД.');
-                                } catch (IOException $IOException) {
-                                    $this->addFlash('danger', 'Ошибка при удалении новой директории из файловой системы: ' . $IOException->getMessage());
-                                }
-                            }
-                        }
-                    }
-                } catch (\Exception $exception) {
-                    $this->addFlash('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
-                }
+                $folderService->createNewFolder($folderAddForm, $this->getUser(), $entryId);
             } else {
                 $this->addFlash('danger', 'Директория ' . $folderAddForm->getName() . ' уже существует в каталоге ' . $folderAddForm->getParent()->getViewData() . '. Операция прервана');
             }
@@ -226,19 +156,7 @@ class FoldersController extends Controller
         $folderRenameForm->handleRequest($request);
         if ($folderRenameForm->isSubmitted()) {
             if ($folderRenameForm->isValid()) {
-                $originalFolder = $folderService->getOriginalData($folder);
-                if ($originalFolder['folderName'] != $folder->getFolderName()) {
-                    if ($folderService->moveFolder($folder, $originalFolder)) {
-                        $folderService->flushFolder();
-                        $this->addFlash('success', 'Переименование ' . $originalFolder['folderName'] . ' > ' . $folder->getFolderName() . ' успешно произведено.');
-                    } else {
-                        $this->addFlash('danger', 'Переименование отменено из за внутренней ошибки.');
-                    }
-                } else {
-                    $this->addFlash('warning', 'Новое имя каталога ' . $folder->getFolderName() . ' совпадает с текущим. Операция отклонена.');
-                }
-                $loggingService->logEntryContent($folder->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
-
+                $folderService->renameFolder($folder, $this->getUser());
                 return $this->render('lencor/admin/archive/archive_manager/files_and_folders/folder.html.twig', array('folder' => $folder));
             } else {
                 $this->addFlash('danger', 'Форма заполнена неверно, недопустимое или уже существующее имя каталога ' . $folder->getFolderName() . '.');

@@ -3,21 +3,13 @@
 namespace App\Service;
 
 use App\Entity\ArchiveEntryEntity;
-use App\Entity\FactoryEntity;
 use App\Entity\FolderEntity;
-use App\Entity\SettingEntity;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
-use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * Class EntryService
@@ -410,6 +402,8 @@ class EntryService
             $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryEntity);
             $rootFolder->setDeleted($delete);
             $this->updateEntry();
+            $entryPath = $this->constructEntryPath($entryEntity, $delete);
+            $this->serializerService->serializeEntry($entryEntity, $entryPath, false);
             if ($entryEntity->getDeletedChildren() > 0) {
                 $entryIdsArray['reload'][] = $entryEntity->getId();
             } else {

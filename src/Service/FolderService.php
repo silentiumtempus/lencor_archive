@@ -6,6 +6,7 @@ use App\Entity\ArchiveEntryEntity;
 use App\Entity\FolderEntity;
 use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -27,6 +28,7 @@ class FolderService
     protected $entryService;
     protected $dSwitchService;
     protected $commonArchiveService;
+    protected $loggingService;
 
     /**
      * FolderService constructor.
@@ -35,18 +37,21 @@ class FolderService
      * @param EntryService $entryService
      * @param DeleteSwitcherService $dSwitchService
      * @param CommonArchiveService $commonArchiveService
+     * @param LoggingService $loggingService
      */
 
     public function __construct(EntityManagerInterface $entityManager,
                                 ContainerInterface $container,
                                 EntryService $entryService,
                                 DeleteSwitcherService $dSwitchService,
-                                CommonArchiveService $commonArchiveService)
+                                CommonArchiveService $commonArchiveService,
+                                LoggingService $loggingService)
     {
         $this->em = $entityManager;
         $this->container = $container;
         $this->entryService = $entryService;
         $this->commonArchiveService = $commonArchiveService;
+        $this->loggingService = $loggingService;
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->dSwitchService = $dSwitchService;
@@ -141,6 +146,84 @@ class FolderService
     /**
      * @param FormInterface $folderAddForm
      * @param User $user
+     * @param int $entryId
+     */
+
+    public function createNewFolder(FormInterface $folderAddForm, User $user, int $entryId)
+    {
+        try {
+            $newFolderEntity = $this->prepareNewFolder($folderAddForm, $user);
+            $fileSystem = new Filesystem();
+            $newFolderAbsPath = $this->pathRoot;
+            $pathPermissions = $this->pathPermissions;
+            $creationNotFailed = true;
+            $directoryExistedPreviously = false;
+
+            if ($fileSystem->exists($newFolderAbsPath)) {
+                try {
+                    $binaryPath = $this->getPath($newFolderEntity->getParentFolder());
+                    foreach ($binaryPath as $folderName) {
+                        $newFolderAbsPath .= "/" . $folderName;
+                        if (!$fileSystem->exists($newFolderAbsPath)) {
+                            $this->container->get('session')->getFlashBag()->add('warning', 'Директория ' . $newFolderAbsPath . ' отсутствует в файловой системе. Пересоздаю...');
+                            try {
+                                $fileSystem->mkdir($newFolderAbsPath, $pathPermissions);
+                                $this->container->get('session')->getFlashBag()->add('success', 'Директория ' . $newFolderAbsPath . ' cоздана.');
+                            } catch (IOException $IOException) {
+                                $this->container->get('session')->getFlashBag()->add('danger', 'Директория ' . $newFolderAbsPath . ' не создана. Ошибка файловой системы: ' . $IOException->getMessage());
+                                $this->container->get('session')->getFlashBag()->add('danger', 'Загрузка в БД прервана: изменения не внесены.');
+                                $creationNotFailed = false;
+                            }
+                        }
+                    }
+                    $newFolderAbsPath .= "/" . $newFolderEntity->getFolderName();
+                    if (!$fileSystem->exists($newFolderAbsPath)) {
+                        try {
+                            $fileSystem->mkdir($newFolderAbsPath, $pathPermissions);
+                            $this->container->get('session')->getFlashBag()->add('success', 'Новая директория ' . $newFolderEntity->getFolderName() . ' успешно создана.');
+                        } catch (IOException $IOException) {
+                            $this->container->get('session')->getFlashBag()->add('danger', 'Новая директория ' . $newFolderAbsPath . ' не создана. Ошибка файловой системы: ' . $IOException->getMessage());
+                            $creationNotFailed = false;
+                        }
+                    } else {
+                        $directoryExistedPreviously = true;
+                        $this->container->get('session')->getFlashBag()->add('warning', 'Директория ' . $newFolderAbsPath . ' уже существует в файловой системе.');
+                    }
+                } catch (\Exception $exception) {
+                    $this->container->get('session')->getFlashBag()->add('danger', 'Новая директория не записана в файловую систему. Ошибка файловой системы: ' . $exception->getMessage());
+                }
+            } else {
+                $this->container->get('session')->getFlashBag()->add('danger', 'Файловая система архива недоступна. Операция не выполнена.');
+            }
+            if ($creationNotFailed) {
+                try {
+                    $this->persistFolder($newFolderEntity);
+                    $this->entryService->changeLastUpdateInfo($entryId, $user);
+                    $this->container->get('session')->getFlashBag()->add('success', 'Новая директория успешно добавлена в БД');
+                } catch (\Exception $exception) {
+                    if ($exception instanceof ConstraintViolationException) {
+                        $this->container->get('session')->getFlashBag()->add('danger', ' В БД найдена запись о дубликате создаваемой директории. Именения БД отклонены.');
+                    } else {
+                        $this->container->get('session')->getFlashBag()->add('danger', 'Директория не записана в БД. Ошибка БД: ' . $exception->getMessage());
+                    }
+                    if (!$directoryExistedPreviously) {
+                        try {
+                            $fileSystem->remove($newFolderAbsPath);
+                            $this->container->get('session')->getFlashBag()->add('danger', 'Новая директория удалёна из файловой системы в связи с ошибкой БД.');
+                        } catch (IOException $IOException) {
+                            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка при удалении новой директории из файловой системы: ' . $IOException->getMessage());
+                        }
+                    }
+                }
+            }
+        } catch (\Exception $exception) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
+        }
+    }
+
+    /**
+     * @param FormInterface $folderAddForm
+     * @param User $user
      * @return FolderEntity
      */
 
@@ -166,6 +249,26 @@ class FolderService
     {
         $this->em->persist($folderEntity);
         $this->em->flush();
+    }
+
+    /**
+     * @param FolderEntity $folder
+     * @param User $user
+     */
+    public function renameFolder(FolderEntity $folder, User $user)
+    {
+        $originalFolder = $this->getOriginalData($folder);
+        if ($originalFolder['folderName'] != $folder->getFolderName()) {
+            if ($this->moveFolder($folder, $originalFolder)) {
+                $this->flushFolder();
+                $this->container->get('session')->getFlashBag()->add('success', 'Переименование ' . $originalFolder['folderName'] . ' > ' . $folder->getFolderName() . ' успешно произведено.');
+            } else {
+                $this->container->get('session')->getFlashBag()->add('danger', 'Переименование отменено из за внутренней ошибки.');
+            }
+        } else {
+            $this->container->get('session')->getFlashBag()->add('warning', 'Новое имя каталога ' . $folder->getFolderName() . ' совпадает с текущим. Операция отклонена.');
+        }
+        $this->loggingService->logEntryContent($folder->getRoot()->getArchiveEntry()->getId(), $user, $this->container->get('session')->getFlashBag()->peekAll());
     }
 
     /**
@@ -290,7 +393,7 @@ class FolderService
         foreach ($foldersChain as $folder) {
             if (!$folder->getDeleted()) {
                 $originalFolder['folderName'] = $folder->getFolderName();
-                $folder->setFolderName($this->renameFolder($folder->getFolderName(), true));
+                $folder->setFolderName($this->changeFolderName($folder->getFolderName(), true));
                 if ($this->moveFolder($folder, $originalFolder, false)) {
                     $folder->setDeleted(true);
                     $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), true);
@@ -348,10 +451,10 @@ class FolderService
         foreach ($binaryPath as $folder) {
             if ($folder->getDeleted() === true) {
                 $originalFolder['folderName'] = $folder->getFolderName();
-                $folder->setFolderName($this->renameFolder($folder->getFolderName(), false));
+                $folder->setFolderName($this->changeFolderName($folder->getFolderName(), false));
                 if ($this->moveFolder($folder, $originalFolder, false)) {
                     $folder->setDeleted(false);
-                    $folder->setFolderName($this->renameFolder($folder->getFolderName(), false));
+                    $folder->setFolderName($this->changeFolderName($folder->getFolderName(), false));
                     if ($folder->getRoot()->getId() !== $folder->getId()) {
                         $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
                         $i = ($folder->getDeletedChildren() === 0) ? 'remove' : 'reload';
@@ -378,7 +481,7 @@ class FolderService
      * @return mixed|string
      */
 
-    private function renameFolder(string $folderName, bool $condition)
+    private function changeFolderName(string $folderName, bool $condition)
     {
         $deleted = '_deleted_';
         $restored = '_restored_';

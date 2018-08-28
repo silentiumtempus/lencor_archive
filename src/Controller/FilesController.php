@@ -5,18 +5,14 @@ namespace App\Controller;
 use App\Entity\FileEntity;
 use App\Form\FileAddForm;
 use App\Form\FileRenameForm;
-use App\Service\DeleteService;
 use App\Service\EntryService;
 use App\Service\FileChecksumService;
 use App\Service\FileService;
 use App\Service\FolderService;
 use App\Service\LoggingService;
-use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -66,94 +62,16 @@ class FilesController extends Controller
         $session = $this->container->get('session');
         $folderId = $archiveEntryService->setFolderId($request);
         $entryId = $folderService->getFolderEntry($folderId)->getId();
-        $newFile = new FileEntity();
-        $user = $this->getUser();
         $isRoot = $folderService->isRoot($folderId);
-
         $fileAddForm = $this->createForm(
             FileAddForm::class,
-            $newFile,
+            new FileEntity(),
             array('action' => $this->generateUrl('entries_new_file'), 'method' => 'POST', 'attr' => array('isRoot' => $isRoot, 'folderId' => $folderId, 'id' => 'file_add_form'))
         );
-
         $fileAddForm->handleRequest($request);
         if ($fileAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($fileAddForm->isValid()) {
-                try {
-                    $parentFolder = null;
-                    $folderAbsPath = null;
-                    $uploadNotFailed = true;
-                    $newFilesArray = $fileAddForm->getData();
-                    $this->get('session')->getFlashBag()->clear();
-                    try {
-                        $parentFolder = $folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
-                        $folderAbsPath = $folderService->constructFolderAbsPath($parentFolder);
-                    } catch (\Exception $exception) {
-                        $this->addFlash('danger', "Ошибка создания пути: " . $exception->getMessage());
-                    }
-                    try {
-                        $passed = 0;
-                        $errors = 0;
-                        foreach ($newFilesArray->getUploadedFiles() as $newFile) {
-                            $newFileEntity = $fileService->createFileEntityFromArray($newFilesArray, $newFile);
-                            $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
-                            $fileWithAbsPath = $fileService->constructFileAbsPath($folderAbsPath, $originalName);
-                            $fileSystem = new Filesystem();
-                            if (!$fileSystem->exists($fileWithAbsPath)) {
-                                $fileExistedPreviously = false;
-                                try {
-                                    $newFileEntity->getFileName()->move($folderAbsPath, $originalName);
-                                    $fileService->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
-                                    $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
-                                    $this->addFlash('success', 'Новый документ ' . $originalName . ' записан в директорию ' . $parentFolder);
-                                } catch (\Exception $exception) {
-                                    $uploadNotFailed = false;
-                                    $this->addFlash('danger', 'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage());
-                                    $this->addFlash('danger', 'Загрузка в БД прервана: изменения не внесены.');
-                                    $errors++;
-                                }
-                            } else {
-                                $fileExistedPreviously = true;
-                                $this->addFlash('danger', 'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.');
-                                $errors++;
-                            }
-
-                            if ($uploadNotFailed) {
-                                try {
-                                    $fileService->persistFile($newFileEntity);
-                                    $archiveEntryService->changeLastUpdateInfo($entryId, $user);
-                                    $this->addFlash('success', 'Новый документ добавлен в БД');
-                                    $passed++;
-                                } catch (\Exception $exception) {
-                                    if ($exception instanceof ConstraintViolationException) {
-                                        $this->addFlash('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage());
-                                    } else {
-                                        $this->addFlash('danger', 'Документ не записан в БД. Ошибка БД: ' . $exception->getMessage());
-                                    }
-                                    if (!$fileExistedPreviously) {
-                                        try {
-                                            $fileSystem->remove($fileWithAbsPath);
-                                            $this->addFlash('danger', 'Новый документ удалён из директории в связи с ошибкой БД.');
-                                        } catch (IOException $IOException) {
-                                            $this->addFlash('danger', 'Ошибка файловой системы при удалении загруженного документа: ' . $IOException->getMessage());
-                                        };
-                                    }
-                                    $errors++;
-                                }
-                            };
-                        }
-                        if ($passed != 0) {
-                            $this->addFlash('passed', $passed . ' файлов успешно загружено.');
-                        }
-                        if ($errors != 0) {
-                            $this->addFlash('errors', $errors . ' ошибок при загрузке.');
-                        }
-                    } catch (\Exception $exception) {
-                        $this->addFlash('danger', "Ошибка загрузки файла(ов) : " . $exception->getMessage());
-                    }
-                } catch (\Exception $exception) {
-                    $this->addFlash('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
-                }
+                $fileService->uploadFiles($fileAddForm, $this->getUser(), $entryId);
             } else {
                 $this->addFlash('danger', 'Форма заполнена неверно. Операция не выполнена.');
             }
@@ -238,21 +156,7 @@ class FilesController extends Controller
         $fileRenameForm->handleRequest($request);
         if ($fileRenameForm->isSubmitted()) {
             if ($fileRenameForm->isValid()) {
-                $originalFile = $fileService->getOriginalData($file);
-                if ($file->getDeleted() !== true) {
-                    if ($originalFile['fileName'] != $file->getFileName()) {
-                        if ($fileService->moveFile($file, $originalFile)) {
-                            $fileService->flushFile();
-                            $this->addFlash('success', 'Переименование ' . $originalFile['fileName'] . ' > ' . $file->getFileName() . ' успешно произведено.');
-                        } else {
-                            $this->addFlash('danger', 'Переименование отменено из за внутренней ошибки.');
-                        }
-                    } else {
-                        $this->addFlash('warning', 'Новое имя файла ' . $file->getFileName() . ' совпадает с текущим. Операция отклонена.');
-                    }
-                } else {
-                    $this->addFlash('warning', 'Переименование удалённого файла запрещено');
-                }
+                $fileService->renameFile($file);
                 $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
 
                 return $this->render('lencor/admin/archive/archive_manager/files_and_folders/file.html.twig', array('file' => $file));
@@ -312,7 +216,7 @@ class FilesController extends Controller
     {
         if ($request->request->has('filesArray')) {
             try {
-                $fileService->deleteFiles($request->get('filesArray'), $fileService);
+                $fileService->deleteFiles($request->get('filesArray'));
                 $this->addFlash('success', 'Файлы успешно удалены');
 
                 return new Response(1);
@@ -323,7 +227,7 @@ class FilesController extends Controller
             }
         } elseif ($file) {
             try {
-                $fileService->deleteFile($file, $fileService);
+                $fileService->deleteFile($file);
                 $this->addFlash('success', 'Файл ' . $file->getFileName() . ' успешно удалён');
 
                 return new Response(1);

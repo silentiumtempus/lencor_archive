@@ -65,7 +65,7 @@ class EntriesEditController extends Controller
                         $this->addFlash('warning', ' Обнаружено изменение параметров расположения ячейки. Перестраивается структура каталога');
                         $pathIsFree = $entryService->checkNewPath($archiveEntryEntity, false);
                         if ($pathIsFree) {
-                            $newEntryFile = $folderService->moveEntryFolder($originalEntry, $archiveEntryEntity);
+                            $folderService->moveEntryFolder($originalEntry, $archiveEntryEntity);
                         } else {
                             $this->addFlash('danger', 'Директория назначения уже существует. Операция прервана.');
 
