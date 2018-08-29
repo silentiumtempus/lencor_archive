@@ -29,6 +29,7 @@ class UserService
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      * @param EncoderFactoryInterface $encoderFactory
+     * @param SerializerService $serializerService
      */
 
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EncoderFactoryInterface $encoderFactory, SerializerService $serializerService)

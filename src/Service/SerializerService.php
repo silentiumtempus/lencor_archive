@@ -66,6 +66,7 @@ class SerializerService
         $normalizer = new ObjectNormalizer();
         $normalizer->setSerializer(new Serializer([$normalizer], [$encoder]));
         $normalizer->setCircularReferenceHandler(function ($object) {
+
             return $object->__toString();
         });
 
@@ -80,16 +81,18 @@ class SerializerService
     {
         $fs = new Filesystem();
         $normalizer = $this->prepareJSONNormalizer();
-        $normalizer->setIgnoredAttributes(array('settings' => 'id'));
+        $normalizer->setIgnoredAttributes(array('settings' => 'id', 'factory'));
         $internalPath = $this->checkAndCreateInternalFolderPath();
         $internalFactoriesFile = $internalPath . "factories_and_settings";
         $factories = $this->factoriesRepository->findAll();
         if ($factories) {
-            $factoriesArray = '';
+            $factoriesArray = '[';
             foreach ($factories as $factory) {
                 $factory = $normalizer->normalize($factory);
-                $factoriesArray .= json_encode($factory, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n";
+                $factoriesArray .= json_encode($factory, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . ', ';
             }
+            $factoriesArray = rtrim($factoriesArray, ', ');
+            $factoriesArray .= ']';
             $fs->dumpFile($internalFactoriesFile, $factoriesArray);
         }
 
@@ -117,12 +120,15 @@ class SerializerService
             'lastLogin' => $timeStamp,
             'passwordRequestedAt' => $timeStamp
         ));
+        //@TODO: Investigate how it's possible to use normalizer directly with array of objects
         if ($users) {
-            $usersArray = '';
+            $usersArray = '[';
             foreach ($users as $user) {
                 $user = $normalizer->normalize($user);
-                $usersArray .= json_encode($user, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n";
+                $usersArray .= json_encode($user, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . ', ';
             }
+            $usersArray = rtrim($usersArray, ', ');
+            $usersArray .= ']';
             $fs->dumpFile($internalUsersFile, $usersArray);
         }
 

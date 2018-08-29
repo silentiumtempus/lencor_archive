@@ -20,30 +20,28 @@ use Symfony\Component\Routing\Annotation\Route;
 class RecoveryController extends Controller
 {
     /**
-     * @param Request $request
      * @return Response
      * @Route("/admin/recovery",
      *     options = { "expose" = true },
      *     name = "recovery")
      */
 
-    public function recoveryIndex(Request $request) {
+    public function recoveryIndex() {
 
         return $this->render('lencor/admin/archive/administration/recovery/index.html.twig');
     }
 
     /**
-     * @param Request $request
-     * @param FileService $fileService
+     * @param RecoveryService $recoveryService
      * @return Response
      * @Route("/admin/recovery/find",
      *     options = { "expose" = true },
      *     name = "recovery-find")
      */
 
-    public function findEntryFiles(Request $request, FileService $fileService)
+    public function findEntryFiles(RecoveryService $recoveryService)
     {
-        $files = $fileService->locateFiles();
+        $files = $recoveryService->locateFiles();
 
         return $this->render('lencor/admin/archive/administration/recovery/find_entry_files.html.twig', array('files' => $files));
 
