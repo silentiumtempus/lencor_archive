@@ -41,6 +41,7 @@ class FactoryEntity
     /**
      * @ORM\OneToMany(targetEntity="SettingEntity", mappedBy = "factory", cascade = {"persist"})
      * @Serializer\Type("ArrayCollection<App\Entity\SettingEntity>")
+     * @var SettingEntity[] | ArrayCollection
      */
 
     private $settings;
@@ -87,6 +88,15 @@ class FactoryEntity
         $this->settings[] = $settings;
 
         return $this;
+    }
+
+    /**
+     * @param array $settings
+     */
+
+    public function setSettings(array $settings)
+    {
+        $this->settings = $settings;
     }
 
     /**

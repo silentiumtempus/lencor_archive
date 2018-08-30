@@ -2,7 +2,10 @@
 
 namespace App\Service;
 
-use App\Serializer\Normalizer\DateTimeAttributeNormalizer;
+use App\Entity\FactoryEntity;
+use App\Entity\User;
+use App\Serializer\Denormalizer\DateTimeAttributeDenormalizer;
+use App\Serializer\Denormalizer\PropertyExtractor\FactoryEntityPropertyExtractor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -10,6 +13,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -41,6 +45,7 @@ class RecoveryService
         $this->internalFolder = $this->container->getParameter('archive.internal.folder_name');
         $this->usersRepository = $this->em->getRepository('App:User');
         $this->factoriesRepository = $this->em->getRepository('App:FactoryEntity');
+        $this->settingsRepository = $this->em->getRepository('App:SettingEntity');
     }
 
     public function restoreDatabase()
@@ -53,8 +58,6 @@ class RecoveryService
             $files = $this->locateFiles();
             $this->restoreUsers($users);
             $this->restoreFactoriesAndSettings($FaS);
-
-
         }
     }
 
@@ -94,15 +97,30 @@ class RecoveryService
         return file_get_contents($internalPath . '/' . 'factories_and_settings');
     }
 
+    /**
+     * @param string $file
+     */
+
     private function restoreFactoriesAndSettings(string $file)
     {
         $serializer = new Serializer(
-            array(new GetSetMethodNormalizer(), new ArrayDenormalizer()),
+            array(new ObjectNormalizer(null, null, null, new FactoryEntityPropertyExtractor()), new ArrayDenormalizer()),
             array(new JsonEncoder()));
-        $factories = $serializer->deserialize($file, 'App\Entity\FactoryEntity[]', 'json');
+        $factories = $serializer->deserialize($file, FactoryEntity::class . '[]', 'json');
         foreach ($factories as $factory) {
-            if (!$this->factoriesRepository->findOneByFactoryName($factory->getFactoryName())) {
+            $factoryExists = $this->factoriesRepository->findOneByFactoryName($factory->getFactoryName());
+            if (!$factoryExists) {
                 $this->em->persist($factory);
+            }
+            foreach ($factory->getSettings() as $setting) {
+                if (!$this->settingsRepository->findOneBySettingName($setting->getSettingName())) {
+                    if ($factoryExists) {
+                        $setting->setFactory($factoryExists);
+                        } else {
+                        $setting->setFactory($factory);
+                    }
+                    $this->em->persist($setting);
+                }
             }
         }
         $this->em->flush();
@@ -115,9 +133,9 @@ class RecoveryService
     private function restoreUsers(string $file)
     {
         $serializer = new Serializer(
-            array(new DateTimeAttributeNormalizer(), new GetSetMethodNormalizer(), new ArrayDenormalizer()),
+            array(new DateTimeAttributeDenormalizer(), new GetSetMethodNormalizer(), new ArrayDenormalizer()),
             array(new JsonEncoder()));
-        $users = $serializer->deserialize($file, 'App\Entity\User[]', 'json');
+        $users = $serializer->deserialize($file, User::class . '[]', 'json');
         foreach ($users as $user) {
             if (!$this->usersRepository->findOneByUsername($user->getUsername())) {
                 $this->em->persist($user);
@@ -125,5 +143,4 @@ class RecoveryService
         }
         $this->em->flush();
     }
-
 }
