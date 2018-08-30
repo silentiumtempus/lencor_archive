@@ -154,8 +154,10 @@ class SerializerService
             $fs->touch($filename);
             $normalizer = $this->prepareJSONNormalizer();
             $normalizer->setIgnoredAttributes(array(
+                'cataloguePath' => 'archiveEntry', 'root',
                 'childFolders' => 'lft', 'rgt', 'lvl', 'requestsCount',
                 'files' => 'id', 'uploadedFiles', 'requestsCount'
+
             ));
             $timeStamp = function ($dateTime) {
                 return (!$dateTime instanceof \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
@@ -167,11 +169,11 @@ class SerializerService
                 return (!$setting instanceof SettingEntity) ?: $setting->getSettingName();
             };
             $userCallback = function ($user) {
-                return (!$user instanceof User) ?: $user->getUsername();
+                return (!$user instanceof User) ? null : $user->getUsername();
             };
             $requestedByCallback = function ($users) {
-                $usersString = '';
-                if (is_array($users)) {
+                $usersString = null;
+                if (is_array($users) && count($users) > 0) {
                     $users = $this->usersRepository->findById($users);
                     if ($users) {
                         foreach ($users as $user) {
@@ -183,6 +185,15 @@ class SerializerService
 
                 return $usersString;
             };
+
+            $nullCallback = function ($attribute) {
+                return ($attribute) ?: false;
+            };
+
+            $zeroCallback = function ($attribute) {
+                return ($attribute) ?: 0;
+            };
+
             $normalizer->setCallbacks(array(
                 'addTimestamp' => $timeStamp,
                 'lastModified' => $timeStamp,
@@ -192,7 +203,11 @@ class SerializerService
                 'addedByUser' => $userCallback,
                 'markedByUser' => $userCallback,
                 'modifiedByUser' => $userCallback,
-                'requestedByUsers' => $requestedByCallback
+                'requestedByUsers' => $requestedByCallback,
+                'removalMark' => $nullCallback,
+                'requestMark' => $nullCallback,
+                'deleted' => $nullCallback,
+                'deletedChildren' => $zeroCallback
             ));
             $array = $normalizer->normalize($newEntry);
             $entryJSON = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);

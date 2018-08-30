@@ -2,9 +2,12 @@
 
 namespace App\Service;
 
+use App\Entity\ArchiveEntryEntity;
 use App\Entity\FactoryEntity;
 use App\Entity\User;
 use App\Serializer\Denormalizer\DateTimeAttributeDenormalizer;
+use App\Serializer\Denormalizer\ArchiveEntityAttributeDenormalizer;
+use App\Serializer\Denormalizer\PropertyExtractor\ArchiveEntityPropertyExtractor;
 use App\Serializer\Denormalizer\PropertyExtractor\FactoryEntityPropertyExtractor;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -30,6 +33,8 @@ class RecoveryService
     protected $factoriesRepository;
     protected $settingsRepository;
     protected $entriesRepository;
+    protected $foldersRepository;
+    protected $filesRepository;
 
     /**
      * RecoveryService constructor.
@@ -46,6 +51,8 @@ class RecoveryService
         $this->usersRepository = $this->em->getRepository('App:User');
         $this->factoriesRepository = $this->em->getRepository('App:FactoryEntity');
         $this->settingsRepository = $this->em->getRepository('App:SettingEntity');
+        $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
+        $this->filesRepository = $this->em->getRepository('App:FileEntity');
     }
 
     public function restoreDatabase()
@@ -55,9 +62,11 @@ class RecoveryService
         if ($fs->exists($internalPath)) {
             $users = $this->locateUsers($internalPath);
             $FaS = $this->locateFactoriesAndSettings($internalPath);
-            $files = $this->locateFiles();
-            $this->restoreUsers($users);
-            $this->restoreFactoriesAndSettings($FaS);
+            $entryFiles = $this->locateFiles();
+            //$this->restoreUsers($users);
+            //$this->restoreFactoriesAndSettings($FaS);
+            $this->restoreEntries($entryFiles);
+
         }
     }
 
@@ -101,6 +110,24 @@ class RecoveryService
      * @param string $file
      */
 
+    private function restoreUsers(string $file)
+    {
+        $serializer = new Serializer(
+            array(new DateTimeAttributeDenormalizer(), new GetSetMethodNormalizer(), new ArrayDenormalizer()),
+            array(new JsonEncoder()));
+        $users = $serializer->deserialize($file, User::class . '[]', 'json');
+        foreach ($users as $user) {
+            if (!$this->usersRepository->findOneByUsername($user->getUsername())) {
+                $this->em->persist($user);
+            }
+        }
+        $this->em->flush();
+    }
+
+    /**
+     * @param string $file
+     */
+
     private function restoreFactoriesAndSettings(string $file)
     {
         $serializer = new Serializer(
@@ -127,20 +154,55 @@ class RecoveryService
     }
 
     /**
-     * @param string $file
+     * @param array $entryFiles
      */
 
-    private function restoreUsers(string $file)
+    private function restoreEntries(array $entryFiles)
     {
         $serializer = new Serializer(
-            array(new DateTimeAttributeDenormalizer(), new GetSetMethodNormalizer(), new ArrayDenormalizer()),
+            array(new ArchiveEntityAttributeDenormalizer(), new ObjectNormalizer(null, null, null, new ArchiveEntityPropertyExtractor()), new ArrayDenormalizer()),
             array(new JsonEncoder()));
-        $users = $serializer->deserialize($file, User::class . '[]', 'json');
-        foreach ($users as $user) {
-            if (!$this->usersRepository->findOneByUsername($user->getUsername())) {
-                $this->em->persist($user);
+        foreach ($entryFiles as $entryFilePath) {
+            $entryFile = file_get_contents($entryFilePath);
+            $entry = $serializer->deserialize($entryFile, ArchiveEntryEntity::class, 'json');
+
+            $entries[] = $entry;
+
+            if ($entry->getMarkedByUser()) {
+                $entry->setMarkedByUser($this->usersRepository->findOneByUsername($entry->getMarkedByUser()->getUsername()));
             }
-        }
-        $this->em->flush();
+            if ($entry->getModifiedByUser()) {
+                $entry->setModifiedByUser($this->usersRepository->findOneByUsername($entry->getModifiedByUser()->getUsername()));
+            }
+            if ($entry->getRequestedByUsers()) {
+
+                /*if (strpos($entry->getRequestedByUsers, ',') !== false) {
+                    $users = explode(', ', $entry->getRequestedByUsers());
+                } else {
+                    $users[] = $entry->getRequestedByUsers();
+                } */
+
+               // if (count($entry->getRequestedByUsers()) > 0) {
+                    $users = [];
+                    foreach ($entry->getRequestedByUsers() as $username) {
+                        $user = $this->usersRepository->findOneByUsername($username->getUsername());
+                        $users[] = $user->getId();
+                    }
+
+                    $entry->setRequestedByUsers($users);
+                //}
+            }
+
+            set_include_path('/var/www/archive/public_html/public/');
+            $file = 'test.txt';
+            $wr = file_get_contents($file);
+            $wr = $wr . 'CataloguePath: ' . $entry->getCataloguePath() . "!!!!!!!!!!!!!!" . "\n\n";
+            //$wr = $wr . $newFolder>get('parentFolder')->getViewData() . "!!!!!!!!!!!!!!" . "\n\n";
+            file_put_contents($file, $wr);
+
+            //$this->em->persist($entry);
+            }
+
+            //$this->em->flush();
     }
 }

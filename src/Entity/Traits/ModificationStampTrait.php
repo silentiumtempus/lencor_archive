@@ -26,7 +26,7 @@ trait ModificationStampTrait
 
     /**
      * @ORM\ManyToOne(targetEntity = "User", cascade = {"persist"})
-     * @ORM\JoinColumn(name = "modified_by_user", referencedColumnName = "id")
+     * @ORM\JoinColumn(name = "modified_by_user", referencedColumnName = "id", nullable = true)
      * @Gedmo\Versioned()
      * @Serializer\Type("App\Entity\User")
      */
