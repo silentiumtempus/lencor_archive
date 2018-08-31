@@ -48,11 +48,8 @@ class EntryAttributesDenormalizer implements DenormalizerInterface
         //array(new FolderAttributesDenormalizer(), new ObjectNormalizer(null, null, null, new ArchiveEntityPropertyExtractor()), new ArrayDenormalizer()),
         //array(new JsonEncoder()));
         //$data['cataloguePath'] = $serializer->deserialize(json_encode($data['cataloguePath']), FolderEntity::class, 'json');
-
-
         //$folder->set($data['cataloguePath']);
         $data['cataloguePath'] = $folder;
-
         /*set_include_path('/var/www/archive/public_html/public/');
         $file = 'test.txt';
         $wr = file_get_contents($file);
@@ -61,10 +58,6 @@ class EntryAttributesDenormalizer implements DenormalizerInterface
         file_put_contents($file, $wr); */
         //return null;
         //}
-
-
-
-
         $normalizer = new ObjectNormalizer();
 
         return $normalizer->denormalize($data, $class, $format, $context);
