@@ -24,6 +24,9 @@ class DateTimeAttributeDenormalizer implements DenormalizerInterface
     {
         if (isset($data['lastLogin']) && is_string($data['lastLogin'])) {
             $data['lastLogin'] = new \DateTime($data['lastLogin']);
+        } elseif (isset($data) && is_string($data)) {
+            //@TODO: to be removed
+            $data = new \DateTime($data);
         }
 
         $normalizer = new ObjectNormalizer();

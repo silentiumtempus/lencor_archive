@@ -122,7 +122,7 @@ class FolderEntity
      * @Serializer\Type("ArrayCollection<App\Entity\FileEntity>")
      */
 
-    private $files;
+    protected $files;
 
     /**
      * @Gedmo\Translatable
@@ -260,6 +260,18 @@ class FolderEntity
     {
         return $this->files;
     }
+
+    /**
+     * @param ArrayCollection|null $files
+     * @return $this
+     */
+
+    /*public function setFiles(ArrayCollection $files = null)
+    {
+        $this->files[] = $files;
+
+        return $this;
+    }*/
 
     /**
      * Set lft

@@ -1,0 +1,22 @@
+FOS\UserBundle\Model\User:
+  properties:
+    id:
+      type: integer
+    username:
+      type: string
+    usernameCanonical:
+      type: string
+    email:
+      type: string
+    emailCanonical:
+      type: string
+    enabled:
+      type: boolean
+    salt:
+      type: string
+    password:
+      type: string
+    plainPassword:
+      type: string
+    last_login:
+      type: DateTime

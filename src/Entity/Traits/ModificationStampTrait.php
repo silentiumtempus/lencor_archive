@@ -62,7 +62,7 @@ trait ModificationStampTrait
      * @return $this
      */
 
-    public function setModifiedByUser(User $modifiedByUser)
+    public function setModifiedByUser(User $modifiedByUser = null)
     {
         $this->modifiedByUser = $modifiedByUser;
 

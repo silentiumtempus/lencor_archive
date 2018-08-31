@@ -155,8 +155,8 @@ class SerializerService
             $normalizer = $this->prepareJSONNormalizer();
             $normalizer->setIgnoredAttributes(array(
                 'cataloguePath' => 'archiveEntry', 'root',
-                'childFolders' => 'lft', 'rgt', 'lvl', 'requestsCount',
-                'files' => 'id', 'uploadedFiles', 'requestsCount'
+                'childFolders' => 'lft', 'rgt', 'lvl', 'requestsCount', 'parentFolder',
+                'files' => 'id', 'uploadedFiles', 'requestsCount', 'parentFolder'
 
             ));
             $timeStamp = function ($dateTime) {
@@ -185,15 +185,18 @@ class SerializerService
 
                 return $usersString;
             };
-
             $nullCallback = function ($attribute) {
                 return ($attribute) ?: false;
             };
-
             $zeroCallback = function ($attribute) {
                 return ($attribute) ?: 0;
             };
-
+            $childFoldersCallback = function ($childFolders) {
+                return (count($childFolders) > 0) ? $childFolders : null;
+            };
+            $filesCallback = function ($files) {
+                return (count($files) > 0) ? $files : null;
+            };
             $normalizer->setCallbacks(array(
                 'addTimestamp' => $timeStamp,
                 'lastModified' => $timeStamp,
@@ -207,7 +210,9 @@ class SerializerService
                 'removalMark' => $nullCallback,
                 'requestMark' => $nullCallback,
                 'deleted' => $nullCallback,
-                'deletedChildren' => $zeroCallback
+                'deletedChildren' => $zeroCallback,
+                'childFolders' => $childFoldersCallback,
+                'files' => $filesCallback
             ));
             $array = $normalizer->normalize($newEntry);
             $entryJSON = json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);

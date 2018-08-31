@@ -61,7 +61,7 @@ trait RemovalMarkTrait
      * @return $this
      */
 
-    public function setMarkedByUser($markedByUser)
+    public function setMarkedByUser($markedByUser = null)
     {
         $this->markedByUser = $markedByUser;
 
