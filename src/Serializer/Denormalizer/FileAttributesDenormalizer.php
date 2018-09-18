@@ -66,7 +66,7 @@ file_put_contents($file, $wr);
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return is_array($data) && ($type == FileEntity::class);
+        return is_array($data) && ($type == self::class);
     }
 
 }

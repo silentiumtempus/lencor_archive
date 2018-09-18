@@ -86,6 +86,6 @@ class FolderAttributesDenormalizer implements DenormalizerInterface
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return is_array($data) && ($type == FolderEntity::class);
+        return is_array($data) && ($type == self::class);
     }
 }

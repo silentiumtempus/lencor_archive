@@ -182,7 +182,7 @@ class RecoveryService
 
             $rootFolder = $entry->getCataloguePath();
             $rootFolder->setArchiveEntry($entry);
-            foreach ($rootFolder->getFiles() as $file) {
+            foreach ($rootFolder->getFiles()->getIterator() as $key => $file) {
                 $wr = $wr . 'file name: ' . $file->getFileName() . "!!!!!!!!!!!!!!" . "\n\n";
                 //$wr = $wr . $newFolder>get('parentFolder')->getViewData() . "!!!!!!!!!!!!!!" . "\n\n";
                 file_put_contents($file, $wr);
