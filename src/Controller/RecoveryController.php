@@ -6,6 +6,7 @@ use App\Service\EntryService;
 use App\Service\FileService;
 use App\Service\RecoveryService;
 use JMS\Serializer\SerializerBuilder;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,9 +22,10 @@ class RecoveryController extends Controller
 {
     /**
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/admin/recovery",
      *     options = { "expose" = true },
-     *     name = "recovery")
+     *     name = "admin-recovery")
      */
 
     public function recoveryIndex() {
@@ -34,9 +36,10 @@ class RecoveryController extends Controller
     /**
      * @param RecoveryService $recoveryService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/admin/recovery/find",
      *     options = { "expose" = true },
-     *     name = "recovery-find")
+     *     name = "admin-recovery-find")
      */
 
     public function findEntryFiles(RecoveryService $recoveryService)
@@ -50,9 +53,10 @@ class RecoveryController extends Controller
     /**
      * @param RecoveryService $recoveryService
      * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
      * @Route("/admin/recovery/exec",
      *     options = { "expose" = true },
-     *     name = "recovery-exec")
+     *     name = "admin-recovery-exec")
      */
 
     public function restoreEntries(RecoveryService $recoveryService)

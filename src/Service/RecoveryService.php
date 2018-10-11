@@ -84,7 +84,7 @@ class RecoveryService
             }
             $this->container->get('session')->getFlashBag()->add('success', 'База успешно восстановлена');
         } catch (\Exception $exception) {
-            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка при восстановлении БД: ' . $exception->getMessage());
+            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка при восстановлении БД: ' . $exception->getMessage() . $exception->getTraceAsString());
         }
     }
 
