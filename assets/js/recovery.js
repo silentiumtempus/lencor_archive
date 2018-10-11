@@ -7,7 +7,7 @@ $(document).ready(function () {
 
         function findEntryFiles() {
             $.ajax({
-                url: Routing.generate('recovery-find'),
+                url: Routing.generate('admin-recovery-find'),
                 method: "POST",
                 data: null,
                 success: function (files) {
@@ -24,10 +24,10 @@ $(document).ready(function () {
 
         function restoreEntriesFromFiles() {
             $.ajax({
-                url: Routing.generate('recovery-exec'),
+                url: Routing.generate('admin-recovery-exec'),
                 method: "POST",
                 data: null,
-                success: function(result) {
+                success: function (result) {
                     loadFlashMessages();
                 }
             });
@@ -57,13 +57,18 @@ $(document).ready(function () {
         function hideFlashMessages() {
             let $flashMessages = $('#flash-messages');
             $flashMessages.fadeOut("slow");
-
         }
 
         /** Close flash message manually **/
 
         $(document).on('click', '#close-alert', function () {
-            $(this).parent().fadeOut("slow");
+            let $fm = $('#flash-messages');
+            $(this).parent().fadeOut("slow").promise().done(function () {
+                (this).remove();
+                if ($fm.length === 1) {
+                    $fm.hide();
+                }
+            });
         });
     }
 });

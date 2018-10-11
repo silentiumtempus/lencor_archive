@@ -990,7 +990,13 @@ $(document).ready(function () {
         /** Close flash message manually **/
 
         $(document).on('click', '#close-alert', function () {
-            $(this).parent().fadeOut("slow");
+            let $fm = $('#flash-messages');
+            $(this).parent().fadeOut("slow").promise().done(function () {
+                (this).remove();
+                if ($fm.length === 1) {
+                    $fm.hide();
+                }
+            });
         });
 
 
