@@ -269,7 +269,7 @@ class FolderService
         } else {
             $this->container->get('session')->getFlashBag()->add('warning', 'Новое имя каталога ' . $folder->getFolderName() . ' совпадает с текущим. Операция отклонена.');
         }
-        $this->loggingService->logEntryContent($folder->getRoot()->getArchiveEntry()->getId(), $user, $this->container->get('session')->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent($folder->getRoot()->getArchiveEntry(), $user, $this->container->get('session')->getFlashBag()->peekAll());
     }
 
     /**

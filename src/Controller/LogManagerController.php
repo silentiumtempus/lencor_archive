@@ -16,7 +16,6 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class LogManagerController
  * @package App\Controller
  */
-
 class LogManagerController extends Controller
 {
     /**
@@ -36,28 +35,24 @@ class LogManagerController extends Controller
     public function logManagerIndex(int $entryId, Request $request, LoggingService $loggingService, EntryService $archiveEntryService)
     {
         $logSearchForm = $this->createForm(LogSearchForm::class);
-        try {
-            $currentFolder = "";
-            $logsPath = null;
-            $logsHTTPPath = null;
-            $logFiles = null;
-            $logFolders = null;
-            $entryExists = false;
-            $logSearchForm->handleRequest($request);
-            if ($logSearchForm->isSubmitted() && $logSearchForm->isValid() && $request->isMethod('POST')) {
-                $entryId = $logSearchForm->get('id')->getData();
+        $currentFolder = "";
+        $logsPath = null;
+        $logsHTTPPath = null;
+        $logFiles = null;
+        $logFolders = null;
+        $entryExists = false;
+        $logSearchForm->handleRequest($request);
+        if ($logSearchForm->isSubmitted() && $logSearchForm->isValid() && $request->isMethod('POST')) {
+            $entryId = $logSearchForm->get('id')->getData();
+        }
+        if ($archiveEntryService->getEntryById($entryId)) {
+            $entryExists = true;
+            $logsPath = $loggingService->getLogsRootPath($entryId);
+            //$logsHTTPPath = $loggingService->getLogsHTTPPath($entryId);
+            if ($logsPath) {
+                $logFolders = $loggingService->getEntryLogFolders($logsPath);
+                $logFiles = $loggingService->getEntryLogFiles($logsPath);
             }
-            if ($archiveEntryService->getEntryById($entryId)) {
-                $entryExists = true;
-                $logsPath = $loggingService->getLogsRootPath($entryId);
-                //$logsHTTPPath = $loggingService->getLogsHTTPPath($entryId);
-                if ($logsPath) {
-                    $logFolders = $loggingService->getEntryLogFolders($logsPath);
-                    $logFiles = $loggingService->getEntryLogFiles($logsPath);
-                }
-            }
-        } catch (\Exception $e) {
-            //$folderPath = "failed : " . $e->getMessage();
         }
 
         return $this->render('lencor/admin/archive/logging_manager/show_logs.html.twig', array(
@@ -93,12 +88,12 @@ class LogManagerController extends Controller
             $logFiles = $loggingService->getEntryLogFiles($logsPath);
 
             return $this->render('lencor/admin/archive/logging_manager/logs_list.html.twig', array(
-                    'entryExists' => true,
-                    'logsFolderPath' => $logsFolderPath,
-                    'currentFolder' => $currentFolder,
-                    'entryId' => $entryId,
-                    'logFolders' => $logFolders,
-                    'logFiles' => $logFiles));
+                'entryExists' => true,
+                'logsFolderPath' => $logsFolderPath,
+                'currentFolder' => $currentFolder,
+                'entryId' => $entryId,
+                'logFolders' => $logFolders,
+                'logFiles' => $logFiles));
         } else {
             return $this->redirectToRoute('logging', array('entryId' => $entryId));
         }

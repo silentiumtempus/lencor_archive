@@ -3,22 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\ArchiveEntryEntity;
-use App\Entity\FolderEntity;
 use App\Entity\SettingEntity;
 use App\Form\EntryForm;
 use App\Form\FactoryForm;
 use App\Entity\FactoryEntity;
 use App\Form\SettingForm;
-use App\Service\CommonArchiveService;
 use App\Service\EntryService;
 use App\Service\FactoryService;
 use App\Service\FolderService;
-use App\Service\LoggingService;
-use App\Service\SerializerService;
 use App\Service\SettingService;
-use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Filesystem\Filesystem;

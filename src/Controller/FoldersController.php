@@ -62,7 +62,7 @@ class FoldersController extends Controller
     {
         $session = $this->container->get('session');
         $folderId = $archiveEntryService->setFolderId($request);
-        $entryId = $folderService->getFolderEntry($folderId)->getId();
+        $entry = $folderService->getFolderEntry($folderId);
         $newFolder = new FolderEntity();
         $isRoot = $folderService->isRoot($folderId);
         $folderAddForm = $this->createForm(
@@ -73,13 +73,13 @@ class FoldersController extends Controller
         $folderAddForm->handleRequest($request);
         if ($folderAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($folderAddForm->isValid()) {
-                $folderService->createNewFolder($folderAddForm, $this->getUser(), $entryId);
+                $folderService->createNewFolder($folderAddForm, $this->getUser(), $entry->getId());
             } else {
                 $this->addFlash('danger', 'Директория ' . $folderAddForm->getName() . ' уже существует в каталоге ' . $folderAddForm->getParent()->getViewData() . '. Операция прервана');
             }
-            $loggingService->logEntryContent($entryId, $this->getUser(), $session->getFlashBag()->peekAll());
+            $loggingService->logEntryContent($entry, $this->getUser(), $session->getFlashBag()->peekAll());
         }
-        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entryId));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entry->getId()));
     }
 
 
@@ -162,7 +162,7 @@ class FoldersController extends Controller
                 $this->addFlash('danger', 'Форма заполнена неверно, недопустимое или уже существующее имя каталога ' . $folder->getFolderName() . '.');
             }
 
-            $loggingService->logEntryContent($folder->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
+            $loggingService->logEntryContent($folder->getRoot()->getArchiveEntry(), $this->getUser(), $session->getFlashBag()->peekAll());
         }
 
         return $this->render('lencor/admin/archive/administration/files_and_folders/folder_rename.html.twig', array('folderRenameForm' => $folderRenameForm->createView()));

@@ -61,7 +61,7 @@ class FilesController extends Controller
     {
         $session = $this->container->get('session');
         $folderId = $archiveEntryService->setFolderId($request);
-        $entryId = $folderService->getFolderEntry($folderId)->getId();
+        $entry = $folderService->getFolderEntry($folderId);
         $isRoot = $folderService->isRoot($folderId);
         $fileAddForm = $this->createForm(
             FileAddForm::class,
@@ -71,14 +71,14 @@ class FilesController extends Controller
         $fileAddForm->handleRequest($request);
         if ($fileAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($fileAddForm->isValid()) {
-                $fileService->uploadFiles($fileAddForm, $this->getUser(), $entryId);
+                $fileService->uploadFiles($fileAddForm, $this->getUser(), $entry->getId());
             } else {
                 $this->addFlash('danger', 'Форма заполнена неверно. Операция не выполнена.');
             }
-            $loggingService->logEntryContent($entryId, $this->getUser(), $session->getFlashBag()->peekAll());
+            $loggingService->logEntryContent($entry, $this->getUser(), $session->getFlashBag()->peekAll());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'entryId' => $entryId));
+        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/new_file.html.twig', array('fileAddForm' => $fileAddForm->createView(), 'entryId' => $entry->getId()));
     }
 
     /**
@@ -157,13 +157,13 @@ class FilesController extends Controller
         if ($fileRenameForm->isSubmitted()) {
             if ($fileRenameForm->isValid()) {
                 $fileService->renameFile($file, $this->getUser());
-                $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
+                $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry(), $this->getUser(), $session->getFlashBag()->peekAll());
 
                 return $this->render('lencor/admin/archive/archive_manager/files_and_folders/file.html.twig', array('file' => $file));
             } else {
                 $this->addFlash('danger', 'Форма заполнена неверно, недопустимое или уже существующее имя файла ' . $file->getFileName() . '.');
             }
-            $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry()->getId(), $this->getUser(), $session->getFlashBag()->peekAll());
+            $loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry(), $this->getUser(), $session->getFlashBag()->peekAll());
         }
 
         return $this->render('lencor/admin/archive/administration/files_and_folders/file_rename.html.twig', array('fileRenameForm' => $fileRenameForm->createView()));

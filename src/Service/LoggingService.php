@@ -146,16 +146,15 @@ class LoggingService
     }
 
     /**
-     * @param int $entryId
+     * @param ArchiveEntryEntity $entryEntity
      * @param User $user
      * @param array $messages
      */
 
-    public function logEntryContent(int $entryId, User $user, array $messages)
+    public function logEntryContent(ArchiveEntryEntity $entryEntity, User $user, array $messages)
     {
-        $entry = $this->entriesRepository->findOneById($entryId);
-        $logsDir = $this->getLogsRootPath($entryId);
-        $this->logEntry($entry, $logsDir, $user, $messages);
+        $logsDir = $this->getLogsRootPath($entryEntity->getId());
+        $this->logEntry($entryEntity, $logsDir, $user, $messages);
     }
 
     /**
