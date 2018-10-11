@@ -47,7 +47,6 @@ class RecoveryController extends Controller
         $files = $recoveryService->locateFiles();
 
         return $this->render('lencor/admin/archive/administration/recovery/find_entry_files.html.twig', array('files' => $files));
-
     }
 
     /**
@@ -64,21 +63,6 @@ class RecoveryController extends Controller
         $result = null;
         $recoveryService->restoreDatabase();
 
-        //$serializer = SerializerBuilder::create()->build();
-//        foreach ($files as $file)
- //       {
-            //try {
-
-            //$xml = file_get_contents($file);
-            //$result = $serializer->deserialize($xml, 'App\Entity\ArchiveEntryEntity', 'xml');
-            //} catch (\Exception $exception) {
-            //     $this->addFlash('danger', $exception->getMessage());
-           // }
-   //     }
-
-            //$entryService->restoreEntriesFromFiles($files);
-
-        //return $this->json($xml);
         return $this->render('lencor/admin/archive/administration/recovery/recovery_result.html.twig', array('result' => $result));
     }
 }
