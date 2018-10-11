@@ -37,9 +37,6 @@ class FolderAttributesDenormalizer implements DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        set_include_path('/var/www/archive/public_html/public/');
-        $testFile = 'test.txt';
-        $wr = file_get_contents($testFile);
         $userAttributes = ['addedByUser' => $data['addedByUser'], 'markedByUser' => $data['markedByUser']];
 
         foreach ($userAttributes as $key => $attribute) {
@@ -55,23 +52,16 @@ class FolderAttributesDenormalizer implements DenormalizerInterface
                 $childFolders[] = $normalizer->denormalize($childFolder, FolderEntity::class);
             }
             $data['childFolders'] = $childFolders;
-
         }
         if (isset($data['files']) && is_array($data['files'])) {
             $normalizer = new FileAttributesDenormalizer($this->attributesDenormalizerService);
-            $files = [];
+            $files = new ArrayCollection();
             foreach ($data['files'] as $file) {
-                $files[] = $normalizer->denormalize($file, FileEntity::class);
-                //if (count($files) == 0) {$files = new ArrayCollection();}
+                $files->add($normalizer->denormalize($file, FileEntity::class));
             }
-            //$wr = $wr . 'data: ' . json_encode($data['files'], JSON_PRETTY_PRINT) . "\n\n";
-            //$wr = $wr . 'denormalized: ' . json_encode($files, JSON_PRETTY_PRINT). "\n\n";
-            //$data['files'] = $files;
+            $data['files'] = $files;
         }
-        //$wr = $wr . 'files: ' . $files[0]->getFileName() . "\n\n";
-        file_put_contents($testFile, $wr);
         $data['requestedByUsers'] = $this->attributesDenormalizerService->denormalizeRequestedByUsers($data);
-
         $normalizer = new ObjectNormalizer();
 
         return $normalizer->denormalize($data, $class, $format, $context);

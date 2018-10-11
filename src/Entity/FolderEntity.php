@@ -266,12 +266,12 @@ class FolderEntity
      * @return $this
      */
 
-    /*public function setFiles(ArrayCollection $files = null)
+    public function setFiles(ArrayCollection $files = null)
     {
-        $this->files[] = $files;
+        $this->files = $files;
 
         return $this;
-    }*/
+    }
 
     /**
      * Set lft

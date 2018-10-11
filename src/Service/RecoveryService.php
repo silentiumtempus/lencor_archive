@@ -12,6 +12,7 @@ use App\Serializer\Denormalizer\PropertyExtractor\ArchiveEntityPropertyExtractor
 use App\Serializer\Denormalizer\PropertyExtractor\FactoryEntityPropertyExtractor;
 use App\Serializer\Denormalizer\Service\AttributesDenormalizerService;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -57,24 +58,33 @@ class RecoveryService
         $this->usersRepository = $this->em->getRepository('App:User');
         $this->factoriesRepository = $this->em->getRepository('App:FactoryEntity');
         $this->settingsRepository = $this->em->getRepository('App:SettingEntity');
+        $this->entriesRepository = $this->em->getRepository('App:ArchiveEntryEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->entryAttributeDenormalizer = $entryAttributeDenormalizer;
 
     }
 
+    /**
+     * Main method to trigger database restoration
+     */
+
     public function restoreDatabase()
     {
-        $fs = new Filesystem();
-        $internalPath = $this->pathRoot . '/' . $this->internalFolder;
-        if ($fs->exists($internalPath)) {
-            $users = $this->locateUsers($internalPath);
-            $FaS = $this->locateFactoriesAndSettings($internalPath);
-            $entryFiles = $this->locateFiles();
-            $this->restoreUsers($users);
-            $this->restoreFactoriesAndSettings($FaS);
-            $this->restoreEntries($entryFiles);
-
+        try {
+            $fs = new Filesystem();
+            $internalPath = $this->pathRoot . '/' . $this->internalFolder;
+            if ($fs->exists($internalPath)) {
+                $users = $this->locateUsers($internalPath);
+                $FaS = $this->locateFactoriesAndSettings($internalPath);
+                $entryFiles = $this->locateFiles();
+                $this->restoreUsers($users);
+                $this->restoreFactoriesAndSettings($FaS);
+                $this->restoreEntries($entryFiles);
+            }
+            $this->container->get('session')->getFlashBag()->add('success', 'База успешно восстановлена');
+        } catch (\Exception $exception) {
+            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка при восстановлении БД: ' . $exception->getMessage());
         }
     }
 
@@ -167,34 +177,22 @@ class RecoveryService
 
     private function restoreEntries(array $entryFiles)
     {
-        set_include_path('/var/www/archive/public_html/public/');
-        $file = 'test.txt';
-        $wr = file_get_contents($file);
-        $wr = "";
-        file_put_contents($file, $wr);
-
         $serializer = new Serializer(
             array($this->entryAttributeDenormalizer, new ArrayDenormalizer()),
             array(new JsonEncoder()));
         foreach ($entryFiles as $entryFilePath) {
+            //@TODO: improve partial database restoration
             $entryFile = file_get_contents($entryFilePath);
             $entry = $serializer->deserialize($entryFile, ArchiveEntryEntity::class, 'json');
-
-            $rootFolder = $entry->getCataloguePath();
-            $rootFolder->setArchiveEntry($entry);
-            foreach ($rootFolder->getFiles()->getIterator() as $key => $file) {
-                $wr = $wr . 'file name: ' . $file->getFileName() . "!!!!!!!!!!!!!!" . "\n\n";
-                //$wr = $wr . $newFolder>get('parentFolder')->getViewData() . "!!!!!!!!!!!!!!" . "\n\n";
-                file_put_contents($file, $wr);
-                $file->setParentFolder($rootFolder);
-                $this->em->persist($file);
+            if (!$this->entriesRepository->findOneByArchiveNumber($entry->getArchiveNumber())) {
+                $rootFolder = $entry->getCataloguePath();
+                $rootFolder->setArchiveEntry($entry);
+                if ($rootFolder->getChildFolders() && count($rootFolder->getChildFolders()) > 0) {
+                    $this->addChildFolders($rootFolder, $rootFolder);
+                }
+                $this->em->persist($entry);
+                $this->em->flush();
             }
-            if ($rootFolder->getChildFolders() && count($rootFolder->getChildFolders()) > 0) {
-                $this->addChildFolders($rootFolder, $rootFolder);
-            }
-
-            $this->em->persist($entry);
-            $this->em->flush();
         }
     }
 
@@ -222,16 +220,10 @@ class RecoveryService
 
     private function addChildFiles(FolderEntity $parentFolder)
     {
-        set_include_path('/var/www/archive/public_html/public/');
-        $file = 'test.txt';
-        $wr = file_get_contents($file);
         if ($parentFolder->getFiles()) {
-            foreach ($parentFolder->getFiles() as $file) {
-                $wr = $wr . 'file name: ' . $file->getFileName() . "!!!!!!!!!!!!!!" . "\n\n";
+            foreach ($parentFolder->getFiles()->getIterator() as $key => $file) {
                 $file->setParentFolder($parentFolder);
-                $this->em->persist($file);
             }
         }
-        file_put_contents($file, $wr);
     }
 }

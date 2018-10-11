@@ -28,7 +28,6 @@ $(document).ready(function () {
                 method: "POST",
                 data: null,
                 success: function(result) {
-                    console.log(result);
                     loadFlashMessages();
                 }
             });
@@ -60,5 +59,11 @@ $(document).ready(function () {
             $flashMessages.fadeOut("slow");
 
         }
+
+        /** Close flash message manually **/
+
+        $(document).on('click', '#close-alert', function () {
+            $(this).parent().fadeOut("slow");
+        });
     }
 });

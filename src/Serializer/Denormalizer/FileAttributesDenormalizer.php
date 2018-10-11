@@ -2,8 +2,6 @@
 
 namespace App\Serializer\Denormalizer;
 
-
-use App\Entity\FileEntity;
 use App\Serializer\Denormalizer\Service\AttributesDenormalizerService;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -44,16 +42,8 @@ class FileAttributesDenormalizer implements DenormalizerInterface
             $data[$key] = $this->attributesDenormalizerService->denormalizeAttribute($key, $attribute);
         }
         $data['requestedByUsers'] = $this->attributesDenormalizerService->denormalizeRequestedByUsers($data);
-
         $normalizer = new ObjectNormalizer();
 
-/*set_include_path('/var/www/archive/public_html/public/');
-$file = 'test.txt';
-$wr = file_get_contents($file);
-$wr = $wr . 'array: ' . json_encode($data, JSON_PRETTY_PRINT);
-//$wr = $wr . 'files: ' . json_encode($files, JSON_PRETTY_PRINT) . "\n\n";
-file_put_contents($file, $wr);
-*/
         return $normalizer->denormalize($data, $class, $format, $context);
     }
 

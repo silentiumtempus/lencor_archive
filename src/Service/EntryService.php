@@ -258,6 +258,7 @@ class EntryService
                 if (!$users || (array_search($user->getId(), $users, true)) === false) {
                     $users[] = $user->getId();
                     $archiveEntry->setRequestedByUsers($users);
+                    $archiveEntry->setRequestedByUsers($users);
                 }
             } else {
                 $archiveEntry

@@ -20,7 +20,7 @@ class EntryAttributesDenormalizer implements DenormalizerInterface
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         if (isset($data['factory']) && is_string($data['factory'])) {
-            $data['factory'] = $this->attributesDenormalizerService->denormalizeAttribute('factory',  $data['factory']);
+            $data['factory'] = $this->attributesDenormalizerService->denormalizeAttribute('factory', $data['factory']);
         }
         if (isset($data['setting']) && is_string($data['setting'])) {
             $data['setting'] = $this->attributesDenormalizerService->denormalizeAttribute('setting', $data['setting']);
@@ -33,31 +33,10 @@ class EntryAttributesDenormalizer implements DenormalizerInterface
         if (isset($data['lastModified']) && is_string($data['lastModified'])) {
             $data['lastModified'] = $this->attributesDenormalizerService->denormalizeAttribute('lastModified', $data['lastModified']);
         }
-
-
-        //if (isset($data['cataloguePath']) && is_array($data['cataloguePath'])) {
-        //$encoder = new JsonEncoder();
-        $normalizer = new FolderAttributesDenormalizer($this->attributesDenormalizerService);
-        //$normalizer->setSerializer(new Serializer($normalizer, [$encoder]));
-        //$normalizer->setCircularReferenceHandler(function ($object) {
-
-        //   return $object->__toString();
-        // });
-        $folder = $normalizer->denormalize($data['cataloguePath'], FolderEntity::class);
-        //$serializer = new Serializer(
-        //array(new FolderAttributesDenormalizer(), new ObjectNormalizer(null, null, null, new ArchiveEntityPropertyExtractor()), new ArrayDenormalizer()),
-        //array(new JsonEncoder()));
-        //$data['cataloguePath'] = $serializer->deserialize(json_encode($data['cataloguePath']), FolderEntity::class, 'json');
-        //$folder->set($data['cataloguePath']);
-        $data['cataloguePath'] = $folder;
-        /*set_include_path('/var/www/archive/public_html/public/');
-        $file = 'test.txt';
-        $wr = file_get_contents($file);
-        $wr = $wr . 'CataloguePath: ' . $folder->getAddedByUser() . "!!!!!!!!!!!!!!" . "\n\n";
-        //$wr = $wr . $newFolder>get('parentFolder')->getViewData() . "!!!!!!!!!!!!!!" . "\n\n";
-        file_put_contents($file, $wr); */
-        //return null;
-        //}
+        if (isset($data['cataloguePath']) && is_array($data['cataloguePath'])) {
+            $normalizer = new FolderAttributesDenormalizer($this->attributesDenormalizerService);
+            $data['cataloguePath'] = $normalizer->denormalize($data['cataloguePath'], FolderEntity::class);
+        }
         $normalizer = new ObjectNormalizer();
 
         return $normalizer->denormalize($data, $class, $format, $context);

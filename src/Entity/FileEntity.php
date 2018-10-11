@@ -23,11 +23,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity(
  *     fields = {"fileName", "parentFolder"},
  *     groups = {"file_common"}),
- * @ORM\Table(name="archive_files", uniqueConstraints = {
- *     @ORM\UniqueConstraint(
- *      name = "unique_file",
- *      columns = {"file_name", "parent_folder_id"}
- *     )
+ * @ORM\Table(
+ *     name="archive_files",
+ *     uniqueConstraints = {
+ *        @ORM\UniqueConstraint(
+ *           name = "unique_file",
+ *           columns = {"file_name", "parent_folder_id"}
+ *       )
  * }),
  * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntities\FileLog")
  */

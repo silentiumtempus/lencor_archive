@@ -30,7 +30,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  *     groups = {"entry_addition"},
  *     ignoreNull = true
  * )
- * @ORM\Table(name = "archive_entries")
+ * @ORM\Table(name = "archive_entries",
+ *     uniqueConstraints = {
+ *        @ORM\UniqueConstraint(
+ *           name = "unique_entry_archive_number",
+ *           columns = {"archive_number"}
+ *       )
+ * })
  * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntities\ArchiveEntryLog")
  */
 class ArchiveEntryEntity implements \JsonSerializable
@@ -71,7 +77,6 @@ class ArchiveEntryEntity implements \JsonSerializable
     protected $factory;
 
     /**
-
      * @ORM\ManyToOne(targetEntity = "SettingEntity", cascade = {"persist"})
      * @ORM\JoinColumn(name = "setting_id", referencedColumnName = "id")
      * @Assert\NotBlank(groups = {"entry_addition"})
@@ -142,7 +147,7 @@ class ArchiveEntryEntity implements \JsonSerializable
 
     /**
      * Constructor
-    */
+     */
 
     public function __construct()
     {
