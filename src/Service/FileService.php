@@ -507,13 +507,6 @@ class FileService
         $originalFile["fileName"] = $file->getFileName();
         $delPosIndex = strrpos($file->getFileName(), $deleted);
         $resPosIndex = strrpos($file->getFileName(), $restored);
-
-        set_include_path('/var/www/archive/public_html/public/');
-        $testFile = 'test.txt';
-        $wr = file_get_contents($testFile);
-        $wr = $wr . 'delPosIndex: ' . $delPosIndex . "!!!!!!!!!!!!!!" . "\n\n";
-        //$wr = $wr . $newFolder>get('parentFolder')->getViewData() . "!!!!!!!!!!!!!!" . "\n\n";
-        file_put_contents($testFile, $wr);
         if ($delPosIndex) {
             $file->setFileName(substr_replace($file->getFileName(), $restored, $delPosIndex, strlen($deleted)));
         } elseif ($resPosIndex === false) {
