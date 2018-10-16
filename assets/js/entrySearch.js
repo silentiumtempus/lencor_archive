@@ -373,6 +373,7 @@ $(document).ready(function () {
                 data: {fileId: fileId},
                 success: function (fileRemoval) {
                     $('#file_' + fileId).replaceWith(fileRemoval);
+                    loadFlashMessages();
                 }
             });
 
@@ -391,6 +392,7 @@ $(document).ready(function () {
                 data: {fileId: fileId},
                 success: function (fileRestoration) {
                     $('#file_' + fileId).replaceWith(fileRestoration);
+                    loadFlashMessages();
                 }
             });
 
@@ -409,6 +411,7 @@ $(document).ready(function () {
                 data: {fileId: fileId},
                 success: function (fileRequest) {
                     $('#file_' + fileId).replaceWith(fileRequest);
+                    loadFlashMessages();
                 }
             });
 
@@ -603,6 +606,7 @@ $(document).ready(function () {
                     folderContent.html('');
                     folderContent.hide();
                     loadLastUpdateInfo(null, folderId);
+                    loadFlashMessages();
                 }
             });
 
@@ -632,6 +636,7 @@ $(document).ready(function () {
                                 $($folderEntry.children('ul').first()).replaceWith($temp.children('ul').first());
                                 $folderEntry.removeClass('marked');
                             });
+                            loadFlashMessages();
                         }
                     });
                     loadLastUpdateInfo(null, folderId);
@@ -654,6 +659,7 @@ $(document).ready(function () {
                 success: function (folderRequest) {
                     $($('#folder_' + folderId).children('ul').first()).replaceWith($(folderRequest).children('ul').first());
                     loadLastUpdateInfo(null, folderId);
+                    loadFlashMessages();
                 }
             });
 
@@ -758,6 +764,7 @@ $(document).ready(function () {
                     $('#entry_' + entryId).replaceWith(entryRemoval);
                     if ($('#entryContent_' + entryId).is(':visible')) {
                         loadLastUpdateInfo(entryId, null);
+                        loadFlashMessages();
                     }
                 }
             });
@@ -779,6 +786,7 @@ $(document).ready(function () {
                     $('#entry_' + entryId).replaceWith(entryRestoration);
                     if ($('#entryContent_' + entryId).is(':visible')) {
                         loadLastUpdateInfo(entryId, null);
+                        loadFlashMessages();
                     }
                 }
             });
@@ -800,6 +808,7 @@ $(document).ready(function () {
                     $('#entry_' + entryId).replaceWith(entryRequest);
                     if ($('#entryContent_' + entryId).is(':visible')) {
                         loadLastUpdateInfo(entryId, null);
+                        loadFlashMessages();
                     }
                 }
             });

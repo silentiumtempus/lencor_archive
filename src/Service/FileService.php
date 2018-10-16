@@ -33,7 +33,6 @@ class FileService
     protected $loggingService;
     protected $serializerService;
 
-
     /**
      * FileService constructor.
      * @param EntityManagerInterface $entityManager
@@ -389,6 +388,7 @@ class FileService
     /**
      * @param array $filesArray
      * @param User $user
+     * @return int $status
      */
 
     public function deleteFiles(array $filesArray, User $user)
@@ -396,55 +396,73 @@ class FileService
         $deletedFiles = $this->filesRepository->find($filesArray);
         $archiveEntryEntity = $deletedFiles[0]->getParentFolder()->getRoot()->getArchiveEntry();
         try {
+            $status = 1;
             foreach ($deletedFiles as $file) {
-                $this->deleteFile($file, true, null);
+                $status = $this->deleteFile($file, true, null);
             }
             $this->entryService->updateEntryInfo($archiveEntryEntity, $user, true);
             $this->session->getFlashBag()->add('success', 'Файл(ы) успешно удалены.');
         } catch (\Exception $exception) {
             $this->session->getFlashBag()->add('danger', 'Удалене файла(ов) не выполнено:  ' . $exception->getMessage());
+            $status = 0;
         }
         $this->loggingService->logEntryContent($archiveEntryEntity, $user, $this->session->getFlashBag()->peekAll());
+
+        return $status;
     }
 
     /**
      * @param FileEntity $file
      * @param bool $multiple
      * @param User $user
+     * @return int $status
      */
 
     public function deleteFile(FileEntity $file, bool $multiple, User $user)
     {
-        $deleted = '_deleted_';
-        $restored = '_restored_';
-        $originalFile["fileName"] = $file->getFileName();
-        $extPosIndex = strrpos($file->getFileName(), '.');
-        $resPosIndex = strrpos($file->getFileName(), $restored);
-        if ($resPosIndex === false) {
-            if ($extPosIndex === false) {
-                $file->setFileName($file->getFileName() . $deleted);
-            } else {
-                $targz = '.tar.gz';
-                $targzPosIndex = strrpos($file->getFileName(), $targz);
-                if ($targzPosIndex === false) {
-                    $ext = $extPosIndex;
+        try {
+            $deleted = '_deleted_';
+            $restored = '_restored_';
+            $originalFile["fileName"] = $file->getFileName();
+            $extPosIndex = strrpos($file->getFileName(), '.');
+            $resPosIndex = strrpos($file->getFileName(), $restored);
+            if ($resPosIndex === false) {
+                if ($extPosIndex === false) {
+                    $file->setFileName($file->getFileName() . $deleted);
                 } else {
-                    $ext = $targzPosIndex;
+                    $targz = '.tar.gz';
+                    $targzPosIndex = strrpos($file->getFileName(), $targz);
+                    if ($targzPosIndex === false) {
+                        $ext = $extPosIndex;
+                    } else {
+                        $ext = $targzPosIndex;
+                    }
+                    $file->setFileName(substr($file->getFileName(), 0, $ext) . $deleted . substr($file->getFileName(), $ext));
                 }
-                $file->setFileName(substr($file->getFileName(), 0, $ext) . $deleted . substr($file->getFileName(), $ext));
+            } else {
+                $restored_length = strlen($restored);
+                $file->setFileName(substr_replace($file->getFileName(), $deleted, $resPosIndex, $restored_length));
             }
-        } else {
-            $restored_length = strlen($restored);
-            $file->setFileName(substr_replace($file->getFileName(), $deleted, $resPosIndex, $restored_length));
-        }
-        if ($this->moveFile($file, $originalFile) === true) {
-            $file->setDeleted(true);
-            $this->commonArchiveService->changeDeletesQuantity($file->getParentFolder(), true);
-            $this->em->flush();
-            if (!$multiple) {
-                $this->entryService->updateEntryInfo($file->getParentFolder()->getRoot()->getArchiveEntry(), $user, true);
+            $archiveEntry = $file->getParentFolder()->getRoot()->getArchiveEntry();
+            if ($this->moveFile($file, $originalFile) === true) {
+                $file->setDeleted(true);
+                $this->commonArchiveService->changeDeletesQuantity($file->getParentFolder(), true);
+                $this->em->flush();
+
+                if (!$multiple) {
+                    $this->entryService->updateEntryInfo($archiveEntry, $user, true);
+                }
             }
+            $this->session->getFlashBag()->add('success', 'Файл ' . $file->getFileName() . ' успешно удалён');
+            $this->loggingService->logEntryContent($archiveEntry, $user, $this->session->getFlashBag()->peekAll());
+            $status = 1;
+        } catch (\Exception $exception)
+        {
+            $this->session->getFlashBag()->add('danger', 'Файл ' . $file->getFileName() . ' не удалён из за непредвиденной ошибки: ' . $exception->getMessage());
+            $status = 0;
         }
+
+        return $status;
     }
 
     /**
@@ -489,7 +507,14 @@ class FileService
         $originalFile["fileName"] = $file->getFileName();
         $delPosIndex = strrpos($file->getFileName(), $deleted);
         $resPosIndex = strrpos($file->getFileName(), $restored);
-        if ($delPosIndex === true) {
+
+        set_include_path('/var/www/archive/public_html/public/');
+        $testFile = 'test.txt';
+        $wr = file_get_contents($testFile);
+        $wr = $wr . 'delPosIndex: ' . $delPosIndex . "!!!!!!!!!!!!!!" . "\n\n";
+        //$wr = $wr . $newFolder>get('parentFolder')->getViewData() . "!!!!!!!!!!!!!!" . "\n\n";
+        file_put_contents($testFile, $wr);
+        if ($delPosIndex) {
             $file->setFileName(substr_replace($file->getFileName(), $restored, $delPosIndex, strlen($deleted)));
         } elseif ($resPosIndex === false) {
             $extPosIndex = strrpos($file->getFileName(), '.');

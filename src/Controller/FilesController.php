@@ -215,27 +215,13 @@ class FilesController extends Controller
     public function deleteFile(Request $request, FileEntity $file, FileService $fileService)
     {
         if ($request->request->has('filesArray')) {
-            try {
-                $fileService->deleteFiles($request->get('filesArray'), $this->getUser());
-                $this->addFlash('success', 'Файлы успешно удалены');
+            $result = $fileService->deleteFiles($request->get('filesArray'), $this->getUser());
 
-                return new Response(1);
-            } catch (\Exception $exception) {
-                $this->addFlash('danger', 'Файлы не удалёны из за непредвиденной ошибки: ' . $exception->getMessage());
-
-                return new Response(0);
-            }
+            return new Response($result);
         } elseif ($file) {
-            try {
-                $fileService->deleteFile($file, false, $this->getUser());
-                $this->addFlash('success', 'Файл ' . $file->getFileName() . ' успешно удалён');
+            $result = $fileService->deleteFile($file, false, $this->getUser());
 
-                return new Response(1);
-            } catch (\Exception $exception) {
-                $this->addFlash('danger', 'Файл ' . $file->getFileName() . ' не удалён из за непредвиденной ошибки: ' . $exception->getMessage());
-
-                return new Response(0);
-            }
+            return new Response($result);
         } else {
 
             return $this->redirectToRoute('entries');
