@@ -534,7 +534,7 @@ class FolderService
             }
             array_reverse($folderIdsArray['remove']);
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Нерпедвиденная ошибка при восстановлении директории ' . $folderEntity->getFolderName() . ' : ' . $exception->getMessage());
+            $this->session->getFlashBag()->add('danger', 'Непредвиденная ошибка при восстановлении директории ' . $folderEntity->getFolderName() . ' : ' . $exception->getMessage());
         }
         $this->loggingService->logEntryContent($folderEntity->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
 
