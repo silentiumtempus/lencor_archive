@@ -176,12 +176,12 @@ class FileService
             $folderAbsPath = null;
             $uploadNotFailed = true;
             $newFilesArray = $fileAddForm->getData();
-            $this->container->get('session')->getFlashBag()->clear();
+            $this->session->getFlashBag()->clear();
             try {
                 $parentFolder = $this->folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
                 $folderAbsPath = $this->folderService->constructFolderAbsPath($parentFolder);
             } catch (\Exception $exception) {
-                $this->container->get('session')->getFlashBag()->add('danger', "Ошибка создания пути: " . $exception->getMessage());
+                $this->session->getFlashBag()->add('danger', "Ошибка создания пути: " . $exception->getMessage());
             }
             try {
                 $passed = 0;
@@ -197,35 +197,35 @@ class FileService
                             $newFileEntity->getFileName()->move($folderAbsPath, $originalName);
                             $this->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
                             $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
-                            $this->container->get('session')->getFlashBag()->add('success', 'Новый документ ' . $originalName . ' записан в директорию ' . $parentFolder);
+                            $this->session->getFlashBag()->add('success', 'Новый документ ' . $originalName . ' записан в директорию ' . $parentFolder);
                         } catch (\Exception $exception) {
                             $uploadNotFailed = false;
-                            $this->container->get('session')->getFlashBag()->add('danger', 'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage());
-                            $this->container->get('session')->getFlashBag()->add('danger', 'Загрузка в БД прервана: изменения не внесены.');
+                            $this->session->getFlashBag()->add('danger', 'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage());
+                            $this->session->getFlashBag()->add('danger', 'Загрузка в БД прервана: изменения не внесены.');
                             $errors++;
                         }
                     } else {
                         $fileExistedPreviously = true;
-                        $this->container->get('session')->getFlashBag()->add('danger', 'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.');
+                        $this->session->getFlashBag()->add('danger', 'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.');
                         $errors++;
                     }
                     if ($uploadNotFailed) {
                         try {
                             $this->persistFile($newFileEntity);
-                            $this->container->get('session')->getFlashBag()->add('success', 'Новый документ добавлен в БД');
+                            $this->session->getFlashBag()->add('success', 'Новый документ добавлен в БД');
                             $passed++;
                         } catch (\Exception $exception) {
                             if ($exception instanceof ConstraintViolationException) {
-                                $this->container->get('session')->getFlashBag()->add('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage());
+                                $this->session->getFlashBag()->add('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage());
                             } else {
-                                $this->container->get('session')->getFlashBag()->add('danger', 'Документ не записан в БД. Ошибка БД: ' . $exception->getMessage());
+                                $this->session->getFlashBag()->add('danger', 'Документ не записан в БД. Ошибка БД: ' . $exception->getMessage());
                             }
                             if (!$fileExistedPreviously) {
                                 try {
                                     $fileSystem->remove($fileWithAbsPath);
-                                    $this->container->get('session')->getFlashBag()->add('danger', 'Новый документ удалён из директории в связи с ошибкой БД.');
+                                    $this->session->getFlashBag()->add('danger', 'Новый документ удалён из директории в связи с ошибкой БД.');
                                 } catch (IOException $IOException) {
-                                    $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка файловой системы при удалении загруженного документа: ' . $IOException->getMessage());
+                                    $this->session->getFlashBag()->add('danger', 'Ошибка файловой системы при удалении загруженного документа: ' . $IOException->getMessage());
                                 };
                             }
                             $errors++;
@@ -233,17 +233,17 @@ class FileService
                     };
                 }
                 if ($passed != 0) {
-                    $this->container->get('session')->getFlashBag()->add('passed', $passed . ' файлов успешно загружено.');
+                    $this->session->getFlashBag()->add('passed', $passed . ' файлов успешно загружено.');
                     $this->entryService->updateEntryInfo($this->entryService->getEntryById($entryId), $user, true);
                 }
                 if ($errors != 0) {
-                    $this->container->get('session')->getFlashBag()->add('errors', $errors . ' ошибок при загрузке.');
+                    $this->session->getFlashBag()->add('errors', $errors . ' ошибок при загрузке.');
                 }
             } catch (\Exception $exception) {
-                $this->container->get('session')->getFlashBag()->add('danger', "Ошибка загрузки файла(ов) : " . $exception->getMessage());
+                $this->session->getFlashBag()->add('danger', "Ошибка загрузки файла(ов) : " . $exception->getMessage());
             }
         } catch (\Exception $exception) {
-            $this->container->get('session')->getFlashBag()->add('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
         }
     }
 
@@ -312,7 +312,7 @@ class FileService
             $this->entryService->updateEntryInfo($archiveEntryEntity, $user, false);
             $this->session->getFlashBag()->add('success', 'Файл(ы) успешно помечены на удаление.');
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Файл(ы) помечены на удаление: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add('danger', 'Файл(ы) не помечены на удаление: ' . $exception->getMessage());
         }
         $this->loggingService->logEntryContent($archiveEntryEntity, $user, $this->session->getFlashBag()->peekAll());
 
@@ -396,6 +396,7 @@ class FileService
         $deletedFiles = $this->filesRepository->find($filesArray);
         $archiveEntryEntity = $deletedFiles[0]->getParentFolder()->getRoot()->getArchiveEntry();
         try {
+            //@TODO: to be improved
             $status = 1;
             foreach ($deletedFiles as $file) {
                 $status = $this->deleteFile($file, true, null);
@@ -448,7 +449,6 @@ class FileService
                 $file->setDeleted(true);
                 $this->commonArchiveService->changeDeletesQuantity($file->getParentFolder(), true);
                 $this->em->flush();
-
                 if (!$multiple) {
                     $this->entryService->updateEntryInfo($archiveEntry, $user, true);
                 }
@@ -568,15 +568,15 @@ class FileService
                 if ($this->moveFile($file, $originalFile)) {
                     $this->flushFile();
                     $this->entryService->updateEntryInfo($archiveEntryEntity, $user, true);
-                    $this->container->get('session')->getFlashBag()->add('success', 'Переименование ' . $originalFile['fileName'] . ' > ' . $file->getFileName() . ' успешно произведено.');
+                    $this->session->getFlashBag()->add('success', 'Переименование ' . $originalFile['fileName'] . ' > ' . $file->getFileName() . ' успешно произведено.');
                 } else {
-                    $this->container->get('session')->getFlashBag()->add('danger', 'Переименование отменено из за внутренней ошибки.');
+                    $this->session->getFlashBag()->add('danger', 'Переименование отменено из за внутренней ошибки.');
                 }
             } else {
-                $this->container->get('session')->getFlashBag()->add('warning', 'Новое имя файла ' . $file->getFileName() . ' совпадает с текущим. Операция отклонена.');
+                $this->session->getFlashBag()->add('warning', 'Новое имя файла ' . $file->getFileName() . ' совпадает с текущим. Операция отклонена.');
             }
         } else {
-            $this->container->get('session')->getFlashBag()->add('warning', 'Переименование удалённого файла запрещено');
+            $this->session->getFlashBag()->add('warning', 'Переименование удалённого файла запрещено');
         }
         $this->loggingService->logEntryContent($archiveEntryEntity, $user, $this->session->getFlashBag()->peekAll());
     }
@@ -592,7 +592,7 @@ class FileService
         try {
             $absPath = $this->folderService->constructFolderAbsPath($newFile->getParentFolder());
         } catch (\Exception $exception) {
-            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка при получении информации о файле из базы данных :' . $exception->getMessage());
+            $this->session->getFlashBag()->add('danger', 'Ошибка при получении информации о файле из базы данных :' . $exception->getMessage());
 
             return false;
         }
@@ -602,7 +602,7 @@ class FileService
 
             return true;
         } catch (\Exception $exception) {
-            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка файловой системы при переименовании файла :' . $exception->getMessage());
+            $this->session->getFlashBag()->add('danger', 'Ошибка файловой системы при переименовании файла :' . $exception->getMessage());
 
             return false;
         }
