@@ -461,6 +461,7 @@ class FileService
             $this->session->getFlashBag()->add('danger', 'Файл ' . $file->getFileName() . ' не удалён из за непредвиденной ошибки: ' . $exception->getMessage());
             $status = 0;
         }
+        $this->loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
 
         return $status;
     }
@@ -481,9 +482,9 @@ class FileService
                 $folderIdsArray = $this->unDeleteFile($file, $folderIdsArray, true, null);
             }
             $this->entryService->updateEntryInfo($archiveEntryEntity, $user, true);
-            $this->session->getFlashBag()->add('success', 'Файл(ы) успешно восстановлены.');
+            $this->session->getFlashBag()->add('success', 'Файлы успешно восстановлены.');
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Файл(ы) не восстановлены: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add('danger', 'Файлы не восстановлены: ' . $exception->getMessage());
         }
         $this->loggingService->logEntryContent($archiveEntryEntity, $user, $this->session->getFlashBag()->peekAll());
 
@@ -504,52 +505,58 @@ class FileService
         $folderIdsArray['reload'] = [];
         $deleted = '_deleted_';
         $restored = '_restored_';
-        $originalFile["fileName"] = $file->getFileName();
-        $delPosIndex = strrpos($file->getFileName(), $deleted);
-        $resPosIndex = strrpos($file->getFileName(), $restored);
-        if ($delPosIndex) {
-            $file->setFileName(substr_replace($file->getFileName(), $restored, $delPosIndex, strlen($deleted)));
-        } elseif ($resPosIndex === false) {
-            $extPosIndex = strrpos($file->getFileName(), '.');
-            if ($extPosIndex === false) {
-                $file->setFileName($file->getFileName() . "_restored_");
-            } else {
-                $targz = '.tar.gz';
-                $targzPosIndex = strrpos($file->getFileName(), $targz);
-                if ($targzPosIndex === false) {
-                    $ext = $extPosIndex;
+        $originalFile['fileName'] = $file->getFileName();
+        try {
+            $delPosIndex = strrpos($file->getFileName(), $deleted);
+            $resPosIndex = strrpos($file->getFileName(), $restored);
+            if ($delPosIndex) {
+                $file->setFileName(substr_replace($file->getFileName(), $restored, $delPosIndex, strlen($deleted)));
+            } elseif ($resPosIndex === false) {
+                $extPosIndex = strrpos($file->getFileName(), '.');
+                if ($extPosIndex === false) {
+                    $file->setFileName($file->getFileName() . "_restored_");
                 } else {
-                    $ext = $targzPosIndex;
-                }
-                $file->setFileName(substr($file->getFileName(), 0, $ext) . '_restored_' . substr($file->getFileName(), $ext));
-            }
-        }
-        if ($this->moveFile($file, $originalFile) === true) {
-            $file->setDeleted(false);
-            $this->commonArchiveService->changeDeletesQuantity($file->getParentFolder(), false);
-            $binaryPath = $this->folderService->getPath($file->getParentFolder());
-            foreach ($binaryPath as $folder) {
-                if ($folder->getDeleted() === true) {
-                    $folder->setDeleted(false);
-                    if ($folder->getRoot()->getId() !== $folder->getId()) {
-                        $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
-                        $i = ($folder->getDeletedChildren() === 0) ? 'remove' : 'reload';
-                        $folderIdsArray[$i][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, $i);
+                    $targz = '.tar.gz';
+                    $targzPosIndex = strrpos($file->getFileName(), $targz);
+                    if ($targzPosIndex === false) {
+                        $ext = $extPosIndex;
+                    } else {
+                        $ext = $targzPosIndex;
                     }
-                } else {
-                    if ($folder->getRoot()->getId() !== $folder->getId()) {
-                        if ($folder->getDeletedChildren() === 0) {
-                            $folderIdsArray['remove'][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
+                    $file->setFileName(substr($file->getFileName(), 0, $ext) . '_restored_' . substr($file->getFileName(), $ext));
+                }
+            }
+            if ($this->moveFile($file, $originalFile) === true) {
+                $file->setDeleted(false);
+                $this->commonArchiveService->changeDeletesQuantity($file->getParentFolder(), false);
+                $binaryPath = $this->folderService->getPath($file->getParentFolder());
+                foreach ($binaryPath as $folder) {
+                    if ($folder->getDeleted() === true) {
+                        $folder->setDeleted(false);
+                        if ($folder->getRoot()->getId() !== $folder->getId()) {
+                            $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
+                            $i = ($folder->getDeletedChildren() === 0) ? 'remove' : 'reload';
+                            $folderIdsArray[$i][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, $i);
+                        }
+                    } else {
+                        if ($folder->getRoot()->getId() !== $folder->getId()) {
+                            if ($folder->getDeletedChildren() === 0) {
+                                $folderIdsArray['remove'][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
+                            }
                         }
                     }
                 }
+                $this->em->flush();
+                if (!$multiple) {
+                    $this->entryService->updateEntryInfo($file->getParentFolder()->getRoot()->getArchiveEntry(), $user, true);
+                }
             }
-            $this->em->flush();
-            if (!$multiple) {
-                $this->entryService->updateEntryInfo($file->getParentFolder()->getRoot()->getArchiveEntry(), $user, true);
-            }
+            array_reverse($folderIdsArray['remove']);
+            $this->session->getFlashBag()->add('success', 'Файл ' . $originalFile['fileName'] . ' успешно восстановлен.');
+        } catch (\Exception $exception) {
+            $this->session->getFlashBag()->add('danger', 'Файл ' . $originalFile['fileName'] . ' не восстановлен. Ошибка' . $exception->getMessage());
         }
-        array_reverse($folderIdsArray['remove']);
+        $this->loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
 
         return $folderIdsArray;
     }

@@ -160,7 +160,6 @@ class FolderService
             $pathPermissions = $this->pathPermissions;
             $creationNotFailed = true;
             $directoryExistedPreviously = false;
-
             if ($fileSystem->exists($newFolderAbsPath)) {
                 try {
                     $binaryPath = $this->getPath($newFolderEntity->getParentFolder());
@@ -299,12 +298,11 @@ class FolderService
             $this->entryService->updateEntryInfo($removedFolder->getRoot()->getArchiveEntry(), $user, false);
             $this->session->getFlashBag()->add('success', 'Директория ' . $removedFolder->getFolderName() . ' успешно удалена.');
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Директория ' . $removedFolder->getFolderName() .' не удалена. Ошибка: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add('danger', 'Директория ' . $removedFolder->getFolderName() . ' не удалена. Ошибка: ' . $exception->getMessage());
         }
         $this->loggingService->logEntryContent($removedFolder->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
 
         return $removedFolder;
-
     }
 
     /**
@@ -333,7 +331,7 @@ class FolderService
 
                 $this->session->getFlashBag()->add('success', 'Директория ' . $restoredFolder->getFolderName() . ' успешно восстановлена.');
             } catch (\Exception $exception) {
-                $this->session->getFlashBag()->add('danger', 'Директория ' . $restoredFolder->getFolderName() .' не восстановлена. Ошибка: ' . $exception->getMessage());
+                $this->session->getFlashBag()->add('danger', 'Директория ' . $restoredFolder->getFolderName() . ' не восстановлена. Ошибка: ' . $exception->getMessage());
             }
             $this->loggingService->logEntryContent($restoredFolder->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
         }
@@ -385,7 +383,7 @@ class FolderService
             $this->entryService->updateEntryInfo($requestedFolder->getRoot()->getArchiveEntry(), $user, false);
             $this->session->getFlashBag()->add('success', 'Запрос на восстановление директории ' . $requestedFolder->getFolderName() . ' успешно создан.');
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Запрос на восстановление директории ' . $requestedFolder->getFolderName() .' не создан. Ошибка: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add('danger', 'Запрос на восстановление директории ' . $requestedFolder->getFolderName() . ' не создан. Ошибка: ' . $exception->getMessage());
         }
         $this->loggingService->logEntryContent($requestedFolder->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
 
@@ -401,10 +399,17 @@ class FolderService
     public function deleteFolders(array $foldersArray, FileService $fileService, User $user)
     {
         $deletedFolders = $this->foldersRepository->find($foldersArray);
-        foreach ($deletedFolders as $folder) {
-            $this->deleteFolder($folder, $fileService, true, $user);
+        $archiveEntry = $deletedFolders[0]->getRoot()->getArchiveEntry();
+        try {
+            foreach ($deletedFolders as $folder) {
+                $this->deleteFolder($folder, $fileService, true, $user);
+            }
+            $this->session->getFlashBag()->add('success', 'Каталог(и) успешно удалены.');
+            $this->entryService->updateEntryInfo($deletedFolders[0]->getRoot()->getArchiveEntry(), $user, true);
+        } catch (\Exception $exception) {
+            $this->session->getFlashBag()->add('danger', 'Удалене каталога(ов) не выполнено:  ' . $exception->getMessage());
         }
-        $this->entryService->updateEntryInfo($deletedFolders[0]->getRoot()->getArchiveEntry(), $user, true);
+        $this->loggingService->logEntryContent($archiveEntry, $user, $this->session->getFlashBag()->peekAll());
     }
 
     /**
@@ -416,22 +421,29 @@ class FolderService
 
     public function deleteFolder(FolderEntity $folderEntity, FileService $fileService, bool $multiple, User $user)
     {
+        $archiveEntry = $folderEntity->getRoot()->getArchiveEntry();
         $foldersChain = $this->foldersRepository->getChildren($folderEntity, false, null, null, true);
         foreach ($foldersChain as $folder) {
-            if (!$folder->getDeleted()) {
-                $originalFolder['folderName'] = $folder->getFolderName();
-                $folder->setFolderName($this->changeFolderName($folder->getFolderName(), true));
-                if ($this->moveFolder($folder, $originalFolder, false)) {
-                    $folder->setDeleted(true);
-                    $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), true);
+            try {
+                if (!$folder->getDeleted()) {
+                    $originalFolder['folderName'] = $folder->getFolderName();
+                    $folder->setFolderName($this->changeFolderName($folder->getFolderName(), true));
+                    if ($this->moveFolder($folder, $originalFolder, false)) {
+                        $folder->setDeleted(true);
+                        $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), true);
+                    }
                 }
+                $this->deleteFilesByParentFolder($folder, $fileService, $user);
+                $this->session->getFlashBag()->add('success', 'Директория ' . $folder->getFolderName() . ' успешно удалёна');
+            } catch (\Exception $exception) {
+                $this->session->getFlashBag()->add('danger', 'Удалене директории ' . $folder->getFolderName() . ' не выполнено:  ' . $exception->getMessage());
             }
-            $this->deleteFilesByParentFolder($folder, $fileService, $user);
         }
         $this->em->flush();
         if (!$multiple) {
             $this->entryService->updateEntryInfo($folderEntity->getRoot()->getArchiveEntry(), $user, true);
         }
+        $this->loggingService->logEntryContent($archiveEntry, $user, $this->session->getFlashBag()->peekAll());
     }
 
     /**
@@ -462,10 +474,16 @@ class FolderService
     {
         $folderIdsArray = [];
         $unDeletedFolders = $this->foldersRepository->find($foldersArray);
-        foreach ($unDeletedFolders as $folder) {
-            $folderIdsArray = $this->unDeleteFolder($folder, $folderIdsArray, true, $user);
+        try {
+            foreach ($unDeletedFolders as $folder) {
+                $folderIdsArray = $this->unDeleteFolder($folder, $folderIdsArray, true, $user);
+            }
+            $this->entryService->updateEntryInfo($unDeletedFolders[0]->getRoot()->getArchiveEntry(), $user, true);
+            $this->session->getFlashBag()->add('success', 'Директории успешно восстановлены.');
+        } catch (\Exception $exception) {
+            $this->session->getFlashBag()->add('danger', 'Директории не восстановлены: ' . $exception->getMessage());
         }
-        $this->entryService->updateEntryInfo($unDeletedFolders[0]->getRoot()->getArchiveEntry(), $user, true);
+        $this->loggingService->logEntryContent($unDeletedFolders[0]->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
 
         return $folderIdsArray;
     }
@@ -482,33 +500,43 @@ class FolderService
     {
         $folderIdsArray['remove'] = [];
         $folderIdsArray['reload'] = [];
-        $binaryPath = $this->getPath($folderEntity);
-        foreach ($binaryPath as $folder) {
-            if ($folder->getDeleted() === true) {
-                $originalFolder['folderName'] = $folder->getFolderName();
-                $folder->setFolderName($this->changeFolderName($folder->getFolderName(), false));
-                if ($this->moveFolder($folder, $originalFolder, false)) {
-                    $folder->setDeleted(false);
-                    $folder->setFolderName($this->changeFolderName($folder->getFolderName(), false));
-                    if ($folder->getRoot()->getId() !== $folder->getId()) {
-                        $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
-                        $i = ($folder->getDeletedChildren() === 0) ? 'remove' : 'reload';
-                        $folderIdsArray[$i][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, $i);
+        try {
+            $binaryPath = $this->getPath($folderEntity);
+            foreach ($binaryPath as $folder) {
+                if ($folder->getDeleted() === true) {
+                    $originalFolder['folderName'] = $folder->getFolderName();
+                    try {
+                        $folder->setFolderName($this->changeFolderName($folder->getFolderName(), false));
+                        if ($this->moveFolder($folder, $originalFolder, false)) {
+                            $folder->setDeleted(false);
+                            $folder->setFolderName($this->changeFolderName($folder->getFolderName(), false));
+                            if ($folder->getRoot()->getId() !== $folder->getId()) {
+                                $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
+                                $i = ($folder->getDeletedChildren() === 0) ? 'remove' : 'reload';
+                                $folderIdsArray[$i][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, $i);
+                            }
+                        }
+                        $this->session->getFlashBag()->add('success', 'Директория ' . $originalFolder['folderName'] . ' успешно восстановлена.');
+                    } catch (\Exception $exception) {
+                        $this->session->getFlashBag()->add('danger', 'Директория ' . $originalFolder['folderName'] . ' не восстановлен. Ошибка' . $exception->getMessage());
                     }
-                }
-            } else {
-                if ($folder->getRoot()->getId() !== $folder->getId()) {
-                    if ($folder->getDeletedChildren() === 0) {
-                        $folderIdsArray['remove'][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
+                } else {
+                    if ($folder->getRoot()->getId() !== $folder->getId()) {
+                        if ($folder->getDeletedChildren() === 0) {
+                            $folderIdsArray['remove'][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
+                        }
                     }
                 }
             }
+            $this->em->flush();
+            if (!$multiple) {
+                $this->entryService->updateEntryInfo($folderEntity->getRoot()->getArchiveEntry(), $user, true);
+            }
+            array_reverse($folderIdsArray['remove']);
+        } catch (\Exception $exception) {
+            $this->session->getFlashBag()->add('danger', 'Нерпедвиденная ошибка при восстановлении директории ' . $folderEntity->getFolderName() . ' : ' . $exception->getMessage());
         }
-        $this->em->flush();
-        if (!$multiple) {
-            $this->entryService->updateEntryInfo($folderEntity->getRoot()->getArchiveEntry(), $user, true);
-        }
-        array_reverse($folderIdsArray['remove']);
+        $this->loggingService->logEntryContent($folderEntity->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
 
         return $folderIdsArray;
     }

@@ -226,11 +226,9 @@ class FoldersController extends Controller
         } elseif ($folder) {
             try {
                 $folderService->deleteFolder($folder, $fileService, false, $this->getUser());
-                $this->addFlash('success', 'Директория '. $folder->getFolderName() . ' успешно удалёна');
 
                 return new Response(1);
             } catch (\Exception $exception) {
-                $this->addFlash('danger', 'Директория ' . $folder->getFolderName() . ' не удалёна из за непредвиденной ошибки: ' . $exception->getMessage());
 
                 return new Response(0);
             }
@@ -257,25 +255,22 @@ class FoldersController extends Controller
 
     public function unDeleteFolder(Request $request, FolderEntity $folder, FolderService $folderService)
     {
+        //TODO: to be improved
         if ($request->request->has('filesArray')) {
             try {
                 $folders = $folderService->unDeleteFolders($request->get('filesArray'), $this->getUser());
-                $this->addFlash('success', 'Каталоги успешно восстановлены');
 
                 return new JsonResponse($folders);
             } catch (\Exception $exception) {
-                $this->addFlash('danger', 'Каталоги не восстановлены из за непредвиденной ошибки: ' . $exception->getMessage());
 
                 return new JsonResponse(0);
             }
         } elseif ($folder) {
             try {
                 $folders = $folderService->unDeleteFolder($folder, [], false, $this->getUser());
-                $this->addFlash('success', 'Каталог ' . $folder->getFolderName() . ' успешно восстановлен');
 
                 return new JsonResponse($folders);
             } catch (\Exception $exception) {
-                $this->addFlash('danger', 'Каталог ' . $folder->getFolderName() . ' не восстановлен из за непредвиденной ошибки: ' . $exception->getMessage());
 
                 return new JsonResponse(0);
             }
