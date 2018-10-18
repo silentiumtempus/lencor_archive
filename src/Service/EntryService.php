@@ -305,7 +305,6 @@ class EntryService
     public function checkEntryUpdates(array $originalEntry, ArchiveEntryEntity $archiveEntry)
     {
         $updatedEntry = json_decode(json_encode($archiveEntry), true);
-        //$updatedEntry['factory'] = $archiveEntry->getFactory()->getId();
         $originalEntry['factory'] = $originalEntry['factory']->getId();
 
         return array_diff_assoc($originalEntry, $updatedEntry);
@@ -437,29 +436,6 @@ class EntryService
         $fs->rename($oldPath, $newPath);
 
         return true;
-    }
-
-    /**
-     * @param array $files
-     */
-
-    public function restoreEntriesFromFiles(array $files)
-    {
-        //$serializer = $this->container->get('jms_serializer');
-        //$serializer = SerializerBuilder::create()->build();
-        foreach ($files as $file) {
-            $xml = file_get_contents($file);
-
-            //try {
-            //$entry = $serializer->deserialize($xml, 'App\Entity\ArchiveEntryEntity', 'xml');
-
-            //} catch (\Exception $exception) {
-            //     $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка :' . $exception->getMessage());
-            // }
-            //$this->em->persist($entry);
-        }
-
-        $this->em->flush();
     }
 
     /**
