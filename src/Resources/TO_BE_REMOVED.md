@@ -1,0 +1,2 @@
+Application fails on boot without this folder because it's used by serializer in config for models location.
+This serializer is not used anywhere (anymore), so it's deprecated and will be removed in future.
