@@ -53,6 +53,20 @@ class SystemService
     }
 
     /**
+     * @return false|string
+     */
+
+    public function getPHPInfo()
+    {
+        ob_start();
+        phpinfo();
+        $phpinfo = ob_get_contents();
+        ob_end_clean();
+
+        return $phpinfo;
+    }
+
+    /**
      * @return mixed
      */
 

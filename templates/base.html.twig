@@ -60,8 +60,16 @@
                         {% if is_granted('ROLE_ADMIN') %}
                             <li>
                                 <a href="{{ path('system') }}">
-                                    <span><i class="fa fa-cog"> </i> {{ 'header.menu.system'|trans }} <i class="fa fa-angle-down"> </i> </span>
+                                    <span><i class="fa fa-cog"> </i> {{ 'header.menu.system.menu0'|trans }} <i class="fa fa-angle-down"> </i> </span>
                                 </a>
+                                <ul>
+                                    <li>
+                                        <a href="{{ path('system-info') }}">{{ 'header.menu.system.menu1'|trans }}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('system-php-info') }}" target="_blank">{{ 'header.menu.system.menu2'|trans }}</a>
+                                    </li>
+                                </ul>
                             </li>
                             <li>
                                 <a href="{{ path('admin') }}">

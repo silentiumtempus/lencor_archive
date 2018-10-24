@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Service\SystemService;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,13 +43,14 @@ class SystemManagerController extends Controller
     public function systemInfo(Request $request, SystemService $systemService)
     {
         $sysInfo = $systemService->getSystemInfo($request);
+
         return $this->render('lencor/admin/archive/system_manager/info.html.twig', array(
             'sysInfo' => $sysInfo
         ));
     }
 
     /**
-     * @param Request $request
+     * @param SystemService $systemService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/system/php-info",
@@ -58,12 +58,10 @@ class SystemManagerController extends Controller
      *     name = "system-php-info")
      */
 
-    public function phpInfo(Request $request)
+    public function phpInfo(SystemService $systemService)
     {
-        ob_start();
-        phpinfo();
-        $phpinfo = ob_get_contents();
-        ob_end_clean();
+        $phpinfo = $systemService->getPHPInfo();
+
         return $this->render('lencor/admin/archive/system_manager/PHPInfo.html.twig', array(
             'phpinfo' => $phpinfo,
         ));
