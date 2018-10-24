@@ -8,12 +8,7 @@ use App\Entity\FolderEntity;
 use App\Entity\User;
 use App\Serializer\Denormalizer\DateTimeAttributeDenormalizer;
 use App\Serializer\Denormalizer\EntryAttributesDenormalizer;
-use App\Serializer\Denormalizer\PropertyExtractor\ArchiveEntityPropertyExtractor;
 use App\Serializer\Denormalizer\PropertyExtractor\FactoryEntityPropertyExtractor;
-use App\Serializer\Denormalizer\Service\AttributesDenormalizerService;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -28,6 +23,7 @@ use Symfony\Component\Serializer\Serializer;
  * Class RecoveryService
  * @package App\Service
  */
+
 class RecoveryService
 {
     protected $em;

@@ -74,8 +74,7 @@ class UserService
     public function createKerberosUser(Entry $remoteUser)
     {
         $user = $this->prepareKerberosUser($remoteUser);
-        $hashedDefaultPassword = $this->setDefaultPassword($user);
-        $user->setPassword($hashedDefaultPassword);
+        $user->setPassword($this->setDefaultPassword($user));
         $this->persistNewKerberosUser($user);
 
         return $user;
