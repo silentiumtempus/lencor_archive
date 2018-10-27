@@ -98,12 +98,13 @@ class EntrySearchService
     public function showDeleted(BoolQuery $filterQuery, bool $switchDeleted)
     {
         $this->dSwitcherService->switchDeleted($switchDeleted);
-        $conditionDeleted = (new Query\Term())->setTerm('deleted', $switchDeleted);
+        $conditionDeleted = (new Term())->setTerm('deleted', $switchDeleted);
+        $filterQuery->addShould($conditionDeleted);
         if ($switchDeleted) {
             $conditionDeletedChildren = (new Query\Range('deleted_children', array('gt' => 0)));
             $filterQuery->addShould($conditionDeletedChildren);
         }
-        $filterQuery->addShould($conditionDeleted);
+        $filterQuery->setMinimumShouldMatch(1);
 
         return $filterQuery;
     }
