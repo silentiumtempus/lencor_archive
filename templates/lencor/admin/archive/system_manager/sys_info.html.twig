@@ -1,0 +1,66 @@
+<table id="sysinfo_table" class="table">
+    <thead>
+    <tr>
+        <td>Параметр</td>
+        <td>Значение</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Server IP Address</td>
+        <td>{{ sysInfo.server_ip }}</td>
+    </tr>
+    <tr>
+        <td>Server Hostname</td>
+        <td>{{ sysInfo.hostname }}</td>
+    </tr>
+    <tr>
+        <td>Database Platform</td>
+        <td>{{ sysInfo.db_platform }}</td>
+    </tr>
+    <tr>
+        <td>Database Version</td>
+        <td>{{ sysInfo.mysql_server }}</td>
+    </tr>
+    <tr>
+        <td>PHP Version</td>
+        <td>{{ sysInfo.php_version }}</td>
+    </tr>
+    <tr>
+        <td>Symfony Framework Version</td>
+        <td>{{ sysInfo.sf_version }}</td>
+    </tr>
+    <tr>
+        <td>Doctrine Version</td>
+        <td>{{ sysInfo.doctrine_version }}</td>
+    </tr>
+    <tr>
+        <td>Twig Version</td>
+        <td>{{ sysInfo.twig_version }}</td>
+    </tr>
+    <tr>
+        <td>Web Server</td>
+        <td>{{ sysInfo.ws_version }}</td>
+    </tr>
+    <tr>
+        <td>Web Server to PHP interface</td>
+        <td>{{ sysInfo.ws2php_interface }}</td>
+    </tr>
+    <tr>
+        <td>Elastic Search Version</td>
+        <td>{{ sysInfo.es_version }}</td>
+    </tr>
+    <tr>
+        <td>Lucene Version</td>
+        <td>{{ sysInfo.lucene_version }}</td>
+    </tr>
+    <tr>
+        <td>Java Version</td>
+        <td>{{ sysInfo.java_version }}</td>
+    </tr>
+    <tr>
+        <td>User Agent</td>
+        <td>{{ sysInfo.user_agent }}</td>
+    </tr>
+    </tbody>
+</table>

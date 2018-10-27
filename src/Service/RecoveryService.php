@@ -49,7 +49,7 @@ class RecoveryService
     {
         $this->em = $entityManager;
         $this->container = $container;
-        $this->pathRoot = $this->container->getParameter('archive.storage_path');
+        $this->pathRoot = $this->container->getParameter('archive.storage_path');;
         $this->internalFolder = $this->container->getParameter('archive.internal.folder_name');
         $this->usersRepository = $this->em->getRepository('App:User');
         $this->factoriesRepository = $this->em->getRepository('App:FactoryEntity');

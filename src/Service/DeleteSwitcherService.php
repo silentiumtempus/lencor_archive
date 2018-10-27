@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
  * Class DeleteSwitcherService
  * @package App\Service
  */
+
 class DeleteSwitcherService
 {
     protected $em;

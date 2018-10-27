@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Class EntryService
  * @package App\Services
  */
+
 class EntryService
 {
     protected $em;

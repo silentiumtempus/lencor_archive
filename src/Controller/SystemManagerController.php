@@ -35,6 +35,9 @@ class SystemManagerController extends Controller
      * @param SystemService $systemService
      * @return Response
      * @Security("has_role('ROLE_ADMIN')")
+     * @Route("/system/env/info",
+     *     options = { "expose" = true },
+     *     name = "system-env-info")
      * @Route("/system/info",
      *     options = { "expose" = true },
      *     name = "system-info")
@@ -46,6 +49,63 @@ class SystemManagerController extends Controller
 
         return $this->render('lencor/admin/archive/system_manager/info.html.twig', array(
             'sysInfo' => $sysInfo
+        ));
+    }
+
+    /**
+     * @param Request $request
+     * @param SystemService $systemService
+     * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("/system/config/info",
+     *     options = { "expose" = true },
+     *     name = "system-config-info")
+     */
+
+    public function configInfo(Request $request, SystemService $systemService)
+    {
+        $configInfo = $systemService->getConfigInfo($request);
+
+        return $this->render('lencor/admin/archive/system_manager/config_info.html.twig', array(
+            'configInfo' => $configInfo
+        ));
+    }
+
+    /**
+     * @param Request $request
+     * @param SystemService $systemService
+     * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("/system/php-config/info",
+     *     options = { "expose" = true },
+     *     name = "system-php-config-info")
+     */
+
+    public function PHPConfigInfo(Request $request, SystemService $systemService)
+    {
+        $PHPConfigInfo = $systemService->getPHPConfigInfo($request);
+
+        return $this->render('lencor/admin/archive/system_manager/php_config_info.html.twig', array(
+            'PHPConfigInfo' => $PHPConfigInfo
+        ));
+    }
+
+    /**
+     * @param Request $request
+     * @param SystemService $systemService
+     * @return Response
+     * @Security("has_role('ROLE_ADMIN')")
+     * @Route("/system/permissions/info",
+     *     options = { "expose" = true },
+     *     name = "system-permissions-info")
+     */
+
+    public function permissionsInfo(Request $request, SystemService $systemService)
+    {
+        $configInfo = $systemService->getPermissionsInfo($request);
+
+        return $this->render('lencor/admin/archive/system_manager/permissions_info.html.twig', array(
+            'configInfo' => $configInfo
         ));
     }
 

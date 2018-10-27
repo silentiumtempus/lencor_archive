@@ -11,14 +11,25 @@ use Symfony\Component\HttpKernel\Kernel;
  * Class SystemService
  * @package App\Service
  */
+
 class SystemService
 {
     protected $container;
+
+    /**
+     * SystemService constructor.
+     * @param ContainerInterface $container
+     */
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
 
     public function getSystemInfo(Request $request)
     {
@@ -50,6 +61,29 @@ class SystemService
         ];
 
         return $data;
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+
+    public function getConfigInfo(Request $request)
+    {
+
+        return [];
+    }
+
+    public function getPHPConfigInfo(Request $request)
+    {
+
+        return [];
+    }
+
+    public function getPermissionsInfo(Request $request)
+    {
+
+        return [];
     }
 
     /**

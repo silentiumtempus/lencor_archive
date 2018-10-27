@@ -14,6 +14,11 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
+/**
+ * Class SerializerService
+ * @package App\Service
+ */
+
 class SerializerService
 {
     protected $em;
@@ -25,6 +30,12 @@ class SerializerService
     protected $factoriesRepository;
     protected $settingsRepository;
 
+    /**
+     * SerializerService constructor.
+     * @param EntityManagerInterface $em
+     * @param ContainerInterface $container
+     */
+
     public function __construct(EntityManagerInterface $em, ContainerInterface $container)
     {
         $this->em = $em;
@@ -35,6 +46,10 @@ class SerializerService
         $this->factoriesRepository = $this->em->getRepository('App:FactoryEntity');
         $this->usersRepository = $this->em->getRepository('App:User');
     }
+
+    /**
+     * @return string
+     */
 
     private function checkAndCreateInternalFolderPath()
     {

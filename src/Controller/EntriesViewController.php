@@ -24,7 +24,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class ArchiveViewController
  * @package App\Controller
  */
-
 class EntriesViewController extends Controller
 {
     /**
