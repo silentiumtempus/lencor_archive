@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'lencor/admin/archive/system_manager/index.html.twig' %}
 {% block main %}
     <div class="page-title">
         <h3>Информация о системе</h3>
@@ -7,21 +7,21 @@
         <ul class="fa-ul">
             <li class="path-row">
                 <span>
-                    <a id="sys-info" class="button" name="openSubDir" href="#">Системное окружение</a>
+                    <a id="info" class="button" name="openSubDir" href="#">Системное окружение</a>
                 </span>
                 <span>
-                    <a id="app-config" class="button" name="openSubDir" href="#">Конфигурация приложения</a>
+                    <a id="config-info" class="button" name="openSubDir" href="#">Конфигурация приложения</a>
                 </span>
                 <span>
-                    <a id="php-settings" class="button" name="openSubDir" href="#">Настройки PHP</a>
+                    <a id="php-config-info" class="button" name="openSubDir" href="#">Настройки PHP</a>
                 </span>
                 <span>
-                    <a id="folder-permissions" class="button" name="openSubDir" href="#">Права директорий</a>
+                    <a id="permissions-info" class="button" name="openSubDir" href="#">Права директорий</a>
                 </span>
             </li>
         </ul>
     </div>
-    <div class="content">
+    <div class="system-content" id="system-content">
         {{ include('lencor/admin/archive/system_manager/sys_info.html.twig', {'sysInfo': sysInfo}) }}
     </div>
 {% endblock %}
