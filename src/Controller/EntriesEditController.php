@@ -68,41 +68,35 @@ class EntriesEditController extends Controller
                         $pathIsFree = $entryService->checkNewPath($archiveEntryEntity, false);
                         if ($pathIsFree) {
                             $folderService->moveEntryFolder($originalEntry, $archiveEntryEntity);
+                            $newEntryFolderName = $entryService->constructEntryPath($archiveEntryEntity, false);
                         } else {
                             $this->addFlash('danger', 'Директория назначения уже существует. Операция прервана.');
                             $loggingService->logEntryContent($archiveEntryEntity, $this->getUser(), $session->getFlashBag()->peekAll());
 
                             return new Response();
                         }
-                    } else {
-                        $entryFolder = $entryService->constructEntryPath($archiveEntryEntity, false);
                     }
-                    if (isset($entryFolder)) {
-                        try {
-                            $entryService->updateEntry();
-                            $entryService->updateEntryInfo($archiveEntryEntity, $this->getUser(), true);
-                            $this->addFlash('success', 'Изменения параметров ячейки сохранены');
-                            $loggingService->logEntryContent($archiveEntryEntity, $this->getUser(), $session->getFlashBag()->peekAll());
-
-                            return new Response($archiveEntryEntity->getId());
-                        } catch (\Exception $exception) {
-                            $this->addFlash('danger', 'Изменения не сохранены. Ошибка: ' . $exception->getMessage());
-                            $loggingService->logEntryContent($archiveEntryEntity, $this->getUser(), $session->getFlashBag()->peekAll());
-
-                            return $this->render(
-                                'lencor/admin/archive/administration/entries/entry_edit.html.twig',
-                                array(
-                                    'entryForm' => $entryForm->createView(),
-                                    'entryId' => $archiveEntryEntity->getId())
-                            );
+                    try {
+                        $entryService->updateEntry();
+                        if (isset($newEntryFolderName)) {
+                            $folderService->updateEntryFolderName($archiveEntryEntity->getCataloguePath(), $newEntryFolderName);
                         }
-                    } else {
-                        $this->addFlash('danger', 'Указанный каталог уже существует. Операция прервана.');
+                        $entryService->updateEntryInfo($archiveEntryEntity, $this->getUser(), true);
+                        $this->addFlash('success', 'Изменения параметров ячейки сохранены');
                         $loggingService->logEntryContent($archiveEntryEntity, $this->getUser(), $session->getFlashBag()->peekAll());
 
-                        return new Response();
-                    }
+                        return new Response($archiveEntryEntity->getId());
+                    } catch (\Exception $exception) {
+                        $this->addFlash('danger', 'Изменения не сохранены. Ошибка: ' . $exception->getMessage());
+                        $loggingService->logEntryContent($archiveEntryEntity, $this->getUser(), $session->getFlashBag()->peekAll());
 
+                        return $this->render(
+                            'lencor/admin/archive/administration/entries/entry_edit.html.twig',
+                            array(
+                                'entryForm' => $entryForm->createView(),
+                                'entryId' => $archiveEntryEntity->getId())
+                        );
+                    }
                 } else {
                     if (!$request->get('submit')) {
                         $this->addFlash('danger', 'Форма заполнена неверно. Архивная запись с такими ключевыми параметрами уже существует.');
@@ -132,6 +126,7 @@ class EntriesEditController extends Controller
             return $this->render(
                 'lencor/admin/archive/administration/entries/entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
         }
+
         if ($entrySearchByIdForm->isSubmitted()) {
 
             return $this->render('lencor/admin/archive/administration/entries/entry_edit.html.twig',

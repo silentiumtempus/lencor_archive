@@ -51,8 +51,11 @@
                                         <a href="{{ path('admin-entries') }}">{{ 'header.menu.manager.menu3'|trans }}</a>
                                     </li>
                                     <li>
+                                        <a href="{{ path('admin-factories-and-settings') }}">{{ 'header.menu.manager.menu4'|trans }}</a>
+                                    </li>
+                                    <li>
                                         <!-- //@TODO: find a solution for this URL generation issue -->
-                                        <a href="{{ path('admin-deleted-entries')}}/deleted">{{ 'header.menu.manager.menu4'|trans }}</a>
+                                        <a href="{{ path('admin-deleted-entries')}}/deleted">{{ 'header.menu.manager.menu5'|trans }}</a>
                                     </li>
                                 {% endif %}
                             </ul>
@@ -77,13 +80,10 @@
                                 </a>
                                 <ul>
                                     <li>
-                                        <a href="{{ path('admin-factories-and-settings') }}">{{ 'header.menu.admin.menu1'|trans }}</a>
+                                        <a href="{{ path('admin-users') }}">{{ 'header.menu.admin.menu1'|trans }}</a>
                                     </li>
                                     <li>
-                                        <a href="{{ path('admin-users') }}">{{ 'header.menu.admin.menu2'|trans }}</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{ path('admin-recovery') }}">{{ 'header.menu.admin.menu3'|trans }}</a>
+                                        <a href="{{ path('admin-recovery') }}">{{ 'header.menu.admin.menu2'|trans }}</a>
                                     </li>
                                 </ul>
                             </li>
@@ -97,11 +97,11 @@
                                     </li>
                                 </ul>
                             </li>
-                            <li>
+                            {# <li>
                                 <a href="{{ path('stats') }}">
                                     <span><i class="fa fa-info"> </i> {{ 'header.menu.stats'|trans }} <i class="fa fa-angle-down"> </i></span>
                                 </a>
-                            </li>
+                            </li> #}
                         {% endif %}
                     </ul>
                     <ul class="right">

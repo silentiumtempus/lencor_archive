@@ -675,8 +675,20 @@ class FolderService
         if ($originalEntry['archiveNumber'] != $archiveEntryEntity->getArchiveNumber()) {
             $oldEntryFile = $newPath . "/" . $originalEntry["archiveNumber"] . ".entry";
             $fs->rename($oldEntryFile, $newEntryFile);
+            $this->loggingService->renameLogFile($newPath, $originalEntry['archiveNumber'], $archiveEntryEntity->getArchiveNumber());
         }
 
         return $newEntryFile;
+    }
+
+    /**
+     * @param FolderEntity $folderEntity
+     * @param string $newFolderName
+     */
+
+    public function updateEntryFolderName(FolderEntity $folderEntity, string $newFolderName)
+    {
+        $folderEntity->setFolderName($newFolderName);
+        $this->flushFolder();
     }
 }

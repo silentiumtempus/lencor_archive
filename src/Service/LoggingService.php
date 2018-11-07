@@ -15,7 +15,6 @@ use Symfony\Component\Finder\Finder;
  * Class LoggingService
  * @package App\Service
  */
-
 class LoggingService
 {
     protected $em;
@@ -52,8 +51,10 @@ class LoggingService
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         if ($entryFolder) {
-            return $this->pathRoot . "/" . $entryFolder->getFolderName() . "/logs";
+
+            return $entryFolder->getFolderName() . "/logs";
         } else {
+
             return false;
         }
     }
@@ -67,8 +68,10 @@ class LoggingService
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         if ($entryFolder) {
+
             return $this->pathHTTP . "/" . $entryFolder->getFolderName() . "/logs";
         } else {
+
             return false;
         }
     }
@@ -110,8 +113,10 @@ class LoggingService
     public function getLogsCurrentFolder(string $parentFolder, string $folder)
     {
         if ($folder != "/") {
+
             return (($parentFolder != "") ? $parentFolder . "/" : null) . $folder;
         } else {
+
             return "";
         }
     }
@@ -226,7 +231,21 @@ class LoggingService
 
             return $fileContent;
         } else {
+
             return null;
         }
+    }
+
+    /**
+     * @param string $newPath
+     * @param string $oldName
+     * @param string $newName
+     */
+
+    public function renameLogFile(string $newPath, string $oldName, string $newName)
+    {
+        $fs = new Filesystem();
+        $logsDir = $newPath . '/logs/';
+        $fs->rename($logsDir . $oldName . '.log', $logsDir . $newName . '.log');
     }
 }
