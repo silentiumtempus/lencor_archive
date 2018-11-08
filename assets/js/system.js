@@ -28,7 +28,6 @@ $(document).ready(function () {
                 data: null,
                 success: function (response) {
                     $('#system-content').html(response);
-                    alert(response);
                 }
             });
 

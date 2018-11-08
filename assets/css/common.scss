@@ -11,6 +11,9 @@ body {
   line-height: 1.42857143;
   color: #2c3e50;
   margin: 0;
+  header {
+    min-width: 848px;
+  }
   .content {
     li {
       margin-bottom: 0.5em
@@ -288,6 +291,7 @@ h6, .h6 {
   li {
     display: flex;
     vertical-align: middle;
+    flex-wrap: wrap;
   }
   li > span {
     padding-left: 10px;
