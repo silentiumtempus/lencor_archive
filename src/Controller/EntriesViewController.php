@@ -289,16 +289,19 @@ class EntriesViewController extends Controller
      * @param Request $request
      * @param EntrySearchService $entrySearchService
      * @param string $field
+     * @param string $deleted
      * @return Response
      * @Security("has_role('ROLE_USER')")
-     * @Route("entries/search_hints/{field}",
+     * @Route("entries/search_hints/{deleted}/{field}",
      *     name = "entries_search_hints",
      *     options = { "expose" = true },
-     *     defaults = { "field" : "0" }
-     *     )
+     *     defaults = {
+     *      "field" : "0",
+     *      "deleted" : false
+     *     })
      */
 
-    public function loadSearchHints(Request $request, EntrySearchService $entrySearchService, string $field)
+    public function loadSearchHints(Request $request, EntrySearchService $entrySearchService, string $field, string $deleted = null)
     {
         $limit = $this->getParameter('archive.search_hints_limit');
         $data = [];
@@ -311,7 +314,7 @@ class EntriesViewController extends Controller
         if ($searchForm->isSubmitted() && $searchForm->isValid() && $request->isMethod('POST')) {
 
             $filterQuery = $entrySearchService->performSearch($searchForm, $filterQuery);
-            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $limit, true);
+            $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $limit, $deleted ?: false);
             if ($field !== 0) {
                 foreach ($archiveEntries as $entry) {
                     switch ($field) {

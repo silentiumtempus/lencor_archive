@@ -1066,12 +1066,11 @@ $(document).ready(function () {
                     // @TODO: refactor this regex
                     let $field = /\[(.+)/.exec(input.attr('name'))[0].replace(/[^\w\s]/gi, '');
                     $.ajax({
-                        url: Routing.generate('entries_search_hints', {field: $field}),
+                        url: Routing.generate('entries_search_hints', {field: $field, deleted: deleted}),
                         method: "POST",
                         data: $fields,
                         success: function (hints) {
                             response(hints);
-
                         }
                     });
                 },
