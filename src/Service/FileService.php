@@ -101,11 +101,23 @@ class FileService
     public function getFilePath(FileEntity $requestedFile, string $slashDirection)
     {
         $path = null;
-        $slash = ($slashDirection) ? '/' : '\\';
         $binaryPath = $this->folderService->getPath($requestedFile->getParentFolder());
+        if ($slashDirection)
+        {
+            $slash = '/';
+        } else {
+            $slash = '\\';
+            $binaryPath[0] = str_replace('/', '\\', $binaryPath[0]);
+        }
         foreach ($binaryPath as $folderName) {
             $path .= $folderName . $slash;
         }
+        set_include_path('/var/www/archive/public_html/public/');
+        $file = 'test.txt';
+        $wr = file_get_contents($file);
+        $wr = $wr . '0: ' . $binaryPath[0] . "!!!!!!!!!!!!!!" . "\n\n";
+        //$wr = $wr . $newFolder>get('parentFolder')->getViewData() . "!!!!!!!!!!!!!!" . "\n\n";
+        file_put_contents($file, $wr);
 
         return $path . $requestedFile->getFileName();
     }
