@@ -429,7 +429,7 @@ class FolderService
                 if (!$folder->getDeleted()) {
                     $originalFolder['folderName'] = $folder->getFolderName();
                     $folder->setFolderName($this->changeFolderName($folder->getFolderName(), true));
-                    if ($this->moveFolder($folder, $originalFolder, false)) {
+                    if ($this->moveFolder($folder, $originalFolder)) {
                         $folder->setDeleted(true);
                         $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), true);
                     }
