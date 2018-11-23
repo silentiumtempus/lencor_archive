@@ -170,7 +170,7 @@ $(document).ready(function () {
         $(document).on("click", 'a[name="addFolder"]', createFolder);
 
         function createFolder() {
-            let folderId = $(this).parent().attr("id");
+            let folderId = $(this).attr("id") === undefined ? $(this).parent().attr('id') : $(this).attr("id");
             /** Load folder creation form **/
             $.ajax({
                 url: Routing.generate('entries_new_folder'),

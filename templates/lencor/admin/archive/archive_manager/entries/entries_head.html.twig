@@ -6,8 +6,8 @@
             <i class="fa fa-spinner fa-pulse fa-fw" id="update-info-spinner"> </i>
         </td>
         {% if not deleted %}
-            <td id="{{ folderId }}"><a class="button" href="#" name="addFolder" title="Добавить директорию"><i class="fa fa-folder-o"> </i> Добавить директорию </a></td>
-            <td id="{{ folderId }}"><a class="button" href="#" name="addFiles" title="Добавить файл"><i class="fa fa-file-o"> </i> Добавить файл </a></td>
+            <td><a class="button" href="#" id="{{ folderId }}" name="addFolder" title="Добавить директорию"><i class="fa fa-folder-o"> </i> Добавить директорию </a></td>
+            <td><a class="button" href="#" id="{{ folderId }}" name="addFiles" title="Добавить файл"><i class="fa fa-file-o"> </i> Добавить файл </a></td>
         {% endif %}
     </tr>
     <tr>
