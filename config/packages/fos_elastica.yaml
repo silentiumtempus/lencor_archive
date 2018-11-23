@@ -10,6 +10,14 @@ fos_elastica:
       archive:
         index_name: archive_entries
         client: default
+        settings:
+          index:
+            analysis:
+              analyzer:
+                archive:
+                  type: keyword
+                  filter: [lowercase]
+                  tokenizer: keyword
         types:
           archive_factories:
             properties:
@@ -38,10 +46,10 @@ fos_elastica:
                   settingName: ~
               year:
                 type: integer
-              archiveNumber: ~
-              registerNumber: ~
-              contractNumber: ~
-              fullConclusionName: ~
+              archiveNumber: {analyzer: archive}
+              registerNumber: {analyzer: archive}
+              contractNumber: {analyzer: archive}
+              fullConclusionName: {analyzer: archive}
               cataloguePath: ~
               deleted: ~
               deleted_children: ~

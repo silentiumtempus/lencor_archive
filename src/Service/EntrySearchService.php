@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Elastica\Util;
 use Psr\Container\ContainerInterface;
 use Elastica\Query\BoolQuery;
 use Elastica\Query\Match;
@@ -62,7 +63,8 @@ class EntrySearchService
                     $filterQuery->addMust($conditionSetting);
                 } else {
                     $conditionString = new Query\QueryString();
-                    $conditionString->setQuery('*' . $child->getViewData() . '*');
+                    $conditionString->setQuery('*' . Util::escapeTerm($child->getViewData()) . '*');
+                    $conditionString->setDefaultOperator('AND');
                     $conditionString->setParam('fields', array($key));
                     $filterQuery->addMust($conditionString);
                 }
