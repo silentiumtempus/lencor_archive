@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
@@ -19,7 +20,6 @@ trait DeletedStateTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("boolean")
      */
-
     protected $deleted = false;
 
     /**
@@ -27,8 +27,7 @@ trait DeletedStateTrait
      * @param bool $deleted
      * @return $this
      */
-
-    public function setDeleted(bool $deleted)
+    public function setDeleted(bool $deleted): self
     {
         $this->deleted = $deleted;
 
@@ -37,10 +36,9 @@ trait DeletedStateTrait
 
     /**
      * Get requestMark
-     * @return bool
+     * @return bool|null
      */
-
-    public function getDeleted()
+    public function getDeleted(): ?bool
     {
         return $this->deleted;
     }

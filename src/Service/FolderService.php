@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
 use App\Entity\ArchiveEntryEntity;
 use App\Entity\FolderEntity;
 use App\Entity\User;
+use App\Factory\FolderFactory;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,20 +19,20 @@ use Symfony\Component\Form\FormInterface;
  * Class FolderService
  * @package App\Services
  */
-
 class FolderService
 {
-    protected $em;
-    protected $container;
-    protected $session;
-    protected $foldersRepository;
-    protected $filesRepository;
-    protected $pathRoot;
-    protected $pathPermissions;
-    protected $entryService;
-    protected $dSwitchService;
-    protected $commonArchiveService;
-    protected $loggingService;
+    private $em;
+    private $container;
+    private $session;
+    private $foldersRepository;
+    private $filesRepository;
+    private $pathRoot;
+    private $pathPermissions;
+    private $entryService;
+    private $dSwitchService;
+    private $commonArchiveService;
+    private $loggingService;
+    private $folderFactory;
 
     /**
      * FolderService constructor.
@@ -40,14 +42,17 @@ class FolderService
      * @param DeleteSwitcherService $dSwitchService
      * @param CommonArchiveService $commonArchiveService
      * @param LoggingService $loggingService
+     * @param FolderFactory $folderFactory
      */
-
-    public function __construct(EntityManagerInterface $entityManager,
-                                ContainerInterface $container,
-                                EntryService $entryService,
-                                DeleteSwitcherService $dSwitchService,
-                                CommonArchiveService $commonArchiveService,
-                                LoggingService $loggingService)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContainerInterface $container,
+        EntryService $entryService,
+        DeleteSwitcherService $dSwitchService,
+        CommonArchiveService $commonArchiveService,
+        LoggingService $loggingService,
+        FolderFactory $folderFactory
+    )
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -58,6 +63,7 @@ class FolderService
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->dSwitchService = $dSwitchService;
+        $this->folderFactory = $folderFactory;
         $this->pathRoot = $this->container->getParameter('archive.storage_path');
         $this->pathPermissions = $this->container->getParameter('archive.storage_permissions');
     }
@@ -66,7 +72,6 @@ class FolderService
      * @param int $folderId
      * @return mixed
      */
-
     public function getFolderEntry(int $folderId)
     {
         $folderNode = $this->foldersRepository->find($folderId);
@@ -78,7 +83,6 @@ class FolderService
      * @param $entryId
      * @return mixed
      */
-
     public function getRootFolder(int $entryId)
     {
         $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
@@ -91,7 +95,6 @@ class FolderService
      * @param integer $folderId
      * @return bool
      */
-
     public function isRoot(int $folderId)
     {
         $folderEntity = $this->foldersRepository->find($folderId);
@@ -103,7 +106,6 @@ class FolderService
      * @param $parentFolder
      * @return mixed
      */
-
     public function getParentFolder($parentFolder)
     {
         return $this->foldersRepository->find($parentFolder);
@@ -113,7 +115,6 @@ class FolderService
      * @param FolderEntity $folder
      * @return array
      */
-
     public function getPath(FolderEntity $folder)
     {
         return $this->foldersRepository->getPath($folder);
@@ -123,27 +124,9 @@ class FolderService
      * @param array $foldersArray
      * @return FolderEntity||array
      */
-
     public function getFoldersList(array $foldersArray)
     {
         return $this->foldersRepository->findById($foldersArray);
-    }
-
-    /**
-     * @param FolderEntity $newFolderEntity
-     * @param ArchiveEntryEntity $newEntry
-     * @param User $user
-     */
-
-    public function prepareNewRootFolder(FolderEntity $newFolderEntity, ArchiveEntryEntity $newEntry, User $user)
-    {
-        $newFolderEntity
-            ->setArchiveEntry($newEntry)
-            ->setFolderName($newEntry->getYear() . "/" . $newEntry->getFactory()->getId() . "/" . $newEntry->getArchiveNumber())
-            ->setAddedByUser($user)
-            ->setRemovalMark(false)
-            ->setMarkedByUser(null)
-            ->setSlug(null);
     }
 
     /**
@@ -151,11 +134,12 @@ class FolderService
      * @param User $user
      * @param int $entryId
      */
-
     public function createNewFolder(FormInterface $folderAddForm, User $user, int $entryId)
     {
         try {
-            $newFolderEntity = $this->prepareNewFolder($folderAddForm, $user);
+            $newFolderEntity = $this->folderFactory->prepareNewFolder($folderAddForm, $user);
+            $parentFolder = $this->foldersRepository->find($folderAddForm->get('parentFolder')->getViewData());
+            $newFolderEntity->setParentFolder($parentFolder);
             $fileSystem = new Filesystem();
             $newFolderAbsPath = $this->pathRoot;
             $pathPermissions = $this->pathPermissions;
@@ -167,13 +151,25 @@ class FolderService
                     foreach ($binaryPath as $folderName) {
                         $newFolderAbsPath .= "/" . $folderName;
                         if (!$fileSystem->exists($newFolderAbsPath)) {
-                            $this->session->getFlashBag()->add('warning', 'Директория ' . $newFolderAbsPath . ' отсутствует в файловой системе. Пересоздаю...');
+                            $this->session->getFlashBag()->add(
+                                'warning',
+                                'Директория ' . $newFolderAbsPath . ' отсутствует в файловой системе. Пересоздаю...'
+                            );
                             try {
                                 $fileSystem->mkdir($newFolderAbsPath, $pathPermissions);
-                                $this->session->getFlashBag()->add('success', 'Директория ' . $newFolderAbsPath . ' cоздана.');
+                                $this->session->getFlashBag()->add(
+                                    'success',
+                                    'Директория ' . $newFolderAbsPath . ' cоздана.'
+                                );
                             } catch (IOException $IOException) {
-                                $this->session->getFlashBag()->add('danger', 'Директория ' . $newFolderAbsPath . ' не создана. Ошибка файловой системы: ' . $IOException->getMessage());
-                                $this->session->getFlashBag()->add('danger', 'Загрузка в БД прервана: изменения не внесены.');
+                                $this->session->getFlashBag()->add(
+                                    'danger',
+                                    'Директория ' . $newFolderAbsPath . ' не создана. Ошибка файловой системы: ' . $IOException->getMessage()
+                                );
+                                $this->session->getFlashBag()->add(
+                                    'danger',
+                                    'Загрузка в БД прервана: изменения не внесены.'
+                                );
                                 $creationNotFailed = false;
                             }
                         }
@@ -182,71 +178,83 @@ class FolderService
                     if (!$fileSystem->exists($newFolderAbsPath)) {
                         try {
                             $fileSystem->mkdir($newFolderAbsPath, $pathPermissions);
-                            $this->session->getFlashBag()->add('success', 'Новая директория ' . $newFolderEntity->getFolderName() . ' успешно создана.');
+                            $this->session->getFlashBag()->add(
+                                'success',
+                                'Новая директория ' . $newFolderEntity->getFolderName() . ' успешно создана.'
+                            );
                         } catch (IOException $IOException) {
-                            $this->session->getFlashBag()->add('danger', 'Новая директория ' . $newFolderAbsPath . ' не создана. Ошибка файловой системы: ' . $IOException->getMessage());
+                            $this->session->getFlashBag()->add(
+                                'danger',
+                                'Новая директория ' . $newFolderAbsPath . ' не создана. Ошибка файловой системы: ' . $IOException->getMessage()
+                            );
                             $creationNotFailed = false;
                         }
                     } else {
                         $directoryExistedPreviously = true;
-                        $this->session->getFlashBag()->add('warning', 'Директория ' . $newFolderAbsPath . ' уже существует в файловой системе.');
+                        $this->session->getFlashBag()->add(
+                            'warning',
+                            'Директория ' . $newFolderAbsPath . ' уже существует в файловой системе.'
+                        );
                     }
                 } catch (\Exception $exception) {
-                    $this->session->getFlashBag()->add('danger', 'Новая директория не записана в файловую систему. Ошибка файловой системы: ' . $exception->getMessage());
+                    $this->session->getFlashBag()->add(
+                        'danger',
+                        'Новая директория не записана в файловую систему. Ошибка файловой системы: ' . $exception->getMessage()
+                    );
                 }
             } else {
-                $this->session->getFlashBag()->add('danger', 'Файловая система архива недоступна. Операция не выполнена.');
+                $this->session->getFlashBag()->add(
+                    'danger',
+                    'Файловая система архива недоступна. Операция не выполнена.'
+                );
             }
             if ($creationNotFailed) {
                 try {
                     $this->persistFolder($newFolderEntity);
                     $this->entryService->updateEntryInfo($this->entryService->getEntryById($entryId), $user, true);
-                    $this->session->getFlashBag()->add('success', 'Новая директория успешно добавлена в БД');
+                    $this->session->getFlashBag()->add(
+                        'success',
+                        'Новая директория успешно добавлена в БД'
+                    );
                 } catch (\Exception $exception) {
                     if ($exception instanceof ConstraintViolationException) {
-                        $this->session->getFlashBag()->add('danger', ' В БД найдена запись о дубликате создаваемой директории. Именения БД отклонены.');
+                        $this->session->getFlashBag()->add(
+                            'danger',
+                            ' В БД найдена запись о дубликате создаваемой директории. Именения БД отклонены.'
+                        );
                     } else {
-                        $this->session->getFlashBag()->add('danger', 'Директория не записана в БД. Ошибка БД: ' . $exception->getMessage());
+                        $this->session->getFlashBag()->add(
+                            'danger',
+                            'Директория не записана в БД. Ошибка БД: ' . $exception->getMessage()
+                        );
                     }
                     if (!$directoryExistedPreviously) {
                         try {
                             $fileSystem->remove($newFolderAbsPath);
-                            $this->session->getFlashBag()->add('danger', 'Новая директория удалёна из файловой системы в связи с ошибкой БД.');
+                            $this->session->getFlashBag()->add(
+                                'danger',
+                                'Новая директория удалёна из файловой системы в связи с ошибкой БД.'
+                            );
                         } catch (IOException $IOException) {
-                            $this->session->getFlashBag()->add('danger', 'Ошибка при удалении новой директории из файловой системы: ' . $IOException->getMessage());
+                            $this->session->getFlashBag()->add(
+                                'danger',
+                                'Ошибка при удалении новой директории из файловой системы: ' . $IOException->getMessage()
+                            );
                         }
                     }
                 }
             }
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage()
+            );
         }
-    }
-
-    /**
-     * @param FormInterface $folderAddForm
-     * @param User $user
-     * @return FolderEntity
-     */
-
-    public function prepareNewFolder(FormInterface $folderAddForm, User $user)
-    {
-        $newFolderEntity = $folderAddForm->getData();
-        $parentFolder = $this->foldersRepository->find($folderAddForm->get('parentFolder')->getViewData());
-        $newFolderEntity
-            ->setParentFolder($parentFolder)
-            ->setAddedByUser($user)
-            ->setRemovalMark(false)
-            ->setMarkedByUser(null)
-            ->setSlug(null);
-
-        return $newFolderEntity;
     }
 
     /**
      * @param FolderEntity $folderEntity
      */
-
     public function persistFolder(FolderEntity $folderEntity)
     {
         $this->em->persist($folderEntity);
@@ -256,6 +264,7 @@ class FolderService
     /**
      * @param FolderEntity $folder
      * @param User $user
+     * @throws \Exception
      */
     public function renameFolder(FolderEntity $folder, User $user)
     {
@@ -264,28 +273,42 @@ class FolderService
             if ($this->moveFolder($folder, $originalFolder)) {
                 $this->flushFolder();
                 $this->entryService->updateEntryInfo($folder->getRoot()->getArchiveEntry(), $user, true);
-                $this->session->getFlashBag()->add('success', 'Переименование ' . $originalFolder['folderName'] . ' > ' . $folder->getFolderName() . ' успешно произведено.');
+                $this->session->getFlashBag()->add(
+                    'success',
+                    'Переименование ' . $originalFolder['folderName'] . ' > ' . $folder->getFolderName() . ' успешно произведено.'
+                );
             } else {
-                $this->session->getFlashBag()->add('danger', 'Переименование отменено из за внутренней ошибки.');
+                $this->session->getFlashBag()->add(
+                    'danger',
+                    'Переименование отменено из за внутренней ошибки.'
+                );
             }
         } else {
-            $this->session->getFlashBag()->add('warning', 'Новое имя каталога ' . $folder->getFolderName() . ' совпадает с текущим. Операция отклонена.');
+            $this->session->getFlashBag()->add(
+                'warning',
+                'Новое имя каталога ' . $folder->getFolderName() . ' совпадает с текущим. Операция отклонена.'
+            );
         }
-        $this->loggingService->logEntryContent($folder->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $folder->getRoot()->getArchiveEntry(),
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
     }
 
     /**
-     * @param $folderId
+     * @param int $folderId
      * @param User $user
      * @param FileService $fileService
-     * @return mixed
+     * @return FolderEntity|object|null
+     * @throws \Exception
      */
-
     public function removeFolder(int $folderId, User $user, FileService $fileService)
     {
         $removedFolder = $this->foldersRepository->find($folderId);
         try {
-            $folderChildren = $this->foldersRepository->getChildren($removedFolder, false, null, null, true);
+            $folderChildren =
+                $this->foldersRepository->getChildren($removedFolder, false, null, null, true);
             if ($folderChildren) {
                 foreach ($folderChildren as $childFolder) {
                     if (!$childFolder->getRemovalMark()) {
@@ -296,22 +319,36 @@ class FolderService
                 }
             }
             $this->em->flush();
-            $this->entryService->updateEntryInfo($removedFolder->getRoot()->getArchiveEntry(), $user, false);
-            $this->session->getFlashBag()->add('success', 'Директория ' . $removedFolder->getFolderName() . ' успешно удалена.');
+            $this->entryService->updateEntryInfo(
+                $removedFolder->getRoot()->getArchiveEntry(),
+                $user,
+                false
+            );
+            $this->session->getFlashBag()->add(
+                'success',
+                'Директория ' . $removedFolder->getFolderName() . ' успешно удалена.'
+            );
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Директория ' . $removedFolder->getFolderName() . ' не удалена. Ошибка: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Директория ' . $removedFolder->getFolderName() . ' не удалена. Ошибка: ' . $exception->getMessage()
+            );
         }
-        $this->loggingService->logEntryContent($removedFolder->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $removedFolder->getRoot()->getArchiveEntry(),
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
 
         return $removedFolder;
     }
 
     /**
-     * @param $folderId
+     * @param int $folderId
      * @param User $user
-     * @return mixed
+     * @return array
+     * @throws \Exception
      */
-
     public function restoreFolder(int $folderId, User $user)
     {
         $foldersArray = [];
@@ -328,13 +365,27 @@ class FolderService
                     }
                 }
                 $this->em->flush();
-                $this->entryService->updateEntryInfo($restoredFolder->getRoot()->getArchiveEntry(), $user, false);
+                $this->entryService->updateEntryInfo(
+                    $restoredFolder->getRoot()->getArchiveEntry(),
+                    $user,
+                    false
+                );
 
-                $this->session->getFlashBag()->add('success', 'Директория ' . $restoredFolder->getFolderName() . ' успешно восстановлена.');
+                $this->session->getFlashBag()->add(
+                    'success',
+                    'Директория ' . $restoredFolder->getFolderName() . ' успешно восстановлена.'
+                );
             } catch (\Exception $exception) {
-                $this->session->getFlashBag()->add('danger', 'Директория ' . $restoredFolder->getFolderName() . ' не восстановлена. Ошибка: ' . $exception->getMessage());
+                $this->session->getFlashBag()->add(
+                    'danger',
+                    'Директория ' . $restoredFolder->getFolderName() . ' не восстановлена. Ошибка: ' . $exception->getMessage()
+                );
             }
-            $this->loggingService->logEntryContent($restoredFolder->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
+            $this->loggingService->logEntryContent(
+                $restoredFolder->getRoot()->getArchiveEntry(),
+                $user,
+                $this->session->getFlashBag()->peekAll()
+            );
         }
 
         return $foldersArray;
@@ -343,7 +394,6 @@ class FolderService
     /**
      * @param FolderEntity $folderEntity
      */
-
     public function unsetFolderRemovalMark(FolderEntity $folderEntity)
     {
         $folderEntity
@@ -356,9 +406,9 @@ class FolderService
     /**
      * @param int $folderId
      * @param User $user
-     * @return FolderEntity
+     * @return mixed
+     * @throws \Exception
      */
-
     public function requestFolder(int $folderId, User $user)
     {
         $requestedFolder = $this->getParentFolder($folderId);
@@ -381,12 +431,26 @@ class FolderService
                 }
             }
             $this->em->flush();
-            $this->entryService->updateEntryInfo($requestedFolder->getRoot()->getArchiveEntry(), $user, false);
-            $this->session->getFlashBag()->add('success', 'Запрос на восстановление директории ' . $requestedFolder->getFolderName() . ' успешно создан.');
+            $this->entryService->updateEntryInfo(
+                $requestedFolder->getRoot()->getArchiveEntry(),
+                $user,
+                false
+            );
+            $this->session->getFlashBag()->add(
+                'success',
+                'Запрос на восстановление директории ' . $requestedFolder->getFolderName() . ' успешно создан.'
+            );
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Запрос на восстановление директории ' . $requestedFolder->getFolderName() . ' не создан. Ошибка: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Запрос на восстановление директории ' . $requestedFolder->getFolderName() . ' не создан. Ошибка: ' . $exception->getMessage()
+            );
         }
-        $this->loggingService->logEntryContent($requestedFolder->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $requestedFolder->getRoot()->getArchiveEntry(),
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
 
         return $requestedFolder;
     }
@@ -395,8 +459,8 @@ class FolderService
      * @param array $foldersArray
      * @param FileService $fileService
      * @param User $user
+     * @throws \Exception
      */
-
     public function deleteFolders(array $foldersArray, FileService $fileService, User $user)
     {
         $deletedFolders = $this->foldersRepository->find($foldersArray);
@@ -405,12 +469,26 @@ class FolderService
             foreach ($deletedFolders as $folder) {
                 $this->deleteFolder($folder, $fileService, true, $user);
             }
-            $this->session->getFlashBag()->add('success', 'Каталог(и) успешно удалены.');
-            $this->entryService->updateEntryInfo($deletedFolders[0]->getRoot()->getArchiveEntry(), $user, true);
+            $this->session->getFlashBag()->add(
+                'success',
+                'Каталог(и) успешно удалены.'
+            );
+            $this->entryService->updateEntryInfo(
+                $deletedFolders[0]->getRoot()->getArchiveEntry(),
+                $user,
+                true
+            );
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Удалене каталога(ов) не выполнено:  ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Удалене каталога(ов) не выполнено:  ' . $exception->getMessage()
+            );
         }
-        $this->loggingService->logEntryContent($archiveEntry, $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $archiveEntry,
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
     }
 
     /**
@@ -418,9 +496,14 @@ class FolderService
      * @param FileService $fileService
      * @param bool $multiple
      * @param User $user
+     * @throws \Exception
      */
-
-    public function deleteFolder(FolderEntity $folderEntity, FileService $fileService, bool $multiple, User $user)
+    public function deleteFolder(
+        FolderEntity $folderEntity,
+        FileService $fileService,
+        bool $multiple,
+        User $user
+    )
     {
         $archiveEntry = $folderEntity->getRoot()->getArchiveEntry();
         $foldersChain = $this->foldersRepository->getChildren($folderEntity, false, null, null, true);
@@ -435,9 +518,15 @@ class FolderService
                     }
                 }
                 $this->deleteFilesByParentFolder($folder, $fileService, $user);
-                $this->session->getFlashBag()->add('success', 'Директория ' . $folder->getFolderName() . ' успешно удалёна');
+                $this->session->getFlashBag()->add(
+                    'success',
+                    'Директория ' . $folder->getFolderName() . ' успешно удалёна'
+                );
             } catch (\Exception $exception) {
-                $this->session->getFlashBag()->add('danger', 'Удалене директории ' . $folder->getFolderName() . ' не выполнено:  ' . $exception->getMessage());
+                $this->session->getFlashBag()->add(
+                    'danger',
+                    'Удалене директории ' . $folder->getFolderName() . ' не выполнено:  ' . $exception->getMessage()
+                );
             }
         }
         $this->em->flush();
@@ -451,8 +540,8 @@ class FolderService
      * @param FolderEntity $folder
      * @param FileService $fileService
      * @param User $user
+     * @throws \Exception
      */
-
     private function deleteFilesByParentFolder(FolderEntity $folder, FileService $fileService, User $user)
     {
         $childFiles = $folder->getFiles();
@@ -469,8 +558,8 @@ class FolderService
      * @param array $foldersArray
      * @param User $user
      * @return array
+     * @throws \Exception
      */
-
     public function unDeleteFolders(array $foldersArray, User $user)
     {
         $folderIdsArray = [];
@@ -480,11 +569,21 @@ class FolderService
                 $folderIdsArray = $this->unDeleteFolder($folder, $folderIdsArray, true, $user);
             }
             $this->entryService->updateEntryInfo($unDeletedFolders[0]->getRoot()->getArchiveEntry(), $user, true);
-            $this->session->getFlashBag()->add('success', 'Директории успешно восстановлены.');
+            $this->session->getFlashBag()->add(
+                'success',
+                'Директории успешно восстановлены.'
+            );
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Директории не восстановлены: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Директории не восстановлены: ' . $exception->getMessage()
+            );
         }
-        $this->loggingService->logEntryContent($unDeletedFolders[0]->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $unDeletedFolders[0]->getRoot()->getArchiveEntry(),
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
 
         return $folderIdsArray;
     }
@@ -495,8 +594,8 @@ class FolderService
      * @param bool $multiple
      * @param User $user
      * @return array
+     * @throws \Exception
      */
-
     public function unDeleteFolder(FolderEntity $folderEntity, array $folderIdsArray, bool $multiple, User $user)
     {
         $folderIdsArray['remove'] = [];
@@ -517,27 +616,45 @@ class FolderService
                                 $folderIdsArray[$i][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, $i);
                             }
                         }
-                        $this->session->getFlashBag()->add('success', 'Директория ' . $originalFolder['folderName'] . ' успешно восстановлена.');
+                        $this->session->getFlashBag()->add(
+                            'success',
+                            'Директория ' . $originalFolder['folderName'] . ' успешно восстановлена.'
+                        );
                     } catch (\Exception $exception) {
-                        $this->session->getFlashBag()->add('danger', 'Директория ' . $originalFolder['folderName'] . ' не восстановлен. Ошибка' . $exception->getMessage());
+                        $this->session->getFlashBag()->add(
+                            'danger',
+                            'Директория ' . $originalFolder['folderName'] . ' не восстановлен. Ошибка' . $exception->getMessage()
+                        );
                     }
                 } else {
                     if ($folder->getRoot()->getId() !== $folder->getId()) {
                         if ($folder->getDeletedChildren() === 0) {
-                            $folderIdsArray['remove'][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
+                            $folderIdsArray['remove'][] =
+                                $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
                         }
                     }
                 }
             }
             $this->em->flush();
             if (!$multiple) {
-                $this->entryService->updateEntryInfo($folderEntity->getRoot()->getArchiveEntry(), $user, true);
+                $this->entryService->updateEntryInfo(
+                    $folderEntity->getRoot()->getArchiveEntry(),
+                    $user,
+                    true
+                );
             }
             array_reverse($folderIdsArray['remove']);
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Непредвиденная ошибка при восстановлении директории ' . $folderEntity->getFolderName() . ' : ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Непредвиденная ошибка при восстановлении директории ' . $folderEntity->getFolderName() . ' : ' . $exception->getMessage()
+            );
         }
-        $this->loggingService->logEntryContent($folderEntity->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $folderEntity->getRoot()->getArchiveEntry(),
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
 
         return $folderIdsArray;
     }
@@ -547,7 +664,6 @@ class FolderService
      * @param bool $condition
      * @return mixed|string
      */
-
     private function changeFolderName(string $folderName, bool $condition)
     {
         $deleted = '_deleted_';
@@ -580,13 +696,15 @@ class FolderService
      * @param array $originalFolder
      * @return bool
      */
-
     public function moveFolder(FolderEntity $newFolder, array $originalFolder)
     {
         try {
             $absPath = $this->constructFolderAbsPath($newFolder->getParentFolder());
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Ошибка при получении информации о каталоге из базы данных :' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Ошибка при получении информации о каталоге из базы данных :' . $exception->getMessage()
+            );
 
             return false;
         }
@@ -596,7 +714,10 @@ class FolderService
 
             return true;
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Ошибка файловой системы при переименовании каталога :' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Ошибка файловой системы при переименовании каталога :' . $exception->getMessage()
+            );
 
             return false;
         }
@@ -606,7 +727,6 @@ class FolderService
      * @param FolderEntity $folder
      * @return array
      */
-
     public function getOriginalData(FolderEntity $folder)
     {
         return $this->em->getUnitOfWork()->getOriginalEntityData($folder);
@@ -615,7 +735,6 @@ class FolderService
     /**
      * This is for folder name update
      */
-
     public function flushFolder()
     {
         $this->em->flush();
@@ -625,7 +744,6 @@ class FolderService
      * @param FolderEntity $folder
      * @return string
      */
-
     public function constructFolderAbsPath(FolderEntity $folder)
     {
         $folderAbsPath = $this->pathRoot;
@@ -642,7 +760,6 @@ class FolderService
      * @param bool $deleted
      * @return mixed
      */
-
     public function showEntryFolders(int $folderId, bool $deleted)
     {
         /** First code version to retrieve folders as nested tree */
@@ -664,7 +781,6 @@ class FolderService
      * @param ArchiveEntryEntity $archiveEntryEntity
      * @return string
      */
-
     public function moveEntryFolder(array $originalEntry, ArchiveEntryEntity $archiveEntryEntity)
     {
         $oldPath = $this->entryService->constructExistingPath($originalEntry);
@@ -675,7 +791,11 @@ class FolderService
         if ($originalEntry['archiveNumber'] != $archiveEntryEntity->getArchiveNumber()) {
             $oldEntryFile = $newPath . "/" . $originalEntry["archiveNumber"] . ".entry";
             $fs->rename($oldEntryFile, $newEntryFile);
-            $this->loggingService->renameLogFile($newPath, $originalEntry['archiveNumber'], $archiveEntryEntity->getArchiveNumber());
+            $this->loggingService->renameLogFile(
+                $newPath,
+                $originalEntry['archiveNumber'],
+                $archiveEntryEntity->getArchiveNumber()
+            );
         }
 
         return $newEntryFile;
@@ -685,7 +805,6 @@ class FolderService
      * @param FolderEntity $folderEntity
      * @param string $newFolderName
      */
-
     public function updateEntryFolderName(FolderEntity $folderEntity, string $newFolderName)
     {
         $folderEntity->setFolderName($newFolderName);

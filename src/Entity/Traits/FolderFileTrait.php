@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
@@ -22,7 +23,6 @@ trait FolderFileTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("DateTime")
      */
-
     protected $addTimestamp;
 
     /**
@@ -33,7 +33,6 @@ trait FolderFileTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("App\Entity\User")
      */
-
     protected $addedByUser;
 
     /**
@@ -41,8 +40,7 @@ trait FolderFileTrait
      * @param FolderEntity $parentFolder
      * @return $this
      */
-
-    public function setParentFolder(FolderEntity $parentFolder = null)
+    public function setParentFolder(FolderEntity $parentFolder = null): self
     {
         $this->parentFolder = $parentFolder;
 
@@ -51,10 +49,9 @@ trait FolderFileTrait
 
     /**
      * Get parentFolder
-     * @return FolderEntity
+     * @return FolderEntity|null
      */
-
-    public function getParentFolder()
+    public function getParentFolder(): ?FolderEntity
     {
         return $this->parentFolder;
     }
@@ -64,8 +61,7 @@ trait FolderFileTrait
      * @param \DateTime $addTimestamp
      * @return $this
      */
-
-    public function setAddTimestamp($addTimestamp)
+    public function setAddTimestamp($addTimestamp): self
     {
         $this->addTimestamp = $addTimestamp;
 
@@ -74,10 +70,9 @@ trait FolderFileTrait
 
     /**
      * Get addTimestamp
-     * @return \DateTime
+     * @return \DateTime|null
      */
-
-    public function getAddTimestamp()
+    public function getAddTimestamp(): ?\DateTime
     {
         return $this->addTimestamp;
     }
@@ -87,8 +82,7 @@ trait FolderFileTrait
      * @param User $addedByUser
      * @return $this
      */
-
-    public function setAddedByUser(User $addedByUser)
+    public function setAddedByUser(User $addedByUser): self
     {
         $this->addedByUser = $addedByUser;
 
@@ -97,10 +91,9 @@ trait FolderFileTrait
 
     /**
      * Get addedByUser
-     * @return string
+     * @return User|null
      */
-
-    public function getAddedByUser()
+    public function getAddedByUser(): ?User
     {
         return $this->addedByUser;
     }

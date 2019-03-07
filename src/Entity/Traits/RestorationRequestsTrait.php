@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
@@ -20,7 +21,6 @@ trait RestorationRequestsTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("boolean")
      */
-
     protected $requestMark;
 
     /**
@@ -28,7 +28,6 @@ trait RestorationRequestsTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("array")
      */
-
 /* Serializer\Type("ArrayCollection<App\Entity\User>") */
     protected $requestedByUsers;
 
@@ -36,7 +35,6 @@ trait RestorationRequestsTrait
      * @var $requestsCount
      * @Serializer\Type("integer")
      */
-
     protected $requestsCount;
 
     /**
@@ -44,8 +42,7 @@ trait RestorationRequestsTrait
      * @param bool $requestMark
      * @return $this
      */
-
-    public function setRequestMark(bool $requestMark)
+    public function setRequestMark(bool $requestMark): self
     {
         $this->requestMark = $requestMark;
 
@@ -56,8 +53,7 @@ trait RestorationRequestsTrait
      * Get requestMark
      * @return bool
      */
-
-    public function getRequestMark()
+    public function getRequestMark(): ?bool
     {
         return $this->requestMark;
     }
@@ -67,8 +63,7 @@ trait RestorationRequestsTrait
      * @param array $users
      * @return $this
      */
-
-    public function setRequestedByUsers(array $users = null)
+    public function setRequestedByUsers(array $users = null): self
     {
         $this->requestedByUsers = $users;
 
@@ -79,8 +74,7 @@ trait RestorationRequestsTrait
      * Get requestedByUsers
      * @return array
      */
-
-    public function getRequestedByUsers()
+    public function getRequestedByUsers(): ?array
     {
         return $this->requestedByUsers;
     }
@@ -90,8 +84,7 @@ trait RestorationRequestsTrait
      * @param int $count
      * @return $this
      */
-
-    public function setRequestsCount(int $count)
+    public function setRequestsCount(int $count): self
     {
         $this->requestsCount = $count;
 
@@ -102,8 +95,7 @@ trait RestorationRequestsTrait
      * Get requestsCount
      * @return int
      */
-
-    public function getRequestsCount()
+    public function getRequestsCount(): ?int
     {
         return count($this->getRequestedByUsers());
         //$arr = $this->getRequestedByUsers();

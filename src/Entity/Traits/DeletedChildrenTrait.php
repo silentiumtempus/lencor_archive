@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
@@ -20,7 +21,6 @@ trait DeletedChildrenTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("integer")
      */
-
     protected $deletedChildren;
 
     /**
@@ -28,8 +28,7 @@ trait DeletedChildrenTrait
      * @param int $deletedChildren
      * @return $this
      */
-
-    public function setDeletedChildren(int $deletedChildren)
+    public function setDeletedChildren(int $deletedChildren): self
     {
         $this->deletedChildren = $deletedChildren;
 
@@ -38,10 +37,9 @@ trait DeletedChildrenTrait
 
     /**
      * Get requestMark
-     * @return int
+     * @return int|null
      */
-
-    public function getDeletedChildren()
+    public function getDeletedChildren(): ?int
     {
         return $this->deletedChildren;
     }

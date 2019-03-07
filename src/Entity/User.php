@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity;
 
@@ -13,7 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  * @ORM\Table(name = "main_users")
  */
-
 class User extends DefaultUSer
 {
     /**
@@ -22,49 +22,42 @@ class User extends DefaultUSer
      * @ORM\GeneratedValue(strategy = "AUTO")
      * @Serializer\Type("integer")
      */
-
     protected $id;
 
     /**
      * @var $username
      * @Serializer\Type("string")
      */
-    
     protected $username;
 
     /**
      * @var $usernameCanonical
      * @Serializer\Type("string")
      */
-    
     protected $usernameCanonical;
 
     /**
      * @var $email
      * @Serializer\Type("string")
      */
-
     protected $email;
 
     /**
      * @var $emailCanonical
      * @Serializer\Type("string")
      */
-
     protected $emailCanonical;
 
     /**
      * @var $enabled
      * @Serializer\Type("boolean")
      */
-
     protected $enabled;
 
     /**
      * @var $salt
      * @Serializer\Type("string")
      */
-
     protected $salt;
 
     /**
@@ -78,7 +71,6 @@ class User extends DefaultUSer
      * @var $plainPassword
      * @Serializer\Type("string")
      */
-
     protected $plainPassword;
 
     /**
@@ -92,7 +84,6 @@ class User extends DefaultUSer
      * @var $confirmationToken
      * @Serializer\Type("string")
      */
-
     protected $confirmationToken;
 
     /**
@@ -104,16 +95,13 @@ class User extends DefaultUSer
 
     /**
      * @var $roles
-     *
      */
-
     protected $roles;
 
     /**
      * @var $groups
      * @Serializer\Type("GroupInterface")
      */
-
     protected $groups;
 
     /**
@@ -121,7 +109,6 @@ class User extends DefaultUSer
      * @Assert\Type("boolean")
      * @Serializer\Type("boolean")
      */
-
     protected $isADUser;
 
     /**
@@ -129,7 +116,6 @@ class User extends DefaultUSer
      * @Assert\Type("integer")
      * @Serializer\Type("integer")
      */
-
     protected $ADUserId;
 
     /**
@@ -137,8 +123,7 @@ class User extends DefaultUSer
      * @param boolean $isADUser
      * @return User
      */
-
-    public function setIsADUser($isADUser)
+    public function setIsADUser($isADUser): self
     {
         $this->isADUser = $isADUser;
 
@@ -149,8 +134,7 @@ class User extends DefaultUSer
      * Get isADUser
      * @return boolean
      */
-
-    public function getIsADUser()
+    public function getIsADUser(): ?bool
     {
         return $this->isADUser;
     }
@@ -160,8 +144,7 @@ class User extends DefaultUSer
      * @param $ADUserId
      * @return $this
      */
-
-    public function setADUserId($ADUserId)
+    public function setADUserId($ADUserId): self
     {
         $this->ADUserId = $ADUserId;
 
@@ -172,8 +155,7 @@ class User extends DefaultUSer
      * Get ADUserId
      * @return integer
      */
-
-    public function getADUserId()
+    public function getADUserId(): ?int
     {
         return $this->ADUserId;
     }

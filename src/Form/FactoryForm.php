@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Form;
 
@@ -14,7 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Class FactoryAddForm
  * @package App\Form
  */
-
 class FactoryForm extends AbstractType
 {
     /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity;
 
@@ -48,7 +49,6 @@ class FileEntity
      * @Gedmo\Versioned()
      * @Serializer\Type("string")
      */
-
     protected $fileName;
 
     /**
@@ -57,7 +57,6 @@ class FileEntity
      * @Gedmo\Versioned()
      * @Serializer\Type("Symfony\Component\HttpFoundation\File\File")
      */
-
     protected $uploadedFiles;
 
     /**
@@ -67,7 +66,6 @@ class FileEntity
      * @Gedmo\Versioned()
      * @Serializer\Type("App\Entity\FolderEntity")
      */
-
     protected $parentFolder;
 
     /**
@@ -77,7 +75,6 @@ class FileEntity
      * @Gedmo\Versioned()
      * @Serializer\Type("string")
      */
-
     protected $checksum;
 
     /**
@@ -85,7 +82,6 @@ class FileEntity
      * @Assert\Type("boolean")
      * @Serializer\Type("boolean")
      */
-
     protected $sumError;
 
     /**
@@ -94,13 +90,11 @@ class FileEntity
      * @ORM\Column(name = "slug", type = "string", length = 128)
      * @Serializer\Type("string")
      */
-
     private $slug;
 
     /**
      * Constructor
      */
-
     public function __construct()
     {
         $this->requestedByUsers = new ArrayCollection();
@@ -110,8 +104,7 @@ class FileEntity
      * Convert to string
      * @return mixed
      */
-
-    public function __toString()
+    public function __toString(): string
     {
         return $this->fileName;
     }
@@ -121,8 +114,7 @@ class FileEntity
      * @param array $files
      * @return FileEntity
      */
-
-    public function setUploadedFiles($files)
+    public function setUploadedFiles($files): self
     {
         $this->uploadedFiles = $files;
 
@@ -133,7 +125,6 @@ class FileEntity
      * Get files
      * @return array
      */
-
     public function getUploadedFiles()
     {
         return $this->uploadedFiles;
@@ -144,8 +135,7 @@ class FileEntity
      * @param string $fileName
      * @return FileEntity
      */
-
-    public function setFileName($fileName)
+    public function setFileName($fileName): self
     {
         $this->fileName = $fileName;
 
@@ -156,8 +146,7 @@ class FileEntity
      * Get fileName
      * @return string
      */
-
-    public function getFileName()
+    public function getFileName(): ?string
     {
         return $this->fileName;
     }
@@ -167,8 +156,7 @@ class FileEntity
      * @param string $checksum
      * @return FileEntity
      */
-
-    public function setChecksum($checksum)
+    public function setChecksum($checksum): self
     {
         $this->checksum = $checksum;
 
@@ -179,8 +167,7 @@ class FileEntity
      * Get checksum
      * @return string
      */
-
-    public function getChecksum()
+    public function getChecksum(): ?string
     {
         return $this->checksum;
     }
@@ -190,8 +177,7 @@ class FileEntity
      * @param boolean $sumError
      * @return FileEntity
      */
-
-    public function setSumError($sumError)
+    public function setSumError($sumError): self
     {
         $this->sumError = $sumError;
 
@@ -202,8 +188,7 @@ class FileEntity
      * Get sumError
      * @return boolean
      */
-
-    public function getSumError()
+    public function getSumError(): ?bool
     {
         return $this->sumError;
     }

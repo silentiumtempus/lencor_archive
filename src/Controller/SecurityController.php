@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Symfony package.
@@ -22,7 +23,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  * @author Ryan Weaver <weaverryan@gmail.com>
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
-
 class SecurityController extends Controller
 {
     /**
@@ -30,7 +30,6 @@ class SecurityController extends Controller
      *     options = { "expose" = true },
      *     name="security_login")
      */
-
     public function loginAction()
     {
         $authForm = $this->createForm(AuthForm::class);
@@ -55,7 +54,6 @@ class SecurityController extends Controller
      *     options = { "expose" = true },
      *     name="security_logout")
      */
-
     public function logoutAction()
     {
         throw new \Exception('This should never be reached!');

@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
 use App\Entity\User;
+use App\Factory\UserFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Ldap\Entry;
@@ -12,17 +14,17 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
  * Class UserService
  * @package App\Service
  */
-
 class UserService
 {
-    protected $em;
-    protected $container;
-    protected $encoderFactory;
-    protected $defaultPassword;
-    protected $userIDAttribute;
-    protected $LDAPAdminsGroup;
-    protected $usersRepository;
-    protected $serializerService;
+    private $em;
+    private $container;
+    private $userFactory;
+    private $encoderFactory;
+    private $defaultPassword;
+    private $userIDAttribute;
+    private $LDAPAdminsGroup;
+    private $usersRepository;
+    private $serializerService;
 
     /**
      * UserService constructor.
@@ -30,13 +32,19 @@ class UserService
      * @param ContainerInterface $container
      * @param EncoderFactoryInterface $encoderFactory
      * @param SerializerService $serializerService
+     * @param UserFactory $userFactory
      */
-
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, EncoderFactoryInterface $encoderFactory, SerializerService $serializerService)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContainerInterface $container,
+        EncoderFactoryInterface $encoderFactory,
+        SerializerService $serializerService,
+        UserFactory $userFactory
+    )
     {
-
         $this->em = $entityManager;
         $this->container = $container;
+        $this->userFactory = $userFactory;
         $this->encoderFactory = $encoderFactory;
         $this->serializerService = $serializerService;
         $this->defaultPassword = $this->container->getParameter('default.password');
@@ -47,10 +55,9 @@ class UserService
 
     /**
      * @param array $userIds
-     * @return \App\Entity\User[]|array
+     * @return \App\Entity\User[]|null
      */
-
-    public function getUsers(array $userIds)
+    public function getUsers(array $userIds): ?User
     {
         return $this->usersRepository->findById($userIds);
     }
@@ -59,19 +66,17 @@ class UserService
      * @param $username
      * @return \App\Entity\User[]|null
      */
-
-    public function getUserByCanonicalName($username)
+    public function getUserByCanonicalName($username): ?User
     {
-
         return $this->usersRepository->findOneByUsernameCanonical($username);
     }
 
     /**
      * @param Entry $remoteUser
      * @return User
+     * @throws \Exception
      */
-
-    public function createKerberosUser(Entry $remoteUser)
+    public function createKerberosUser(Entry $remoteUser): User
     {
         $user = $this->prepareKerberosUser($remoteUser);
         $user->setPassword($this->setDefaultPassword($user));
@@ -84,8 +89,7 @@ class UserService
      * @param User $user
      * @return string
      */
-
-    private function setDefaultPassword(User $user)
+    private function setDefaultPassword(User $user): string
     {
         $encoder = $this->encoderFactory->getEncoder($user);
 
@@ -95,21 +99,11 @@ class UserService
     /**
      * @param Entry $kerberosUser
      * @return User
+     * @throws \Exception
      */
-
-    private function prepareKerberosUser(Entry $kerberosUser)
+    private function prepareKerberosUser(Entry $kerberosUser): User
     {
-        $user = new User();
-        $email = ($kerberosUser->getAttribute('mail')[0]) ?? null;
-        $user
-            ->setUsername($kerberosUser->getAttribute('uid')[0])
-            ->setUsernameCanonical(($kerberosUser->getAttribute('uid')[0]))
-            ->setEmail($email)
-            ->setEmailCanonical($email)
-            ->setEnabled(true)
-            ->setLastLogin(new \DateTime())
-            ->setIsADUser(true)
-            ->setADUserId($kerberosUser->getAttribute($this->userIDAttribute)[0]);
+        $user = $this->userFactory->prepareKerberosUser($kerberosUser, $this->userIDAttribute);
         $groups = ($kerberosUser->getAttribute('memberOf')) ?? null;
         if ($groups) {
             $group_names = [];
@@ -128,8 +122,7 @@ class UserService
     /**
      * @param User $user
      */
-
-    private function persistNewKerberosUser(User $user)
+    private function persistNewKerberosUser(User $user): void
     {
         $this->em->persist($user);
         $this->serializerService->serializeUsers();
@@ -138,9 +131,9 @@ class UserService
 
     /**
      * @param User $user
+     * @throws \Exception
      */
-
-    public function updateLastLogin(User $user)
+    public function updateLastLogin(User $user): void
     {
         $user->setLastLogin(new \DateTime());
         $this->serializerService->serializeUsers();

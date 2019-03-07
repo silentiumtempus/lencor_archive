@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity;
 
@@ -33,7 +34,6 @@ class SettingEntity
      * @Gedmo\Versioned()
      * @Serializer\Type("App\Entity\FactoryEntity")
      */
-
     protected $factory;
 
     /**
@@ -43,7 +43,6 @@ class SettingEntity
      * @Gedmo\Versioned()
      * @Serializer\Type("string")
      */
-
     protected $settingName;
 
     /**
@@ -52,8 +51,7 @@ class SettingEntity
      * @return SettingEntity
      * @internal param FactoryEntity $factory
      */
-
-    public function setFactory(FactoryEntity $factory = null)
+    public function setFactory(FactoryEntity $factory = null): self
     {
         $this->factory = $factory;
 
@@ -64,8 +62,7 @@ class SettingEntity
      * Get factory
      * @return FactoryEntity
      */
-
-    public function getFactory()
+    public function getFactory(): ?FactoryEntity
     {
         return $this->factory;
     }
@@ -75,8 +72,7 @@ class SettingEntity
      * @param string $settingName
      * @return SettingEntity
      */
-
-    public function setSettingName($settingName)
+    public function setSettingName($settingName): self
     {
         $this->settingName = $settingName;
 
@@ -87,17 +83,15 @@ class SettingEntity
      * Get settingName
      * @return string
      */
-
-    public function getSettingName()
+    public function getSettingName(): ?string
     {
         return $this->settingName;
     }
 
     /**
-     * @return mixed
+     * @return string|null
      */
-
-    public function __toString()
+    public function __toString(): ?string
     {
         return $this->settingName;
     }

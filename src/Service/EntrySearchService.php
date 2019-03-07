@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -15,14 +16,13 @@ use Symfony\Component\Form\Form;
  * Class EntrySearchService
  * @package App\Service
  */
-
 class EntrySearchService
 {
-    protected $em;
-    protected $container;
-    protected $elasticManager;
-    protected $entriesRepository;
-    protected $dSwitcherService;
+    private $em;
+    private $container;
+    private $elasticManager;
+    private $entriesRepository;
+    private $dSwitcherService;
 
     /**
      * EntrySearchService constructor
@@ -32,8 +32,11 @@ class EntrySearchService
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, DeleteSwitcherService $dSwitcherService)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContainerInterface $container,
+        DeleteSwitcherService $dSwitcherService
+    )
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -47,7 +50,6 @@ class EntrySearchService
      * @param BoolQuery $filterQuery
      * @return BoolQuery
      */
-
     public function performSearch(Form $searchForm, BoolQuery $filterQuery)
     {
         foreach ($searchForm->getIterator() as $key => $child) {
@@ -81,8 +83,12 @@ class EntrySearchService
      * @param bool $switchDeleted
      * @return mixed
      */
-
-    public function getQueryResult(Query $finalQuery, BoolQuery $filterQuery, int $limit, bool $switchDeleted)
+    public function getQueryResult(
+        Query $finalQuery,
+        BoolQuery $filterQuery,
+        int $limit,
+        bool $switchDeleted
+    )
     {
         $filterQuery = $this->showDeleted($filterQuery, $switchDeleted);
         $finalQuery->setQuery($filterQuery);
@@ -96,8 +102,7 @@ class EntrySearchService
      * @param bool $switchDeleted
      * @return BoolQuery
      */
-
-    public function showDeleted(BoolQuery $filterQuery, bool $switchDeleted)
+    private function showDeleted(BoolQuery $filterQuery, bool $switchDeleted)
     {
         $this->dSwitcherService->switchDeleted($switchDeleted);
         $conditionDeleted = (new Term())->setTerm('deleted', $switchDeleted);

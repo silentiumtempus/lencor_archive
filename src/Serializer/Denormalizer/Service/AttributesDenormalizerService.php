@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Serializer\Denormalizer\Service;
 
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -19,7 +21,6 @@ class AttributesDenormalizerService
      * AttributesDenormalizerService constructor.
      * @param EntityManagerInterface $em
      */
-
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
@@ -31,9 +32,9 @@ class AttributesDenormalizerService
     /**
      * @param string $key
      * @param string|null $value
-     * @return null
+     * @return User|\DateTime|null
+     * @throws \Exception
      */
-
     public function denormalizeAttribute(string $key, string $value = null)
     {
         switch ($key) {
@@ -61,18 +62,17 @@ class AttributesDenormalizerService
      * @param array $data
      * @return null
      */
-
     public function denormalizeRequestedByUsers(array $data)
     {
         if (isset($data['requestedByUsers']) && is_string($data['requestedByUsers'])) {
             $users = [];
             if ($data['requestedByUsers'] !== "") {
                 if (strpos($data['requestedByUsers'], ',') !== false) {
-                    $usernames = explode(',', $data['requestedByUsers']);
+                    $userNames = explode(',', $data['requestedByUsers']);
                 } else {
-                    $usernames[] = $data['requestedByUsers'];
+                    $userNames[] = $data['requestedByUsers'];
                 }
-                foreach ($usernames as $requestedByUser) {
+                foreach ($userNames as $requestedByUser) {
                     $user = $this->usersRepository->findOneByUsername($requestedByUser);
                     $users[] = $user;
                 }
@@ -87,64 +87,65 @@ class AttributesDenormalizerService
 
     /**
      * @param string|null $userAttribute
-     * @return null
+     * @return User|null
      */
-
     private function denormalizeUserAttribute(string $userAttribute = null)
     {
         if (isset($userAttribute) && is_string($userAttribute)) {
             $user = $this->usersRepository->findOneByUsername($userAttribute);
 
             return $user;
-        }
+        } else {
 
-        return null;
+            return null;
+        }
     }
 
     /**
      * @param string $factoryName
-     * @return null
+     * @return User|null
      */
-
     private function denormalizeFactoryAttribute(string $factoryName)
     {
         if (isset($factoryName) && is_string($factoryName)) {
             $user = $this->factoriesRepository->findOneByFactoryName($factoryName);
 
             return $user;
-        }
+        } else {
 
-        return null;
+            return null;
+        }
     }
 
     /**
      * @param string $settingName
-     * @return null
+     * @return User|null
      */
-
     private function denormalizeSettingAttribute(string $settingName)
     {
         if (isset($settingName) && is_string($settingName)) {
             $user = $this->settingsRepository->findOneBySettingName($settingName);
 
             return $user;
-        }
+        } else {
 
-        return null;
+            return null;
+        }
     }
 
     /**
      * @param string $dateTime
      * @return \DateTime|null
+     * @throws \Exception
      */
-
     private function denormalizeTimestamp(string $dateTime)
     {
         if (isset($dateTime) && is_string($dateTime)) {
 
-            return  new \DateTime($dateTime);
-        }
+            return new \DateTime($dateTime);
+        } else {
 
-        return null;
+            return null;
+        }
     }
 }

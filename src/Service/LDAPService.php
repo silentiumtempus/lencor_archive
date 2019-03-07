@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -11,16 +12,14 @@ use Symfony\Component\Ldap\Ldap;
  * Class LDAPService
  * @package App\Service
  */
-
 class LDAPService
 {
-    protected $container;
+    private $container;
 
     /**
      * LDAPService constructor.
      * @param ContainerInterface $container
      */
-
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -29,7 +28,6 @@ class LDAPService
     /**
      * @return LDAPConnectionModel
      */
-
     private function createLDAPConnectionModel() {
 
         return new LDAPConnectionModel($this->container);
@@ -39,7 +37,6 @@ class LDAPService
      * @param LDAPConnectionModel $LDAPConnectionModel
      * @return Ldap
      */
-
     private function createLDAPConnection(LDAPConnectionModel $LDAPConnectionModel)
     {
 
@@ -55,7 +52,6 @@ class LDAPService
      * @param LDAPConnectionModel $LDAPConnectionModel
      * @return Ldap
      */
-
     private function prepareConnection(LDAPConnectionModel $LDAPConnectionModel) {
 
         $ldap = $this->createLDAPConnection($LDAPConnectionModel);
@@ -68,7 +64,6 @@ class LDAPService
      * @param $username
      * @return Entry
      */
-
     public function authorizeLDAPUserByUserName($username) {
 
         $LDAPConnectionModel = $this->createLDAPConnectionModel();
@@ -83,7 +78,6 @@ class LDAPService
      * @param string $username
      * @return mixed|Entry
      */
-
     private function findUser(Ldap $ldap, string $dc, string $username)
     {
         $query = $ldap->query($dc, '(&(uid='.$username.'))');

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Twig;
 
@@ -8,14 +9,12 @@ use Twig\Extension\AbstractExtension;
  * Class FileSizeConverterExtension
  * @package App\Twig
  */
-
 class FilesystemSizeConverterExtension extends AbstractExtension
 {
     /**
      * @return array|\Twig_Filter[]
      */
-
-    public function getFilters()
+    public function getFilters(): array
     {
         return array(
             new \Twig_SimpleFilter('bytes_convert', array($this, 'bytesConvert')),
@@ -25,8 +24,7 @@ class FilesystemSizeConverterExtension extends AbstractExtension
     /**
      * @return string
      */
-
-    public function getName()
+    public function getName(): string
     {
         return 'bytes_convert';
     }
@@ -36,7 +34,6 @@ class FilesystemSizeConverterExtension extends AbstractExtension
      * @param int $precision
      * @return string
      */
-
     public function bytesConvert(int $bytes, int $precision = 2)
     {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');

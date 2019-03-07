@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Serializer\Denormalizer;
 
@@ -18,7 +19,6 @@ class FileAttributesDenormalizer implements DenormalizerInterface
      * FileAttributesDenormalizer constructor.
      * @param AttributesDenormalizerService $attributesDenormalizerService
      */
-
     public function __construct(AttributesDenormalizerService $attributesDenormalizerService)
     {
         $this->attributesDenormalizerService = $attributesDenormalizerService;
@@ -30,18 +30,21 @@ class FileAttributesDenormalizer implements DenormalizerInterface
      * @param null $format
      * @param array $context
      * @return object
+     * @throws \Exception
      */
-
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         if (isset($data['addTimestamp']) && is_string($data['addTimestamp'])) {
-            $data['addTimestamp'] = $this->attributesDenormalizerService->denormalizeAttribute('addTimestamp', $data['addTimestamp']);
+            $data['addTimestamp'] =
+                $this->attributesDenormalizerService->denormalizeAttribute('addTimestamp', $data['addTimestamp']);
         }
         $userAttributes = ['addedByUser' => $data['addedByUser'], 'markedByUser' => $data['markedByUser']];
         foreach ($userAttributes as $key => $attribute) {
-            $data[$key] = $this->attributesDenormalizerService->denormalizeAttribute($key, $attribute);
+            $data[$key] =
+                $this->attributesDenormalizerService->denormalizeAttribute($key, $attribute);
         }
-        $data['requestedByUsers'] = $this->attributesDenormalizerService->denormalizeRequestedByUsers($data);
+        $data['requestedByUsers'] =
+            $this->attributesDenormalizerService->denormalizeRequestedByUsers($data);
         $normalizer = new ObjectNormalizer();
 
         return $normalizer->denormalize($data, $class, $format, $context);
@@ -53,10 +56,8 @@ class FileAttributesDenormalizer implements DenormalizerInterface
      * @param null $format
      * @return bool
      */
-
     public function supportsDenormalization($data, $type, $format = null)
     {
         return is_array($data) && ($type == self::class);
     }
-
 }

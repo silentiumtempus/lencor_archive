@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -31,7 +32,6 @@ class EntriesCreateController extends Controller
      * @param EntryService $entryService
      * @param FactoryService $factoryService
      * @param SettingService $settingService
-     * @param FolderService $folderService
      * @return Response
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\
@@ -45,12 +45,24 @@ class EntriesCreateController extends Controller
         Request $request,
         EntryService $entryService,
         FactoryService $factoryService,
-        SettingService $settingService,
-        FolderService $folderService)
+        SettingService $settingService
+    )
     {
-        $entryForm = $this->createForm(EntryForm::class, new ArchiveEntryEntity(), array('attr' => array('id' => 'entry_form', 'function' => 'add')));
-        $factoryForm = $this->createForm(FactoryForm::class, new FactoryEntity(), array('attr' => array('id' => 'factory_form', 'function' => 'add')));
-        $settingForm = $this->createForm(SettingForm::class, new SettingEntity(), array('attr' => array('id' => 'setting_form', 'function' => 'add')));
+        $entryForm = $this->createForm(
+            EntryForm::class,
+            new ArchiveEntryEntity(),
+            array('attr' => array('id' => 'entry_form', 'function' => 'add'))
+        );
+        $factoryForm = $this->createForm(
+            FactoryForm::class,
+            new FactoryEntity(),
+            array('attr' => array('id' => 'factory_form', 'function' => 'add'))
+        );
+        $settingForm = $this->createForm(
+            SettingForm::class,
+            new SettingEntity(),
+            array('attr' => array('id' => 'setting_form', 'function' => 'add'))
+        );
         $pathRoot = $this->getParameter('archive.storage_path');
         $fs = new Filesystem();
         $entryId = null;
@@ -78,10 +90,16 @@ class EntriesCreateController extends Controller
                     $settingService->createSetting($settingForm->getData());
                     $this->addFlash('success', 'Новая установка добавлена');
                 } catch (\Exception $exception) {
-                    $this->addFlash('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
+                    $this->addFlash(
+                        'danger',
+                        'Ошибка сохранения в БД: ' . $exception->getMessage()
+                    );
                 }
             } else {
-                $this->addFlash('danger', 'Установка с таким именем уже добавлена для выбранного завода');
+                $this->addFlash(
+                    'danger',
+                    'Установка с таким именем уже добавлена для выбранного завода'
+                );
             }
 
             return new Response();
@@ -90,22 +108,38 @@ class EntriesCreateController extends Controller
         $entryForm->handleRequest($request);
         if ($entryForm->isSubmitted() && $fs->exists($pathRoot)) {
             if ($entryForm->isValid()) {
-                $newEntry = $entryService->createEntry($entryForm->getData(), $this->getUser(), $folderService);
+                $newEntry = $entryService->createEntry($entryForm, $this->getUser());
 
                 return new Response($newEntry->getId());
             } else {
                 if (!$request->get('submit')) {
-                    $this->addFlash('danger', 'Форма заполнена неверно. Проверьте правильность заполнения формы');
+                    $this->addFlash(
+                        'danger',
+                        'Форма заполнена неверно. Проверьте правильность заполнения формы'
+                    );
 
                     return new Response();
                 }
 
-                return $this->render('lencor/admin/archive/archive_manager/entry_form.html.twig', array('entryForm' => $entryForm->createView(), 'entryId' => $entryId));
+                return $this->render(
+                    'lencor/admin/archive/archive_manager/entry_form.html.twig',
+                    array(
+                        'entryForm' => $entryForm->createView(),
+                        'entryId' => $entryId
+                    )
+                );
             }
         } elseif (!$fs->exists($pathRoot)) {
             $this->addFlash('danger', 'Корневой путь файловой системы архива недоступен');
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/new/new_entry.html.twig', array('entryForm' => $entryForm->createView(), 'factoryForm' => $factoryForm->createView(), 'settingForm' => $settingForm->createView(), 'entryId' => $entryId));
+        return $this->render(
+            'lencor/admin/archive/archive_manager/new/new_entry.html.twig',
+            array(
+                'entryForm' => $entryForm->createView(),
+                'factoryForm' => $factoryForm->createView(),
+                'settingForm' => $settingForm->createView(), 'entryId' => $entryId
+            )
+        );
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Serializer\Denormalizer;
 
@@ -18,8 +19,8 @@ class DateTimeAttributeDenormalizer implements DenormalizerInterface
      * @param null $format
      * @param array $context
      * @return object
+     * @throws \Exception
      */
-
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         if (isset($data['lastLogin']) && is_string($data['lastLogin'])) {
@@ -40,7 +41,6 @@ class DateTimeAttributeDenormalizer implements DenormalizerInterface
      * @param null $format
      * @return bool
      */
-
     public function supportsDenormalization($data, $type, $format = null)
     {
         return is_array($data) && ($type == User::class);

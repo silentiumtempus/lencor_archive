@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
 use App\Entity\FileEntity;
 use App\Entity\FolderEntity;
 use App\Entity\User;
+use App\Factory\FileFactory;
 use Doctrine\DBAL\Exception\ConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
@@ -19,19 +21,20 @@ use Symfony\Component\Form\FormInterface;
  */
 class FileService
 {
-    protected $em;
-    protected $container;
-    protected $session;
-    protected $folderService;
-    protected $filesRepository;
-    protected $entryService;
-    protected $pathRoot;
-    protected $deletedFolder;
-    protected $commonArchiveService;
-    protected $dSwitchService;
-    protected $fileChecksumService;
-    protected $loggingService;
-    protected $serializerService;
+    private $em;
+    private $container;
+    private $session;
+    private $folderService;
+    private $filesRepository;
+    private $entryService;
+    private $pathRoot;
+    private $deletedFolder;
+    private $commonArchiveService;
+    private $dSwitchService;
+    private $fileChecksumService;
+    private $loggingService;
+    private $serializerService;
+    private $fileFactory;
 
     /**
      * FileService constructor.
@@ -44,17 +47,20 @@ class FileService
      * @param FileChecksumService $fileChecksumService
      * @param LoggingService $loggingService
      * @param SerializerService $serializerService
+     * @param FileFactory $fileFactory
      */
-
-    public function __construct(EntityManagerInterface $entityManager,
-                                ContainerInterface $container,
-                                FolderService $folderService,
-                                EntryService $entryService,
-                                DeleteSwitcherService $dSwitchService,
-                                CommonArchiveService $commonArchiveService,
-                                FileChecksumService $fileChecksumService,
-                                LoggingService $loggingService,
-                                SerializerService $serializerService)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContainerInterface $container,
+        FolderService $folderService,
+        EntryService $entryService,
+        DeleteSwitcherService $dSwitchService,
+        CommonArchiveService $commonArchiveService,
+        FileChecksumService $fileChecksumService,
+        LoggingService $loggingService,
+        SerializerService $serializerService,
+        FileFactory $fileFactory
+    )
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -67,6 +73,7 @@ class FileService
         $this->fileChecksumService = $fileChecksumService;
         $this->loggingService = $loggingService;
         $this->serializerService = $serializerService;
+        $this->fileFactory = $fileFactory;
         $this->pathRoot = $this->container->getParameter('archive.storage_path');
         $this->deletedFolder = $this->container->getParameter('archive.deleted.folder_name');
     }
@@ -75,7 +82,6 @@ class FileService
      * @param int $fileId
      * @return mixed
      */
-
     public function getFileById(int $fileId)
     {
         return $this->filesRepository->findOneById($fileId);
@@ -86,7 +92,6 @@ class FileService
      * @param string $originalName
      * @return string
      */
-
     public function constructFileAbsPath(string $folderAbsPath, string $originalName)
     {
         return $folderAbsPath . "/" . $originalName;
@@ -97,13 +102,11 @@ class FileService
      * @param string $slashDirection
      * @return null|string
      */
-
     public function getFilePath(FileEntity $requestedFile, string $slashDirection)
     {
         $path = null;
         $binaryPath = $this->folderService->getPath($requestedFile->getParentFolder());
-        if ($slashDirection)
-        {
+        if ($slashDirection) {
             $slash = '/';
         } else {
             $slash = '\\';
@@ -126,7 +129,12 @@ class FileService
     {
         $filePath = $this->getFilePath($fileEntity, true);
 
-        return $this->container->getParameter('archive.http_path') . '/' . ($deleted ? '/' . $this->deletedFolder : '') . $filePath;
+        return
+            $this->container->getParameter('archive.http_path') .
+            '/' .
+            ($deleted ? '/' . $this->deletedFolder : '') .
+            $filePath
+            ;
     }
 
     /**
@@ -134,19 +142,22 @@ class FileService
      * @param bool $deleted ;
      * @return string
      */
-
     public function getFileSharePath(FileEntity $fileEntity, bool $deleted)
     {
         $fileAbsPath = $this->getFilePath($fileEntity, false);
 
-        return $this->container->getParameter('archive.share_path') . ($deleted ? '\\' . $this->deletedFolder : '') . '\\' . $fileAbsPath;
+        return
+            $this->container->getParameter('archive.share_path') .
+            ($deleted ? '\\' . $this->deletedFolder : '') .
+            '\\' .
+            $fileAbsPath
+            ;
     }
 
     /**
      * @param FileEntity $file
      * @return mixed
      */
-
     public function getFileDownloadInfo(FileEntity $file)
     {
         $parentEntry = $file->getParentFolder()->getRoot()->getArchiveEntry();
@@ -163,7 +174,6 @@ class FileService
      * @param array $filesArray
      * @return FolderEntity||array
      */
-
     public function getFilesList(array $filesArray)
     {
         return $this->filesRepository->findById($filesArray);
@@ -174,7 +184,6 @@ class FileService
      * @param User $user
      * @param int $entryId
      */
-
     public function uploadFiles(FormInterface $fileAddForm, User $user, int $entryId)
     {
         try {
@@ -187,14 +196,22 @@ class FileService
                 $parentFolder = $this->folderService->getParentFolder($fileAddForm->get('parentFolder')->getViewData());
                 $folderAbsPath = $this->folderService->constructFolderAbsPath($parentFolder);
             } catch (\Exception $exception) {
-                $this->session->getFlashBag()->add('danger', "Ошибка создания пути: " . $exception->getMessage());
+                $this->session->getFlashBag()->add(
+                    'danger',
+                    "Ошибка создания пути: " .
+                    $exception->getMessage()
+                );
             }
             try {
                 $passed = 0;
                 $errors = 0;
                 foreach ($newFilesArray->getUploadedFiles() as $newFile) {
-                    $newFileEntity = $this->createFileEntityFromArray($newFilesArray, $newFile);
-                    $originalName = pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) . "-" . (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension());
+                    $newFileEntity = $this->fileFactory->createFileEntityFromArray($newFilesArray, $newFile);
+                    $originalName =
+                        pathinfo($newFileEntity->getFileName()->getClientOriginalName(), PATHINFO_FILENAME) .
+                        "-" .
+                        (hash('crc32', uniqid(), false) . "." . $newFileEntity->getFileName()->getClientOriginalExtension()
+                        );
                     $fileWithAbsPath = $this->constructFileAbsPath($folderAbsPath, $originalName);
                     $fileSystem = new Filesystem();
                     if (!$fileSystem->exists($fileWithAbsPath)) {
@@ -203,35 +220,62 @@ class FileService
                             $newFileEntity->getFileName()->move($folderAbsPath, $originalName);
                             $this->prepareNewFile($newFileEntity, $parentFolder, $originalName, $user);
                             $newFileEntity->setChecksum(md5_file($fileWithAbsPath));
-                            $this->session->getFlashBag()->add('success', 'Новый документ ' . $originalName . ' записан в директорию ' . $parentFolder);
+                            $this->session->getFlashBag()->add(
+                                'success',
+                                'Новый документ ' . $originalName . ' записан в директорию ' . $parentFolder
+                            );
                         } catch (\Exception $exception) {
                             $uploadNotFailed = false;
-                            $this->session->getFlashBag()->add('danger', 'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage());
-                            $this->session->getFlashBag()->add('danger', 'Загрузка в БД прервана: изменения не внесены.');
+                            $this->session->getFlashBag()->add(
+                                'danger',
+                                'Новый документ не записан в директорию. Ошибка файловой системы: ' . $exception->getMessage()
+                            );
+                            $this->session->getFlashBag()->add(
+                                'danger',
+                                'Загрузка в БД прервана: изменения не внесены.'
+                            );
                             $errors++;
                         }
                     } else {
                         $fileExistedPreviously = true;
-                        $this->session->getFlashBag()->add('danger', 'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.');
+                        $this->session->getFlashBag()->add(
+                            'danger',
+                            'Документ с таким именем уже существует в директории назначения. Перезапись отклонена.'
+                        );
                         $errors++;
                     }
                     if ($uploadNotFailed) {
                         try {
                             $this->persistFile($newFileEntity);
-                            $this->session->getFlashBag()->add('success', 'Новый документ добавлен в БД');
+                            $this->session->getFlashBag()->add(
+                                'success',
+                                'Новый документ добавлен в БД'
+                            );
                             $passed++;
                         } catch (\Exception $exception) {
                             if ($exception instanceof ConstraintViolationException) {
-                                $this->session->getFlashBag()->add('danger', ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage());
+                                $this->session->getFlashBag()->add(
+                                    'danger',
+                                    ' В БД найдена запись о дубликате загружаемого документа. Именения БД отклонены.' . $exception->getMessage()
+                                );
                             } else {
-                                $this->session->getFlashBag()->add('danger', 'Документ не записан в БД. Ошибка БД: ' . $exception->getMessage());
+                                $this->session->getFlashBag()->add(
+                                    'danger',
+                                    'Документ не записан в БД. Ошибка БД: ' . $exception->getMessage()
+                                );
                             }
                             if (!$fileExistedPreviously) {
                                 try {
                                     $fileSystem->remove($fileWithAbsPath);
-                                    $this->session->getFlashBag()->add('danger', 'Новый документ удалён из директории в связи с ошибкой БД.');
+                                    $this->session->getFlashBag()->add(
+                                        'danger',
+                                        'Новый документ удалён из директории в связи с ошибкой БД.'
+                                    );
                                 } catch (IOException $IOException) {
-                                    $this->session->getFlashBag()->add('danger', 'Ошибка файловой системы при удалении загруженного документа: ' . $IOException->getMessage());
+                                    $this->session->getFlashBag()->add(
+                                        'danger',
+                                        'Ошибка файловой системы при удалении загруженного документа: ' . $IOException->getMessage()
+                                    );
                                 };
                             }
                             $errors++;
@@ -239,34 +283,30 @@ class FileService
                     };
                 }
                 if ($passed != 0) {
-                    $this->session->getFlashBag()->add('passed', $passed . ' файлов успешно загружено.');
+                    $this->session->getFlashBag()->add(
+                        'passed',
+                        $passed . ' файлов успешно загружено.'
+                    );
                     $this->entryService->updateEntryInfo($this->entryService->getEntryById($entryId), $user, true);
                 }
                 if ($errors != 0) {
-                    $this->session->getFlashBag()->add('errors', $errors . ' ошибок при загрузке.');
+                    $this->session->getFlashBag()->add(
+                        'errors',
+                        $errors . ' ошибок при загрузке.'
+                    );
                 }
             } catch (\Exception $exception) {
-                $this->session->getFlashBag()->add('danger', "Ошибка загрузки файла(ов) : " . $exception->getMessage());
+                $this->session->getFlashBag()->add(
+                    'danger',
+                    "Ошибка загрузки файла(ов) : " . $exception->getMessage()
+                );
             }
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Невозможно выполнить операцию. Ошибка: ' . $exception->getMessage())
+            ;
         }
-    }
-
-    /**
-     * @param FileEntity $fileArrayEntity
-     * @param $file
-     * @return FileEntity
-     */
-
-    private function createFileEntityFromArray(FileEntity $fileArrayEntity, $file)
-    {
-        $newFileEntity = clone $fileArrayEntity;
-        $newFileEntity
-            ->setFileName($file)
-            ->setUploadedFiles(null);
-
-        return $newFileEntity;
     }
 
     /**
@@ -275,8 +315,12 @@ class FileService
      * @param string $originalName
      * @param User $user
      */
-
-    private function prepareNewFile(FileEntity $newFileEntity, FolderEntity $parentFolder, string $originalName, User $user)
+    private function prepareNewFile(
+        FileEntity $newFileEntity,
+        FolderEntity $parentFolder,
+        string $originalName,
+        User $user
+    )
     {
         $parentFolder = $this->folderService->getParentFolder($parentFolder);
         $newFileEntity
@@ -291,7 +335,6 @@ class FileService
     /**
      * @param FileEntity $fileEntity
      */
-
     private function persistFile(FileEntity $fileEntity)
     {
         $this->em->persist($fileEntity);
@@ -302,8 +345,8 @@ class FileService
      * @param int $fileId
      * @param User $user
      * @return mixed
+     * @throws \Exception
      */
-
     public function removeFile(int $fileId, User $user)
     {
         $markedFiles = $this->filesRepository->findById($fileId);
@@ -316,11 +359,21 @@ class FileService
             }
             $this->em->flush();
             $this->entryService->updateEntryInfo($archiveEntryEntity, $user, false);
-            $this->session->getFlashBag()->add('success', 'Файл(ы) успешно помечены на удаление.');
+            $this->session->getFlashBag()->add(
+                'success',
+                'Файл(ы) успешно помечены на удаление.'
+            );
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Файл(ы) не помечены на удаление: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Файл(ы) не помечены на удаление: ' . $exception->getMessage()
+            );
         }
-        $this->loggingService->logEntryContent($archiveEntryEntity, $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $archiveEntryEntity,
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
 
         return $markedFiles;
     }
@@ -330,8 +383,8 @@ class FileService
      * @param User $user
      * @param FolderService $folderService
      * @return mixed
+     * @throws \Exception
      */
-
     public function requestFile(int $fileId, User $user, FolderService $folderService)
     {
         $requestedFiles = $this->filesRepository->findById($fileId);
@@ -353,11 +406,21 @@ class FileService
             }
             $this->em->flush();
             $this->entryService->updateEntryInfo($archiveEntryEntity, $user, false);
-            $this->session->getFlashBag()->add('success', 'Запрос на восстановление файла(ов) выполнен успешно.');
+            $this->session->getFlashBag()->add(
+                'success',
+                'Запрос на восстановление файла(ов) выполнен успешно.'
+            );
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Запрос на восстановление файла(ов) выполнен некорректно:  ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Запрос на восстановление файла(ов) выполнен некорректно:  ' . $exception->getMessage()
+            );
         }
-        $this->loggingService->logEntryContent($archiveEntryEntity, $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $archiveEntryEntity,
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
 
         return $requestedFiles;
     }
@@ -366,8 +429,8 @@ class FileService
      * @param int $fileId
      * @param User $user
      * @return mixed
+     * @throws \Exception
      */
-
     public function restoreFile(int $fileId, User $user)
     {
         $restoredFiles = $this->filesRepository->findById($fileId);
@@ -382,11 +445,21 @@ class FileService
             }
             $this->em->flush();
             $this->entryService->updateEntryInfo($archiveEntryEntity, $user, false);
-            $this->session->getFlashBag()->add('success', 'Метка на удаление файла(ов) снята успешно.');
+            $this->session->getFlashBag()->add(
+                'success',
+                'Метка на удаление файла(ов) снята успешно.'
+            );
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Снятие метки на удаление не выполнено:  ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Снятие метки на удаление не выполнено:  ' . $exception->getMessage()
+            );
         }
-        $this->loggingService->logEntryContent($archiveEntryEntity, $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $archiveEntryEntity,
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
 
         return $restoredFiles;
     }
@@ -394,9 +467,9 @@ class FileService
     /**
      * @param array $filesArray
      * @param User $user
-     * @return int $status
+     * @return int
+     * @throws \Exception
      */
-
     public function deleteFiles(array $filesArray, User $user)
     {
         $deletedFiles = $this->filesRepository->find($filesArray);
@@ -408,12 +481,22 @@ class FileService
                 $status = $this->deleteFile($file, true, null);
             }
             $this->entryService->updateEntryInfo($archiveEntryEntity, $user, true);
-            $this->session->getFlashBag()->add('success', 'Файл(ы) успешно удалены.');
+            $this->session->getFlashBag()->add(
+                'success',
+                'Файл(ы) успешно удалены.'
+            );
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Удалене файла(ов) не выполнено:  ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Удалене файла(ов) не выполнено:  ' . $exception->getMessage()
+            );
             $status = 0;
         }
-        $this->loggingService->logEntryContent($archiveEntryEntity, $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $archiveEntryEntity,
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
 
         return $status;
     }
@@ -422,9 +505,9 @@ class FileService
      * @param FileEntity $file
      * @param bool $multiple
      * @param User $user
-     * @return int $status
+     * @return int
+     * @throws \Exception
      */
-
     public function deleteFile(FileEntity $file, bool $multiple, User $user)
     {
         try {
@@ -444,7 +527,9 @@ class FileService
                     } else {
                         $ext = $targzPosIndex;
                     }
-                    $file->setFileName(substr($file->getFileName(), 0, $ext) . $deleted . substr($file->getFileName(), $ext));
+                    $file->setFileName(
+                        substr($file->getFileName(), 0, $ext) . $deleted . substr($file->getFileName(), $ext)
+                    );
                 }
             } else {
                 $restored_length = strlen($restored);
@@ -459,15 +544,28 @@ class FileService
                     $this->entryService->updateEntryInfo($archiveEntry, $user, true);
                 }
             }
-            $this->session->getFlashBag()->add('success', 'Файл ' . $file->getFileName() . ' успешно удалён');
-            $this->loggingService->logEntryContent($archiveEntry, $user, $this->session->getFlashBag()->peekAll());
+            $this->session->getFlashBag()->add(
+                'success',
+                'Файл ' . $file->getFileName() . ' успешно удалён'
+            );
+            $this->loggingService->logEntryContent(
+                $archiveEntry,
+                $user,
+                $this->session->getFlashBag()->peekAll()
+            );
             $status = 1;
-        } catch (\Exception $exception)
-        {
-            $this->session->getFlashBag()->add('danger', 'Файл ' . $file->getFileName() . ' не удалён из за непредвиденной ошибки: ' . $exception->getMessage());
+        } catch (\Exception $exception) {
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Файл ' . $file->getFileName() . ' не удалён из за непредвиденной ошибки: ' . $exception->getMessage()
+            );
             $status = 0;
         }
-        $this->loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $file->getParentFolder()->getRoot()->getArchiveEntry(),
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
 
         return $status;
     }
@@ -476,8 +574,8 @@ class FileService
      * @param array $filesArray
      * @param User $user
      * @return array
+     * @throws \Exception
      */
-
     public function unDeleteFiles(array $filesArray, User $user)
     {
         $folderIdsArray = [];
@@ -488,9 +586,15 @@ class FileService
                 $folderIdsArray = $this->unDeleteFile($file, $folderIdsArray, true, null);
             }
             $this->entryService->updateEntryInfo($archiveEntryEntity, $user, true);
-            $this->session->getFlashBag()->add('success', 'Файлы успешно восстановлены.');
+            $this->session->getFlashBag()->add(
+                'success',
+                'Файлы успешно восстановлены.'
+            );
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Файлы не восстановлены: ' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Файлы не восстановлены: ' . $exception->getMessage()
+            );
         }
         $this->loggingService->logEntryContent($archiveEntryEntity, $user, $this->session->getFlashBag()->peekAll());
 
@@ -503,8 +607,8 @@ class FileService
      * @param bool $multiple
      * @param User $user
      * @return array
+     * @throws \Exception
      */
-
     public function unDeleteFile(FileEntity $file, array $folderIdsArray, bool $multiple, User $user)
     {
         $folderIdsArray['remove'] = [];
@@ -529,7 +633,9 @@ class FileService
                     } else {
                         $ext = $targzPosIndex;
                     }
-                    $file->setFileName(substr($file->getFileName(), 0, $ext) . '_restored_' . substr($file->getFileName(), $ext));
+                    $file->setFileName(
+                        substr($file->getFileName(), 0, $ext) . '_restored_' . substr($file->getFileName(), $ext)
+                    );
                 }
             }
             if ($this->moveFile($file, $originalFile) === true) {
@@ -542,12 +648,14 @@ class FileService
                         if ($folder->getRoot()->getId() !== $folder->getId()) {
                             $this->commonArchiveService->changeDeletesQuantity($folder->getParentFolder(), false);
                             $i = ($folder->getDeletedChildren() === 0) ? 'remove' : 'reload';
-                            $folderIdsArray[$i][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, $i);
+                            $folderIdsArray[$i][] =
+                                $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, $i);
                         }
                     } else {
                         if ($folder->getRoot()->getId() !== $folder->getId()) {
                             if ($folder->getDeletedChildren() === 0) {
-                                $folderIdsArray['remove'][] = $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
+                                $folderIdsArray['remove'][] =
+                                    $this->commonArchiveService->addFolderIdToArray($folder, $folderIdsArray, 'remove');
                             }
                         }
                     }
@@ -558,11 +666,21 @@ class FileService
                 }
             }
             array_reverse($folderIdsArray['remove']);
-            $this->session->getFlashBag()->add('success', 'Файл ' . $originalFile['fileName'] . ' успешно восстановлен.');
+            $this->session->getFlashBag()->add(
+                'success',
+                'Файл ' . $originalFile['fileName'] . ' успешно восстановлен.'
+            );
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Файл ' . $originalFile['fileName'] . ' не восстановлен. Ошибка' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Файл ' . $originalFile['fileName'] . ' не восстановлен. Ошибка' . $exception->getMessage()
+            );
         }
-        $this->loggingService->logEntryContent($file->getParentFolder()->getRoot()->getArchiveEntry(), $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $file->getParentFolder()->getRoot()->getArchiveEntry(),
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
 
         return $folderIdsArray;
     }
@@ -570,8 +688,8 @@ class FileService
     /**
      * @param FileEntity $file
      * @param User $user
+     * @throws \Exception
      */
-
     public function renameFile(FileEntity $file, User $user)
     {
         $originalFile = $this->getOriginalData($file);
@@ -581,17 +699,33 @@ class FileService
                 if ($this->moveFile($file, $originalFile)) {
                     $this->flushFile();
                     $this->entryService->updateEntryInfo($archiveEntryEntity, $user, true);
-                    $this->session->getFlashBag()->add('success', 'Переименование ' . $originalFile['fileName'] . ' > ' . $file->getFileName() . ' успешно произведено.');
+                    $this->session->getFlashBag()->add(
+                        'success',
+                        'Переименование ' . $originalFile['fileName'] . ' > ' . $file->getFileName() . ' успешно произведено.'
+                    );
                 } else {
-                    $this->session->getFlashBag()->add('danger', 'Переименование отменено из за внутренней ошибки.');
+                    $this->session->getFlashBag()->add(
+                        'danger',
+                        'Переименование отменено из за внутренней ошибки.'
+                    );
                 }
             } else {
-                $this->session->getFlashBag()->add('warning', 'Новое имя файла ' . $file->getFileName() . ' совпадает с текущим. Операция отклонена.');
+                $this->session->getFlashBag()->add(
+                    'warning',
+                    'Новое имя файла ' . $file->getFileName() . ' совпадает с текущим. Операция отклонена.'
+                );
             }
         } else {
-            $this->session->getFlashBag()->add('warning', 'Переименование удалённого файла запрещено');
+            $this->session->getFlashBag()->add(
+                'warning',
+                'Переименование удалённого файла запрещено'
+            );
         }
-        $this->loggingService->logEntryContent($archiveEntryEntity, $user, $this->session->getFlashBag()->peekAll());
+        $this->loggingService->logEntryContent(
+            $archiveEntryEntity,
+            $user,
+            $this->session->getFlashBag()->peekAll()
+        );
     }
 
     /**
@@ -599,23 +733,30 @@ class FileService
      * @param array $originalFile
      * @return bool
      */
-
     public function moveFile(FileEntity $newFile, array $originalFile)
     {
         try {
             $absPath = $this->folderService->constructFolderAbsPath($newFile->getParentFolder());
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Ошибка при получении информации о файле из базы данных :' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Ошибка при получении информации о файле из базы данных :' . $exception->getMessage()
+            );
 
             return false;
         }
         try {
             $fs = new Filesystem();
-            $fs->rename($absPath . "/" . $originalFile["fileName"], $absPath . "/" . $newFile->getFileName());
+            $fs->rename(
+                $absPath . "/" . $originalFile["fileName"],
+                $absPath . "/" . $newFile->getFileName());
 
             return true;
         } catch (\Exception $exception) {
-            $this->session->getFlashBag()->add('danger', 'Ошибка файловой системы при переименовании файла :' . $exception->getMessage());
+            $this->session->getFlashBag()->add(
+                'danger',
+                'Ошибка файловой системы при переименовании файла :' . $exception->getMessage()
+            );
 
             return false;
         }
@@ -625,7 +766,6 @@ class FileService
      * @param FileEntity $file
      * @return array
      */
-
     public function getOriginalData(FileEntity $file)
     {
         return $this->em->getUnitOfWork()->getOriginalEntityData($file);
@@ -634,7 +774,6 @@ class FileService
     /**
      * This is for file name update
      */
-
     public function flushFile()
     {
         $this->em->flush();
@@ -645,7 +784,6 @@ class FileService
      * @param User $user
      * @return bool
      */
-
     public function removeFilesByParentFolder(FolderEntity $folder, User $user)
     {
         $childFiles = $folder->getFiles();
@@ -667,7 +805,6 @@ class FileService
      * @param bool $deleted
      * @return mixed
      */
-
     public function showEntryFiles(int $folderId, bool $deleted)
     {
         if ($this->folderService->getFolderEntry($folderId)->getDeleted()) {
@@ -689,7 +826,6 @@ class FileService
      * @param int $fileId
      * @return mixed
      */
-
     public function reloadFileDetails(int $fileId)
     {
         return $this->filesRepository->findOneById($fileId);

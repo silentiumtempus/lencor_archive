@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Doctrine;
 
@@ -16,7 +17,6 @@ class DeletedFilter extends SQLFilter
      * @param string $targetTableAlias
      * @return string
      */
-
     public function addFilterConstraint(ClassMetadata $targetEntity, $targetTableAlias)
     {
         $classes = [
@@ -35,13 +35,25 @@ class DeletedFilter extends SQLFilter
 
             return '';
 
-        } else if ($targetEntity->getReflectionClass()->name == 'App\Entity\ArchiveEntryEntity' || $targetEntity->getReflectionClass()->name == 'App\Entity\FolderEntity') {
+        } else if (
+            $targetEntity->getReflectionClass()->name == 'App\Entity\ArchiveEntryEntity' ||
+            $targetEntity->getReflectionClass()->name == 'App\Entity\FolderEntity'
+        ) {
             if ($this->getParameter('deleted') == '\'1\'') {
 
-                return sprintf('%s.deleted = %s or %s.deleted_children > 0', $targetTableAlias, $this->getParameter('deleted'), $targetTableAlias);
+                return sprintf(
+                    '%s.deleted = %s or %s.deleted_children > 0',
+                    $targetTableAlias,
+                    $this->getParameter('deleted'),
+                    $targetTableAlias
+                );
             }
         }
 
-        return sprintf('%s.deleted = %s', $targetTableAlias, $this->getParameter('deleted'));
+        return sprintf(
+            '%s.deleted = %s',
+            $targetTableAlias,
+            $this->getParameter('deleted')
+        );
     }
 }

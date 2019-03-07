@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Repository;
 
@@ -10,7 +11,6 @@ use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
  * Class FolderRepository
  * @package App\Repository
  */
-
 class FolderRepository extends NestedTreeRepository
 {
     /**
@@ -18,7 +18,6 @@ class FolderRepository extends NestedTreeRepository
      * @param int $folderId
      * @return QueryBuilder
      */
-
     public function showEntryFoldersQuery(EntityRepository $entityRepository, int $folderId)
     {
         return $entityRepository->createQueryBuilder('parent')

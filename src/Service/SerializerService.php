@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -18,24 +19,21 @@ use Symfony\Component\Serializer\Serializer;
  * Class SerializerService
  * @package App\Service
  */
-
 class SerializerService
 {
-    protected $em;
-    protected $container;
-    protected $pathRoot;
-    protected $internalFolder;
-    protected $pathPermissions;
-    protected $usersRepository;
-    protected $factoriesRepository;
-    protected $settingsRepository;
+    private $em;
+    private $container;
+    private $pathRoot;
+    private $internalFolder;
+    private $pathPermissions;
+    private $usersRepository;
+    private $factoriesRepository;
 
     /**
      * SerializerService constructor.
      * @param EntityManagerInterface $em
      * @param ContainerInterface $container
      */
-
     public function __construct(EntityManagerInterface $em, ContainerInterface $container)
     {
         $this->em = $em;
@@ -50,7 +48,6 @@ class SerializerService
     /**
      * @return string
      */
-
     private function checkAndCreateInternalFolderPath()
     {
         $fs = new Filesystem();
@@ -65,7 +62,6 @@ class SerializerService
     /**
      * @return string
      */
-
     private function constructInternalFolderPath()
     {
         return $this->pathRoot . '/' . $this->internalFolder . '/';
@@ -74,7 +70,6 @@ class SerializerService
     /**
      * @return ObjectNormalizer
      */
-
     private function prepareJSONNormalizer()
     {
         $encoder = new JsonEncoder();
@@ -91,7 +86,6 @@ class SerializerService
     /**
      * @return bool
      */
-
     public function serializeFactoriesAndSettings()
     {
         $fs = new Filesystem();
@@ -117,7 +111,6 @@ class SerializerService
     /**
      * @return bool
      */
-
     public function serializeUsers()
     {
         $fs = new Filesystem();
@@ -126,7 +119,17 @@ class SerializerService
         $internalUsersFile = $internalPath . "users";
         $users = $this->usersRepository->findAll();
         $normalizer->setIgnoredAttributes(array(
-            'user' => 'salt', 'plainPassword', 'accountNonExpired', 'accountNonLocked', 'superAdmin', 'groups', 'groupNames', 'credentialsNonExpired', 'passwordRequestedAt', 'confirmationToken'
+            'user' =>
+                'salt',
+                'plainPassword',
+                'accountNonExpired',
+                'accountNonLocked',
+                'superAdmin',
+                'groups',
+                'groupNames',
+                'credentialsNonExpired',
+                'passwordRequestedAt',
+                'confirmationToken'
         ));
         $timeStamp = function ($dateTime) {
             return (!$dateTime instanceof \DateTime) ?: $dateTime->format(\DateTime::ISO8601);
@@ -156,14 +159,16 @@ class SerializerService
      * @param bool $isNew
      * @return bool
      */
-
     public function serializeEntry(ArchiveEntryEntity $newEntry, string $entryPath, bool $isNew)
     {
         //try {
         $filename = $entryPath . "/" . $newEntry->getArchiveNumber() . ".entry";
         $fs = new Filesystem();
         if ($isNew && $fs->exists($filename)) {
-            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка: файл ячейки: ' . $filename . ' уже существует. Продолжение прервано.');
+            $this->container->get('session')->getFlashBag()->add(
+                'danger',
+                'Ошибка: файл ячейки: ' . $filename . ' уже существует. Продолжение прервано.'
+            );
             throw new IOException('Файл ячейки уже существует');
         } else {
             $fs->touch($filename);

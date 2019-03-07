@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -35,7 +36,6 @@ class FoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_view_folders")
      */
-
     public function showEntryFolders(Request $request, FolderService $folderService)
     {
         $folderTree = null;
@@ -43,7 +43,10 @@ class FoldersController extends Controller
             $folderTree = $folderService->showEntryFolders($request->get('folderId'), (bool) $request->get('deleted'));
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig', array('folderTree' => $folderTree, 'placeholder' => true));
+        return $this->render(
+            'lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig',
+            array('folderTree' => $folderTree, 'placeholder' => true)
+        );
     }
 
     /**
@@ -52,13 +55,18 @@ class FoldersController extends Controller
      * @param EntryService $archiveEntryService
      * @param LoggingService $loggingService
      * @return Response
+     * @throws \Exception
      * @Security("has_role('ROLE_USER')")
      * @Route("/entries/new_folder",
      *     options = { "expose" = true },
      *     name = "entries_new_folder")
      */
-
-    public function createNewFolder(Request $request, FolderService $folderService, EntryService $archiveEntryService, LoggingService $loggingService)
+    public function createNewFolder(
+        Request $request,
+        FolderService $folderService,
+        EntryService $archiveEntryService,
+        LoggingService $loggingService
+    )
     {
         $session = $this->container->get('session');
         $folderId = $archiveEntryService->setFolderId($request);
@@ -68,18 +76,29 @@ class FoldersController extends Controller
         $folderAddForm = $this->createForm(
             FolderAddForm::class,
             $newFolder,
-            array('action' => $this->generateUrl('entries_new_folder'), 'attr' => array('isRoot' => $isRoot, 'folderId' => $folderId, 'id' => 'folder_add_form'))
+            array(
+                'action' => $this->generateUrl('entries_new_folder'),
+                'attr' => array('isRoot' => $isRoot, 'folderId' => $folderId, 'id' => 'folder_add_form')
+            )
         );
         $folderAddForm->handleRequest($request);
         if ($folderAddForm->isSubmitted() && $request->isMethod('POST')) {
             if ($folderAddForm->isValid()) {
                 $folderService->createNewFolder($folderAddForm, $this->getUser(), $entry->getId());
             } else {
-                $this->addFlash('danger', 'Директория ' . $folderAddForm->getName() . ' уже существует в каталоге ' . $folderAddForm->getParent()->getViewData() . '. Операция прервана');
+                $this->addFlash(
+                    'danger',
+                    'Директория ' . $folderAddForm->getName() . ' уже существует в каталоге ' . $folderAddForm->getParent()->getViewData() . '. Операция прервана'
+                );
             }
             $loggingService->logEntryContent($entry, $this->getUser(), $session->getFlashBag()->peekAll());
         }
-        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/new_folder.html.twig', array('folderAddForm' => $folderAddForm->createView(), 'entryId' => $entry->getId()));
+        return $this->render(
+            'lencor/admin/archive/archive_manager/files_and_folders/new_folder.html.twig',
+            array(
+                'folderAddForm' => $folderAddForm->createView(),
+                'entryId' => $entry->getId())
+        );
     }
 
 
@@ -88,32 +107,46 @@ class FoldersController extends Controller
      * @param FolderService $folderService
      * @param FileService $fileService
      * @return Response
+     * @throws \Exception
      * @Security("has_role('ROLE_USER')")
      * @Route("/entries/remove_folder",
      *     options = { "expose" = true },
      *     name = "entries_remove_folder")
      */
-
-    public function removeFolder(Request $request, FolderService $folderService, FileService $fileService)
+    public function removeFolder(
+        Request $request,
+        FolderService $folderService,
+        FileService $fileService
+    )
     {
-        $removedFolders[] = $folderService->removeFolder($request->get('folderId'), $this->getUser(), $fileService);
+        $removedFolders[] = $folderService->removeFolder(
+            $request->get('folderId'),
+            $this->getUser(),
+            $fileService
+        );
 
-        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig', array('folderTree' => $removedFolders));
+        return $this->render(
+            'lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig',
+            array('folderTree' => $removedFolders)
+        );
     }
 
     /**
      * @param Request $request
      * @param FolderService $folderService
      * @return JsonResponse
+     * @throws \Exception
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("/entries/restore_folder",
      *     options = { "expose" = true },
      *     name = "entries_restore_folder")
      */
-
     public function restoreFolder(Request $request, FolderService $folderService)
     {
-        $restoredFolders = $folderService->restoreFolder($request->get('folderId'), $this->getUser());
+        $restoredFolders = $folderService->restoreFolder(
+            $request->get('folderId'),
+            $this->getUser()
+        );
 
         return new JsonResponse($restoredFolders);
     }
@@ -122,17 +155,20 @@ class FoldersController extends Controller
      * @param Request $request
      * @param FolderService $folderService
      * @return Response
+     * @throws \Exception
      * @Security("has_role('ROLE_USER')")
      * @Route("/entries/request_folder",
      *     options = { "expose" = true },
      *     name = "entries_request_folder")
      */
-
     public function requestFolder(Request $request, FolderService $folderService)
     {
         $requestedFolder[] = $folderService->requestFolder($request->get('folderId'), $this->getUser());
 
-        return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig', array('folderTree' => $requestedFolder));
+        return $this->render(
+            'lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig',
+            array('folderTree' => $requestedFolder)
+        );
     }
 
     /**
@@ -141,14 +177,19 @@ class FoldersController extends Controller
      * @param FolderService $folderService
      * @param LoggingService $loggingService
      * @return Response
+     * @throws \Exception
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/rename_folder/{folder}",
      *     options = { "expose" = true },
      *     name = "entries_rename_folder")
      * @ParamConverter("folder", class = "App:FolderEntity", options = { "id" = "folder" })
      */
-
-    public function renameFolder(Request $request, FolderEntity $folder, FolderService $folderService, LoggingService $loggingService)
+    public function renameFolder(
+        Request $request,
+        FolderEntity $folder,
+        FolderService $folderService,
+        LoggingService $loggingService
+    )
     {
         $session = $this->container->get('session');
         $form_id = 'folder_rename_form_' . $folder->getId();
@@ -157,15 +198,28 @@ class FoldersController extends Controller
         if ($folderRenameForm->isSubmitted()) {
             if ($folderRenameForm->isValid()) {
                 $folderService->renameFolder($folder, $this->getUser());
-                return $this->render('lencor/admin/archive/archive_manager/files_and_folders/folder.html.twig', array('folder' => $folder));
+                return $this->render(
+                    'lencor/admin/archive/archive_manager/files_and_folders/folder.html.twig',
+                    array('folder' => $folder)
+                );
             } else {
-                $this->addFlash('danger', 'Форма заполнена неверно, недопустимое или уже существующее имя каталога ' . $folder->getFolderName() . '.');
+                $this->addFlash(
+                    'danger',
+                    'Форма заполнена неверно, недопустимое или уже существующее имя каталога ' . $folder->getFolderName() . '.'
+                );
             }
 
-            $loggingService->logEntryContent($folder->getRoot()->getArchiveEntry(), $this->getUser(), $session->getFlashBag()->peekAll());
+            $loggingService->logEntryContent(
+                $folder->getRoot()->getArchiveEntry(),
+                $this->getUser(),
+                $session->getFlashBag()->peekAll()
+            );
         }
 
-        return $this->render('lencor/admin/archive/administration/files_and_folders/folder_rename.html.twig', array('folderRenameForm' => $folderRenameForm->createView()));
+        return $this->render(
+            'lencor/admin/archive/administration/files_and_folders/folder_rename.html.twig',
+            array('folderRenameForm' => $folderRenameForm->createView())
+        );
     }
 
     /**
@@ -181,16 +235,25 @@ class FoldersController extends Controller
      *     name = "entries_reload_folder")
      * @ParamConverter("folder", class = "App:FolderEntity", isOptional = true, options = { "id" = "folder" })
      */
-
-    public function reloadFolder(Request $request, FolderService $folderService, FolderEntity $folder = null)
+    public function reloadFolder(
+        Request $request,
+        FolderService $folderService,
+        FolderEntity $folder = null
+    )
     {
         if ($request->request->has('foldersArray')) {
             $foldersArray = $folderService->getFoldersList($request->get('foldersArray'));
 
-            return $this->render('lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig', array('folderTree' => $foldersArray));
+            return $this->render(
+                'lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig',
+                array('folderTree' => $foldersArray)
+            );
         } else if ($folder) {
 
-            return $this->render('lencor/admin/archive/archive_manager/files_and_folders/folder.html.twig', array('folder' => $folder));
+            return $this->render(
+                'lencor/admin/archive/archive_manager/files_and_folders/folder.html.twig',
+                array('folder' => $folder)
+            );
         } else {
 
             return $this->redirectToRoute('entries');
@@ -211,15 +274,27 @@ class FoldersController extends Controller
      *     name = "entries_delete_folder")
      * @ParamConverter("folder", class = "App:FolderEntity", isOptional = true, options = { "id" = "folder" })
      */
-    public function deleteFolder(Request $request, FolderEntity $folder, FolderService $folderService, FileService $fileService) {
+    public function deleteFolder(
+        Request $request,
+        FolderEntity $folder,
+        FolderService $folderService,
+        FileService $fileService
+    )
+    {
         if ($request->request->has('foldersArray')) {
             try {
                 $folderService->deleteFolders($request->get('filesArray'), $fileService, $this->getUser());
-                $this->addFlash('success', 'Директории успешно удалены');
+                $this->addFlash(
+                    'success',
+                    'Директории успешно удалены'
+                );
 
                 return new Response(1);
             } catch (\Exception $exception) {
-                $this->addFlash('danger', 'Директории не удалёны из за непредвиденной ошибки: ' . $exception->getMessage());
+                $this->addFlash(
+                    'danger',
+                    'Директории не удалёны из за непредвиденной ошибки: ' . $exception->getMessage()
+                );
 
                 return new Response(0);
             }
@@ -252,8 +327,11 @@ class FoldersController extends Controller
      *     )
      * @ParamConverter("folder", class = "App:FolderEntity", isOptional = true, options = { "id" = "folder" })
      */
-
-    public function unDeleteFolder(Request $request, FolderEntity $folder, FolderService $folderService)
+    public function unDeleteFolder(
+        Request $request,
+        FolderEntity $folder,
+        FolderService $folderService
+    )
     {
         //TODO: to be improved
         if ($request->request->has('filesArray')) {
@@ -289,7 +367,6 @@ class FoldersController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_get_folder_entryId")
      */
-
     public function getFolderEntryId(Request $request, FolderService $folderService)
     {
         $entry = null;

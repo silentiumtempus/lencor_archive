@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Serializer\Denormalizer;
 
@@ -21,7 +22,6 @@ class FolderAttributesDenormalizer implements DenormalizerInterface
      * FolderAttributesDenormalizer constructor.
      * @param AttributesDenormalizerService $attributesDenormalizerService
      */
-
     public function __construct(AttributesDenormalizerService $attributesDenormalizerService)
     {
         $this->attributesDenormalizerService = $attributesDenormalizerService;
@@ -33,8 +33,8 @@ class FolderAttributesDenormalizer implements DenormalizerInterface
      * @param null $format
      * @param array $context
      * @return mixed|object
+     * @throws \Exception
      */
-
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         $userAttributes = ['addedByUser' => $data['addedByUser'], 'markedByUser' => $data['markedByUser']];
@@ -43,7 +43,8 @@ class FolderAttributesDenormalizer implements DenormalizerInterface
             $data[$key] = $this->attributesDenormalizerService->denormalizeAttribute($key, $attribute);
         }
         if (isset($data['addTimestamp']) && is_string($data['addTimestamp'])) {
-            $data['addTimestamp'] = $this->attributesDenormalizerService->denormalizeAttribute('addTimestamp', $data['addTimestamp']);
+            $data['addTimestamp'] =
+                $this->attributesDenormalizerService->denormalizeAttribute('addTimestamp', $data['addTimestamp']);
         }
         if (isset($data['childFolders']) && is_array($data['childFolders'])) {
             $normalizer = new self($this->attributesDenormalizerService);
@@ -61,7 +62,8 @@ class FolderAttributesDenormalizer implements DenormalizerInterface
             }
             $data['files'] = $files;
         }
-        $data['requestedByUsers'] = $this->attributesDenormalizerService->denormalizeRequestedByUsers($data);
+        $data['requestedByUsers'] =
+            $this->attributesDenormalizerService->denormalizeRequestedByUsers($data);
         $normalizer = new ObjectNormalizer();
 
         return $normalizer->denormalize($data, $class, $format, $context);
@@ -73,7 +75,6 @@ class FolderAttributesDenormalizer implements DenormalizerInterface
      * @param null $format
      * @return bool
      */
-
     public function supportsDenormalization($data, $type, $format = null)
     {
         return is_array($data) && ($type == self::class);

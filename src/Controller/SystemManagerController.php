@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -13,7 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class SystemManagerController
  * @package App\Controller
  */
-
 class SystemManagerController extends Controller
 {
     /**
@@ -24,7 +24,6 @@ class SystemManagerController extends Controller
      *     options = { "expose" = true },
      *     name = "system")
      */
-
     public function systemIndex(Request $request)
     {
         return $this->render('lencor/admin/archive/system_manager/index.html.twig');
@@ -42,7 +41,6 @@ class SystemManagerController extends Controller
      *     options = { "expose" = true },
      *     name = "system-info")
      */
-
     public function systemInfo(Request $request, SystemService $systemService)
     {
         $sysInfo = $systemService->getSystemInfo($request);
@@ -61,7 +59,6 @@ class SystemManagerController extends Controller
      *     options = { "expose" = true },
      *     name = "system-config-info")
      */
-
     public function configInfo(Request $request, SystemService $systemService)
     {
         $configInfo = $systemService->getConfigInfo($request);
@@ -80,7 +77,6 @@ class SystemManagerController extends Controller
      *     options = { "expose" = true },
      *     name = "system-php-config-info")
      */
-
     public function PHPConfigInfo(Request $request, SystemService $systemService)
     {
         $PHPConfigInfo = $systemService->getPHPConfigInfo($request);
@@ -99,7 +95,6 @@ class SystemManagerController extends Controller
      *     options = { "expose" = true },
      *     name = "system-permissions-info")
      */
-
     public function permissionsInfo(Request $request, SystemService $systemService)
     {
         $configInfo = $systemService->getPermissionsInfo($request);
@@ -117,7 +112,6 @@ class SystemManagerController extends Controller
      *     options = { "expose" = true },
      *     name = "system-php-info")
      */
-
     public function phpInfo(SystemService $systemService)
     {
         $phpinfo = $systemService->getPHPInfo();

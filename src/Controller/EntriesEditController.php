@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -27,6 +28,7 @@ class EntriesEditController extends Controller
      * @param LoggingService $loggingService
      * @param integer $entryId
      * @return Response
+     * @throws \Exception
      * @Security("has_role('ROLE_ADMIN')")
      * @Route("admin/entries/{entryId}",
      *     options = { "expose" = true },
@@ -36,7 +38,13 @@ class EntriesEditController extends Controller
      */
 
     //@ParamConverter("archiveEntryEntity", class="App:ArchiveEntryEntity", options = { "id" = "entryId" }, isOptional="true")
-    public function entryEditIndex(Request $request, EntryService $entryService, FolderService $folderService, LoggingService $loggingService, $entryId)
+    public function entryEditIndex(
+        Request $request,
+        EntryService $entryService,
+        FolderService $folderService,
+        LoggingService $loggingService,
+        int $entryId
+    )
     {
         $session = $this->container->get('session');
         $archiveEntryEntity = null;
@@ -64,13 +72,19 @@ class EntriesEditController extends Controller
                     $originalEntry = $entryService->getOriginalData($archiveEntryEntity);
                     $matches = $entryService->checkPathChanges($originalEntry, $archiveEntryEntity);
                     if (count($matches) > 0) {
-                        $this->addFlash('warning', ' Обнаружено изменение параметров расположения ячейки. Перестраивается структура каталога');
+                        $this->addFlash(
+                            'warning',
+                            ' Обнаружено изменение параметров расположения ячейки. Перестраивается структура каталога'
+                        );
                         $pathIsFree = $entryService->checkNewPath($archiveEntryEntity, false);
                         if ($pathIsFree) {
                             $folderService->moveEntryFolder($originalEntry, $archiveEntryEntity);
                             $newEntryFolderName = $entryService->constructEntryPath($archiveEntryEntity, false);
                         } else {
-                            $this->addFlash('danger', 'Директория назначения уже существует. Операция прервана.');
+                            $this->addFlash(
+                                'danger',
+                                'Директория назначения уже существует. Операция прервана.'
+                            );
                             $loggingService->logEntryContent($archiveEntryEntity, $this->getUser(), $session->getFlashBag()->peekAll());
 
                             return new Response();
@@ -82,12 +96,18 @@ class EntriesEditController extends Controller
                             $folderService->updateEntryFolderName($archiveEntryEntity->getCataloguePath(), $newEntryFolderName);
                         }
                         $entryService->updateEntryInfo($archiveEntryEntity, $this->getUser(), true);
-                        $this->addFlash('success', 'Изменения параметров ячейки сохранены');
+                        $this->addFlash(
+                            'success',
+                            'Изменения параметров ячейки сохранены'
+                        );
                         $loggingService->logEntryContent($archiveEntryEntity, $this->getUser(), $session->getFlashBag()->peekAll());
 
                         return new Response($archiveEntryEntity->getId());
                     } catch (\Exception $exception) {
-                        $this->addFlash('danger', 'Изменения не сохранены. Ошибка: ' . $exception->getMessage());
+                        $this->addFlash(
+                            'danger',
+                            'Изменения не сохранены. Ошибка: ' . $exception->getMessage()
+                        );
                         $loggingService->logEntryContent($archiveEntryEntity, $this->getUser(), $session->getFlashBag()->peekAll());
 
                         return $this->render(
@@ -99,7 +119,10 @@ class EntriesEditController extends Controller
                     }
                 } else {
                     if (!$request->get('submit')) {
-                        $this->addFlash('danger', 'Форма заполнена неверно. Архивная запись с такими ключевыми параметрами уже существует.');
+                        $this->addFlash(
+                            'danger',
+                            'Форма заполнена неверно. Архивная запись с такими ключевыми параметрами уже существует.'
+                        );
                         $loggingService->logEntryContent($archiveEntryEntity, $this->getUser(), $session->getFlashBag()->peekAll());
 
                         return new Response();
@@ -124,7 +147,9 @@ class EntriesEditController extends Controller
         } else {
 
             return $this->render(
-                'lencor/admin/archive/administration/entries/entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
+                'lencor/admin/archive/administration/entries/entries.html.twig',
+                array('entrySearchByIdForm' => $entrySearchByIdForm->createView())
+            );
         }
 
         if ($entrySearchByIdForm->isSubmitted()) {
@@ -135,7 +160,10 @@ class EntriesEditController extends Controller
                     'entryId' => $archiveEntryEntity->getId()));
         } else {
 
-            return $this->render('lencor/admin/archive/administration/entries/entries.html.twig', array('entrySearchByIdForm' => $entrySearchByIdForm->createView()));
+            return $this->render(
+                'lencor/admin/archive/administration/entries/entries.html.twig',
+                array('entrySearchByIdForm' => $entrySearchByIdForm->createView())
+            );
         }
     }
 }

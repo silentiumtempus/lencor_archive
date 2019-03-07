@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -17,20 +18,19 @@ use Symfony\Component\Finder\Finder;
  */
 class LoggingService
 {
-    protected $em;
-    protected $container;
-    protected $pathRoot;
-    protected $pathHTTP;
-    protected $foldersRepository;
-    protected $entriesRepository;
-    protected $pathPermissions;
+    private $em;
+    private $container;
+    private $pathRoot;
+    private $pathHTTP;
+    private $foldersRepository;
+    private $entriesRepository;
+    private $pathPermissions;
 
     /**
      * LoggingService constructor.
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
      */
-
     public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
     {
         $this->em = $entityManager;
@@ -46,7 +46,6 @@ class LoggingService
      * @param int $entryId
      * @return string
      */
-
     public function getLogsRootPath(int $entryId)
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
@@ -63,7 +62,6 @@ class LoggingService
      * @param int $entryId
      * @return string
      */
-
     public function getLogsHTTPPath(int $entryId)
     {
         $entryFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
@@ -81,7 +79,6 @@ class LoggingService
      * @param string $folder
      * @return array|null
      */
-
     public function getLogsNavigationPath(string $parentFolder, string $folder)
     {
         if ($folder == "/" and $parentFolder == "") {
@@ -109,7 +106,6 @@ class LoggingService
      * @param string $folder
      * @return string
      */
-
     public function getLogsCurrentFolder(string $parentFolder, string $folder)
     {
         if ($folder != "/") {
@@ -126,8 +122,8 @@ class LoggingService
      * @param string $logsDir
      * @param User $user
      * @param array $flashArray
+     * @throws \Exception
      */
-
     public function logEntry(ArchiveEntryEntity $archiveEntryEntity, string $logsDir, User $user, array $flashArray)
     {
         $fs = new Filesystem();
@@ -154,8 +150,8 @@ class LoggingService
      * @param ArchiveEntryEntity $entryEntity
      * @param User $user
      * @param array $messages
+     * @throws \Exception
      */
-
     public function logEntryContent(ArchiveEntryEntity $entryEntity, User $user, array $messages)
     {
         $logsDir = $this->getLogsRootPath($entryEntity->getId());
@@ -166,7 +162,6 @@ class LoggingService
      * @param Finder $finder
      * @return array
      */
-
     public function finderToArray(Finder $finder)
     {
         $array = [];
@@ -181,7 +176,6 @@ class LoggingService
      * @param string $logsPath
      * @return array
      */
-
     public function getEntryLogFolders(string $logsPath)
     {
         $finder = new Finder();
@@ -197,7 +191,6 @@ class LoggingService
      * @param string $logsPath
      * @return array
      */
-
     public function getEntryLogFiles(string $logsPath)
     {
         $finder = new Finder();
@@ -215,7 +208,6 @@ class LoggingService
      * @param int $rowsCount
      * @return null|string[]
      */
-
     public function getFileContent(int $entryId, string $file, int $rowsCount)
     {
         $path = $this->getLogsRootPath($entryId);
@@ -241,7 +233,6 @@ class LoggingService
      * @param string $oldName
      * @param string $newName
      */
-
     public function renameLogFile(string $newPath, string $oldName, string $newName)
     {
         $fs = new Filesystem();

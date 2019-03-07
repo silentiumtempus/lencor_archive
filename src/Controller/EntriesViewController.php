@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -52,8 +53,12 @@ class EntriesViewController extends Controller
      * )
      * @ParamConverter("entry", class = "App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
      */
-
-    public function loadEntries(Request $request, EntrySearchService $entrySearchService, string $deleted = null, ArchiveEntryEntity $entry = null)
+    public function loadEntries(
+        Request $request,
+        EntrySearchService $entrySearchService,
+        string $deleted = null,
+        ArchiveEntryEntity $entry = null
+    )
     {
         $search_limit = $this->getParameter('archive.entries_search_limit');
         $finalQuery = new Query();
@@ -77,7 +82,13 @@ class EntriesViewController extends Controller
             $archiveEntries = $entrySearchService->getQueryResult($finalQuery, $filterQuery, $search_limit, $deleted ?: false);
         }
 
-        return $this->render('/lencor/admin/archive/archive_manager/entries/show_entries.html.twig', array('archiveEntries' => $archiveEntries, 'searchForm' => $searchForm->createView(), 'rootPath' => $rootPath, 'deleted' => $deleted));
+        return $this->render(
+            '/lencor/admin/archive/archive_manager/entries/show_entries.html.twig',
+            array(
+                'archiveEntries' => $archiveEntries,
+                'searchForm' => $searchForm->createView(),
+                'rootPath' => $rootPath, 'deleted' => $deleted)
+        );
     }
 
     /**
@@ -89,7 +100,6 @@ class EntriesViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_view")
      */
-
     public function showEntryDetails(Request $request, FolderService $folderService)
     {
         $entryId = null;
@@ -101,7 +111,8 @@ class EntriesViewController extends Controller
             $folderId = $folderService->getRootFolder($entryId);
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entries/entries_head.html.twig', array(
+        return $this->render('lencor/admin/archive/archive_manager/entries/entries_head.html.twig',
+            array(
             'folderId' => $folderId,
             'entryId' => $entryId,
             'addHeaderAndButtons' => $addHeaderAndButtons,
@@ -117,7 +128,6 @@ class EntriesViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_remove_entry")
      */
-
     public function removeEntry(Request $request, EntryService $entryService)
     {
         $archiveEntry = null;
@@ -125,7 +135,10 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->removeEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entries/entry.html.twig', array('entry' => $archiveEntry));
+        return $this->render(
+            'lencor/admin/archive/archive_manager/entries/entry.html.twig',
+            array('entry' => $archiveEntry)
+        );
     }
 
     /**
@@ -137,7 +150,6 @@ class EntriesViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_restore_entry")
      */
-
     public function restoreEntry(Request $request, EntryService $entryService)
     {
         $archiveEntry = null;
@@ -145,19 +157,22 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->restoreEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entries/entry.html.twig', array('entry' => $archiveEntry));
+        return $this->render(
+            'lencor/admin/archive/archive_manager/entries/entry.html.twig',
+            array('entry' => $archiveEntry)
+        );
     }
 
     /**
      * @param Request $request
      * @param EntryService $entryService
      * @return Response
+     * @throws \Exception
      * @Security("has_role('ROLE_USER')")
      * @Route("entries/request_entry",
      *     options = { "expose" = true },
      *     name = "entries_request_entry")
      */
-
     public function requestEntry(Request $request, EntryService $entryService)
     {
         $archiveEntry = null;
@@ -165,7 +180,10 @@ class EntriesViewController extends Controller
             $archiveEntry = $entryService->requestEntry($request->get('entryId'), $this->getUser());
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/entries/entry.html.twig', array('entry' => $archiveEntry));
+        return $this->render(
+            'lencor/admin/archive/archive_manager/entries/entry.html.twig',
+            array('entry' => $archiveEntry)
+        );
     }
 
     /**
@@ -182,27 +200,43 @@ class EntriesViewController extends Controller
      *     )
      * @ParamConverter("entry", class = "App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
      */
-    public function deleteEntry(Request $request, EntryService $entryService, ArchiveEntryEntity $entry = null)
+    public function deleteEntry(
+        Request $request,
+        EntryService $entryService,
+        ArchiveEntryEntity $entry = null
+    )
     {
         if ($request->request->has('entriesArray')) {
             try {
                 $entryIdsArray = $entryService->handleEntriesDelete($request->get('filesArray'), true);
-                $this->addFlash('success', 'Ячейки успешно удалены');
+                $this->addFlash(
+                    'success',
+                    'Ячейки успешно удалены'
+                );
 
                 return new JsonResponse($entryIdsArray);
             } catch (\Exception $exception) {
-                $this->addFlash('danger', 'Ячкейи не удалёны из за непредвиденной ошибки: ' . $exception->getMessage());
+                $this->addFlash(
+                    'danger',
+                    'Ячкейи не удалёны из за непредвиденной ошибки: ' . $exception->getMessage()
+                );
 
                 return new JsonResponse(0);
             }
         } elseif ($entry) {
             try {
                 $entryIdsArray = $entryService->handleEntryDelete($entry, true, ['remove' => [], 'reload' => []]);
-                $this->addFlash('success', 'Директория '. $entry->getId() . ' успешно удалёна');
+                $this->addFlash(
+                    'success',
+                    'Директория '. $entry->getId() . ' успешно удалёна'
+                );
 
                 return new JsonResponse($entryIdsArray);
             } catch (\Exception $exception) {
-                $this->addFlash('danger', 'Директория ' . $entry->getId() . ' не удалёна из за непредвиденной ошибки: ' . $exception->getMessage());
+                $this->addFlash(
+                    'danger',
+                    'Директория ' . $entry->getId() . ' не удалёна из за непредвиденной ошибки: ' . $exception->getMessage()
+                );
 
                 return new JsonResponse(0);
             }
@@ -226,27 +260,43 @@ class EntriesViewController extends Controller
      *     )
      * @ParamConverter("entry", class = "App:ArchiveEntryEntity", options = { "id" = "entry" }, isOptional="true")
      */
-    public function unDeleteEntry(Request $request, EntryService $entryService, ArchiveEntryEntity $entry = null)
+    public function unDeleteEntry(
+        Request $request,
+        EntryService $entryService,
+        ArchiveEntryEntity $entry = null
+    )
     {
         if ($request->request->has('entriesArray')) {
             try {
                 $entryIdsArray = $entryService->handleEntriesDelete($request->get('filesArray'), false);
-                $this->addFlash('success', 'Ячейки успешно восстановлены');
+                $this->addFlash(
+                    'success',
+                    'Ячейки успешно восстановлены'
+                );
 
                 return new JsonResponse($entryIdsArray);
             } catch (\Exception $exception) {
-                $this->addFlash('danger', 'Ячкейи не восстановлены из за непредвиденной ошибки: ' . $exception->getMessage());
+                $this->addFlash(
+                    'danger',
+                    'Ячкейи не восстановлены из за непредвиденной ошибки: ' . $exception->getMessage()
+                );
 
                 return new JsonResponse(0);
             }
         } elseif ($entry) {
             try {
                 $entryIdsArray = $entryService->handleEntryDelete($entry, false, ['remove' => [], 'reload' => []]);
-                $this->addFlash('success', 'Директория '. $entry->getId() . ' успешно восстановлена');
+                $this->addFlash(
+                    'success',
+                    'Директория '. $entry->getId() . ' успешно восстановлена'
+                );
 
                 return new JsonResponse($entryIdsArray);
             } catch (\Exception $exception) {
-                $this->addFlash('danger', 'Директория ' . $entry->getId() . ' не восстановлена из за непредвиденной ошибки: ' . $exception->getMessage());
+                $this->addFlash(
+                    'danger',
+                    'Директория ' . $entry->getId() . ' не восстановлена из за непредвиденной ошибки: ' . $exception->getMessage()
+                );
 
                 return new JsonResponse(0);
             }
@@ -269,16 +319,21 @@ class EntriesViewController extends Controller
      *     name = "entries_reload")
      * @ParamConverter("entry", class = "App:ArchiveEntryEntity", isOptional = true, options = { "id" = "entry" })
      */
-
     public function reloadFolder(Request $request, EntryService $entryService, ArchiveEntryEntity $entry = null)
     {
         if ($request->request->has('entriesArray')) {
             $entriesArray = $entryService->getEntriesList($request->get('foldersArray'));
 
-            return $this->render('/lencor/admin/archive/archive_manager/entries/entries_list.html.twig', array('archiveEntries' => $entriesArray));
+            return $this->render(
+                '/lencor/admin/archive/archive_manager/entries/entries_list.html.twig',
+                array('archiveEntries' => $entriesArray)
+            );
         } else if ($entry) {
 
-            return $this->render('/lencor/admin/archive/archive_manager/entries/entry.html.twig', array('entry' => $entry));
+            return $this->render(
+                '/lencor/admin/archive/archive_manager/entries/entry.html.twig',
+                array('entry' => $entry)
+            );
         } else {
 
             return $this->redirectToRoute('entries');
@@ -300,8 +355,12 @@ class EntriesViewController extends Controller
      *      "deleted" : false
      *     })
      */
-
-    public function loadSearchHints(Request $request, EntrySearchService $entrySearchService, string $field, string $deleted = null)
+    public function loadSearchHints(
+        Request $request,
+        EntrySearchService $entrySearchService,
+        string $field,
+        string $deleted = null
+    )
     {
         $limit = $this->getParameter('archive.search_hints_limit');
         $data = [];
@@ -347,8 +406,11 @@ class EntriesViewController extends Controller
      *     options = { "expose" = true },
      *     name = "show_requesters")
      */
-
-    public function showRequesters(Request $request, CommonArchiveService $commonArchiveService, TranslatorInterface $translator)
+    public function showRequesters(
+        Request $request,
+        CommonArchiveService $commonArchiveService,
+        TranslatorInterface $translator
+    )
     {
         $requesters = null;
         $headerText = null;
@@ -360,19 +422,37 @@ class EntriesViewController extends Controller
             $requesters = $commonArchiveService->getRequesters($id, $type);
             switch ($type) {
                 case 'file':
-                    $headerText = $translator->trans('file.self', array(), 'files_folders') . " " . $translator->trans('requested', array(), 'files_folders');
+                    $headerText = $translator->trans(
+                        'file.self', array(), 'files_folders') .
+                        " " .
+                        $translator->trans('requested', array(), 'files_folders'
+                        );
                     break;
                 case 'folder':
-                    $headerText = $translator->trans('folder.self', array(), 'files_folders') . " " . $translator->trans('requested', array(), 'files_folders');
+                    $headerText = $translator->trans(
+                        'folder.self', array(), 'files_folders') .
+                        " " .
+                        $translator->trans('requested', array(), 'files_folders'
+                        );
                     break;
                 case 'entry':
                     $translator->addResource('yml', 'entries.ru.yml', 'ru_RU', 'entries');
-                    $headerText = $translator->trans('entries.self', array(), 'entries') . " " . $translator->trans('entries.requested', array(), 'entries');
+                    $headerText = $translator->trans(
+                        'entries.self', array(), 'entries') .
+                        " " .
+                        $translator->trans('entries.requested', array(), 'entries'
+                        );
                     break;
             }
         }
 
-        return $this->render('lencor/admin/archive/archive_manager/show_requesters.html.twig', array('requesters' => $requesters, 'headerText' => $headerText));
+        return $this->render(
+            'lencor/admin/archive/archive_manager/show_requesters.html.twig',
+            array(
+                'requesters' => $requesters,
+                'headerText' => $headerText
+            )
+        );
     }
 
     /**
@@ -384,14 +464,16 @@ class EntriesViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_change_last_update_info")
      */
-
     public function changeLastUpdateInfo(EntryService $archiveEntryService, $entryId = null)
     {
         if ($entryId) {
             try {
-                $archiveEntryService->changeLastUpdateInfo($entryId, $this->getUser());
+                $archiveEntryService->changeLastUpdateInfo($this->getUser(), null, $entryId);
             } catch (\Exception $exception) {
-                $this->addFlash('error', 'Информация об изменениях не записана в ячейку. Ошибка: ' . $exception->getMessage());
+                $this->addFlash(
+                    'error',
+                    'Информация об изменениях не записана в ячейку. Ошибка: ' . $exception->getMessage()
+                );
             }
         }
         // @TODO: create proper return
@@ -407,11 +489,13 @@ class EntriesViewController extends Controller
      *     options = { "expose" = true },
      *     name = "entries_last_update_info")
      */
-
     public function loadLastUpdateInfo(Request $request, EntryService $archiveEntryService)
     {
         $lastUpdateInfo = $archiveEntryService->loadLastUpdateInfo($request);
 
-        return $this->render('lencor/admin/archive/archive_manager/entries/entries_update_info.html.twig', array('lastUpdateInfo' => $lastUpdateInfo));
+        return $this->render(
+            'lencor/admin/archive/archive_manager/entries/entries_update_info.html.twig',
+            array('lastUpdateInfo' => $lastUpdateInfo)
+        );
     }
 }

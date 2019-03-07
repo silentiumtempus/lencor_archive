@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Serializer\Denormalizer\PropertyExtractor;
 
@@ -19,7 +20,6 @@ class FactoryEntityPropertyExtractor implements PropertyTypeExtractorInterface
     /**
      * FactoryEntityPropertyExtractor constructor.
      */
-
     public function __construct()
     {
         $this->reflectionExtractor = new ReflectionExtractor();
@@ -31,12 +31,13 @@ class FactoryEntityPropertyExtractor implements PropertyTypeExtractorInterface
      * @param array $context
      * @return array|null|Type[]
      */
-
     public function getTypes($class, $property, array $context = array())
     {
         if (is_a($class, FactoryEntity::class, true) && 'settings' === $property) {
 
-            return [new Type(Type::BUILTIN_TYPE_OBJECT, true, SettingEntity::class . '[]')];
+            return [
+                new Type(Type::BUILTIN_TYPE_OBJECT, true, SettingEntity::class . '[]')
+            ];
         }
 
         return $this->reflectionExtractor->getTypes($class, $property, $context);

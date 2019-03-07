@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -23,20 +24,19 @@ use Symfony\Component\Serializer\Serializer;
  * Class RecoveryService
  * @package App\Service
  */
-
 class RecoveryService
 {
-    protected $em;
-    protected $container;
-    protected $pathRoot;
-    protected $internalFolder;
-    protected $usersRepository;
-    protected $factoriesRepository;
-    protected $settingsRepository;
-    protected $entriesRepository;
-    protected $foldersRepository;
-    protected $filesRepository;
-    protected $entryAttributeDenormalizer;
+    private $em;
+    private $container;
+    private $pathRoot;
+    private $internalFolder;
+    private $usersRepository;
+    private $factoriesRepository;
+    private $settingsRepository;
+    private $entriesRepository;
+    private $foldersRepository;
+    private $filesRepository;
+    private $entryAttributeDenormalizer;
 
     /**
      * RecoveryService constructor.
@@ -44,8 +44,11 @@ class RecoveryService
      * @param EntityManagerInterface $entityManager
      * @param EntryAttributesDenormalizer $entryAttributeDenormalizer
      */
-
-    public function __construct(ContainerInterface $container, EntityManagerInterface $entityManager, EntryAttributesDenormalizer $entryAttributeDenormalizer)
+    public function __construct(
+        ContainerInterface $container,
+        EntityManagerInterface $entityManager,
+        EntryAttributesDenormalizer $entryAttributeDenormalizer
+    )
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -64,7 +67,6 @@ class RecoveryService
     /**
      * Main method to trigger database restoration
      */
-
     public function restoreDatabase()
     {
         try {
@@ -78,16 +80,21 @@ class RecoveryService
                 $this->restoreFactoriesAndSettings($FaS);
                 $this->restoreEntries($entryFiles);
             }
-            $this->container->get('session')->getFlashBag()->add('success', 'База успешно восстановлена');
+            $this->container->get('session')->getFlashBag()->add(
+                'success',
+                'База успешно восстановлена'
+            );
         } catch (\Exception $exception) {
-            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка при восстановлении БД: ' . $exception->getMessage() . $exception->getTraceAsString());
+            $this->container->get('session')->getFlashBag()->add(
+                'danger',
+                'Ошибка при восстановлении БД: ' . $exception->getMessage() . $exception->getTraceAsString()
+            );
         }
     }
 
     /**
      * @return array
      */
-
     public function locateFiles()
     {
         $finder = new Finder();
@@ -104,7 +111,6 @@ class RecoveryService
      * @param string $internalPath
      * @return bool|string
      */
-
     private function locateUsers(string $internalPath)
     {
         return file_get_contents($internalPath . '/' . 'users');
@@ -114,7 +120,6 @@ class RecoveryService
      * @param string $internalPath
      * @return bool|string
      */
-
     private function locateFactoriesAndSettings(string $internalPath)
     {
         return file_get_contents($internalPath . '/' . 'factories_and_settings');
@@ -123,7 +128,6 @@ class RecoveryService
     /**
      * @param string $file
      */
-
     private function restoreUsers(string $file)
     {
         $serializer = new Serializer(
@@ -141,11 +145,15 @@ class RecoveryService
     /**
      * @param string $file
      */
-
     private function restoreFactoriesAndSettings(string $file)
     {
         $serializer = new Serializer(
-            array(new ObjectNormalizer(null, null, null, new FactoryEntityPropertyExtractor()), new ArrayDenormalizer()),
+            array(new ObjectNormalizer(
+                null,
+                null,
+                null,
+                new FactoryEntityPropertyExtractor()),
+                new ArrayDenormalizer()),
             array(new JsonEncoder()));
         $factories = $serializer->deserialize($file, FactoryEntity::class . '[]', 'json');
         foreach ($factories as $factory) {
@@ -170,7 +178,6 @@ class RecoveryService
     /**
      * @param array $entryFiles
      */
-
     private function restoreEntries(array $entryFiles)
     {
         $serializer = new Serializer(
@@ -196,7 +203,6 @@ class RecoveryService
      * @param FolderEntity $rootFolder
      * @param FolderEntity $folder
      */
-
     private function addChildFolders(FolderEntity $rootFolder, FolderEntity $folder)
     {
         foreach ($folder->getChildFolders() as $childFolder) {
@@ -213,7 +219,6 @@ class RecoveryService
     /**
      * @param FolderEntity $parentFolder
      */
-
     private function addChildFiles(FolderEntity $parentFolder)
     {
         if ($parentFolder->getFiles()) {

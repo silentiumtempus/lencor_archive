@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
@@ -19,7 +20,6 @@ trait SumErrorsTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("integer")
      */
-
     protected $sumErrors;
 
     /**
@@ -27,8 +27,7 @@ trait SumErrorsTrait
      * @param integer $sumErrors
      * @return $this
      */
-
-    public function setSumErrors($sumErrors)
+    public function setSumErrors(int $sumErrors): self
     {
         $this->sumErrors = $sumErrors;
 
@@ -39,8 +38,7 @@ trait SumErrorsTrait
      * Get sumErrors
      * @return integer
      */
-
-    public function getSumErrors()
+    public function getSumErrors(): ?int
     {
         return $this->sumErrors;
     }

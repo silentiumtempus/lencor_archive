@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
 use App\Entity\FileEntity;
 use App\Entity\FolderEntity;
 use App\Entity\Mappings\FileChecksumError;
+use App\Factory\FileChecksumErrorFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -13,28 +15,33 @@ use Symfony\Component\Filesystem\Filesystem;
  * Class FileChecksumService
  * @package App\Service
  */
-
 class FileChecksumService
 {
-    protected $em;
-    protected $pathRoot;
-    protected $container;
-    protected $filesRepository;
-    protected $foldersRepository;
-    protected $fileErrorsRepository;
-    protected $entriesRepository;
-    protected $deletedFolder;
+    private $em;
+    private $pathRoot;
+    private $container;
+    private $filesRepository;
+    private $foldersRepository;
+    private $fileErrorsRepository;
+    private $entriesRepository;
+    private $deletedFolder;
+    private $fileChecksumErrorFactory;
 
     /**
      * FileChecksumService constructor.
      * @param EntityManagerInterface $entityManager
      * @param ContainerInterface $container
+     * @param FileChecksumErrorFactory $fileChecksumErrorFactory
      */
-
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContainerInterface $container,
+        FileChecksumErrorFactory $fileChecksumErrorFactory
+    )
     {
         $this->em = $entityManager;
         $this->container = $container;
+        $this->fileChecksumErrorFactory = $fileChecksumErrorFactory;
         $this->filesRepository = $this->em->getRepository('App:FileEntity');
         $this->foldersRepository = $this->em->getRepository('App:FolderEntity');
         $this->fileErrorsRepository = $this->em->getRepository('App:Mappings\FileChecksumError');
@@ -49,7 +56,6 @@ class FileChecksumService
      * @param bool $deleted
      * @return bool
      */
-
     public function checkFile(FileEntity $requestedFile, string $filePath, bool $deleted)
     {
         $fs = new Filesystem();
@@ -67,17 +73,11 @@ class FileChecksumService
      * @param FileEntity $fileEntity
      * @param int $userId
      * @return bool
+     * @throws \Exception
      */
-
     public function newChecksumError(FileEntity $fileEntity, int $userId)
     {
-        $newFileError = new FileChecksumError();
-        $newFileError
-            ->setFileId($fileEntity)
-            ->setParentFolderId($fileEntity->getParentFolder())
-            ->setStatus(1)
-            ->setLastCheckByUser($userId)
-            ->setLastCheckOn(new \DateTime());
+        $newFileError = $this->fileChecksumErrorFactory->prepareChecksumError($fileEntity, $userId);
         $this->em->persist($newFileError);
         $this->em->flush();
 
@@ -88,8 +88,8 @@ class FileChecksumService
      * @param FileEntity $fileEntity
      * @param int $userId
      * @return bool
+     * @throws \Exception
      */
-
     public function reportChecksumError(FileEntity $fileEntity, int $userId)
     {
         $fileError = $this->fileErrorsRepository->findOneByFileId($fileEntity->getId());
@@ -97,7 +97,7 @@ class FileChecksumService
             $fileEntity->setSumError(true);
             if ($fileError) {
                 $fileError->setFirstOccuredOn(new \DateTime());
-                $this->changeErrorStatus($fileError, true, $userId);
+                $this->changeErrorStatus($fileError, 1, $userId);
             } else {
                 $this->newChecksumError($fileEntity, $userId);
             }
@@ -116,15 +116,15 @@ class FileChecksumService
      * @param FileEntity $fileEntity
      * @param int $userId
      * @return bool
+     * @throws \Exception
      */
-
     public function validateChecksumValue(FileEntity $fileEntity, int $userId)
     {
         if ($fileEntity->getSumError() ==  true) {
             $fileEntity->setSumError(false);
             $fileError = $this->fileErrorsRepository->findOneByFileId($fileEntity->getId());
             if ($fileError) {
-                $this->changeErrorStatus($fileError, false, $userId);
+                $this->changeErrorStatus($fileError, 0, $userId);
             }
             $this->changeErrorsQuantity($fileEntity->getParentFolder(), false);
         }
@@ -137,8 +137,8 @@ class FileChecksumService
      * @param FileChecksumError $fileChecksumError
      * @param int $status
      * @param int $userId
+     * @throws \Exception
      */
-
     public function changeErrorStatus(FileChecksumError $fileChecksumError, int $status, int $userId)
     {
         $fileChecksumError
@@ -151,7 +151,6 @@ class FileChecksumService
      * @param FolderEntity $parentFolder
      * @param bool $errorState
      */
-    
     public function changeErrorsQuantity(FolderEntity $parentFolder, bool $errorState)
     {
         $binaryPath = $this->foldersRepository->getPath($parentFolder);

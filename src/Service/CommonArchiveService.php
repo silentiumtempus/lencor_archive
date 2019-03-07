@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -13,19 +14,18 @@ use Symfony\Component\Filesystem\Filesystem;
  * Class CommonArchiveService
  * @package App\Service
  */
-
 class CommonArchiveService
 {
-    protected $em;
-    protected $container;
-    protected $filesRepository;
-    protected $foldersRepository;
-    protected $entriesRepository;
-    protected $userService;
-    protected $pathRoot;
-    protected $internalFolder;
-    protected $pathPermissions;
-    protected $deletedFolder;
+    private $em;
+    private $container;
+    private $filesRepository;
+    private $foldersRepository;
+    private $entriesRepository;
+    private $userService;
+    private $pathRoot;
+    private $internalFolder;
+    private $pathPermissions;
+    private $deletedFolder;
 
     /**
      * CommonArchiveService constructor.
@@ -33,8 +33,11 @@ class CommonArchiveService
      * @param ContainerInterface $container
      * @param UserService $userService
      */
-
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, UserService $userService)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContainerInterface $container,
+        UserService $userService
+    )
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -53,7 +56,6 @@ class CommonArchiveService
      * @param string $type
      * @return array
      */
-
     public function getRequesters(int $id, string $type)
     {
         $repository = null;
@@ -78,7 +80,6 @@ class CommonArchiveService
      * @param FolderEntity $parentFolder
      * @param bool $deleteState
      */
-
     public function changeDeletesQuantity(FolderEntity $parentFolder, bool $deleteState)
     {
         $binaryPath = $this->foldersRepository->getPath($parentFolder);
@@ -101,7 +102,6 @@ class CommonArchiveService
      * @param string $i
      * @return int|null
      */
-
     public function addFolderIdToArray(FolderEntity $folder, array $foldersArray, string $i)
     {
         if (!array_search($folder->getId(), $foldersArray[$i])) {
@@ -115,7 +115,7 @@ class CommonArchiveService
     /**
      * Directory for deleted entries initialization
      */
-    public function checkAndCreateDeletedFolder()
+    private function checkAndCreateDeletedFolder()
     {
         $fs = new Filesystem();
         if (!$fs->exists($this->pathRoot . "/deleted")) {
@@ -131,7 +131,6 @@ class CommonArchiveService
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-
     public function checkAndCreateFolders(ArchiveEntryEntity $archiveEntryEntity, bool $isNew, bool $isDeleted)
     {
         $fs = new Filesystem();
@@ -157,26 +156,41 @@ class CommonArchiveService
                 if (!$fs->exists($pathEntry)) {
                     $fs->mkdir($pathEntry, $this->pathPermissions);
                 } else {
-                    $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! Директория для новой ячейки: ' . $pathEntry . ' уже существует');
+                    $this->container->get('session')->getFlashBag()->add(
+                        'warning',
+                        'Внимание! Директория для новой ячейки: ' . $pathEntry . ' уже существует'
+                    );
                 }
                 if (!$fs->exists($pathLogs)) {
                     $fs->mkdir($pathLogs, $this->pathPermissions);
                 } else {
-                    $this->container->get('session')->getFlashBag()->add('warning', 'Внимание! директория логов: ' . $pathEntry . ' уже существует');
+                    $this->container->get('session')->getFlashBag()->add(
+                        'warning',
+                        'Внимание! директория логов: ' . $pathEntry . ' уже существует'
+                    );
                 }
             } else {
                 if ($fs->exists($pathEntry)) {
-                    $this->container->get('session')->getFlashBag()->add('danger', 'Внимание! Директория назначения: ' . $pathEntry . ' уже существует. Операция прервана.');
+                    $this->container->get('session')->getFlashBag()->add(
+                        'danger',
+                        'Внимание! Директория назначения: ' . $pathEntry . ' уже существует. Операция прервана.'
+                    );
 
                 } else {
                     if ($fs->exists($pathLogs)) {
-                        $this->container->get('session')->getFlashBag()->add('danger', 'Внимание! Директория логов: ' . $pathLogs . 'уже существует. Операция прервана.');
+                        $this->container->get('session')->getFlashBag()->add(
+                            'danger',
+                            'Внимание! Директория логов: ' . $pathLogs . 'уже существует. Операция прервана.'
+                        );
                     }
                 }
             }
 
         } catch (IOException $IOException) {
-            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка создания директории: ' . $IOException->getMessage());
+            $this->container->get('session')->getFlashBag()->add(
+                'danger',
+                'Ошибка создания директории: ' . $IOException->getMessage()
+            );
         }
 
         return $pathEntry;

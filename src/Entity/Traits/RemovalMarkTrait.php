@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
+use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
@@ -19,7 +21,6 @@ trait RemovalMarkTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("boolean")
      */
-
     protected $removalMark;
 
     /**
@@ -29,7 +30,6 @@ trait RemovalMarkTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("App\Entity\User")
      */
-
     protected $markedByUser;
 
     /**
@@ -37,8 +37,7 @@ trait RemovalMarkTrait
      * @param boolean $removalMark
      * @return $this
      */
-
-    public function setRemovalMark($removalMark)
+    public function setRemovalMark($removalMark): self
     {
         $this->removalMark = $removalMark;
 
@@ -49,19 +48,17 @@ trait RemovalMarkTrait
      * Get removalMark
      * @return boolean
      */
-
-    public function getRemovalMark()
+    public function getRemovalMark(): ?bool
     {
         return $this->removalMark;
     }
 
     /**
      * Set markedByUser
-     * @param string $markedByUser
+     * @param User|null $markedByUser
      * @return $this
      */
-
-    public function setMarkedByUser($markedByUser = null)
+    public function setMarkedByUser(User $markedByUser = null): self
     {
         $this->markedByUser = $markedByUser;
 
@@ -70,10 +67,9 @@ trait RemovalMarkTrait
 
     /**
      * Get markedByUser
-     * @return string
+     * @return User|null
      */
-
-    public function getMarkedByUser()
+    public function getMarkedByUser(): ?User
     {
         return $this->markedByUser;
     }

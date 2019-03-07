@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -11,16 +12,14 @@ use Symfony\Component\HttpKernel\Kernel;
  * Class SystemService
  * @package App\Service
  */
-
 class SystemService
 {
-    protected $container;
+    private $container;
 
     /**
      * SystemService constructor.
      * @param ContainerInterface $container
      */
-
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -30,7 +29,6 @@ class SystemService
      * @param Request $request
      * @return array
      */
-
     public function getSystemInfo(Request $request)
     {
         $elasticInfo = $this->getElasticSearchInfo();
@@ -44,8 +42,10 @@ class SystemService
         $data = [
             'server_ip' => $request->getHost(),
             'hostname' => gethostname(),
-            'db_platform' => $this->container->get('doctrine')->getConnection()->getDatabasePlatform()->getName(),
-            'mysql_server' => $this->container->get('doctrine')->getConnection()->getWrappedConnection()->getServerVersion(),
+            'db_platform' =>
+                $this->container->get('doctrine')->getConnection()->getDatabasePlatform()->getName(),
+            'mysql_server' =>
+                $this->container->get('doctrine')->getConnection()->getWrappedConnection()->getServerVersion(),
             'php_version' => PHP_VERSION,
             //'php_version' => phpversion(),
             'ws_version' => $request->server->get('SERVER_SIGNATURE'),
@@ -67,7 +67,6 @@ class SystemService
      * @param Request $request
      * @return array
      */
-
     public function getConfigInfo(Request $request)
     {
 
@@ -89,7 +88,6 @@ class SystemService
     /**
      * @return false|string
      */
-
     public function getPHPInfo()
     {
         ob_start();
@@ -103,7 +101,6 @@ class SystemService
     /**
      * @return mixed
      */
-
     private function getElasticSearchInfo()
     {
         $ch = curl_init();

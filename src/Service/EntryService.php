@@ -1,33 +1,38 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
 use App\Entity\ArchiveEntryEntity;
 use App\Entity\FolderEntity;
 use App\Entity\User;
+use App\Factory\EntryFactory;
+use App\Factory\FolderFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class EntryService
  * @package App\Services
  */
-
 class EntryService
 {
-    protected $em;
-    protected $container;
-    protected $pathRoot;
-    protected $pathKeys;
-    protected $deletedFolder;
-    protected $entriesRepository;
-    protected $foldersRepository;
-    protected $commonArchiveService;
-    protected $serializerService;
-    protected $loggingService;
+    private $em;
+    private $container;
+    private $pathRoot;
+    private $pathKeys;
+    private $deletedFolder;
+    private $entriesRepository;
+    private $foldersRepository;
+    private $commonArchiveService;
+    private $serializerService;
+    private $loggingService;
+    private $folderFactory;
+    private $entryFactory;
 
     /**
      * EntryService constructor.
@@ -36,6 +41,8 @@ class EntryService
      * @param CommonArchiveService $commonArchiveService
      * @param SerializerService $serializerService
      * @param LoggingService $loggingService
+     * @param FolderFactory $folderFactory
+     * @param EntryFactory $entryFactory
      */
 
     public function __construct(
@@ -43,7 +50,10 @@ class EntryService
         ContainerInterface $container,
         CommonArchiveService $commonArchiveService,
         SerializerService $serializerService,
-        LoggingService $loggingService)
+        LoggingService $loggingService,
+        FolderFactory $folderFactory,
+        EntryFactory $entryFactory
+    )
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -55,16 +65,15 @@ class EntryService
         $this->commonArchiveService = $commonArchiveService;
         $this->serializerService = $serializerService;
         $this->loggingService = $loggingService;
+        $this->folderFactory = $folderFactory;
+        $this->entryFactory = $entryFactory;
     }
 
-    //@TODO: why string?
-
     /**
-     * @param string $entryId
+     * @param int $entryId
      * @return ArchiveEntryEntity|null
      */
-
-    public function getEntryById(string $entryId)
+    public function getEntryById(int $entryId)
     {
         return $this->entriesRepository->findOneById($entryId);
     }
@@ -73,7 +82,6 @@ class EntryService
      * @param array $entryIdsArray
      * @return ArchiveEntryEntity|null|object
      */
-
     public function getEntriesList(array $entryIdsArray)
     {
         return $this->entriesRepository->find($entryIdsArray);
@@ -82,10 +90,14 @@ class EntryService
     /**
      * @param ArchiveEntryEntity $entryEntity
      * @param User $user
-     * @param int $entryId
+     * @param int|null $entryId
+     * @throws \Exception
      */
-
-    public function changeLastUpdateInfo(ArchiveEntryEntity $entryEntity, User $user, int $entryId = null)
+    public function changeLastUpdateInfo(
+        User $user,
+        ArchiveEntryEntity $entryEntity = null,
+        int $entryId = null
+    )
     {
         if (!$entryEntity) {
             $entryEntity = $this->entriesRepository->findOneById($entryId);
@@ -100,7 +112,6 @@ class EntryService
      * @param Request $request
      * @return ArchiveEntryEntity
      */
-
     public function loadLastUpdateInfo(Request $request)
     {
         $lastUpdateInfo = null;
@@ -108,7 +119,10 @@ class EntryService
             $lastUpdateInfo = $this->entriesRepository->getUpdateInfoByEntry($request->get('entryId'));
         } elseif ($request->request->has('folderId')) {
             $folderNode = $this->foldersRepository->findOneById($request->get('folderId'));
-            $lastUpdateInfo = $this->entriesRepository->getUpdateInfoByFolder($folderNode->getRoot()->getArchiveEntry()->getId());
+            $lastUpdateInfo =
+                $this->entriesRepository->getUpdateInfoByFolder(
+                    $folderNode->getRoot()->getArchiveEntry()->getId()
+                );
         }
 
         return $lastUpdateInfo;
@@ -118,26 +132,6 @@ class EntryService
      * @param Request $request
      * @return mixed
      */
-
-    public function setEntryId(Request $request)
-    {
-        $session = $this->container->get('session');
-        $entryId = $request->get('entryId');
-        if ($entryId) {
-            $session->set('entryId', $request->get('entryId'));
-
-            return $entryId;
-        } else {
-
-            return $session->get('entryId');
-        }
-    }
-
-    /**
-     * @param Request $request
-     * @return mixed
-     */
-
     public function setFolderId(Request $request)
     {
         $session = $this->container->get('session');
@@ -152,50 +146,55 @@ class EntryService
         }
     }
 
-    public function createEntry(ArchiveEntryEntity $newEntry, User $user, FolderService $folderService)
+    /**
+     * @param FormInterface $newEntryForm
+     * @param User $user
+     * @return ArchiveEntryEntity
+     */
+    public function createEntry(
+        FormInterface $newEntryForm,
+        User $user
+    ): ?ArchiveEntryEntity
     {
         try {
+            $newEntry = $this->entryFactory->prepareEntry($newEntryForm, $user);
+            $newFolderEntity = $this->folderFactory->prepareNewRootFolder($newEntry, $user);
             $entryPath = $this->commonArchiveService->checkAndCreateFolders($newEntry, true, false);
-            $logsDir = $entryPath . "/logs";
-            try {
-                $newFolderEntity = new FolderEntity();
-                $this->prepareEntry($newEntry, $newFolderEntity, $user);
-                $folderService->prepareNewRootFolder($newFolderEntity, $newEntry, $user);
-                $this->serializerService->serializeEntry($newEntry, $entryPath, true);
-                $this->persistEntry($newEntry, $newFolderEntity);
-                $this->container->get('session')->getFlashBag()->add('success', 'Запись успешно создана.');
-            } catch (IOException $IOException) {
-                $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка записи файла ячейки: ' . $IOException->getMessage());
-            }
+            $newEntry->setCataloguePath($newFolderEntity);
+            $this->serializerService->serializeEntry($newEntry, $entryPath, true);
+            $this->persistEntry($newEntry, $newFolderEntity);
+            $this->container->get('session')->getFlashBag()->add(
+                'success',
+                'Запись успешно создана.'
+            );
 
-            $this->loggingService->logEntry($newEntry, $logsDir, $user, $this->container->get('session')->getFlashBag()->peekAll());
+            $logsDir = $entryPath . "/logs";
+            $this->loggingService->logEntry(
+                $newEntry,
+                $logsDir,
+                $user,
+                $this->container->get('session')->getFlashBag()->peekAll()
+            );
+            return $newEntry;
+        } catch (IOException $IOException) {
+            $this->container->get('session')->getFlashBag()->add(
+                'danger',
+                'Ошибка записи файла ячейки: ' . $IOException->getMessage()
+            );
         } catch (\Exception $exception) {
-            $this->container->get('session')->getFlashBag()->add('danger', 'Произошла непредвиденная ошибка:' . $exception->getMessage());
+            $this->container->get('session')->getFlashBag()->add(
+                'danger',
+                'Произошла непредвиденная ошибка:' . $exception->getMessage()
+            );
         }
 
-        return $newEntry;
-    }
-
-    /**
-     * @param ArchiveEntryEntity $newEntry
-     * @param FolderEntity $newFolder
-     * @param User $user
-     */
-
-    public function prepareEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder, User $user)
-    {
-        $newEntry
-            ->setCataloguePath($newFolder)
-            ->setModifiedByUser($user)
-            ->setRemovalMark(false)
-            ->setMarkedByUser(null);
+        return null;
     }
 
     /**
      * @param ArchiveEntryEntity $newEntry
      * @param FolderEntity $newFolder
      */
-
     public function persistEntry(ArchiveEntryEntity $newEntry, FolderEntity $newFolder)
     {
         try {
@@ -203,7 +202,10 @@ class EntryService
             $this->em->persist($newFolder);
             $this->em->flush();
         } catch (\Exception $exception) {
-            $this->container->get('session')->getFlashBag()->add('danger', 'Ошибка сохранения в БД: ' . $exception->getMessage());
+            $this->container->get('session')->getFlashBag()->add(
+                'danger',
+                'Ошибка сохранения в БД: ' . $exception->getMessage()
+            );
         }
     }
 
@@ -212,7 +214,6 @@ class EntryService
      * @param User $user
      * @return ArchiveEntryEntity
      */
-
     public function removeEntry(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
@@ -229,7 +230,6 @@ class EntryService
      * @param User $user
      * @return ArchiveEntryEntity
      */
-
     public function restoreEntry(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
@@ -247,13 +247,13 @@ class EntryService
     /**
      * @param int $entryId
      * @param User $user
-     * @return ArchiveEntryEntity
+     * @return mixed
+     * @throws \Exception
      */
-
     public function requestEntry(int $entryId, User $user)
     {
         $archiveEntry = $this->entriesRepository->findOneById($entryId);
-        if ($archiveEntry->getremovalMark()) {
+        if ($archiveEntry->getRemovalMark()) {
             if ($archiveEntry->getRequestMark() ?? $archiveEntry->getRequestMark() != false) {
                 $users = $archiveEntry->getRequestedByUsers();
                 if (!$users || (array_search($user->getId(), $users, true)) === false) {
@@ -278,7 +278,6 @@ class EntryService
      * @param ArchiveEntryEntity $archiveEntry
      * @return array
      */
-
     public function getOriginalData(ArchiveEntryEntity $archiveEntry)
     {
         return $this->em->getUnitOfWork()->getOriginalEntityData($archiveEntry);
@@ -289,7 +288,6 @@ class EntryService
      * @param ArchiveEntryEntity $archiveEntry
      * @return array
      */
-
     public function checkPathChanges(array $originalEntry, ArchiveEntryEntity $archiveEntry)
     {
         $entryUpdates = $this->checkEntryUpdates($originalEntry, $archiveEntry);
@@ -302,7 +300,6 @@ class EntryService
      * @param ArchiveEntryEntity $archiveEntry
      * @return array
      */
-
     public function checkEntryUpdates(array $originalEntry, ArchiveEntryEntity $archiveEntry)
     {
         $updatedEntry = json_decode(json_encode($archiveEntry), true);
@@ -315,13 +312,11 @@ class EntryService
      * @param array $entryUpdates
      * @return  array
      */
-
     public function findPathParameters(array $entryUpdates)
     {
         $pathParameters = array_flip($this->pathKeys);
 
         return array_intersect_key($entryUpdates, $pathParameters);
-
     }
 
     /**
@@ -329,25 +324,51 @@ class EntryService
      * @param bool $isDeleted
      * @return string
      */
-
     public function constructEntryPath(ArchiveEntryEntity $archiveEntry, bool $isDeleted)
     {
+        $returnString = null;
         if ($isDeleted) {
 
-            return $this->pathRoot . "/" . $this->deletedFolder . "/" . $archiveEntry->getYear() . "/" . $archiveEntry->getFactory()->getId() . "/" . $archiveEntry->getArchiveNumber();
+            $returnString =
+                $this->pathRoot .
+                "/" .
+                $this->deletedFolder .
+                "/" .
+                $archiveEntry->getYear() .
+                "/" .
+                $archiveEntry->getFactory()->getId() .
+                "/" .
+                $archiveEntry->getArchiveNumber();
+        } else {
+
+            $returnString =
+                $this->pathRoot .
+                "/" .
+                $archiveEntry->getYear() .
+                "/" .
+                $archiveEntry->getFactory()->getId() .
+                "/" .
+                $archiveEntry->getArchiveNumber();
         }
 
-        return $this->pathRoot . "/" . $archiveEntry->getYear() . "/" . $archiveEntry->getFactory()->getId() . "/" . $archiveEntry->getArchiveNumber();
+        return $returnString;
     }
 
     /**
      * @param array $originalEntry
      * @return string
      */
-
-    public function constructExistingPath(array $originalEntry)
+    public
+    function constructExistingPath(array $originalEntry)
     {
-        return $this->pathRoot . "/" . $originalEntry['year'] . "/" . $originalEntry['factory']->getId() . "/" . $originalEntry['archiveNumber'];
+        return
+            $this->pathRoot .
+            "/" .
+            $originalEntry['year'] .
+            "/" .
+            $originalEntry['factory']->getId() .
+            "/" .
+            $originalEntry['archiveNumber'];
     }
 
     /**
@@ -355,8 +376,8 @@ class EntryService
      * @param bool $isDeleted
      * @return bool
      */
-
-    public function checkNewPath(ArchiveEntryEntity $archiveEntry, bool $isDeleted)
+    public
+    function checkNewPath(ArchiveEntryEntity $archiveEntry, bool $isDeleted)
     {
         $newPath = $this->constructEntryPath($archiveEntry, $isDeleted);
         $fs = new Filesystem();
@@ -372,7 +393,6 @@ class EntryService
     /**
      * This is called on entry update submit
      */
-
     public function updateEntry()
     {
         $this->em->flush();
@@ -383,7 +403,6 @@ class EntryService
      * @param bool $delete
      * @return array
      */
-
     public function handleEntriesDelete(array $entriesArray, bool $delete)
     {
         $entryIdsArray['remove'] = [];
@@ -402,8 +421,11 @@ class EntryService
      * @param array $entryIdsArray
      * @return array
      */
-
-    public function handleEntryDelete(ArchiveEntryEntity $entryEntity, bool $delete, array $entryIdsArray)
+    public function handleEntryDelete(
+        ArchiveEntryEntity $entryEntity,
+        bool $delete,
+        array $entryIdsArray
+    )
     {
         $this->commonArchiveService->checkAndCreateFolders($entryEntity, false, $delete);
         if ($this->moveEntry($entryEntity, $delete)) {
@@ -428,7 +450,6 @@ class EntryService
      * @param bool $delete
      * @return bool
      */
-
     private function moveEntry(ArchiveEntryEntity $entryEntity, bool $delete)
     {
         $oldPath = $this->constructEntryPath($entryEntity, ($delete ? false : true));
@@ -443,12 +464,16 @@ class EntryService
      * @param ArchiveEntryEntity $entryEntity
      * @param User $user
      * @param bool $updated
+     * @throws \Exception
      */
-
-    public function updateEntryInfo(ArchiveEntryEntity $entryEntity, User $user, bool $updated)
+    public function updateEntryInfo(
+        ArchiveEntryEntity $entryEntity,
+        User $user,
+        bool $updated
+    )
     {
         $entryPath = $this->constructEntryPath($entryEntity, false);
-        (!$updated) ?: $this->changeLastUpdateInfo($entryEntity, $user, null);
+        (!$updated) ?: $this->changeLastUpdateInfo($user, $entryEntity, null);
         $this->serializerService->serializeEntry($entryEntity, $entryPath, false);
     }
 }

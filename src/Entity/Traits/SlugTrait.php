@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\Traits;
 /**
@@ -12,8 +13,7 @@ trait SlugTrait
      * @param string $slug
      * @return $this
      */
-
-    public function setSlug($slug)
+    public function setSlug(string $slug = null): self
     {
         $this->slug = $slug;
 
@@ -24,8 +24,7 @@ trait SlugTrait
      * Get slug
      * @return string
      */
-
-    public function getSlug()
+    public function getSlug(): ?string
     {
         return $this->slug;
     }

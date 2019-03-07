@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Form;
 
@@ -14,14 +15,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Class FileRenameForm
  * @package App\Form
  */
-
 class FileRenameForm extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -36,7 +35,6 @@ class FileRenameForm extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

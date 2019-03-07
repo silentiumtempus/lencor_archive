@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
@@ -21,7 +22,6 @@ trait ModificationStampTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("DateTime")
      */
-
     protected $lastModified;
 
     /**
@@ -30,7 +30,6 @@ trait ModificationStampTrait
      * @Gedmo\Versioned()
      * @Serializer\Type("App\Entity\User")
      */
-
     protected $modifiedByUser;
 
     /**
@@ -38,8 +37,7 @@ trait ModificationStampTrait
      * @param \DateTime $lastModified
      * @return $this
      */
-
-    public function setLastModified($lastModified)
+    public function setLastModified(\DateTime $lastModified): self
     {
         $this->lastModified = $lastModified;
 
@@ -48,10 +46,9 @@ trait ModificationStampTrait
 
     /**
      * Get lastModified
-     * @return \DateTime
+     * @return \DateTime|null
      */
-
-    public function getLastModified()
+    public function getLastModified(): ?\DateTime
     {
         return $this->lastModified;
     }
@@ -61,8 +58,7 @@ trait ModificationStampTrait
      * @param User $modifiedByUser
      * @return $this
      */
-
-    public function setModifiedByUser(User $modifiedByUser = null)
+    public function setModifiedByUser(User $modifiedByUser = null): self
     {
         $this->modifiedByUser = $modifiedByUser;
 
@@ -71,10 +67,9 @@ trait ModificationStampTrait
 
     /**
      * Get modifiedByUser
-     * @return User
+     * @return User|null
      */
-
-    public function getModifiedByUser()
+    public function getModifiedByUser(): ?User
     {
         return $this->modifiedByUser;
     }

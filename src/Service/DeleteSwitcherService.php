@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -11,13 +12,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class DeleteSwitcherService
 {
-    protected $em;
+    private $em;
 
     /**
      * DeleteSwitcherService constructor.
      * @param EntityManagerInterface $entityManager
      */
-
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;
@@ -26,7 +26,6 @@ class DeleteSwitcherService
     /**
      * @param bool $switchDeleted
      */
-
     public function switchDeleted($switchDeleted)
     {
         if (!$this->em->getFilters()->isEnabled('deleted')) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity;
 
@@ -39,7 +40,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * })
  * @Gedmo\Loggable(logEntryClass = "App\Entity\LogEntities\ArchiveEntryLog")
  */
-class ArchiveEntryEntity implements \JsonSerializable
+class ArchiveEntryEntity
 {
     use CommonTrait;
     use RemovalMarkTrait;
@@ -63,7 +64,6 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Gedmo\Versioned()
      * @Serializer\Type("integer")
      */
-
     protected $year;
 
     /**
@@ -73,7 +73,6 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Gedmo\Versioned()
      * @Serializer\Type("App\Entity\FactoryEntity")
      */
-
     protected $factory;
 
     /**
@@ -83,7 +82,6 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Gedmo\Versioned()
      * @Serializer\Type("App\Entity\SettingEntity")
      */
-
     protected $setting;
 
     /**
@@ -93,7 +91,6 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Gedmo\Versioned()
      * @Serializer\Type("string")
      */
-
     protected $archiveNumber;
 
     /**
@@ -102,7 +99,6 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Gedmo\Versioned()
      * @Serializer\Type("string")
      */
-
     protected $registerNumber;
 
     /**
@@ -112,7 +108,6 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Gedmo\Versioned()
      * @Serializer\Type("string")
      */
-
     protected $contractNumber;
 
     /**
@@ -122,14 +117,12 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @Gedmo\Versioned()
      * @Serializer\Type("string")
      */
-
     protected $fullConclusionName;
 
     /**
      * @ORM\OneToOne(targetEntity = "FolderEntity", mappedBy = "archiveEntry", cascade = {"persist"} )
      * @Serializer\Type("App\Entity\FolderEntity")
      */
-
     protected $cataloguePath;
 
     /**
@@ -138,7 +131,6 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @ORM\Column(name = "slug", type = "string", length = 128)
      * @Serializer\Type("string")
      */
-
     private $slug;
 
     /*
@@ -148,15 +140,23 @@ class ArchiveEntryEntity implements \JsonSerializable
     /**
      * Constructor
      */
-
     public function __construct()
     {
         $this->requestedByUsers = new ArrayCollection();
     }
 
-    public function __toString()
+    /**
+     * @return string
+     */
+    public function __toString(): string
     {
-        return $this->year . '/' . $this->factory->getFactoryName() . '/' . $this->archiveNumber;
+        return
+            $this->year .
+            '/' .
+            $this->factory->getFactoryName() .
+            '/' .
+            $this->archiveNumber
+            ;
     }
 
     /**
@@ -164,8 +164,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @param integer $year
      * @return ArchiveEntryEntity
      */
-
-    public function setYear($year)
+    public function setYear(int $year): self
     {
         $this->year = $year;
 
@@ -176,8 +175,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Get year
      * @return integer
      */
-
-    public function getYear()
+    public function getYear(): ?int
     {
         return $this->year;
     }
@@ -187,8 +185,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @param FactoryEntity $factory
      * @return ArchiveEntryEntity
      */
-
-    public function setFactory(FactoryEntity $factory = null)
+    public function setFactory(FactoryEntity $factory = null): self
     {
         $this->factory = $factory;
 
@@ -199,8 +196,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Get factory
      * @return FactoryEntity
      */
-
-    public function getFactory()
+    public function getFactory(): ?FactoryEntity
     {
         return $this->factory;
     }
@@ -210,8 +206,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @param SettingEntity $setting
      * @return ArchiveEntryEntity
      */
-
-    public function setSetting(SettingEntity $setting = null)
+    public function setSetting(SettingEntity $setting = null): self
     {
         $this->setting = $setting;
 
@@ -222,8 +217,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Get setting
      * @return SettingEntity
      */
-
-    public function getSetting()
+    public function getSetting(): ?SettingEntity
     {
         return $this->setting;
     }
@@ -233,8 +227,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @param string $archiveNumber
      * @return ArchiveEntryEntity
      */
-
-    public function setArchiveNumber($archiveNumber)
+    public function setArchiveNumber($archiveNumber): self
     {
         $this->archiveNumber = $archiveNumber;
 
@@ -245,8 +238,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Get archiveNumber
      * @return string
      */
-
-    public function getArchiveNumber()
+    public function getArchiveNumber(): ?string
     {
         return $this->archiveNumber;
     }
@@ -256,8 +248,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @param string $registerNumber
      * @return ArchiveEntryEntity
      */
-
-    public function setRegisterNumber($registerNumber)
+    public function setRegisterNumber($registerNumber): self
     {
         $this->registerNumber = $registerNumber;
 
@@ -268,8 +259,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Get registerNumber
      * @return string
      */
-
-    public function getRegisterNumber()
+    public function getRegisterNumber(): ?string
     {
         return $this->registerNumber;
     }
@@ -279,8 +269,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @param string $contractNumber
      * @return ArchiveEntryEntity
      */
-
-    public function setContractNumber($contractNumber)
+    public function setContractNumber($contractNumber): self
     {
         $this->contractNumber = $contractNumber;
 
@@ -291,8 +280,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Get contractNumber
      * @return string
      */
-
-    public function getContractNumber()
+    public function getContractNumber(): ?string
     {
         return $this->contractNumber;
     }
@@ -302,8 +290,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @param string $fullConclusionName
      * @return ArchiveEntryEntity
      */
-
-    public function setFullConclusionName($fullConclusionName)
+    public function setFullConclusionName($fullConclusionName): self
     {
         $this->fullConclusionName = $fullConclusionName;
 
@@ -314,8 +301,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Get fullConclusionName
      * @return string
      */
-
-    public function getFullConclusionName()
+    public function getFullConclusionName(): ?string
     {
         return $this->fullConclusionName;
     }
@@ -325,8 +311,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @param FolderEntity $cataloguePath
      * @return ArchiveEntryEntity
      */
-
-    public function setCataloguePath($cataloguePath)
+    public function setCataloguePath($cataloguePath): self
     {
         $this->cataloguePath = $cataloguePath;
 
@@ -337,8 +322,7 @@ class ArchiveEntryEntity implements \JsonSerializable
      * Get cataloguePath
      * @return FolderEntity
      */
-
-    public function getCataloguePath()
+    public function getCataloguePath(): ?FolderEntity
     {
         return $this->cataloguePath;
     }
@@ -348,39 +332,10 @@ class ArchiveEntryEntity implements \JsonSerializable
      * @param FolderEntity $cataloguePath
      * @return ArchiveEntryEntity
      */
-    public function addCataloguePath(FolderEntity $cataloguePath)
+    public function addCataloguePath(FolderEntity $cataloguePath): self
     {
         $this->cataloguePath[] = $cataloguePath;
 
         return $this;
-    }
-
-    /**
-     * Remove cataloguePath
-     * @param FolderEntity $cataloguePath
-     */
-
-    public function removeCataloguePath(FolderEntity $cataloguePath)
-    {
-        $this->cataloguePath->removeElement($cataloguePath);
-    }
-
-    /**
-     * Serializing object for update comparison
-     * @return array|mixed
-     */
-
-    public function jsonSerialize()
-    {
-        return [
-            'id' => $this->getId(),
-            'year' => $this->getYear(),
-            'factory' => $this->getFactory()->getId(),
-            'setting' => $this->getSetting()->getId(),
-            'archiveNumber' => $this->getArchiveNumber(),
-            'registerNumber' => $this->getRegisterNumber(),
-            'contractNumber' => $this->getContractNumber(),
-            'fullConclusionName' => $this->getFullConclusionName(),
-        ];
     }
 }

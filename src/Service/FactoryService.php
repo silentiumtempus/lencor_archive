@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Service;
 
@@ -10,16 +11,12 @@ use Psr\Container\ContainerInterface;
  * Class FactoryService
  * @package App\Service
  */
-
 class FactoryService
 {
-    protected $em;
-    protected $container;
-    protected $pathRoot;
-    protected $internalFolder;
-    protected $pathPermissions;
-    protected $factoriesRepository;
-    protected $serializerService;
+    private $em;
+    private $container;
+    private $factoriesRepository;
+    private $serializerService;
 
     /**
      * FactoryService constructor.
@@ -27,8 +24,11 @@ class FactoryService
      * @param ContainerInterface $container
      * @param SerializerService $serializerService
      */
-
-    public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, SerializerService $serializerService)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ContainerInterface $container,
+        SerializerService $serializerService
+    )
     {
         $this->em = $entityManager;
         $this->container = $container;
@@ -39,7 +39,6 @@ class FactoryService
     /**
      * @param FactoryEntity $newFactory
      */
-
     public function createFactory(FactoryEntity $newFactory)
     {
         $this->em->persist($newFactory);
@@ -50,7 +49,6 @@ class FactoryService
     /**
      * This is called on factory property change submit
      */
-
     public function updateFactory()
     {
         $this->serializerService->serializeFactoriesAndSettings();
@@ -60,7 +58,6 @@ class FactoryService
     /**
      * @return FactoryEntity[]|array
      */
-
     public function getFactories()
     {
         return $this->factoriesRepository->findAll();
@@ -70,7 +67,6 @@ class FactoryService
      * @param integer $factoryId
      * @return FactoryEntity|null|object
      */
-
     public function findFactory(int $factoryId)
     {
         return $this->factoriesRepository->findOneById($factoryId);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Form;
 
@@ -13,7 +14,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  * Class EntrySearchByIdForm
  * @package App\Form
  */
-
 class EntrySearchByIdForm extends AbstractType
 {
 
@@ -21,7 +21,6 @@ class EntrySearchByIdForm extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -41,7 +40,6 @@ class EntrySearchByIdForm extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

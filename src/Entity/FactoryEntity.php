@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity;
 
@@ -35,7 +36,6 @@ class FactoryEntity
      * @Gedmo\Versioned()
      * @Serializer\Type("string")
      */
-
     protected $factoryName;
 
     /**
@@ -43,13 +43,11 @@ class FactoryEntity
      * @Serializer\Type("ArrayCollection<App\Entity\SettingEntity>")
      * @var SettingEntity[] | ArrayCollection
      */
-
     private $settings;
 
     /**
      * FactoryEntity constructor.
      */
-
     public function __construct()
     {
         $this->settings = new ArrayCollection();
@@ -60,8 +58,7 @@ class FactoryEntity
      * @param string $factoryName
      * @return FactoryEntity
      */
-
-    public function setFactoryName($factoryName)
+    public function setFactoryName($factoryName): self
     {
         $this->factoryName = $factoryName;
 
@@ -70,9 +67,9 @@ class FactoryEntity
 
     /**
      * Get factoryName
-     * @return string
+     * @return string|null
      */
-    public function getFactoryName()
+    public function getFactoryName(): ?string
     {
         return $this->factoryName;
     }
@@ -82,8 +79,7 @@ class FactoryEntity
      * @param SettingEntity $settings
      * @return $this
      */
-
-    public function addSettings(SettingEntity $settings)
+    public function addSettings(SettingEntity $settings): self
     {
         $this->settings[] = $settings;
 
@@ -92,19 +88,20 @@ class FactoryEntity
 
     /**
      * @param array $settings
+     * @return $this
      */
-
-    public function setSettings(array $settings)
+    public function setSettings(array $settings): self
     {
         $this->settings = $settings;
+
+        return $this;
     }
 
     /**
      * Remove settings
      * @param SettingEntity $settings
      */
-
-    public function removeSettings(SettingEntity $settings)
+    public function removeSettings(SettingEntity $settings): void
     {
         $this->settings->removeElement($settings);
     }
@@ -113,8 +110,7 @@ class FactoryEntity
      * Get settings
      * @return ArrayCollection
      */
-
-    public function getSettings()
+    public function getSettings(): ?ArrayCollection
     {
         return $this->settings;
     }
@@ -122,8 +118,7 @@ class FactoryEntity
     /**
      * @return mixed
      */
-
-    public function __toString()
+    public function __toString(): ?string
     {
         return $this->factoryName;
     }

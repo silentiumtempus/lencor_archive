@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller;
 use App\Entity\ArchiveEntryEntity;
@@ -17,7 +18,6 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class RecoveryController
  * @package App\Controller
  */
-
 class RecoveryController extends Controller
 {
     /**
@@ -27,7 +27,6 @@ class RecoveryController extends Controller
      *     options = { "expose" = true },
      *     name = "admin-recovery")
      */
-
     public function recoveryIndex() {
 
         return $this->render('lencor/admin/archive/administration/recovery/index.html.twig');
@@ -41,12 +40,14 @@ class RecoveryController extends Controller
      *     options = { "expose" = true },
      *     name = "admin-recovery-find")
      */
-
     public function findEntryFiles(RecoveryService $recoveryService)
     {
         $files = $recoveryService->locateFiles();
 
-        return $this->render('lencor/admin/archive/administration/recovery/find_entry_files.html.twig', array('files' => $files));
+        return $this->render(
+            'lencor/admin/archive/administration/recovery/find_entry_files.html.twig',
+            array('files' => $files)
+        );
     }
 
     /**
@@ -57,12 +58,14 @@ class RecoveryController extends Controller
      *     options = { "expose" = true },
      *     name = "admin-recovery-exec")
      */
-
     public function restoreEntries(RecoveryService $recoveryService)
     {
         $result = null;
         $recoveryService->restoreDatabase();
 
-        return $this->render('lencor/admin/archive/administration/recovery/recovery_result.html.twig', array('result' => $result));
+        return $this->render(
+            'lencor/admin/archive/administration/recovery/recovery_result.html.twig',
+            array('result' => $result)
+        );
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Form;
 
@@ -16,7 +17,6 @@ use Yavin\Symfony\Form\Type\TreeType;
  * Class FileAddForm
  * @package App\Form
  */
-
 class FileAddForm extends AbstractType
 {
     protected $em;
@@ -26,7 +26,6 @@ class FileAddForm extends AbstractType
      * FileAddForm constructor.
      * @param EntityManagerInterface $em
      */
-
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
@@ -37,7 +36,6 @@ class FileAddForm extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $parentFolder = $this->folderRepository->findOneById($options['attr']['folderId']);
@@ -52,7 +50,10 @@ class FileAddForm extends AbstractType
                     'orderFields' => ['lft' => 'asc'],
                     'prefixAttributeName' => 'data-level-prefix',
                     'treeLevelField' => 'lvl',
-                    'query_builder' => $this->folderRepository->showEntryFoldersQuery($this->folderRepository, $options['attr']['folderId'])
+                    'query_builder' =>
+                        $this->folderRepository->showEntryFoldersQuery(
+                            $this->folderRepository,
+                            $options['attr']['folderId'])
                 ));
         } else {
             $builder
@@ -74,7 +75,6 @@ class FileAddForm extends AbstractType
     /**
      * @param OptionsResolver $resolver
      */
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

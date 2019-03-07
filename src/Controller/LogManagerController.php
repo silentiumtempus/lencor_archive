@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -31,8 +32,12 @@ class LogManagerController extends Controller
      *     options = { "expose" = true},
      *     name = "logging")
      */
-
-    public function logManagerIndex(int $entryId, Request $request, LoggingService $loggingService, EntryService $archiveEntryService)
+    public function logManagerIndex(
+        int $entryId,
+        Request $request,
+        LoggingService $loggingService,
+        EntryService $archiveEntryService
+    )
     {
         $logSearchForm = $this->createForm(LogSearchForm::class);
         $currentFolder = "";
@@ -77,12 +82,17 @@ class LogManagerController extends Controller
      *     name = "logging-open-sub-dir")
      * @TODO : use type-hint for entry in request instead of db querying
      */
-
-    public function openSubDir(Request $request, int $entryId, LoggingService $loggingService)
+    public function openSubDir(
+        Request $request,
+        int $entryId,
+        LoggingService $loggingService
+    )
     {
         if ($request->get('folder')) {
-            $logsFolderPath = $loggingService->getLogsNavigationPath($request->get('parentFolder'), $request->get('folder'));
-            $currentFolder = $loggingService->getLogsCurrentFolder($request->get('parentFolder'), $request->get('folder'));
+            $logsFolderPath =
+                $loggingService->getLogsNavigationPath($request->get('parentFolder'), $request->get('folder'));
+            $currentFolder =
+                $loggingService->getLogsCurrentFolder($request->get('parentFolder'), $request->get('folder'));
             $logsPath = $loggingService->getLogsRootPath($entryId) . "/" . $currentFolder;
             $logFolders = $loggingService->getEntryLogFolders($logsPath);
             $logFiles = $loggingService->getEntryLogFiles($logsPath);
@@ -108,7 +118,6 @@ class LogManagerController extends Controller
      *     options = { "expose" = true },
      *     name = "logging-open-file")
      */
-
     public function openLogFile(Request $request, LoggingService $loggingService)
     {
         if ($request->get('file') || $request->get('log_rows_count_form')) {
@@ -125,7 +134,11 @@ class LogManagerController extends Controller
                 ))
             );
             $rowsCountForm->handleRequest($request);
-            if ($rowsCountForm->isSubmitted() && $rowsCountForm->isValid() && $request->isMethod('POST')) {
+            if (
+                $rowsCountForm->isSubmitted() &&
+                $rowsCountForm->isValid() &&
+                $request->isMethod('POST')
+            ) {
                 $fileContent = $loggingService->getFileContent(
                     $rowsCountForm->get('entryId')->getViewData(),
                     $rowsCountForm->get('file')->getViewData(),

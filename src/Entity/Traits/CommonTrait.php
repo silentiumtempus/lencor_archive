@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\Traits;
 
@@ -16,15 +17,13 @@ trait CommonTrait
      * @ORM\GeneratedValue(strategy = "AUTO")
      * @Serializer\Type("integer")
      */
-
     protected $id;
 
     /**
      * Get id
-     * @return integer
+     * @return int|null
      */
-
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

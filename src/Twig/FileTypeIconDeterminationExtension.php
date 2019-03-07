@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Twig;
 
@@ -8,14 +9,12 @@ use Twig\Extension\AbstractExtension;
  * Class FileTypeIconDeterminationExtension
  * @package App\Twig
  */
-
 class FileTypeIconDeterminationExtension extends AbstractExtension
 {
     /**
      * @return array|\Twig_Filter[]
      */
-
-    public function getFilters()
+    public function getFilters(): array
     {
         return array(
             new \Twig_SimpleFilter('file_icon', array($this, 'fileIcon')),
@@ -25,8 +24,7 @@ class FileTypeIconDeterminationExtension extends AbstractExtension
     /**
      * @return string
      */
-
-    public function getName()
+    public function getName(): string
     {
         return 'file_icon';
     }
@@ -35,8 +33,7 @@ class FileTypeIconDeterminationExtension extends AbstractExtension
      * @param string $fileName
      * @return string
      */
-
-    public function fileIcon(string $fileName)
+    public function fileIcon(string $fileName): string
     {
         switch (pathinfo($fileName, PATHINFO_EXTENSION)) {
             case 'txt':

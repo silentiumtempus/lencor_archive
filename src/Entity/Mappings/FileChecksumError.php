@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Entity\Mappings;
 
@@ -25,7 +26,6 @@ use App\Entity\FileEntity;
  * }),
  * @Gedmo\Loggable(logEntryClass = "App\Entity\Mappings\LogMappings\FileChecksumErrorLog")
  */
-
 class FileChecksumError
 {
     use CommonTrait;
@@ -36,7 +36,6 @@ class FileChecksumError
      * @Assert\NotBlank
      * @Gedmo\Versioned()
      */
-
     protected $fileId;
 
     /**
@@ -45,7 +44,6 @@ class FileChecksumError
      * @Assert\NotBlank
      * @Gedmo\Versioned()
      */
-
     protected $parentFolderId;
 
     /**
@@ -54,7 +52,6 @@ class FileChecksumError
      * @Gedmo\Timestampable(on = "create")
      * @Gedmo\Versioned()
      */
-
     protected $firstOccuredOn;
 
     /**
@@ -63,7 +60,6 @@ class FileChecksumError
      * @Gedmo\Timestampable()
      * @Gedmo\Versioned()
      */
-
     protected $lastCheckOn;
 
     /**
@@ -71,25 +67,20 @@ class FileChecksumError
      * @Assert\Type("integer")
      * @Gedmo\Versioned()
      */
-
     protected $lastCheckByUser;
 
     /**
     * @ORM\Column(name = "status", type = "integer")
     * @Gedmo\Versioned()
     */
-
-
     protected $status;
 
     /**
      * Set firstOccuredOn
-     *
      * @param \DateTime $firstOccuredOn
-     *
      * @return FileChecksumError
      */
-    public function setFirstOccuredOn($firstOccuredOn)
+    public function setFirstOccuredOn($firstOccuredOn): self
     {
         $this->firstOccuredOn = $firstOccuredOn;
 
@@ -98,22 +89,19 @@ class FileChecksumError
 
     /**
      * Get firstOccuredOn
-     *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getFirstOccuredOn()
+    public function getFirstOccuredOn(): ?\DateTime
     {
         return $this->firstOccuredOn;
     }
 
     /**
      * Set lastCheckOn
-     *
      * @param \DateTime $lastCheckOn
-     *
      * @return FileChecksumError
      */
-    public function setLastCheckOn($lastCheckOn)
+    public function setLastCheckOn($lastCheckOn): self
     {
         $this->lastCheckOn = $lastCheckOn;
 
@@ -122,22 +110,19 @@ class FileChecksumError
 
     /**
      * Get lastCheckOn
-     *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getLastCheckOn()
+    public function getLastCheckOn(): ?\DateTime
     {
         return $this->lastCheckOn;
     }
 
     /**
      * Set status
-     *
      * @param integer $status
-     *
      * @return FileChecksumError
      */
-    public function setStatus($status)
+    public function setStatus($status): self
     {
         $this->status = $status;
 
@@ -146,22 +131,19 @@ class FileChecksumError
 
     /**
      * Get status
-     *
      * @return integer
      */
-    public function getStatus()
+    public function getStatus(): int
     {
         return $this->status;
     }
 
     /**
      * Set fileId
-     *
      * @param FileEntity $fileId
-     *
      * @return FileChecksumError
      */
-    public function setFileId(FileEntity $fileId = null)
+    public function setFileId(FileEntity $fileId = null): self
     {
         $this->fileId = $fileId;
 
@@ -170,22 +152,19 @@ class FileChecksumError
 
     /**
      * Get fileId
-     *
-     * @return FileEntity
+     * @return FileEntity|null
      */
-    public function getFileId()
+    public function getFileId(): ?FileEntity
     {
         return $this->fileId;
     }
 
     /**
      * Set parentFolderId
-     *
      * @param FolderEntity $parentFolderId
-     *
      * @return FileChecksumError
      */
-    public function setParentFolderId(FolderEntity $parentFolderId = null)
+    public function setParentFolderId(FolderEntity $parentFolderId = null): self
     {
         $this->parentFolderId = $parentFolderId;
 
@@ -194,22 +173,19 @@ class FileChecksumError
 
     /**
      * Get parentFolderId
-     *
-     * @return FolderEntity
+     * @return FolderEntity|null
      */
-    public function getParentFolderId()
+    public function getParentFolderId(): ?FolderEntity
     {
         return $this->parentFolderId;
     }
 
     /**
      * Set lastCheckByUser
-     *
      * @param string $lastCheckByUser
-     *
      * @return FileChecksumError
      */
-    public function setLastCheckByUser($lastCheckByUser)
+    public function setLastCheckByUser($lastCheckByUser): self
     {
         $this->lastCheckByUser = $lastCheckByUser;
 
@@ -218,10 +194,9 @@ class FileChecksumError
 
     /**
      * Get lastCheckByUser
-     *
-     * @return string
+     * @return string|null
      */
-    public function getLastCheckByUser()
+    public function getLastCheckByUser(): ?string
     {
         return $this->lastCheckByUser;
     }
