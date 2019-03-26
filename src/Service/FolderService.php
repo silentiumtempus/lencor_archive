@@ -83,7 +83,7 @@ class FolderService
      * @param $entryId
      * @return mixed
      */
-    public function getRootFolder(int $entryId)
+    public function getRootFolder($entryId)
     {
         $rootFolder = $this->foldersRepository->findOneByArchiveEntry($entryId);
         $folderId = $rootFolder->getRoot()->getId();
