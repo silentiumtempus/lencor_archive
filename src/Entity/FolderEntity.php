@@ -333,9 +333,9 @@ class FolderEntity
 
     /**
      * Get root
-     * @return integer
+     * @return FolderEntity
      */
-    public function getRoot(): int
+    public function getRoot(): self
     {
         return $this->root;
     }
