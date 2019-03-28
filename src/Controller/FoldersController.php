@@ -40,7 +40,7 @@ class FoldersController extends Controller
     {
         $folderTree = null;
         if ($request->request->has('folderId')) {
-            $folderTree = $folderService->showEntryFolders($request->get('folderId'), (bool) $request->get('deleted'));
+            $folderTree = $folderService->showEntryFolders((int)$request->get('folderId'), (bool) $request->get('deleted'));
         }
 
         return $this->render(
@@ -120,7 +120,7 @@ class FoldersController extends Controller
     )
     {
         $removedFolders[] = $folderService->removeFolder(
-            $request->get('folderId'),
+            (int)$request->get('folderId'),
             $this->getUser(),
             $fileService
         );
@@ -144,7 +144,7 @@ class FoldersController extends Controller
     public function restoreFolder(Request $request, FolderService $folderService)
     {
         $restoredFolders = $folderService->restoreFolder(
-            $request->get('folderId'),
+            (int)$request->get('folderId'),
             $this->getUser()
         );
 
@@ -163,7 +163,7 @@ class FoldersController extends Controller
      */
     public function requestFolder(Request $request, FolderService $folderService)
     {
-        $requestedFolder[] = $folderService->requestFolder($request->get('folderId'), $this->getUser());
+        $requestedFolder[] = $folderService->requestFolder((int)$request->get('folderId'), $this->getUser());
 
         return $this->render(
             'lencor/admin/archive/archive_manager/files_and_folders/show_folders.html.twig',
@@ -371,7 +371,7 @@ class FoldersController extends Controller
     {
         $entry = null;
         if ($request->request->has('folderId')) {
-            $entry = $folderService->getFolderEntry($request->get('folderId'));
+            $entry = $folderService->getFolderEntry((int)$request->get('folderId'));
         }
 
         return new Response($entry->getId());

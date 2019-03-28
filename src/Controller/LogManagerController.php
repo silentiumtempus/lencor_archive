@@ -122,7 +122,7 @@ class LogManagerController extends Controller
     {
         if ($request->get('file') || $request->get('log_rows_count_form')) {
             $fileContent = null;
-            $entryId = $request->get('entryId');
+            $entryId = (int)$request->get('entryId');
             $file = $request->get('parentFolder') . "/" . $request->get('file');
             $rowsCountForm = $this->createForm(
                 LogRowsCountForm::class,

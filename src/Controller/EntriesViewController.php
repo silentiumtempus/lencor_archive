@@ -107,7 +107,7 @@ class EntriesViewController extends Controller
         $addHeaderAndButtons = true;
 
         if ($request->request->has('entryId')) {
-            $entryId = $request->get('entryId');
+            $entryId = (int)$request->get('entryId');
             $folderId = $folderService->getRootFolder($entryId);
         }
 
@@ -132,7 +132,7 @@ class EntriesViewController extends Controller
     {
         $archiveEntry = null;
         if ($request->request->has('entryId')) {
-            $archiveEntry = $entryService->removeEntry($request->get('entryId'), $this->getUser());
+            $archiveEntry = $entryService->removeEntry((int)$request->get('entryId'), $this->getUser());
         }
 
         return $this->render(
@@ -154,7 +154,7 @@ class EntriesViewController extends Controller
     {
         $archiveEntry = null;
         if ($request->request->has('entryId')) {
-            $archiveEntry = $entryService->restoreEntry($request->get('entryId'), $this->getUser());
+            $archiveEntry = $entryService->restoreEntry((int)$request->get('entryId'), $this->getUser());
         }
 
         return $this->render(
@@ -177,7 +177,7 @@ class EntriesViewController extends Controller
     {
         $archiveEntry = null;
         if ($request->request->has('entryId')) {
-            $archiveEntry = $entryService->requestEntry($request->get('entryId'), $this->getUser());
+            $archiveEntry = $entryService->requestEntry((int)$request->get('entryId'), $this->getUser());
         }
 
         return $this->render(
@@ -418,7 +418,7 @@ class EntriesViewController extends Controller
         $translator->addResource('yml', 'files_folders.ru.yml', 'ru_RU', 'files_folders');
         if ($request->get('type') && $request->get('id')) {
             $type = $request->get('type');
-            $id = $request->get('id');
+            $id = (int)$request->get('id');
             $requesters = $commonArchiveService->getRequesters($id, $type);
             switch ($type) {
                 case 'file':

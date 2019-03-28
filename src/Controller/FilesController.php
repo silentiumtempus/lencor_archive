@@ -40,7 +40,7 @@ class FilesController extends Controller
         $fileList = null;
         if ($request->request->has('folderId')) {
             $fileList = $fileService->showEntryFiles(
-                $request->get('folderId'),
+                (int)$request->get('folderId'),
                 (bool)$request->get('deleted')
             );
         }
@@ -118,7 +118,7 @@ class FilesController extends Controller
     //@TODO: Unite two methods below
     public function removeFile(Request $request, FileService $fileService)
     {
-        $removedFile = $fileService->removeFile($request->get('fileId'), $this->getUser());
+        $removedFile = $fileService->removeFile((int)$request->get('fileId'), $this->getUser());
 
         return $this->render(
             'lencor/admin/archive/archive_manager/files_and_folders/show_files.html.twig',
@@ -139,7 +139,7 @@ class FilesController extends Controller
 
     public function restoreFile(Request $request, FileService $fileService)
     {
-        $restoredFile = $fileService->restoreFile($request->get('fileId'), $this->getUser());
+        $restoredFile = $fileService->restoreFile((int)$request->get('fileId'), $this->getUser());
 
         return $this->render(
             'lencor/admin/archive/archive_manager/files_and_folders/show_files.html.twig',
@@ -165,7 +165,7 @@ class FilesController extends Controller
         FolderService $folderService
     )
     {
-        $requestedFile = $fileService->requestFile($request->get('fileId'), $this->getUser(), $folderService);
+        $requestedFile = $fileService->requestFile((int)$request->get('fileId'), $this->getUser(), $folderService);
 
         return $this->render(
             'lencor/admin/archive/archive_manager/files_and_folders/show_files.html.twig',
