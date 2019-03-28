@@ -34,7 +34,7 @@ class ArchiveEntryRepository extends EntityRepository
      * @param int $entryId
      * @return array
      */
-    public function getUpdateInfoByEntry(int $entryId)
+    public function getUpdateInfoByEntry(string $entryId)
     {
         return $this->queryBuilder
             ->select('en.lastModified', 'us.usernameCanonical')

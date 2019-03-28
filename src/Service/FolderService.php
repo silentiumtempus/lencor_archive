@@ -72,7 +72,7 @@ class FolderService
      * @param int $folderId
      * @return mixed
      */
-    public function getFolderEntry(int $folderId)
+    public function getFolderEntry(string $folderId)
     {
         $folderNode = $this->foldersRepository->find($folderId);
 
@@ -760,7 +760,7 @@ class FolderService
      * @param bool $deleted
      * @return mixed
      */
-    public function showEntryFolders(int $folderId, bool $deleted)
+    public function showEntryFolders(string $folderId, bool $deleted)
     {
         /** First code version to retrieve folders as nested tree */
         //$options = array();
