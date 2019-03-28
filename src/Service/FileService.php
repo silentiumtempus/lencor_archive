@@ -805,7 +805,7 @@ class FileService
      * @param bool $deleted
      * @return mixed
      */
-    public function showEntryFiles(int $folderId, bool $deleted)
+    public function showEntryFiles(string $folderId, bool $deleted)
     {
         if ($this->folderService->getFolderEntry($folderId)->getDeleted()) {
             $this->dSwitchService->switchDeleted(null);
@@ -826,6 +826,7 @@ class FileService
      * @param int $fileId
      * @return mixed
      */
+    //@TODO: To be removed
     public function reloadFileDetails(int $fileId)
     {
         return $this->filesRepository->findOneById($fileId);
