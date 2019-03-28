@@ -99,10 +99,10 @@ class FileService
 
     /**
      * @param FileEntity $requestedFile
-     * @param string $slashDirection
+     * @param bool $slashDirection
      * @return null|string
      */
-    public function getFilePath(FileEntity $requestedFile, string $slashDirection)
+    public function getFilePath(FileEntity $requestedFile, bool $slashDirection)
     {
         $path = null;
         $binaryPath = $this->folderService->getPath($requestedFile->getParentFolder());
